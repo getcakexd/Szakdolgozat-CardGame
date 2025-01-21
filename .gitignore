@@ -1,0 +1,60 @@
+# Common
+.DS_Store
+Thumbs.db
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Spring
+HELP.md
+.apt_generated
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# Angular
+/dist
+/tmp
+/out-tsc
+/bazel-out
+/.angular/cache
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Docker
+*.log
+docker-compose.override.yml
+.env
+.env.*
+Dockerfile.*
+
+# Test and Coverage Files
+coverage/
+libpeerconnection.log
+testem.log
+
+# Temporary Files
+.sass-cache/
+connect.lock
+.typings
+.history/*
