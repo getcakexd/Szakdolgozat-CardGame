@@ -1,0 +1,5 @@
+<h2>Create User</h2>
+<input [(ngModel)]="newUser.username" placeholder="Username" />
+<input [(ngModel)]="newUser.password" type="password" placeholder="Password" />
+<button (click)="createUser()">Create</button>
+<p>{{ message }}</p>
