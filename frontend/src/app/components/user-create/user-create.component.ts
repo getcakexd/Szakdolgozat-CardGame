@@ -19,7 +19,8 @@ export class UserCreateComponent {
 
   createUser(): void {
     this.userService.createUser(this.newUser).subscribe((response) => {
-      this.message = response.message;
+      window.location.reload();
+      //this.message = response.message;
     });
   }
 }

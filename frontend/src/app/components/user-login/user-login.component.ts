@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import { UserService, User } from '../../services/user.service';
 import {FormsModule} from '@angular/forms';
 
@@ -17,9 +17,17 @@ export class UserLoginComponent {
 
   constructor(private userService: UserService) {}
 
+  @Output() loginSuccess = new EventEmitter<string>();
+
   login(): void {
-    this.userService.login(this.user).subscribe((response) => {
-      this.message = response.status === 'ok' ? 'Login successful' : 'Login failed';
+    this.userService.login(this.user).subscribe({
+      next: (response) => {
+        if (response.status === 'ok') {
+          this.loginSuccess.emit(this.user.username);
+        } else {
+          console.error('Login failed');
+        }
+      },
     });
   }
 }

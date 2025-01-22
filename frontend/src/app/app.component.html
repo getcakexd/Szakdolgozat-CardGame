@@ -1,6 +1,18 @@
+<!--
 <div *ngFor="let heartbeat of heartbeats">
   <app-heartbeat [heartbeat]="heartbeat"></app-heartbeat>
 </div>
+-->
+
 <app-user-list></app-user-list>
-<app-user-login></app-user-login>
-<app-user-create></app-user-create>
+
+<div *ngIf="!isLoggedIn">
+  <app-user-login (loginSuccess)="handleLogin($event)"></app-user-login>
+  <app-user-create></app-user-create>
+</div>
+
+<div *ngIf="isLoggedIn">
+  <h1>Welcome {{ username }}!</h1>
+  <button (click)="logout()">Logout</button>
+</div>
+
