@@ -1,6 +1,5 @@
 package hu.benkototh.cardgame.backend.rest;
 
-import hu.benkototh.cardgame.backend.rest.Data.Data;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserService {
+public class UserRestService {
 
     @Autowired
     private IUserRepository userRepository;
