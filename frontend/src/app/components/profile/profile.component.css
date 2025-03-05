@@ -1,0 +1,11 @@
+.edit-btn{
+  background-color: blue;
+}
+
+.submit-btn{
+  background-color: green;
+}
+
+.delete-btn, .cancel-btn{
+  background-color: red;
+}

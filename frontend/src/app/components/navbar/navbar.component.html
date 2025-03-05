@@ -10,6 +10,7 @@
       <a routerLink="/signup">Signup</a>
     </div>
     <div *ngIf="isLoggedIn">
+      <a routerLink="/profile">{{localStorage.getItem("username")}}</a>
       <a (click)="userService.logout()">Logout</a>
     </div>
   </div>

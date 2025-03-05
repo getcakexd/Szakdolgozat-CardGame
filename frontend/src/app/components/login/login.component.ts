@@ -2,19 +2,22 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import { UserService, User } from '../../services/user.service';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    NgIf
   ],
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  user: User = { username: '', password: '', email: '' };
+  user: User = {username: '', password: '', email: '' };
   message: string = '';
+  isSuccess: boolean = false;
 
   constructor(private userService: UserService, private router: Router) {}
 
@@ -22,9 +25,22 @@ export class LoginComponent {
     const user: User = {
       username: this.user.username,
       password: this.user.password,
-      email: this.user.email
+      email: this.user.email,
     };
 
-    this.userService.login(user).subscribe(() => this.router.navigate(['/home']).then());
+    this.userService.login(user).subscribe(
+      (response) => {
+        this.router.navigate(['/home']);
+      },
+    (error) => {
+        this.message = 'Error logging in. Please try again.';
+        this.resetForm();
+      }
+    );
   }
+
+  private resetForm(): void {
+    this.user = {username: '', email: '', password: ''};
+  }
+
 }

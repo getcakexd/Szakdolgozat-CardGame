@@ -19,8 +19,8 @@ export class NavbarComponent implements OnInit{
   constructor(protected userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.isLoggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-    });
+    this.isLoggedIn = this.userService.isLoggedIn();
   }
+
+  protected readonly localStorage = localStorage;
 }
