@@ -22,17 +22,25 @@ export class UserService {
     return this.http.get<User[]>(`${this.apiUrl}/all`);
   }
 
+  createUser(user: User): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, user);
+  }
+
   login(user: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, user).pipe(
-      tap(() => this.isLoggedInSubject.next(true))
+      tap(() => {
+        localStorage.setItem('username', user.username);
+        this.isLoggedInSubject.next(true);
+      })
     );
   }
 
   logout(): void {
+    localStorage.removeItem('username')
     this.isLoggedInSubject.next(false);
   }
 
-  createUser(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create`, user);
+  getLoggedInUsername(): string | null {
+    return localStorage.getItem('username');
   }
 }

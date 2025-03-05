@@ -1,11 +1,22 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {NgIf} from '@angular/common';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [
+    NgIf
+  ],
   templateUrl: './home.component.html',
+  standalone: true,
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  username: string | null = null;
 
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.username = this.userService.getLoggedInUsername();
+  }
 }

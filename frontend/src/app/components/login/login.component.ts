@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import { UserService, User } from '../../services/user.service';
 import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +16,7 @@ export class LoginComponent {
   user: User = { username: '', password: '', email: '' };
   message: string = '';
 
-  constructor(private userService: UserService) {}
-
-  @Output() loginEvent = new EventEmitter<User>();
+  constructor(private userService: UserService, private router: Router) {}
 
   login(): void {
     const user: User = {
@@ -26,8 +25,6 @@ export class LoginComponent {
       email: this.user.email
     };
 
-    this.userService.login(user).subscribe(() => {
-      this.loginEvent.emit(this.user);
-    });
+    this.userService.login(user).subscribe(() => this.router.navigate(['/home']).then());
   }
 }

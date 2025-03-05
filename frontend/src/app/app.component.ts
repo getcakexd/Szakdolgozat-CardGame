@@ -37,18 +37,11 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.userService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
+      if (status) {
+        this.username = localStorage.getItem('username');
+      } else {
+        this.username = null;
+      }
     });
   }
-
-  handleLogin(user: User) {
-    this.userService.login(user).subscribe(() => {
-      this.username = user.username; // Set the username after successful login
-    });
-  }
-
-  logout() {
-    this.userService.logout();  // Log the user out via the service
-    this.username = null;
-  }
-
 }
