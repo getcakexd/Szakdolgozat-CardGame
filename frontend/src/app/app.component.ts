@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {Heartbeat} from './heartbeat';
-import {HttpClient} from '@angular/common/http';
 import {HeartbeatComponent} from './components/heartbeat/heartbeat.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {UserListComponent} from './components/user-list/user-list.component';
@@ -9,10 +7,9 @@ import {SignupComponent} from './components/signup/signup.component';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatButton} from '@angular/material/button';
-import {User, UserService} from './services/user.service';
+import {UserService} from './services/user.service';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {RouterModule, RouterOutlet} from '@angular/router';
-import {AppRoutingModule} from './app.routes';
 
 @Component({
   selector: 'app-root',
