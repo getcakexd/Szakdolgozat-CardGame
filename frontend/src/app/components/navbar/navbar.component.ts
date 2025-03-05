@@ -23,4 +23,7 @@ export class NavbarComponent implements OnInit{
       this.isLoggedIn = status;
     });
   }
+
+  protected readonly sessionStorage = sessionStorage;
+  protected readonly localStorage = localStorage;
 }

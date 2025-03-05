@@ -67,7 +67,7 @@ export class SignupComponent {
   }
 
   private resetForm(): void {
-    this.newUser = { username: '', email: '', password: ''};
+    this.newUser = {username: '', email: '', password: ''};
   }
 
   private isValidEmail(email: string): boolean {

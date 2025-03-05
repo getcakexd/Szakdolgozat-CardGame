@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  user: User = { username: '', password: '', email: '' };
+  user: User = {username: '', password: '', email: '' };
   message: string = '';
 
   constructor(private userService: UserService, private router: Router) {}
@@ -22,7 +22,7 @@ export class LoginComponent {
     const user: User = {
       username: this.user.username,
       password: this.user.password,
-      email: this.user.email
+      email: this.user.email,
     };
 
     this.userService.login(user).subscribe(() => this.router.navigate(['/home']).then());
