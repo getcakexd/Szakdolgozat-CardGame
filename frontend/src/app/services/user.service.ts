@@ -36,7 +36,8 @@ export class UserService {
   }
 
   logout(): void {
-    localStorage.removeItem('username')
+    localStorage.removeItem('username');
+    window.location.reload();
     this.isLoggedInSubject.next(false);
   }
 
