@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {Heartbeat} from './heartbeat';
 import {HttpClient} from '@angular/common/http';
-import {HeartbeatComponent} from './heartbeat/heartbeat.component';
+import {HeartbeatComponent} from './components/heartbeat/heartbeat.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {UserListComponent} from './components/user-list/user-list.component';
 import {UserLoginComponent} from './components/user-login/user-login.component';
@@ -15,17 +15,10 @@ import {UserCreateComponent} from './components/user-create/user-create.componen
   standalone: true,
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   title = 'frontend';
 
-  heartbeats : Heartbeat[] = [];
-
   constructor(private http: HttpClient) {}
-
-  ngOnInit() {
-    this.http.get<Heartbeat[]>('http://localhost:4200/api/heartbeat')
-      .subscribe(data => this.heartbeats = data);
-  }
 
   isLoggedIn = false;
   username: string | null = null;

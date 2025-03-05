@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
   styleUrls: ['./user-login.component.css']
 })
 export class UserLoginComponent {
-  user: User = { username: '', password: '' };
+  user: User = { username: '', password: '', email: '' };
   message: string = '';
 
   constructor(private userService: UserService) {}

@@ -4,10 +4,10 @@
 </div>
 -->
 
-<app-user-list></app-user-list>
-
 <div *ngIf="!isLoggedIn">
+  <!--
   <app-user-login (loginSuccess)="handleLogin($event)"></app-user-login>
+  -->
   <app-user-create></app-user-create>
 </div>
 

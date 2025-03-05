@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {Heartbeat} from '../heartbeat';
+import {Heartbeat} from '../../heartbeat';
 
 @Component({
   selector: 'app-heartbeat',
