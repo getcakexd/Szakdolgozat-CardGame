@@ -4,8 +4,8 @@ import {FormsModule} from '@angular/forms';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 
 @Component({
-  selector: 'app-user-create',
-  templateUrl: './user-create.component.html',
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
   standalone: true,
   imports: [
     FormsModule,
@@ -13,9 +13,9 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
     NgIf,
     NgForOf
   ],
-  styleUrls: ['./user-create.component.css']
+  styleUrls: ['./signup.component.css']
 })
-export class UserCreateComponent {
+export class SignupComponent {
   newUser: User = { username: '', email: '', password: ''};
   message: string = '';
   isSuccess: boolean = false;
