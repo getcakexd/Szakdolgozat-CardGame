@@ -93,7 +93,8 @@ export class ProfileComponent {
   }
 
   cancelEdit(): void {
-    this.editForm = false;
+    this.editField = '';
+
     this.newUsername = '';
     this.newEmail = '';
     this.currentPassword = '';
