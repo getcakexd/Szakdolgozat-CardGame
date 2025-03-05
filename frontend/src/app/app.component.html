@@ -4,15 +4,8 @@
 </div>
 -->
 
-<div *ngIf="!isLoggedIn">
-  <!--
-  <app-user-login (loginSuccess)="handleLogin($event)"></app-user-login>
-  -->
-  <app-user-create></app-user-create>
+<div class="app-container">
+  <app-navbar></app-navbar>
 </div>
 
-<div *ngIf="isLoggedIn">
-  <h1>Welcome {{ username }}!</h1>
-  <button (click)="logout()">Logout</button>
-</div>
-
+<router-outlet></router-outlet>
