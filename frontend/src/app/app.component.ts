@@ -7,7 +7,7 @@ import {SignupComponent} from './components/signup/signup.component';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatButton} from '@angular/material/button';
-import {UserService} from './services/user.service';
+import {UserService} from './services/friends/user.service';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {RouterModule, RouterOutlet} from '@angular/router';
 
