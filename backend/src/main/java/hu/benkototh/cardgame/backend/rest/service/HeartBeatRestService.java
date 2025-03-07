@@ -1,4 +1,4 @@
-package hu.benkototh.cardgame.backend.rest;
+package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.Data;
 import hu.benkototh.cardgame.backend.rest.repository.IDataRepository;
