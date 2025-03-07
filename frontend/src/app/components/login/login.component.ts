@@ -30,7 +30,9 @@ export class LoginComponent {
 
     this.userService.login(user).subscribe(
       (response) => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home']).then( () => {
+          window.location.reload();
+        });
       },
     (error) => {
         this.message = 'Error logging in. Please try again.';
