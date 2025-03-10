@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {Router} from '@angular/router';
 
 export interface User {
   username: string;
@@ -16,7 +17,7 @@ export class UserService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,  private router: Router) {}
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/all`);
@@ -43,7 +44,9 @@ export class UserService {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
     localStorage.removeItem('email');
-    window.location.reload();
+    this.router.navigate(['/home']).then(() => {
+      window.location.reload();
+    });
     this.isLoggedInSubject.next(false);
   }
 

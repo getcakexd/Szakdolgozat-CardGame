@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import { UserService, User } from '../../services/user.service';
+import { UserService, User } from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgIf} from '@angular/common';
@@ -30,7 +30,9 @@ export class LoginComponent {
 
     this.userService.login(user).subscribe(
       (response) => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home']).then( () => {
+          window.location.reload();
+        });
       },
     (error) => {
         this.message = 'Error logging in. Please try again.';

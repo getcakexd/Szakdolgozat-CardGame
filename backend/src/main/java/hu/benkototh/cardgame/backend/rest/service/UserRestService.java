@@ -1,4 +1,4 @@
-package hu.benkototh.cardgame.backend.rest;
+package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
