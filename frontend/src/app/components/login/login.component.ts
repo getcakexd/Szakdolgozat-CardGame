@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import { UserService, User } from '../../services/friends/user.service';
+import { UserService, User } from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgIf} from '@angular/common';

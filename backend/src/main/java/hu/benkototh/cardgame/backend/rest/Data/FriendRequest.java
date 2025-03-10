@@ -17,12 +17,22 @@ public class FriendRequest {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
+    private String status;
 
-    public FriendRequest() {}
+    public FriendRequest() {
+        this.status = "pending";
+    }
 
     public FriendRequest(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
+        this.status = "pending";
+    }
+
+    public FriendRequest(User sender, User receiver, String status) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.status = status;
     }
 
     public Long getId() {
@@ -35,5 +45,13 @@ public class FriendRequest {
 
     public User getReceiver() {
         return receiver;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

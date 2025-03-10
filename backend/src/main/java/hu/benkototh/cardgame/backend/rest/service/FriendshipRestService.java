@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/friends")
+@RequestMapping("/api/friends/request")
 public class FriendshipRestService {
 
     @Autowired

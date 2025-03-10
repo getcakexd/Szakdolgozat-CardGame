@@ -1,0 +1,38 @@
+<div class="friend-requests">
+  <h2>Friend Requests</h2>
+
+  <div class="send-request">
+    <input
+      type="text"
+      [(ngModel)]="username"
+      placeholder="Enter username"
+      class="input"
+    />
+    <button (click)="sendRequest()" class="btn">Send Request</button>
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
+
+  <div class="sent-requests">
+    <h3>Sent Requests</h3>
+    <ul>
+      <li *ngFor="let request of sentRequests">
+        {{ request.receiver.username }}
+        <span *ngIf="request.status === 'pending'">
+          <button (click)="cancelRequest(request.id)" class="btn danger">Cancel</button>
+        </span>
+        <span *ngIf="request.status === 'declined'" class="declined">Declined</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="incoming-requests">
+    <h3>Incoming Requests</h3>
+    <ul>
+      <li *ngFor="let request of incomingRequests">
+        {{ request.sender.username }}
+        <button (click)="acceptRequest(request.id)" class="btn success">Accept</button>
+        <button (click)="declineRequest(request.id)" class="btn danger">Decline</button>
+      </li>
+    </ul>
+  </div>
+</div>
