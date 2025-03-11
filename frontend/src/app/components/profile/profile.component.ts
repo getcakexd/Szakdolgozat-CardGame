@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
-import {NgClass, NgIf} from '@angular/common';
+import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 
 @Component({
@@ -9,7 +9,6 @@ import {Router} from '@angular/router';
   imports: [
     FormsModule,
     NgIf,
-    NgClass
   ],
   templateUrl: './profile.component.html',
   standalone: true,
