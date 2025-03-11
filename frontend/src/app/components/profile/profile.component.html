@@ -50,8 +50,10 @@
     <input type="password" id="password" [(ngModel)]="password" />
     <button class="delete-btn" (click)="deleteProfile()">Delete</button>
     <button class="cancel-btn" (click)="toggleDeleteForm()">Cancel</button>
-  </div>
+    </div>
       <p *ngIf="message">
         {{ message }}
       </p>
+    </div>
+  </div>
 </div>

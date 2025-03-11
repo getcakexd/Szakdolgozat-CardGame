@@ -12,21 +12,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/friends/request")
+@RequestMapping("/api/friends")
 public class FriendshipRestService {
 
     @Autowired
     private IFriendshipRepository friendshipRepository;
 
     @Autowired
-    private IFriendRequestRepository friendRequestRepository;
-
-    @Autowired
     private IUserRepository userRepository;
 
     @GetMapping("/list")
-    public List<User> getFriends(@RequestParam Long userId) {
-        Optional<User> userOpt = userRepository.findById(userId);
+    public List<User> getFriends(@RequestParam String userId) {
+        Long userIdLong = Long.parseLong(userId);
+        Optional<User> userOpt = userRepository.findById(userIdLong);
         if (userOpt.isEmpty()) {
             return Collections.emptyList();
         }
@@ -39,10 +37,12 @@ public class FriendshipRestService {
     }
 
     @DeleteMapping("/remove")
-    public Map<String, String> removeFriend(@RequestParam Long userId, @RequestParam Long friendId) {
+    public Map<String, String> removeFriend(@RequestParam String userId, @RequestParam String friendId) {
+        Long userIdLong = Long.parseLong(userId);
+        Long friendIdLong = Long.parseLong(friendId);
         Map<String, String> response = new HashMap<>();
-        Optional<User> userOpt = userRepository.findById(userId);
-        Optional<User> friendOpt = userRepository.findById(friendId);
+        Optional<User> userOpt = userRepository.findById(userIdLong);
+        Optional<User> friendOpt = userRepository.findById(friendIdLong);
 
         if (userOpt.isEmpty() || friendOpt.isEmpty()) {
             response.put("status", "error");
