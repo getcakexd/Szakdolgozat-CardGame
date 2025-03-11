@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import {FriendRequestsComponent} from '../friend-request/friend-request.component';
+import {FriendshipComponent} from '../friendship/friendship.component';
 
 @Component({
   selector: 'app-social',
   imports: [
-    FriendRequestsComponent
+    FriendRequestsComponent,
+    FriendshipComponent
   ],
   templateUrl: './social.component.html',
   standalone: true,

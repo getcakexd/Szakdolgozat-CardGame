@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService, User } from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-signup',
@@ -11,7 +11,6 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
     FormsModule,
     NgClass,
     NgIf,
-    NgForOf
   ],
   styleUrls: ['./signup.component.css']
 })
