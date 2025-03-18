@@ -1,12 +1,14 @@
 <div class="friend-list">
-  <h2>Barátok</h2>
+  <h2>Friends</h2>
   <ul *ngIf="friends.length > 0; else noFriends">
     <li *ngFor="let friend of friends">
       {{ friend.username }}
+      <button (click)="openChat(friend)">Message</button>
       <button (click)="deleteFriend(friend.id)">Remove</button>
+      <span *ngIf="friend.hasNewMessage" class="new-message-indicator">●</span>
     </li>
   </ul>
   <ng-template #noFriends>
-    <p>Nincsenek barátaid.</p>
+    <p>No friends.</p>
   </ng-template>
 </div>
