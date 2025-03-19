@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FriendRequestsComponent} from '../friend-request/friend-request.component';
-import {ChatComponent} from '../chat/chat.component';
-import {FriendListComponent} from '../friend-list/friend-list.component';
+import {FriendRequestsComponent} from '../../components/friend-request/friend-request.component';
+import {FriendListComponent} from '../../components/friend-list/friend-list.component';
 import {FriendRequestService} from '../../services/friend-request/friend-request.service';
 import {Subscription} from 'rxjs';
 
@@ -9,7 +8,6 @@ import {Subscription} from 'rxjs';
   selector: 'app-social',
   imports: [
     FriendRequestsComponent,
-    ChatComponent,
     FriendListComponent
   ],
   templateUrl: './social.component.html',

@@ -1,10 +1,10 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { SignupComponent } from './components/signup/signup.component';
-import { LoginComponent } from './components/login/login.component';
-import { HomeComponent } from './components/home/home.component';
-import {ProfileComponent} from './components/profile/profile.component';
-import {SocialComponent} from './components/social/social.component';
+import { SignupComponent } from './pages/signup/signup.component';
+import { LoginComponent } from './pages/login/login.component';
+import { HomeComponent } from './pages/home/home.component';
+import {ProfileComponent} from './pages/profile/profile.component';
+import {SocialComponent} from './pages/social/social.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

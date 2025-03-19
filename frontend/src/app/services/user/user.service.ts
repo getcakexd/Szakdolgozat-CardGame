@@ -81,7 +81,7 @@ export class UserService {
   }
 
   getLoggedInUsername(): string {
-    let username = localStorage.getItem('usernamerivc');
+    let username = localStorage.getItem('username');
     if (username !== null) return username;
     return '';
   }
