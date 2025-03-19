@@ -17,7 +17,6 @@ import {NgIf} from '@angular/common';
 export class LoginComponent {
   user: User = {username: '', password: '', email: '' };
   message: string = '';
-  isSuccess: boolean = false;
 
   constructor(private userService: UserService, private router: Router) {}
 

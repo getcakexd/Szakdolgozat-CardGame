@@ -1,5 +1,11 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
+import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
+import hu.benkototh.cardgame.backend.rest.Data.Friendship;
+import hu.benkototh.cardgame.backend.rest.Data.Message;
+import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
+import hu.benkototh.cardgame.backend.rest.repository.IFriendshipRepository;
+import hu.benkototh.cardgame.backend.rest.repository.IMessageRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +23,15 @@ public class UserRestService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IFriendRequestRepository friendRequestRepository;
+
+    @Autowired
+    private IFriendshipRepository friendshipRepository;
+
+    @Autowired
+    private IMessageRepository messageRepository;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -151,9 +166,14 @@ public class UserRestService {
         Long userIdLong = Long.parseLong(userId);
         Optional<User> userOptional = userRepository.findById(userIdLong);
 
+
+
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
+                friendRequestRepository.deleteAll(getFriendRequests(user));
+                friendshipRepository.deleteAll(getFriendships(user));
+                messageRepository.deleteAll(getMessages(user));
                 userRepository.delete(user);
                 response.put("status", "ok");
                 response.put("message", "Account deleted.");
@@ -203,5 +223,32 @@ public class UserRestService {
         }
 
         return false;
+    }
+
+    private List<FriendRequest> getFriendRequests(User user) {
+        return friendRequestRepository.findAll().stream()
+                .filter(friendRequest ->
+                        friendRequest.getReceiver().getId() == user.getId() ||
+                        friendRequest.getSender().getId() == user.getId()
+                )
+                .toList();
+    }
+
+    private List<Friendship> getFriendships(User user) {
+        return friendshipRepository.findAll().stream()
+                .filter(friendship ->
+                        friendship.getUser1().getId() == user.getId() ||
+                        friendship.getUser2().getId() == user.getId()
+                )
+                .toList();
+    }
+
+    private List<Message> getMessages(User user) {
+        return messageRepository.findAll().stream()
+                .filter(message ->
+                        message.getSender().getId() == user.getId() ||
+                        message.getReceiver().getId() == user.getId()
+                )
+                .toList();
     }
 }

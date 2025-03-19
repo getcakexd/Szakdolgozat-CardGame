@@ -1,14 +1,11 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.Message;
-import hu.benkototh.cardgame.backend.rest.Data.MessageDTO;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IMessageRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 

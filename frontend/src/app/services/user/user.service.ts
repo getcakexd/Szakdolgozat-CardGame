@@ -17,6 +17,7 @@ export class UserService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
+
   constructor(private http: HttpClient,  private router: Router) {}
 
   getAllUsers(): Observable<User[]> {
@@ -71,6 +72,10 @@ export class UserService {
   }
 
   deleteAccount(userId: string, password: string): Observable<any> {
+    localStorage.removeItem('id');
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+    localStorage.removeItem('email');
     return this.http.delete(`${this.apiUrl}/delete`, { params: { userId, password } });
   }
 
