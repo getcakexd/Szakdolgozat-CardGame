@@ -25,6 +25,12 @@ public class UserRestService {
         return userRepository.findAll();
     }
 
+    @GetMapping("/get")
+    public User getUser(@RequestParam String userId) {
+        Long userIdLong = Long.parseLong(userId);
+        return userRepository.findById(userIdLong).orElse(null);
+    }
+
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();

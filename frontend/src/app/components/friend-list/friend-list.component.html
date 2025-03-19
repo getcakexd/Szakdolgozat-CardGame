@@ -1,0 +1,13 @@
+<div class="friend-list">
+  <h3>Friends</h3>
+  <ul>
+    <li *ngFor="let friend of friends">
+      {{ friend.username }}
+      <button (click)="toggleChat(friend.id)">
+        {{ openChats[parseInt(friend.id)] ? 'Close' : 'Message' }}
+      </button>
+
+      <app-chat *ngIf="openChats[parseInt(friend.id)]" [receiverId]="friend.id"></app-chat>
+    </li>
+  </ul>
+</div>
