@@ -26,11 +26,11 @@ public class Message {
 
     public Message() {}
 
-    public Message(User sender, User receiver, String content, LocalDateTime timestamp) {
+    public Message(User sender, User receiver, String content) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
-        this.timestamp = timestamp;
+        this.timestamp = LocalDateTime.now();
     }
 
     public Long getId() {

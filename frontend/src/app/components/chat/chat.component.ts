@@ -1,71 +1,48 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, Input, numberAttribute, OnInit} from '@angular/core';
 import { ChatService } from '../../services/chat/chat.service';
-import { Subscription } from 'rxjs';
-import { Message } from '../../models/message.model';
-import {NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgClass, NgForOf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  standalone: true,
+  styleUrls: ['./chat.component.css'],
   imports: [
+    NgClass,
     NgForOf,
-    NgIf,
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
-  styleUrl: './chat.component.css'
+  standalone: true
 })
-export class ChatComponent implements OnInit, OnDestroy {
-  friendId: string | null = null;
-  messages: Message[] = [];
+export class ChatComponent implements OnInit {
+  @Input({transform: numberAttribute}) receiverId!: number;
+  receiverName = '';
+  messages: any[] = [];
   newMessage: string = '';
-  private chatSubscription!: Subscription;
-  protected userId = localStorage.getItem('id');
+  senderId = parseInt(localStorage.getItem('id') || '');
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private userService : UserService) {}
 
-  ngOnInit() {
-    this.chatSubscription = this.chatService.getActiveChat().subscribe(friendId => {
-      if (friendId) {
-        this.friendId = friendId;
-        this.loadMessageHistory(friendId);
-      }
-    });
-
-    this.chatService.receiveMessages().subscribe((message) => {
-      if (message.senderId === this.friendId) {
-        this.messages.push(message);
-      }
+  ngOnInit(): void {
+    this.loadMessages();
+    this.userService.getUserById(this.receiverId.toString()).subscribe((user) => {
+      this.receiverName = user.username;
     });
   }
 
-  loadMessageHistory(friendId: string): void {
-    if (this.userId) {
-      this.chatService.getMessageHistory(this.userId, friendId).subscribe(
-        (data) => this.messages = data
-      );
-    }
+  loadMessages() {
+    if (!this.receiverId) return;
+    this.chatService.getMessages(this.senderId, this.receiverId).subscribe((messages) => {
+      this.messages = messages;
+    });
   }
 
   sendMessage() {
-    if (this.newMessage.trim() && this.userId && this.friendId) {
-      const message: Message = {
-        id: '',
-        senderId: this.userId,
-        receiverId: this.friendId,
-        content: this.newMessage,
-        timestamp: new Date().toISOString()
-      };
-      this.chatService.sendMessage(message);
-      this.messages.push(message);
+    this.chatService.sendMessage(this.senderId, this.receiverId, this.newMessage).subscribe((sentMessage) => {
+      this.messages.push(sentMessage);
       this.newMessage = '';
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.chatSubscription) {
-      this.chatSubscription.unsubscribe();
-    }
+    });
   }
 }

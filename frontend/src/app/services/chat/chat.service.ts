@@ -1,41 +1,24 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { WebSocketSubject } from 'rxjs/webSocket';
-import { Message } from '../../models/message.model';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
-  private socket$: WebSocketSubject<Message>;
-  private activeChat$ = new BehaviorSubject<string | null>(null);
-  private serverUrl = 'ws://localhost:4200/ws/chat';
   private apiUrl = 'http://localhost:4200/api/messages';
 
-  constructor(private http: HttpClient) {
-    this.socket$ = new WebSocketSubject(this.serverUrl);
+  constructor(private http : HttpClient) {}
+
+  getMessages(senderId: number, receiverId: number) {
+    return this.http.get<any[]>(`${this.apiUrl}/list`, {
+      params: new HttpParams().set('userId', senderId.toString()).set('friendId', receiverId.toString()),
+    });
   }
 
-  setActiveChat(friendId: string): void {
-    this.activeChat$.next(friendId);
+  sendMessage(senderId: number, receiverId: number, message: string) {
+    return this.http.post<any[]>(`${this.apiUrl}/send`, null,{
+      params: new HttpParams().set('userId', senderId.toString()).set('friendId', receiverId.toString()).set('content', message),
+    });
   }
 
-  getActiveChat(): Observable<string | null> {
-    return this.activeChat$.asObservable();
-  }
-
-  sendMessage(message: Message): void {
-    console.log('Sending message:', message);
-    this.socket$.next(message);
-    this.http.post<Message>(`${this.apiUrl}/send`, message).subscribe();
-  }
-
-  receiveMessages(): Observable<Message> {
-    return this.socket$;
-  }
-
-  getMessageHistory(userId: string, friendId: string): Observable<Message[]> {
-    return this.http.get<Message[]>(`${this.apiUrl}/${userId}/${friendId}`);
-  }
 }

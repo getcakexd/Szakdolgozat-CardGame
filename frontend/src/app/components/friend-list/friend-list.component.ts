@@ -1,51 +1,47 @@
 import { Component, OnInit } from '@angular/core';
-import { FriendshipService } from '../../services/friendship/friendship.service';
-import { ChatService } from '../../services/chat/chat.service';
 import { Friend } from '../../models/friend.model';
 import {NgForOf, NgIf} from '@angular/common';
+import {ChatComponent} from '../chat/chat.component';
+import {FriendshipService} from '../../services/friendship/friendship.service';
 
 @Component({
   selector: 'app-friend-list',
   templateUrl: './friend-list.component.html',
-  standalone: true,
+  styleUrls: ['./friend-list.component.css'],
   imports: [
-    NgIf,
-    NgForOf
+    NgForOf,
+    ChatComponent,
+    NgIf
   ],
-  styleUrl: './friend-list.component.css'
+  standalone: true
 })
 export class FriendListComponent implements OnInit {
   friends: Friend[] = [];
-  currentUserId: string | null = localStorage.getItem('id');
+  openChats: { [key: number]: boolean } = {};
+  userId :number = parseInt(localStorage.getItem('id') || '');
 
-  constructor(private friendshipService: FriendshipService, private chatService: ChatService) {}
+  constructor(private friendshipService: FriendshipService) {}
 
   ngOnInit(): void {
-    if (this.currentUserId) {
+    this.loadFriends();
+  }
+
+  loadFriends() {
+    this.friendshipService.getFriends(this.userId.toString()).subscribe((data: any[]) => {
+      this.friends = data;
+    });
+  }
+
+  deleteFriend(friendId: string) {
+    this.friendshipService.deleteFriend(this.userId.toString(), friendId).subscribe(() => {
       this.loadFriends();
-    }
+    });
   }
 
-  loadFriends(): void {
-    if (this.currentUserId) {
-      this.friendshipService.getFriends(this.currentUserId).subscribe(
-        (data) => this.friends = data,
-        (error) => console.error('Error loading friends:', error)
-      );
-    }
+  toggleChat(friendId: string) {
+    let friendIdNum = parseInt(friendId);
+    this.openChats[friendIdNum] = !this.openChats[friendIdNum];
   }
 
-  deleteFriend(friendId: string): void {
-    if (this.currentUserId) {
-      this.friendshipService.deleteFriend(this.currentUserId, friendId).subscribe(
-        () => this.friends = this.friends.filter(friend => friend.id !== friendId),
-        (error) => console.error('Error deleting friend:', error)
-      );
-    }
-  }
-
-  openChat(friend: Friend): void {
-    this.chatService.setActiveChat(friend.id);
-    friend.hasNewMessage = false;
-  }
+  protected readonly parseInt = parseInt;
 }

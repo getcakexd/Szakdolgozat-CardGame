@@ -8,10 +8,13 @@ import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -23,34 +26,29 @@ public class ChatRestService {
     @Autowired
     private IUserRepository userRepository;
 
-    @GetMapping("/{userId}")
-    public List<Message> getMessages(@PathVariable Long userId) {
-        return messageRepository.findAll().stream().filter(message ->
-                message.getSender().getId() == userId || message.getReceiver().getId() == userId
-        ).toList();
+    @GetMapping("/list")
+    public List<Message> getMessages(@RequestParam String userId, @RequestParam String friendId) {
+        Long userIdLong = Long.parseLong(userId);
+        Long friendIdLong = Long.parseLong(friendId);
+
+        return findBySenderAndReceiver(userIdLong, friendIdLong);
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Message> sendMessage(@RequestBody MessageDTO messageDTO) {
-        User sender = userRepository.findById(messageDTO.getSenderId())
+    public Map<String, Object> sendMessage(@RequestParam String userId, @RequestParam String friendId, @RequestParam String content) {
+        Map<String, Object> response = new HashMap<>();
+        User sender = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender not found"));
 
-        User receiver = userRepository.findById(messageDTO.getReceiverId())
+        User receiver = userRepository.findById(Long.parseLong(friendId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver not found"));
 
-        Message message = new Message();
-        message.setSender(sender);
-        message.setReceiver(receiver);
-        message.setContent(messageDTO.getContent());
-        message.setTimestamp(messageDTO.getTimestamp());
-
+        Message message = new Message(sender, receiver, content);
         messageRepository.save(message);
-        return ResponseEntity.ok(message);
-    }
 
-    @GetMapping("/{userId}/{friendId}")
-    public List<Message> getMessages(@PathVariable Long userId, @PathVariable Long friendId) {
-        return findBySenderAndReceiver(userId, friendId);
+
+        response.put("status", "ok");
+        return response;
     }
 
     private List<Message> findBySenderAndReceiver(Long userId, Long friendId) {
