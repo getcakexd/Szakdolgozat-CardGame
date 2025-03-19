@@ -3,6 +3,7 @@ import {UserService} from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +25,8 @@ export class ProfileComponent {
   deleteFormVisible: boolean = false;
   message: string = '';
   password: string = '';
+  private deleteSource = new Subject<void>();
+  delete$ = this.deleteSource.asObservable();
 
   constructor(protected userService: UserService, private router: Router) {
     if (!this.userService.isLoggedIn()) {
@@ -84,7 +87,11 @@ export class ProfileComponent {
     this.userService.deleteAccount(this.userService.getLoggedInId(), this.password).subscribe(response => {
       if (response.status === 'ok') {
         alert('Profile deleted successfully!');
-        this.router.navigate(['/login']).then();
+        this.router.navigate(['/login']).then(
+          () => {
+            window.location.reload();
+          }
+        );
       } else {
         this.message = response.message;
       }

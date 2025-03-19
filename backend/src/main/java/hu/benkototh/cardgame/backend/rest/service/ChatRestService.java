@@ -1,17 +1,17 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.Message;
-import hu.benkototh.cardgame.backend.rest.Data.MessageDTO;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IMessageRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.function.EntityResponse;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +35,7 @@ public class ChatRestService {
     }
 
     @PostMapping("/send")
-    public Map<String, Object> sendMessage(@RequestParam String userId, @RequestParam String friendId, @RequestParam String content) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Message> sendMessage(@RequestParam String userId, @RequestParam String friendId, @RequestParam String content) {
         User sender = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender not found"));
 
@@ -47,8 +46,7 @@ public class ChatRestService {
         messageRepository.save(message);
 
 
-        response.put("status", "ok");
-        return response;
+        return ResponseEntity.ok(message);
     }
 
     private List<Message> findBySenderAndReceiver(Long userId, Long friendId) {

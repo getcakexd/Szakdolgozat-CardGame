@@ -28,20 +28,25 @@ public class FriendRequestRestService {
     public Map<String, String> sendFriendRequest(@RequestParam String senderId, @RequestParam String receiverUsername) {
         Map<String, String> response = new HashMap<>();
         Long senderIdLong = Long.parseLong(senderId);
-        Long receiverIdLong = findByUsername(receiverUsername).getId();
+        Optional<User> senderOpt = userRepository.findById(senderIdLong);
+        Optional<User> receiverOpt = Optional.ofNullable(findByUsername(receiverUsername));
 
-        if (senderIdLong.equals(receiverIdLong)) {
+
+        if(receiverOpt.isEmpty()) {
             response.put("status", "error");
-            response.put("message", "You cannot send a friend request to yourself.");
+            response.put("message", "Receiver does not exist.");
             return response;
         }
 
-        Optional<User> senderOpt = userRepository.findById(senderIdLong);
-        Optional<User> receiverOpt = userRepository.findById(receiverIdLong);
-
-        if (senderOpt.isEmpty() || receiverOpt.isEmpty()) {
+        if (senderOpt.isEmpty() ) {
             response.put("status", "error");
-            response.put("message", "One or both users do not exist.");
+            response.put("message", "Error: Failed to send friend request.");
+            return response;
+        }
+
+        if (senderIdLong.equals(receiverOpt.get().getId())) {
+            response.put("status", "error");
+            response.put("message", "You cannot send a friend request to yourself.");
             return response;
         }
 
@@ -175,7 +180,7 @@ public class FriendRequestRestService {
     private User findByUsername(String username) {
         return userRepository.findAll().stream()
                 .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElseThrow();
+                .findFirst().
+                orElse(null);
     }
 }

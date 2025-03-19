@@ -3,6 +3,7 @@
   <ul>
     <li *ngFor="let friend of friends">
       {{ friend.username }}
+      <button (click)="deleteFriend(friend.id)">Remove</button>
       <button (click)="toggleChat(friend.id)">
         {{ openChats[parseInt(friend.id)] ? 'Close' : 'Message' }}
       </button>
