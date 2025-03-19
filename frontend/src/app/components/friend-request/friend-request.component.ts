@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FriendRequestService} from '../../services/friend-request/friend-request.service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
+import {Observable} from 'rxjs';
 
 
 @Component({
@@ -55,9 +56,6 @@ export class FriendRequestsComponent implements OnInit {
         } else {
           this.errorMessage = response.message;
         }
-      },
-      (error) => {
-        this.errorMessage = 'Error sending friend request.';
       }
     );
   }

@@ -26,7 +26,7 @@ export class FriendListComponent implements OnInit {
     this.loadFriends();
   }
 
-  loadFriends() {
+   loadFriends() {
     this.friendshipService.getFriends(this.userId.toString()).subscribe((data: any[]) => {
       this.friends = data;
     });

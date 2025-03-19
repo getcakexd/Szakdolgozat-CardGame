@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export interface FriendRequest {
   id: string;
@@ -19,6 +19,9 @@ export interface Friend {
 })
 export class FriendRequestService {
   private apiUrl = 'http://localhost:4200/api/friends/request';
+  private reloadSource = new Subject<void>();
+  reload$ = this.reloadSource.asObservable();
+
   constructor(private http: HttpClient) {}
 
   sendFriendRequest(senderId: string, receiverUsername: string): Observable<any> {
@@ -41,6 +44,7 @@ export class FriendRequestService {
   }
 
   acceptFriendRequest(requestId: number): Observable<any> {
+    this.reloadSource.next();
     return this.http.post(`${this.apiUrl}/accept`, null, {
       params: new HttpParams().set('requestId', requestId.toString()),
     });

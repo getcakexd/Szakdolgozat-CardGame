@@ -17,7 +17,6 @@ import {NgIf} from '@angular/common';
 export class LoginComponent {
   user: User = {username: '', password: '', email: '' };
   message: string = '';
-  isSuccess: boolean = false;
 
   constructor(private userService: UserService, private router: Router) {}
 
@@ -30,13 +29,14 @@ export class LoginComponent {
 
     this.userService.login(user).subscribe(
       (response) => {
-        this.router.navigate(['/home']).then( () => {
-          window.location.reload();
-        });
-      },
-    (error) => {
-        this.message = 'Error logging in. Please try again.';
-        this.resetForm();
+        if (response.status === 'ok') {
+          this.router.navigate(['/home']).then( () => {
+            window.location.reload();
+          });
+        } else {
+          this.message = 'Invalid username or password';
+        }
+
       }
     );
   }
