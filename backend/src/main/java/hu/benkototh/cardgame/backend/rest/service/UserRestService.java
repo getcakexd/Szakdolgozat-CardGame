@@ -49,7 +49,7 @@ public class UserRestService {
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
-        Optional<User> foundUser = userRepository.findById(findByUsername(user.getUsername()).getId());
+        Optional<User> foundUser = Optional.ofNullable(findByUsername(user.getUsername()));
 
         if (foundUser.isPresent() && passwordEncoder.matches(user.getPassword(), foundUser.get().getPassword())) {
             User loggedInUser = foundUser.get();

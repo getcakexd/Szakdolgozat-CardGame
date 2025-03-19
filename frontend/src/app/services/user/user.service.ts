@@ -35,11 +35,15 @@ export class UserService {
   login(user: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, user).pipe(
       tap((response : any) => {
-        localStorage.setItem('id', response.userId);
-        localStorage.setItem('username', user.username);
-        localStorage.setItem('password', user.password);
-        localStorage.setItem('email', response.email);
-        this.isLoggedInSubject.next(true);
+        if (response.status === 'ok') {
+          localStorage.setItem('id', response.userId);
+          localStorage.setItem('username', user.username);
+          localStorage.setItem('password', user.password);
+          localStorage.setItem('email', response.email);
+          this.isLoggedInSubject.next(true);
+        } else{
+          this.isLoggedInSubject.next(false);
+        }
       })
     );
   }
