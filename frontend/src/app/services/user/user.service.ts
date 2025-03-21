@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
+import {PROXY_API_URL} from '../../../environments/api-config';
 
 export interface User {
   username: string;
@@ -13,7 +14,7 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:4200/api/users';
+  private apiUrl = PROXY_API_URL + '/users';
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
