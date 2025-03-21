@@ -80,4 +80,18 @@ button {
   display: block;
 }
 
+.refresh-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.refresh-button:hover {
+  background-color: #45a049;
+}
+
 

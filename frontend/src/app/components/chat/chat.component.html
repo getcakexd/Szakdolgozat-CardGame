@@ -1,5 +1,6 @@
 <div class="chat-box">
   <h3>Chat with {{ receiverName }}</h3>
+  <button class="refresh-button" (click)="loadMessages()">Refresh</button>
   <div class="messages">
     <div *ngFor="let msg of messages" [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId}">
       <div class="message-content">{{ msg.content }}</div>
