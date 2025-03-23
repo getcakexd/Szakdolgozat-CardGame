@@ -1,8 +1,8 @@
-import {Component, Input, numberAttribute, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, numberAttribute, OnInit, ViewChild} from '@angular/core';
 import { ChatService } from '../../services/chat/chat.service';
-import {DatePipe, NgClass, NgForOf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {UserService} from '../../services/user/user.service';
+import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-chat',
@@ -12,12 +12,15 @@ import {UserService} from '../../services/user/user.service';
     NgClass,
     NgForOf,
     FormsModule,
-    DatePipe
+    DatePipe,
+    NgIf
   ],
   standalone: true
 })
 export class ChatComponent implements OnInit {
   @Input({transform: numberAttribute}) receiverId!: number;
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
+
   receiverName = '';
   messages: any[] = [];
   newMessage: string = '';
@@ -36,6 +39,7 @@ export class ChatComponent implements OnInit {
     if (!this.receiverId) return;
     this.chatService.getMessages(this.senderId, this.receiverId).subscribe((messages) => {
       this.messages = messages;
+      this.scrollToBottom();
     });
   }
 
@@ -44,5 +48,23 @@ export class ChatComponent implements OnInit {
       this.messages.push(sentMessage);
       this.newMessage = '';
     });
+  }
+
+  unsendMessage(messageId: number) {
+    this.chatService.unsendMessage(messageId).subscribe(() => {
+      this.messages = this.messages.map(msg =>
+        msg.id === messageId ? { ...msg, unsent: true } : msg
+      );
+    });
+  }
+
+  private scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      }, 100);
+    } catch (err) {
+      console.error('Scroll error:', err);
+    }
   }
 }

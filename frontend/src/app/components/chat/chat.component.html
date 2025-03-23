@@ -1,11 +1,21 @@
 <div class="chat-box">
   <h3>Chat with {{ receiverName }}</h3>
-  <div class="messages">
+  <button class="refresh-button" (click)="loadMessages()">Refresh</button>
+  <div class="messages" #messageContainer>
     <div *ngFor="let msg of messages" [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId}">
-      <div class="message-content">{{ msg.content }}</div>
+
+      <div class="message-content">
+        {{ msg.unsent ? '(Message Unsent)' : msg.content }}
+      </div>
+
       <div class="message-timestamp" [ngClass]="{'left-timestamp': msg.sender.id !== senderId, 'right-timestamp': msg.sender.id === senderId}">
         {{ msg.timestamp | date:'short' }}
       </div>
+
+      <button *ngIf="msg.sender.id === senderId && msg.status !== 'unsent'"
+              (click)="unsendMessage(msg.id)">
+        Unsend
+      </button>
     </div>
   </div>
 
