@@ -22,4 +22,16 @@ export class ChatService {
     });
   }
 
+  unsendMessage(messageId: number) {
+    return this.http.put<any[]>(`${this.apiUrl}/unsend`, null, {
+      params: new HttpParams().set('messageId', messageId.toString()),
+    });
+  }
+
+  getUnreadMessagesPerFriend(userId: number) {
+    return this.http.get<any>(`${this.apiUrl}/unread`, {
+      params: new HttpParams().set('userId', userId.toString()),
+    });
+  }
+
 }

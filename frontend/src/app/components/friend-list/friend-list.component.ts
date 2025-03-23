@@ -3,6 +3,7 @@ import { Friend } from '../../models/friend.model';
 import {NgForOf, NgIf} from '@angular/common';
 import {ChatComponent} from '../chat/chat.component';
 import {FriendshipService} from '../../services/friendship/friendship.service';
+import {ChatService} from '../../services/chat/chat.service';
 
 @Component({
   selector: 'app-friend-list',
@@ -17,10 +18,11 @@ import {FriendshipService} from '../../services/friendship/friendship.service';
 })
 export class FriendListComponent implements OnInit {
   friends: Friend[] = [];
+  unreadCounts: { [key: number]: number } = {};
   openChats: { [key: number]: boolean } = {};
   userId :number = parseInt(localStorage.getItem('id') || '');
 
-  constructor(private friendshipService: FriendshipService) {}
+  constructor(private friendshipService: FriendshipService, private chatService : ChatService) {}
 
   ngOnInit(): void {
     this.loadFriends();
@@ -29,6 +31,14 @@ export class FriendListComponent implements OnInit {
    loadFriends() {
     this.friendshipService.getFriends(this.userId.toString()).subscribe((data: any[]) => {
       this.friends = data;
+
+      this.loadUnreadCounts();
+    });
+  }
+
+  loadUnreadCounts() {
+    this.chatService.getUnreadMessagesPerFriend(this.userId).subscribe((data) => {
+      this.unreadCounts = data;
     });
   }
 

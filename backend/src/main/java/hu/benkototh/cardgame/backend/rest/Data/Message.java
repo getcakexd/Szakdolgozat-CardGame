@@ -24,6 +24,9 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(nullable = false)
+    private String status;
+
     public Message() {}
 
     public Message(User sender, User receiver, String content) {
@@ -31,6 +34,7 @@ public class Message {
         this.receiver = receiver;
         this.content = content;
         this.timestamp = LocalDateTime.now();
+        this.status = "unread";
     }
 
     public Long getId() {
@@ -71,5 +75,13 @@ public class Message {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
