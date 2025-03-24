@@ -1,0 +1,7 @@
+<div class="club-page">
+  <button (click)="toggleCreateClub()">
+    {{ showCreateClub ? 'Cancel' : 'Create Club' }}
+  </button>
+
+  <app-club-create *ngIf="showCreateClub"></app-club-create>
+</div>
