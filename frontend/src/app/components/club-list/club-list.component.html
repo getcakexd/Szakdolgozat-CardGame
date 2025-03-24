@@ -1,1 +1,15 @@
-<p>club-list works!</p>
+<div class="club-list">
+  <div *ngFor="let club of clubs" class="club-item">
+    <div class="club-name" (click)="onClubClick(club.id)">
+      <h3>{{ club.name }}</h3>
+    </div>
+
+    <div *ngIf="!isUserClubs" class="club-description">
+      <p>{{ club.description }}</p>
+    </div>
+
+    <div *ngIf="!isUserClubs">
+      <button (click)="JoinClub(club.id)">Join Club</button>
+    </div>
+  </div>
+</div>

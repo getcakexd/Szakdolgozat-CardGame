@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/clubs")
@@ -32,9 +33,60 @@ public class ClubRestService {
         return ResponseEntity.ok(clubs);
     }
 
+    @GetMapping("/public")
+    public ResponseEntity<List<Club>> getPublicClubs() {
+        List<Club> clubs = clubRepository.findAll().stream().filter(Club::isPublic).toList();
+        return ResponseEntity.ok(clubs);
+    }
+
+    @GetMapping("/joinable")
+    public ResponseEntity<List<Club>> getPublicClubs(@RequestParam long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        List<Club> clubs = getJoinableClubs(user.get());
+        return ResponseEntity.ok(clubs);
+    }
+
+    private List<Club> getJoinableClubs(User user) {
+        return clubRepository.findAll().stream()
+                .filter(club -> club.isPublic() &&
+                        clubMemberRepository.findAll().stream()
+                                .noneMatch(clubMember -> clubMember.getUser().equals(user) && clubMember.getClub().equals(club)))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get")
-    public ResponseEntity<Club> getClub(@RequestParam long id) {
-        return ResponseEntity.of(clubRepository.findById(id));
+    public ResponseEntity<Club> getClub(@RequestParam long clubId) {
+        return ResponseEntity.of(clubRepository.findById(clubId));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Club>> getClubsByUser(@RequestParam long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        List<Club> clubs = findClubsByUser(user.get());
+        return ResponseEntity.ok(clubs);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<?> getClubMembers(@RequestParam long clubId) {
+        Optional<Club> club = clubRepository.findById(clubId);
+        if (club.isEmpty()) {
+            return ResponseEntity.status(404).body("Club not found");
+        }
+
+        List<ClubMember> clubMembers = clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getClub().equals(club.get()))
+                .toList();
+
+        return ResponseEntity.ok(clubMembers);
     }
 
     @PostMapping("/create")
@@ -60,12 +112,12 @@ public class ClubRestService {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateClub(
-            @RequestParam long id,
+            @RequestParam long clubId,
             @RequestParam String name,
             @RequestParam String description,
             @RequestParam boolean isPublic) {
 
-        Optional<Club> clubOpt = clubRepository.findById(id);
+        Optional<Club> clubOpt = clubRepository.findById(clubId);
         if (clubOpt.isEmpty()) {
             return ResponseEntity.status(404).body("Club not found");
         }
@@ -80,13 +132,20 @@ public class ClubRestService {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteClub(@RequestParam long id) {
-        Optional<Club> club = clubRepository.findById(id);
+    public ResponseEntity<?> deleteClub(@RequestParam long clubId) {
+        Optional<Club> club = clubRepository.findById(clubId);
         if (club.isEmpty()) {
             return ResponseEntity.status(404).body("Club not found");
         }
 
-        clubRepository.deleteById(id);
+        clubRepository.deleteById(clubId);
         return ResponseEntity.ok("Club deleted successfully");
+    }
+
+    private List<Club> findClubsByUser(User user) {
+        return clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getUser().equals(user))
+                .map(ClubMember::getClub)
+                .toList();
     }
 }

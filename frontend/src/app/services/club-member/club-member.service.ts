@@ -10,4 +10,33 @@ export class ClubMemberService {
 
   constructor(private http: HttpClient) { }
 
+  addMember(clubId: number, userId: number) {
+    return this.http.post<any[]>(`${this.apiUrl}/add`, null, {
+      params: {clubId: clubId, userId: userId},
+    });
+  }
+
+  getMembers(clubId: number) {
+    return this.http.get<any[]>(`${this.apiUrl}/list`, {
+      params: {clubId: clubId},
+    });
+  }
+
+  getUserRole(clubId: number, userId: number) {
+    return this.http.get<any>(`${this.apiUrl}/role`, {
+      params: {clubId: clubId, userId: userId},
+    });
+  }
+
+  promoteToModerator(id: number, userId: number) {
+    return this.http.put<any[]>(`${this.apiUrl}/promote`, null, {
+      params: {clubId: id, userId: userId},
+    });
+  }
+
+  kickMember(id: number, userId: number) {
+    return this.http.delete<any[]>(`${this.apiUrl}/kick`, {
+      params: {clubId: id, userId: userId},
+    });
+  }
 }

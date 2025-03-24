@@ -1,7 +1,26 @@
 <div class="club-page">
-  <button (click)="toggleCreateClub()">
-    {{ showCreateClub ? 'Cancel' : 'Create Club' }}
-  </button>
 
-  <app-club-create *ngIf="showCreateClub"></app-club-create>
+  <div>
+    <h2>My Clubs</h2>
+
+    <app-club-list [isUserClubs]="true" (clubClick)="goToClub($event)"></app-club-list>
+  </div>
+
+  <div>
+    <button (click)="toggleJoinClub()">
+      {{ showJoinClub ? 'Cancel' : 'Join a Club' }}
+    </button>
+
+    <app-club-list *ngIf="showJoinClub" [isUserClubs]="false"></app-club-list>
+  </div>
+
+  <div>
+    <button (click)="toggleCreateClub()">
+      {{ showCreateClub ? 'Cancel' : 'Create Club' }}
+    </button>
+
+    <app-club-create *ngIf="showCreateClub"></app-club-create>
+  </div>
+
+
 </div>

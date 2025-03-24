@@ -1,1 +1,6 @@
-<p>club works!</p>
+<div *ngIf="club" class="club-details">
+  <h2>{{ club.name }}</h2>
+  <p>{{ club.description }}</p>
+
+  <button (click)="goBack()">Back to Clubs</button>
+</div>
