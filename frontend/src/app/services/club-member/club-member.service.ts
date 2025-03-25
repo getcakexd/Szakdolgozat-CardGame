@@ -28,15 +28,15 @@ export class ClubMemberService {
     });
   }
 
-  promoteToModerator(id: number, userId: number) {
-    return this.http.put<any[]>(`${this.apiUrl}/promote`, null, {
+  kickMember(id: number, userId: number) {
+    return this.http.delete<any[]>(`${this.apiUrl}/kick`, {
       params: {clubId: id, userId: userId},
     });
   }
 
-  kickMember(id: number, userId: number) {
-    return this.http.delete<any[]>(`${this.apiUrl}/kick`, {
-      params: {clubId: id, userId: userId},
+  updateMemberRole(clubId: number, userId: number, newRole: string) {
+    return this.http.put<any[]>(`${this.apiUrl}/modify`, null, {
+      params: {clubId: clubId, userId: userId, role: newRole},
     });
   }
 }
