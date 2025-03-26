@@ -1,0 +1,25 @@
+<div class="club-list">
+  <div *ngIf="clubs.length === 0 && isUserClubs" class="no-clubs">
+    <p>You are not part of any club at the moment.</p>
+    <p>Join one below!</p>
+  </div>
+
+  <div *ngIf="clubs.length === 0 && !isUserClubs" class="no-clubs">
+    <p>No clubs available at the moment.</p>
+    <p>Check back later!</p>
+  </div>
+
+  <div *ngFor="let club of clubs" class="club-item">
+    <div class="club-name" (click)="onClubClick(club.id)">
+      <h3>{{ club.name }}</h3>
+    </div>
+
+    <div *ngIf="!isUserClubs" class="club-description">
+      <p>{{ club.description }}</p>
+    </div>
+
+    <div *ngIf="!isUserClubs">
+      <button (click)="JoinClub(club.id)">Join Club</button>
+    </div>
+  </div>
+</div>
