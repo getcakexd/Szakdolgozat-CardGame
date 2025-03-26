@@ -15,6 +15,15 @@
   </div>
 
   <div>
+    <h2>Invites</h2>
+    <div *ngFor="let invite of invites">
+      <span>Invite to: {{ invite.club.name }}</span>
+      <button (click)="acceptInvite(invite.id)">Accept</button>
+      <button (click)="declineInvite(invite.id)">Decline</button>
+    </div>
+  </div>
+
+  <div>
     <button (click)="toggleCreateClub()">
       {{ showCreateClub ? 'Cancel' : 'Create Club' }}
     </button>

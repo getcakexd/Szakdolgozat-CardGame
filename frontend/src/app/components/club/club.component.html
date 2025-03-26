@@ -38,3 +38,27 @@
     </li>
   </ul>
 </div>
+
+<div class="member-invite">
+
+  <h3>Invite Somebody</h3>
+  <input type="text" [(ngModel)]="inviteUsername" placeholder="Enter username">
+  <button (click)="inviteUser(inviteUsername)">Invite</button>
+  <p *ngIf="inviteMessage">{{inviteMessage}}</p>
+
+  <h3>Pending Invites</h3>
+  <ul>
+    <li *ngFor="let invite of pendingInvites">
+      {{ invite.user.username }}
+      <button *ngIf="invite.status === 'pending'" (click)="cancelInvite(invite.id)">Cancel</button>
+    </li>
+  </ul>
+
+  <h3>Invite History</h3>
+  <ul>
+    <li *ngFor="let invite of inviteHistory">
+      {{ invite.user.username}} - {{ invite.status }}
+    </li>
+  </ul>
+
+</div>

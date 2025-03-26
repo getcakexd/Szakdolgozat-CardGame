@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ClubService} from '../../services/club/club.service';
-import {Club} from '../../models/club.model';
 import {NgForOf, NgIf} from '@angular/common';
 import {ClubMember} from '../../models/club-member.model';
 import {ClubMemberService} from '../../services/club-member/club-member.service';
 import {FormsModule} from '@angular/forms';
+import {ClubInviteService} from '../../services/club-invite/club-invite.service';
+import {ClubInvite} from '../../models/club-invite.model';
 
 @Component({
   selector: 'app-club',
@@ -19,17 +20,22 @@ import {FormsModule} from '@angular/forms';
   styleUrls: ['./club.component.css']
 })
 export class ClubComponent implements OnInit {
-  public club: any = {};
-  public members: ClubMember[] = [];
+  protected club: any = {};
+  protected members: ClubMember[] = [];
+  protected pendingInvites: any[] = [];
+  protected inviteHistory: any[] = [];
   protected userId: number = parseInt(localStorage.getItem('id') || '0');
+  inviteMessage: string = '';
   userRole: string = '';
   editingName = false;
   editingDescription = false;
+  inviteUsername: any;
 
   constructor(
     private route: ActivatedRoute,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService,
+    private clubInviteService: ClubInviteService,
     private router: Router
   ) {}
 
@@ -41,6 +47,8 @@ export class ClubComponent implements OnInit {
           this.club = clubData;
           this.loadMembers(clubId);
           this.getRole(clubId, this.userId);
+          this.loadPendingInvites(clubId);
+          this.loadInviteHistory(clubId);
         },
           error: (error) => {
           if (error.status === 404) {
@@ -50,6 +58,7 @@ export class ClubComponent implements OnInit {
           }
         }
       });
+
     });
   }
 
@@ -119,7 +128,53 @@ export class ClubComponent implements OnInit {
     }
   }
 
+  inviteUser(username: string) {
+    this.clubInviteService.inviteUser(this.club.id, username).subscribe( {
+      next: () => {
+        this.inviteMessage = 'Invite sent';
+      },
+      error: (error) => {
+        switch (error.status) {
+          case 404:
+            this.inviteMessage = 'User not found';
+            break;
+          case 409:
+            this.inviteMessage = 'User is already a member';
+            break;
+          case 410:
+            this.inviteMessage = 'User is already invited';
+            break;
+          default:
+            this.inviteMessage = 'Error sending invite';
+        }
+      }
+    });
+  }
+
+  loadPendingInvites(clubId: number) {
+    this.clubInviteService.getPendingInvites(clubId).subscribe((invites) => {
+      console.log(typeof invites);
+      console.log(invites);
+      this.pendingInvites = invites;
+    });
+  }
+
+  loadInviteHistory(clubId: number) {
+    this.clubInviteService.getInviteHistory(clubId).subscribe((history) => {
+      console.log(typeof history);
+      console.log(history);
+      this.inviteHistory = history;
+    });
+  }
+
+  cancelInvite(inviteId: number) {
+    this.clubInviteService.cancelInvite(inviteId).subscribe(() => {
+      window.location.reload();
+    });
+  }
+
   goBack() {
     this.router.navigate(['/clubs']);
   }
+
 }
