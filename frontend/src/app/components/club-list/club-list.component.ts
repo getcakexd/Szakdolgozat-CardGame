@@ -42,10 +42,11 @@ export class ClubListComponent implements OnInit {
   JoinClub(clubId: number) {
     this.clubMemberService.addMember(clubId, this.userId).subscribe(() => {
       this.LoadClubs();
+      window.location.reload();
     });
   }
 
   onClubClick(clubId: number) {
-    this.clubClick.emit(clubId);  // Emit clubId to the parent component
+    this.clubClick.emit(clubId);
   }
 }

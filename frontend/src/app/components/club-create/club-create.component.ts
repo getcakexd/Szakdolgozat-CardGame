@@ -26,8 +26,7 @@ export class ClubCreateComponent {
     this.clubService.createClub(this.name, this.description, this.isPublic, this.userId)
       .subscribe({
         next: (response: any) => {
-          this.message = 'Club created successfully!';
-          this.resetForm();
+          window.location.reload();
 
         },
         error: (err: any) => {

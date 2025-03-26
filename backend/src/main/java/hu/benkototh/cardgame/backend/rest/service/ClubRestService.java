@@ -2,6 +2,7 @@ package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
+import hu.benkototh.cardgame.backend.rest.Data.ClubMessage;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubMemberRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -61,7 +64,9 @@ public class ClubRestService {
 
     @GetMapping("/get")
     public ResponseEntity<Club> getClub(@RequestParam long clubId) {
-        return ResponseEntity.of(clubRepository.findById(clubId));
+        return clubRepository.findById(clubId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user")
@@ -132,14 +137,24 @@ public class ClubRestService {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteClub(@RequestParam long clubId) {
+    public ResponseEntity<Map<String, String>> deleteClub(@RequestParam long clubId) {
         Optional<Club> club = clubRepository.findById(clubId);
+        Map<String, String> response = new HashMap<>();
         if (club.isEmpty()) {
-            return ResponseEntity.status(404).body("Club not found");
+            response.put("error", "Club not found");
+            return ResponseEntity.status(404).body(response);
         }
 
+        List<ClubMember> clubMembers = clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getClub().equals(club.get()))
+                .toList();
+
+
+        clubMemberRepository.deleteAll(clubMembers);
         clubRepository.deleteById(clubId);
-        return ResponseEntity.ok("Club deleted successfully");
+
+        response.put("ok", "Club deleted successfull");
+        return ResponseEntity.ok(response);
     }
 
     private List<Club> findClubsByUser(User user) {
