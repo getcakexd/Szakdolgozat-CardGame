@@ -11,15 +11,20 @@ export class FriendshipService {
 
   constructor(private http : HttpClient) {}
 
-  getFriends(userId : string) : Observable<any> {
+  getFriends(userId : number) : Observable<any> {
     return this.http.get<any[]>(`${this.apiUrl}/list`, {
-      params: new HttpParams().set('userId', userId),
+      params:{
+        userId: userId,
+      },
     });
   }
 
-  deleteFriend(userId: string, friendId: string) : Observable<any>{
+  deleteFriend(userId: number, friendId: number) : Observable<any>{
     return this.http.delete(`${this.apiUrl}/remove`, {
-      params: new HttpParams().set('userId', userId).set('friendId', friendId),
+      params:{
+        userId: userId.toString(),
+        friendId: friendId.toString(),
+      },
     });
   }
 }

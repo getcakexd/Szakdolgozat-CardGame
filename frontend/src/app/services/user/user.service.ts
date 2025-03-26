@@ -25,7 +25,7 @@ export class UserService {
     return this.http.get<User[]>(`${this.apiUrl}/all`);
   }
 
-  getUserById(userId: string): Observable<User> {
+  getUserById(userId: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/get`, { params: { userId } });
   }
 
@@ -64,19 +64,19 @@ export class UserService {
     return localStorage.getItem('id') !== null;
   }
 
-  updateUsername(userId: string, newUsername: string): Observable<any> {
+  updateUsername(userId: number, newUsername: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/update/username`, null, { params: { userId, newUsername } });
   }
 
-  updateEmail(userId: string, newEmail: string): Observable<any> {
+  updateEmail(userId: number, newEmail: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/update/email`, null, { params: { userId, newEmail } });
   }
 
-  updatePassword(userId: string, currentPassword: string, newPassword: string): Observable<any> {
+  updatePassword(userId: number, currentPassword: string, newPassword: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/update/password`, null, { params: { userId, currentPassword, newPassword } });
   }
 
-  deleteAccount(userId: string, password: string): Observable<any> {
+  deleteAccount(userId: number, password: string): Observable<any> {
     localStorage.removeItem('id');
     localStorage.removeItem('username');
     localStorage.removeItem('password');

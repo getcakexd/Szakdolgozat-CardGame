@@ -1,16 +1,10 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
-import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
-import hu.benkototh.cardgame.backend.rest.Data.Friendship;
-import hu.benkototh.cardgame.backend.rest.Data.Message;
-import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IFriendshipRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IMessageRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
+import hu.benkototh.cardgame.backend.rest.Data.*;
+import hu.benkototh.cardgame.backend.rest.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import hu.benkototh.cardgame.backend.rest.Data.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +27,12 @@ public class UserRestService {
     @Autowired
     private IMessageRepository messageRepository;
 
+    @Autowired
+    private IClubMemberRepository clubMemberRepository;
+
+    @Autowired
+    private IClubMessageRepository clubMessageRepository;
+
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @GetMapping("all")
@@ -41,9 +41,8 @@ public class UserRestService {
     }
 
     @GetMapping("/get")
-    public User getUser(@RequestParam String userId) {
-        Long userIdLong = Long.parseLong(userId);
-        return userRepository.findById(userIdLong).orElse(null);
+    public User getUser(@RequestParam long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     @PostMapping("/login")
@@ -86,10 +85,9 @@ public class UserRestService {
     }
 
     @PutMapping("/update/username")
-    public Map<String, String> updateUsername(@RequestParam String userId, @RequestParam String newUsername) {
+    public Map<String, String> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
         Map<String, String> response = new HashMap<>();
-        Long userIdLong = Long.parseLong(userId);
-        Optional<User> userOptional = userRepository.findById(userIdLong);
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -110,10 +108,9 @@ public class UserRestService {
     }
 
     @PutMapping("/update/email")
-    public Map<String, String> updateEmail(@RequestParam String userId, @RequestParam String newEmail) {
+    public Map<String, String> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
         Map<String, String> response = new HashMap<>();
-        Long userIdLong = Long.parseLong(userId);
-        Optional<User> userOptional = userRepository.findById(userIdLong);
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -134,10 +131,9 @@ public class UserRestService {
     }
 
     @PutMapping("/update/password")
-    public Map<String, String> updatePassword(@RequestParam String userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
+    public Map<String, String> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
         Map<String, String> response = new HashMap<>();
-        Long userIdLong = Long.parseLong(userId);
-        Optional<User> userOptional = userRepository.findById(userIdLong);
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -161,10 +157,9 @@ public class UserRestService {
     }
 
     @DeleteMapping("/delete")
-    public Map<String, String> deleteUser(@RequestParam String userId, @RequestParam String password) {
+    public Map<String, String> deleteUser(@RequestParam long userId, @RequestParam String password) {
         Map<String, String> response = new HashMap<>();
-        Long userIdLong = Long.parseLong(userId);
-        Optional<User> userOptional = userRepository.findById(userIdLong);
+        Optional<User> userOptional = userRepository.findById(userId);
 
 
 
@@ -174,6 +169,8 @@ public class UserRestService {
                 friendRequestRepository.deleteAll(getFriendRequests(user));
                 friendshipRepository.deleteAll(getFriendships(user));
                 messageRepository.deleteAll(getMessages(user));
+                clubMemberRepository.delete(getClubMember(user));
+                clubMessageRepository.deleteAll(getClubMessages(user));
                 userRepository.delete(user);
                 response.put("status", "ok");
                 response.put("message", "Account deleted.");
@@ -250,5 +247,28 @@ public class UserRestService {
                         message.getReceiver().getId() == user.getId()
                 )
                 .toList();
+    }
+
+    private List<ClubMessage> getClubMessages(User user) {
+        return clubMessageRepository.findAll().stream()
+                .filter(clubMessage -> clubMessage.getSender().getId() == user.getId())
+                .toList();
+    }
+
+    private ClubMember getClubMember(User user) {
+        ClubMember member = clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getUser().getId() == user.getId())
+                .findFirst()
+                .orElse(null);
+
+        if (member != null) {
+            if (member.getRole().equals("admin")){
+                ClubRestService clubRestService = new ClubRestService();
+                clubRestService.deleteClub(member.getClub().getId());
+            }
+            return member;
+        } else {
+            return new ClubMember();
+        }
     }
 }

@@ -21,10 +21,10 @@ export class FriendRequestsComponent implements OnInit {
   errorMessage: string = '';
   sentRequests: any[] = [];
   incomingRequests: any[] = [];
-  currentUserId: string = '';
+  currentUserId: number;
 
   constructor(private friendRequestService: FriendRequestService) {
-    this.currentUserId = localStorage.getItem('id') || '';
+    this.currentUserId = parseInt(localStorage.getItem('id') || '0');
   }
 
   ngOnInit(): void {

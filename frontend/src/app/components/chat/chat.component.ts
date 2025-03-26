@@ -30,7 +30,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMessages();
-    this.userService.getUserById(this.receiverId.toString()).subscribe((user) => {
+    this.userService.getUserById(this.receiverId).subscribe((user) => {
       this.receiverName = user.username;
     });
   }

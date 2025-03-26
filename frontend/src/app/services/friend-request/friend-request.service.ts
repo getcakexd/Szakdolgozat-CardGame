@@ -25,20 +25,25 @@ export class FriendRequestService {
 
   constructor(private http: HttpClient) {}
 
-  sendFriendRequest(senderId: string, receiverUsername: string): Observable<any> {
-    if (senderId === '' || receiverUsername === '') return new Observable();
+  sendFriendRequest(senderId: number, receiverUsername: string): Observable<any> {
+    if (receiverUsername === '') return new Observable();
     return this.http.post(`${this.apiUrl}/send`, null, {
-      params: new HttpParams().set('senderId', senderId).set('receiverUsername', receiverUsername),
+      params: {
+        senderId: senderId,
+        receiverUsername,
+      }
     });
   }
 
-  getSentRequests(userId: string): Observable<any[]> {
+  getSentRequests(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/sent`, {
-      params: new HttpParams().set('userId', userId),
+      params: {
+        userId: userId,
+      },
     });
   }
 
-  getIncomingRequests(userId: string): Observable<any[]> {
+  getIncomingRequests(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/requests`, {
       params: new HttpParams().set('userId', userId),
     });

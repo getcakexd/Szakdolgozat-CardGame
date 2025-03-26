@@ -25,10 +25,9 @@ public class FriendRequestRestService {
     private IUserRepository userRepository;
 
     @PostMapping("/send")
-    public Map<String, String> sendFriendRequest(@RequestParam String senderId, @RequestParam String receiverUsername) {
+    public Map<String, String> sendFriendRequest(@RequestParam long senderId, @RequestParam String receiverUsername) {
         Map<String, String> response = new HashMap<>();
-        Long senderIdLong = Long.parseLong(senderId);
-        Optional<User> senderOpt = userRepository.findById(senderIdLong);
+        Optional<User> senderOpt = userRepository.findById(senderId);
         Optional<User> receiverOpt = Optional.ofNullable(findByUsername(receiverUsername));
 
 
@@ -44,7 +43,7 @@ public class FriendRequestRestService {
             return response;
         }
 
-        if (senderIdLong.equals(receiverOpt.get().getId())) {
+        if (senderId == receiverOpt.get().getId()) {
             response.put("status", "error");
             response.put("message", "You cannot send a friend request to yourself.");
             return response;
@@ -71,22 +70,19 @@ public class FriendRequestRestService {
 
 
     @GetMapping("/requests")
-    public List<FriendRequest> getPendingRequests(@RequestParam String userId) {
-        Long userIdLong = Long.parseLong(userId);
-        return findByReceiverId(userIdLong);
+    public List<FriendRequest> getPendingRequests(@RequestParam long userId) {
+        return findByReceiverId(userId);
     }
 
     @GetMapping("/sent")
-    public List<FriendRequest> getSentRequests(@RequestParam String userId) {
-        Long userIdLong = Long.parseLong(userId);
-        return findBySenderId(userIdLong);
+    public List<FriendRequest> getSentRequests(@RequestParam long userId) {
+        return findBySenderId(userId);
     }
 
     @PostMapping("/accept")
-    public Map<String, String> acceptFriendRequest(@RequestParam String requestId) {
+    public Map<String, String> acceptFriendRequest(@RequestParam long requestId) {
         Map<String, String> response = new HashMap<>();
-        Long requestIdLong = Long.parseLong(requestId);
-        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestIdLong);
+        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
 
         if (requestOpt.isEmpty()) {
             response.put("status", "error");
@@ -105,10 +101,9 @@ public class FriendRequestRestService {
     }
 
     @DeleteMapping("/decline")
-    public Map<String, String> declineFriendRequest(@RequestParam String requestId) {
+    public Map<String, String> declineFriendRequest(@RequestParam long requestId) {
         Map<String, String> response = new HashMap<>();
-        Long requestIdLong = Long.parseLong(requestId);
-        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestIdLong);
+        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
 
         if (requestOpt.isEmpty()) {
             response.put("status", "error");
@@ -125,10 +120,9 @@ public class FriendRequestRestService {
     }
 
     @DeleteMapping("/cancel")
-    public Map<String, String> cancelFriendRequest(@RequestParam String requestId) {
+    public Map<String, String> cancelFriendRequest(@RequestParam long requestId) {
         Map<String, String> response = new HashMap<>();
-        Long requestIdLong = Long.parseLong(requestId);
-        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestIdLong);
+        Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
 
         if (requestOpt.isEmpty()) {
             response.put("status", "error");
