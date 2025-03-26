@@ -60,5 +60,13 @@
       {{ invite.user.username}} - {{ invite.status }}
     </li>
   </ul>
+</div>
+
+<div class="club-chat">
+  <h2>Club Details</h2>
+
+  <button (click)="toggleChat()">Open Chat</button>
+
+  <app-club-chat *ngIf="showChat" [clubId]="club.id" [clubName]="club.name"></app-club-chat>
 
 </div>

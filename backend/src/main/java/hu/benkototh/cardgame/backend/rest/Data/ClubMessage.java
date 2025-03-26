@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Table(name = "club_messages")
 public class ClubMessage {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
@@ -16,7 +17,7 @@ public class ClubMessage {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User sender;
 
     @Column(nullable = false)
     private String content;
@@ -33,18 +34,18 @@ public class ClubMessage {
 
     public ClubMessage(Club club, User user, String content) {
         this.club = club;
-        this.user = user;
+        this.sender = user;
         this.content = content;
         this.timestamp = LocalDateTime.now();
-        this.status = "unread";
+        this.status = "sent";
     }
 
     public ClubMessage(Club club, User user, String content, LocalDateTime timestamp) {
         this.club = club;
-        this.user = user;
+        this.sender = user;
         this.content = content;
         this.timestamp = timestamp;
-        this.status = "unread";
+        this.status = "sent";
     }
 
     public long getId() {
@@ -63,12 +64,12 @@ public class ClubMessage {
         this.club = club;
     }
 
-    public User getUser() {
-        return user;
+    public User getSender() {
+        return sender;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
     public String getContent() {

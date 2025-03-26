@@ -7,6 +7,7 @@ import {ClubMemberService} from '../../services/club-member/club-member.service'
 import {FormsModule} from '@angular/forms';
 import {ClubInviteService} from '../../services/club-invite/club-invite.service';
 import {ClubInvite} from '../../models/club-invite.model';
+import {ClubChatComponent} from '../club-chat/club-chat.component';
 
 @Component({
   selector: 'app-club',
@@ -15,7 +16,8 @@ import {ClubInvite} from '../../models/club-invite.model';
   imports: [
     NgIf,
     NgForOf,
-    FormsModule
+    FormsModule,
+    ClubChatComponent
   ],
   styleUrls: ['./club.component.css']
 })
@@ -30,6 +32,7 @@ export class ClubComponent implements OnInit {
   editingName = false;
   editingDescription = false;
   inviteUsername: any;
+  showChat: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -153,16 +156,12 @@ export class ClubComponent implements OnInit {
 
   loadPendingInvites(clubId: number) {
     this.clubInviteService.getPendingInvites(clubId).subscribe((invites) => {
-      console.log(typeof invites);
-      console.log(invites);
       this.pendingInvites = invites;
     });
   }
 
   loadInviteHistory(clubId: number) {
     this.clubInviteService.getInviteHistory(clubId).subscribe((history) => {
-      console.log(typeof history);
-      console.log(history);
       this.inviteHistory = history;
     });
   }
@@ -177,4 +176,7 @@ export class ClubComponent implements OnInit {
     this.router.navigate(['/clubs']);
   }
 
+  toggleChat() {
+    this.showChat = !this.showChat;
+  }
 }
