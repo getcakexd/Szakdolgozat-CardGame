@@ -11,6 +11,7 @@
     </div>
     <div *ngIf="isLoggedIn">
       <a routerLink="/social">Social</a>
+      <a routerLink="/clubs">Clubs</a>
       <a routerLink="/profile">{{localStorage.getItem("username")}}</a>
       <a (click)="userService.logout()">Logout</a>
     </div>

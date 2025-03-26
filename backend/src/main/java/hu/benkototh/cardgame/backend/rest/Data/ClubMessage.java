@@ -1,22 +1,23 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "messages")
-public class Message {
+@Table(name = "club_messages")
+public class ClubMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
+    @JoinColumn(name = "club_id", nullable = false)
+    private Club club;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User sender;
-
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver;
 
     @Column(nullable = false)
     private String content;
@@ -27,22 +28,40 @@ public class Message {
     @Column(nullable = false)
     private String status;
 
-    public Message() {}
+    public ClubMessage() {
 
-    public Message(User sender, User receiver, String content) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.timestamp = LocalDateTime.now();
-        this.status = "unread";
     }
 
-    public Long getId() {
+    public ClubMessage(Club club, User user, String content) {
+        this.club = club;
+        this.sender = user;
+        this.content = content;
+        this.timestamp = LocalDateTime.now();
+        this.status = "sent";
+    }
+
+    public ClubMessage(Club club, User user, String content, LocalDateTime timestamp) {
+        this.club = club;
+        this.sender = user;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.status = "sent";
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public Club getClub() {
+        return club;
+    }
+
+    public void setClub(Club club) {
+        this.club = club;
     }
 
     public User getSender() {
@@ -51,14 +70,6 @@ public class Message {
 
     public void setSender(User sender) {
         this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
     }
 
     public String getContent() {
