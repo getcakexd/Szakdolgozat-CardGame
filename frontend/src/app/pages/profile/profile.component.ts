@@ -27,9 +27,12 @@ export class ProfileComponent {
   password: string = '';
   private deleteSource = new Subject<void>();
   delete$ = this.deleteSource.asObservable();
-  private userId = parseInt(localStorage.getItem('id') || '0');
+  private userId : number;
 
-  constructor(protected userService: UserService, private router: Router) {
+  constructor(
+    protected userService: UserService, private router: Router
+  ) {
+    this.userId = this.userService.getLoggedInId();
     if (!this.userService.isLoggedIn()) {
       this.router.navigate(['/login']).then();
     }

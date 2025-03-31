@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
@@ -84,10 +84,8 @@ export class UserService {
     return this.http.delete(`${this.apiUrl}/delete`, { params: { userId, password } });
   }
 
-  getLoggedInId(): string {
-    let id = localStorage.getItem('id');
-    if (id !== null) return id;
-    return '';
+  getLoggedInId(): number {
+    return parseInt(localStorage.getItem('id') || '0');
   }
 
   getLoggedInUsername(): string {

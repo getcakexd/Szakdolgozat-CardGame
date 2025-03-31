@@ -3,6 +3,7 @@ import {FriendRequestService} from '../../services/friend-request/friend-request
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import {Observable} from 'rxjs';
+import {UserService} from '../../services/user/user.service';
 
 
 @Component({
@@ -23,8 +24,11 @@ export class FriendRequestsComponent implements OnInit {
   incomingRequests: any[] = [];
   currentUserId: number;
 
-  constructor(private friendRequestService: FriendRequestService) {
-    this.currentUserId = parseInt(localStorage.getItem('id') || '0');
+  constructor(
+    private userService: UserService,
+    private friendRequestService: FriendRequestService
+  ) {
+    this.currentUserId = this.userService.getLoggedInId();
   }
 
   ngOnInit(): void {

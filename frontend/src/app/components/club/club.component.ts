@@ -8,6 +8,7 @@ import {FormsModule} from '@angular/forms';
 import {ClubInviteService} from '../../services/club-invite/club-invite.service';
 import {ClubInvite} from '../../models/club-invite.model';
 import {ClubChatComponent} from '../club-chat/club-chat.component';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-club',
@@ -26,7 +27,7 @@ export class ClubComponent implements OnInit {
   protected members: ClubMember[] = [];
   protected pendingInvites: any[] = [];
   protected inviteHistory: any[] = [];
-  protected userId: number = parseInt(localStorage.getItem('id') || '0');
+  protected userId: number;
   inviteMessage: string = '';
   userRole: string = '';
   editingName = false;
@@ -36,13 +37,17 @@ export class ClubComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private userService: UserService,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService,
     private clubInviteService: ClubInviteService,
     private router: Router
-  ) {}
+  ) {
+    this.userId = this.userService.getLoggedInId();
+  }
 
   ngOnInit(): void {
+
     this.route.params.subscribe(params => {
       const clubId = +params['id'];
       this.clubService.getClubById(clubId).subscribe({
