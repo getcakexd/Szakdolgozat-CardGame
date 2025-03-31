@@ -12,25 +12,36 @@ export class ChatService {
 
   getMessages(senderId: number, receiverId: number) {
     return this.http.get<any[]>(`${this.apiUrl}/list`, {
-      params: new HttpParams().set('userId', senderId.toString()).set('friendId', receiverId.toString()),
+      params: {
+        userId: senderId,
+        friendId: receiverId
+      }
     });
   }
 
   sendMessage(senderId: number, receiverId: number, message: string) {
     return this.http.post<any[]>(`${this.apiUrl}/send`, null,{
-      params: new HttpParams().set('userId', senderId.toString()).set('friendId', receiverId.toString()).set('content', message),
+      params: {
+        userId: senderId,
+        friendId: receiverId,
+        content: message
+      }
     });
   }
 
   unsendMessage(messageId: number) {
     return this.http.put<any[]>(`${this.apiUrl}/unsend`, null, {
-      params: new HttpParams().set('messageId', messageId.toString()),
+      params: {
+        messageId: messageId
+      }
     });
   }
 
   getUnreadMessagesPerFriend(userId: number) {
     return this.http.get<any>(`${this.apiUrl}/unread`, {
-      params: new HttpParams().set('userId', userId.toString()),
+      params: {
+        userId: userId
+      }
     });
   }
 

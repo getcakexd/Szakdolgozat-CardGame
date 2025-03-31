@@ -26,7 +26,11 @@ export class UserService {
   }
 
   getUserById(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/get`, { params: { userId } });
+    return this.http.get<User>(`${this.apiUrl}/get`, {
+      params: {
+        userId
+      }
+    });
   }
 
   createUser(user: User): Observable<any> {
@@ -65,15 +69,31 @@ export class UserService {
   }
 
   updateUsername(userId: number, newUsername: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/username`, null, { params: { userId, newUsername } });
+    return this.http.put(`${this.apiUrl}/update/username`, null, {
+      params: {
+        userId,
+        newUsername
+      }
+    });
   }
 
   updateEmail(userId: number, newEmail: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/email`, null, { params: { userId, newEmail } });
+    return this.http.put(`${this.apiUrl}/update/email`, null, {
+      params: {
+        userId,
+        newEmail
+      }
+    });
   }
 
   updatePassword(userId: number, currentPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/password`, null, { params: { userId, currentPassword, newPassword } });
+    return this.http.put(`${this.apiUrl}/update/password`, null, {
+      params: {
+        userId,
+        currentPassword,
+        newPassword
+      }
+    });
   }
 
   deleteAccount(userId: number, password: string): Observable<any> {
@@ -81,7 +101,12 @@ export class UserService {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
     localStorage.removeItem('email');
-    return this.http.delete(`${this.apiUrl}/delete`, { params: { userId, password } });
+    return this.http.delete(`${this.apiUrl}/delete`, {
+      params: {
+        userId,
+        password
+      }
+    });
   }
 
   getLoggedInId(): number {

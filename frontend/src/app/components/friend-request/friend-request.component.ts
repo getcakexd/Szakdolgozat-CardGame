@@ -4,6 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import {Observable} from 'rxjs';
 import {UserService} from '../../services/user/user.service';
+import {FriendRequest} from '../../models/FriendRequest';
 
 
 @Component({
@@ -20,8 +21,8 @@ import {UserService} from '../../services/user/user.service';
 export class FriendRequestsComponent implements OnInit {
   username: string = '';
   errorMessage: string = '';
-  sentRequests: any[] = [];
-  incomingRequests: any[] = [];
+  sentRequests: FriendRequest[] = [];
+  incomingRequests: FriendRequest[] = [];
   currentUserId: number;
 
   constructor(

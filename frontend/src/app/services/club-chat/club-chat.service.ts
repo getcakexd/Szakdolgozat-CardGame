@@ -13,25 +13,35 @@ export class ClubChatService {
 
   getMessages(clubId: number) {
     return this.http.get<ClubMessage[]>(`${this.apiUrl}/history`,{
-        params: {clubId: clubId}
+        params: {
+          clubId: clubId
+        }
     });
   }
 
   sendMessage(clubId: number, senderId: number, content: string) {
     return this.http.post<ClubMessage>(`${this.apiUrl}/send`, null,{
-      params: {clubId: clubId, senderId: senderId, content: content}
+      params: {
+        clubId: clubId,
+        senderId: senderId,
+        content: content
+      }
     });
   }
 
   unsendMessage(messageId: number) {
     return this.http.put<any[]>(`${this.apiUrl}/unsend`, null, {
-      params: {messageId: messageId},
+      params: {
+        messageId: messageId
+      }
     });
   }
 
   removeMessage(messageId: number) {
     return this.http.put<any[]>(`${this.apiUrl}/remove`, null,{
-      params: {messageId: messageId},
+      params: {
+        messageId: messageId
+      }
     });
   }
 }

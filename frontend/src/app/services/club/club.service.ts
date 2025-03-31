@@ -17,7 +17,9 @@ export class ClubService {
 
   getClub(id: number) {
     return this.http.get<any>(`${this.apiUrl}/get`, {
-      params: {clubId: id},
+      params: {
+        clubId: id
+      }
     });
   }
 
@@ -27,48 +29,63 @@ export class ClubService {
 
   getJoinableClubs(userId: number) {
     return this.http.get<any[]>(`${this.apiUrl}/joinable`, {
-      params: {userId: userId},
+      params: {
+        userId: userId
+      }
     });
   }
 
   getClubMembers(id: number) {
     return this.http.get<any[]>(`${this.apiUrl}/members`, {
-      params: {clubId: id},
+      params: {
+        clubId: id
+      }
     });
   }
 
   getClubsByUser(userId: number) {
     return this.http.get<any[]>(`${this.apiUrl}/user`, {
-      params: {userId: userId},
+      params: {
+        userId: userId
+      }
     });
   }
 
   createClub(name: string, description: string, isPublic : boolean, userId : number) :Observable<any> {
     return this.http.post<any[]>(`${this.apiUrl}/create`, null, {
-      params: {name: name, description: description,  isPublic: isPublic, userId: userId},
+      params: {
+        name: name,
+        description: description,
+        isPublic: isPublic,
+        userId: userId
+      }
     });
   }
 
   updateClub(clubId: number, name: string, description: string, isPublic: boolean): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/update`, null, {
       params: {
-        clubId: clubId.toString(),
+        clubId: clubId,
         name: name,
         description: description,
-        isPublic: isPublic.toString(),
+        isPublic: isPublic
       }
     });
   }
 
   deleteClub(id: number) {
     return this.http.delete<any[]>(`${this.apiUrl}/delete`, {
-      params: {clubId: id},
+      params: {
+        clubId: id
+      }
     });
   }
 
   getClubById(clubId: number) {
     return this.http.get<any>(`${this.apiUrl}/get`, {
-      params: {clubId: clubId},
+      params: {
+        clubId: clubId
+      }
     });
   }
 }

@@ -29,7 +29,7 @@ export class FriendListComponent implements OnInit {
   }
 
    loadFriends() {
-    this.friendshipService.getFriends(this.userId).subscribe((data: any[]) => {
+    this.friendshipService.getFriends(this.userId).subscribe((data: Friend[]) => {
       this.friends = data;
 
       this.loadUnreadCounts();

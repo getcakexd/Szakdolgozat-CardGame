@@ -57,9 +57,8 @@ public class ChatRestService {
     }
 
     @PutMapping("/unsend")
-    public ResponseEntity<Map<String, String>> deleteMessage(@RequestParam String messageId) {
-        Long id = Long.parseLong(messageId);
-        Message message = messageRepository.findById(id)
+    public ResponseEntity<Map<String, String>> deleteMessage(@RequestParam long messageId) {
+        Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found"));
 
         message.setStatus("unsent");
