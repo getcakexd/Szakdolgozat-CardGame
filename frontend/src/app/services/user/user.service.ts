@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
-import {PROXY_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL, PROXY_API_URL} from '../../../environments/api-config';
 
 export interface User {
   username: string;
@@ -15,6 +15,7 @@ export interface User {
 })
 export class UserService {
   private apiUrl = PROXY_API_URL + '/users';
+  private url = BACKEND_API_URL + '/users';
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
@@ -38,7 +39,7 @@ export class UserService {
   }
 
   login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, user).pipe(
+    return this.http.post(`${this.url}/login`, user).pipe(
       tap((response : any) => {
         if (response.status === 'ok') {
           localStorage.setItem('id', response.userId);
