@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
@@ -35,7 +35,7 @@ public class FriendRequest {
         this.status = status;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

@@ -5,6 +5,7 @@ import {ClubListComponent} from '../../components/club-list/club-list.component'
 import {Router} from '@angular/router';
 import {ClubInviteService} from '../../services/club-invite/club-invite.service';
 import {ClubInvite} from '../../models/club-invite.model';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-club-page',
@@ -22,12 +23,15 @@ export class ClubPageComponent implements OnInit{
   showCreateClub = false;
   showJoinClub = false;
   invites: ClubInvite[] = [];
-  userId = parseInt(localStorage.getItem('id') || '0');
+  userId : number;
 
   constructor(
     private router: Router,
+    private userService: UserService,
     private clubInviteService: ClubInviteService,
-  ) {}
+  ) {
+    this.userId = this.userService.getLoggedInId();
+  }
 
   ngOnInit() {
     this.loadInvites();

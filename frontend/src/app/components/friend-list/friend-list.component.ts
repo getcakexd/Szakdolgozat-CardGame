@@ -29,7 +29,7 @@ export class FriendListComponent implements OnInit {
   }
 
    loadFriends() {
-    this.friendshipService.getFriends(this.userId.toString()).subscribe((data: any[]) => {
+    this.friendshipService.getFriends(this.userId).subscribe((data: Friend[]) => {
       this.friends = data;
 
       this.loadUnreadCounts();
@@ -43,7 +43,7 @@ export class FriendListComponent implements OnInit {
   }
 
   deleteFriend(friendId: string) {
-    this.friendshipService.deleteFriend(this.userId.toString(), friendId).subscribe(() => {
+    this.friendshipService.deleteFriend(this.userId, parseInt(friendId)).subscribe(() => {
       this.loadFriends();
     });
   }

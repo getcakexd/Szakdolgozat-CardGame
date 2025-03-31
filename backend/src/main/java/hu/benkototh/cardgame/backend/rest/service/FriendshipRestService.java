@@ -22,9 +22,8 @@ public class FriendshipRestService {
     private IUserRepository userRepository;
 
     @GetMapping("/list")
-    public List<User> getFriends(@RequestParam String userId) {
-        Long userIdLong = Long.parseLong(userId);
-        Optional<User> userOpt = userRepository.findById(userIdLong);
+    public List<User> getFriends(@RequestParam long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             return Collections.emptyList();
         }
@@ -37,12 +36,10 @@ public class FriendshipRestService {
     }
 
     @DeleteMapping("/remove")
-    public Map<String, String> removeFriend(@RequestParam String userId, @RequestParam String friendId) {
-        Long userIdLong = Long.parseLong(userId);
-        Long friendIdLong = Long.parseLong(friendId);
+    public Map<String, String> removeFriend(@RequestParam long userId, @RequestParam long friendId) {
         Map<String, String> response = new HashMap<>();
-        Optional<User> userOpt = userRepository.findById(userIdLong);
-        Optional<User> friendOpt = userRepository.findById(friendIdLong);
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> friendOpt = userRepository.findById(friendId);
 
         if (userOpt.isEmpty() || friendOpt.isEmpty()) {
             response.put("status", "error");

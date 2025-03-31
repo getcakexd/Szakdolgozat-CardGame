@@ -28,14 +28,12 @@ public class ChatRestService {
     private IUserRepository userRepository;
 
     @GetMapping("/list")
-    public List<Message> getMessages(@RequestParam String userId, @RequestParam String friendId) {
-        Long userIdLong = Long.parseLong(userId);
-        Long friendIdLong = Long.parseLong(friendId);
+    public List<Message> getMessages(@RequestParam long userId, @RequestParam long friendId) {
 
-        List<Message> messages = findBySenderAndReceiver(userIdLong, friendIdLong);
+        List<Message> messages = findBySenderAndReceiver(userId, friendId);
 
         messages.stream()
-                .filter(msg -> msg.getReceiver().getId() == (userIdLong) && msg.getStatus().equals("unread"))
+                .filter(msg -> msg.getReceiver().getId() == (userId) && msg.getStatus().equals("unread"))
                 .forEach(msg -> {
                     msg.setStatus("read");
                     messageRepository.save(msg);
@@ -44,11 +42,11 @@ public class ChatRestService {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Message> sendMessage(@RequestParam String userId, @RequestParam String friendId, @RequestParam String content) {
-        User sender = userRepository.findById(Long.parseLong(userId))
+    public ResponseEntity<Message> sendMessage(@RequestParam long userId, @RequestParam long friendId, @RequestParam String content) {
+        User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender not found"));
 
-        User receiver = userRepository.findById(Long.parseLong(friendId))
+        User receiver = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver not found"));
 
         Message message = new Message(sender, receiver, content);
@@ -59,9 +57,8 @@ public class ChatRestService {
     }
 
     @PutMapping("/unsend")
-    public ResponseEntity<Map<String, String>> deleteMessage(@RequestParam String messageId) {
-        Long id = Long.parseLong(messageId);
-        Message message = messageRepository.findById(id)
+    public ResponseEntity<Map<String, String>> deleteMessage(@RequestParam long messageId) {
+        Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found"));
 
         message.setStatus("unsent");
@@ -74,10 +71,9 @@ public class ChatRestService {
     }
 
     @GetMapping("/unread")
-    public ResponseEntity<Map<Long, Integer>> getUnreadMessageCounts(@RequestParam String userId) {
-        Long userIdLong = Long.parseLong(userId);
+    public ResponseEntity<Map<Long, Integer>> getUnreadMessageCounts(@RequestParam long userId) {
         List<Message> unreadMessages = messageRepository.findAll().stream()
-                .filter(msg -> msg.getReceiver().getId() == (userIdLong) && msg.getStatus().equals("unread"))
+                .filter(msg -> msg.getReceiver().getId() == userId && msg.getStatus().equals("unread"))
                 .toList();
 
         Map<Long, Integer> unreadCounts = new HashMap<>();

@@ -27,8 +27,12 @@ export class ProfileComponent {
   password: string = '';
   private deleteSource = new Subject<void>();
   delete$ = this.deleteSource.asObservable();
+  private userId : number;
 
-  constructor(protected userService: UserService, private router: Router) {
+  constructor(
+    protected userService: UserService, private router: Router
+  ) {
+    this.userId = this.userService.getLoggedInId();
     if (!this.userService.isLoggedIn()) {
       this.router.navigate(['/login']).then();
     }
@@ -51,7 +55,7 @@ export class ProfileComponent {
 
   updateUser(): void {
     if (this.editField === 'username') {
-      this.userService.updateUsername(this.userService.getLoggedInId(), this.newUsername).subscribe(response => {
+      this.userService.updateUsername(this.userId, this.newUsername).subscribe(response => {
         if (response.status === "ok") {
           this.userService.setLoggedInUsername(this.newUsername);
           this.cancelEdit();
@@ -61,7 +65,7 @@ export class ProfileComponent {
         }
       });
     } else if (this.editField === 'email') {
-      this.userService.updateEmail(this.userService.getLoggedInId(), this.newEmail).subscribe(response => {
+      this.userService.updateEmail(this.userId, this.newEmail).subscribe(response => {
         if (response.status === "ok") {
           this.userService.setLoggedInEmail(this.newEmail);
           this.cancelEdit();
@@ -71,7 +75,7 @@ export class ProfileComponent {
         }
       });
     } else if (this.editField === 'password') {
-      this.userService.updatePassword(this.userService.getLoggedInId(), this.userService.getLoggedInPassword(), this.newPassword).subscribe(response => {
+      this.userService.updatePassword(this.userId, this.userService.getLoggedInPassword(), this.newPassword).subscribe(response => {
         if (response.status === "ok") {
           this.userService.setLoggedInPassword(this.newPassword);
           this.cancelEdit();
@@ -84,7 +88,7 @@ export class ProfileComponent {
   }
 
   deleteProfile(): void {
-    this.userService.deleteAccount(this.userService.getLoggedInId(), this.password).subscribe(response => {
+    this.userService.deleteAccount(this.userId, this.password).subscribe(response => {
       if (response.status === 'ok') {
         alert('Profile deleted successfully!');
         this.router.navigate(['/login']).then(

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
@@ -37,7 +37,7 @@ public class Message {
         this.status = "unread";
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
