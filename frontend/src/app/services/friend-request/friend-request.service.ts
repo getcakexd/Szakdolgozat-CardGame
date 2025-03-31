@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, Subject} from 'rxjs';
-import {PROXY_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL} from '../../../environments/api-config';
 import {FriendRequest} from '../../models/FriendRequest';
 
 
@@ -10,7 +10,7 @@ import {FriendRequest} from '../../models/FriendRequest';
   providedIn: 'root'
 })
 export class FriendRequestService {
-  private apiUrl = PROXY_API_URL + '/friends/request';
+  private apiUrl = BACKEND_API_URL + '/friends/request';
   private reloadSource = new Subject<void>();
   reload$ = this.reloadSource.asObservable();
 

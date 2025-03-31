@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {PROXY_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL} from '../../../environments/api-config';
 import {Friend} from '../../models/friend.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FriendshipService {
-  private apiUrl = PROXY_API_URL + '/friends';
+  private apiUrl = BACKEND_API_URL + '/friends';
 
   constructor(private http : HttpClient) {}
 

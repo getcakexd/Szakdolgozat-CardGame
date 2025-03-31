@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {PROXY_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL} from '../../../environments/api-config';
 import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClubService {
-  private apiUrl = PROXY_API_URL + '/clubs';
+  private apiUrl = BACKEND_API_URL + '/clubs';
 
   constructor(private http : HttpClient) {}
 

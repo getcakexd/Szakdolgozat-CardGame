@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {PROXY_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL} from '../../../environments/api-config';
 import {Observable} from 'rxjs';
 import {ClubInvite} from '../../models/club-invite.model';
 
@@ -8,7 +8,7 @@ import {ClubInvite} from '../../models/club-invite.model';
   providedIn: 'root'
 })
 export class ClubInviteService {
-  private apiUrl = PROXY_API_URL + '/clubinvites';
+  private apiUrl = BACKEND_API_URL + '/clubinvites';
 
   constructor(private http : HttpClient) { }
 

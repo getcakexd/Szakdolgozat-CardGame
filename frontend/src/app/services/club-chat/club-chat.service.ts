@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import {PROXY_API_URL} from '../../../environments/api-config';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {BACKEND_API_URL} from '../../../environments/api-config';
+import {HttpClient} from '@angular/common/http';
 import {ClubMessage} from '../../models/club-message.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClubChatService {
-  private apiUrl = PROXY_API_URL + '/clubchat';
+  private apiUrl = BACKEND_API_URL + '/clubchat';
 
   constructor(private http: HttpClient) { }
 
