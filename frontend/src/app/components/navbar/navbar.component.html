@@ -1,19 +1,22 @@
-<nav class="navbar">
+<mat-toolbar color="primary" class="navbar">
   <div class="navbar-logo">
+    <!-- Logo content goes here -->
   </div>
-  <ul class="navbar-links">
-    <li><a routerLink="/">Home</a></li>
-  </ul>
-  <div class="navbar-actions">
-    <div *ngIf="!isLoggedIn">
-      <a routerLink="/login">Login</a>
-      <a routerLink="/signup">Signup</a>
-    </div>
-    <div *ngIf="isLoggedIn">
-      <a routerLink="/social">Social</a>
-      <a routerLink="/clubs">Clubs</a>
-      <a routerLink="/profile">{{localStorage.getItem("username")}}</a>
-      <a (click)="userService.logout()">Logout</a>
-    </div>
+  <div class="navbar-left">
+    <ng-container *ngIf="isLoggedIn">
+      <button class="navbar-button" mat-button routerLink="/home">Home</button>
+      <button class="navbar-button" mat-button routerLink="/social">Social</button>
+      <button class="navbar-button" mat-button routerLink="/clubs">Clubs</button>
+    </ng-container>
   </div>
-</nav>
+  <div class="navbar-right">
+    <ng-container *ngIf="isLoggedIn">
+      <button class="navbar-button" mat-button routerLink="/profile">{{ localStorage.getItem("username") }}</button>
+      <button class="navbar-button" mat-button (click)="userService.logout()">Logout</button>
+    </ng-container>
+    <ng-container *ngIf="!isLoggedIn">
+      <button class="navbar-button" mat-button routerLink="/login">Login</button>
+      <button class="navbar-button" mat-button routerLink="/signup">Signup</button>
+    </ng-container>
+  </div>
+</mat-toolbar>

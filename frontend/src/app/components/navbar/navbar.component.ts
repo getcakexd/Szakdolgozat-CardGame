@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import {NgIf} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import { NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import {MatToolbar} from '@angular/material/toolbar';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-navbar',
-  imports: [
-    NgIf,
-    RouterLink
-  ],
-  templateUrl: './navbar.component.html',
   standalone: true,
-  styleUrl: './navbar.component.css'
+  imports: [NgIf, RouterLink, MatToolbar, MatButton],
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   isLoggedIn: boolean = false;
 
   constructor(protected userService: UserService) {}
