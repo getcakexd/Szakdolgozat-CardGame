@@ -1,38 +1,44 @@
-<div class="friend-requests">
-  <h2>Friend Requests</h2>
+<mat-card class="friend-requests">
+  <mat-card-header>
+    <mat-card-title><h3>Friend Requests</h3></mat-card-title>
+  </mat-card-header>
 
-  <div class="send-request">
-    <input
-      type="text"
-      [(ngModel)]="username"
-      placeholder="Enter username"
-      class="input"
-    />
-    <button (click)="sendRequest()" class="btn">Send Request</button>
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-  </div>
+  <mat-card-content>
+    <div class="send-request">
+      <mat-form-field appearance="fill">
+        <mat-label>Enter username</mat-label>
+        <input matInput [(ngModel)]="username" placeholder="Enter username" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="sendRequest()">Send Request</button>
+      <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+    </div>
 
-  <div class="sent-requests">
-    <h3>Sent Requests</h3>
-    <ul>
-      <li *ngFor="let request of sentRequests">
-        {{ request.receiver.username }}
-        <span *ngIf="request.status === 'pending'">
-          <button (click)="cancelRequest(request.id)" class="btn danger">Cancel</button>
-        </span>
-        <span *ngIf="request.status === 'declined'" class="declined">Declined</span>
-      </li>
-    </ul>
-  </div>
+    <div class="incoming-requests">
+      <h3>Incoming Requests</h3>
+      <mat-list>
+        <mat-list-item *ngFor="let request of incomingRequests">
+          <span>{{ request.sender.username }}</span>
+          <div class="button-container">
+            <button mat-button color="primary" (click)="acceptRequest(request.id)">Accept</button>
+            <button mat-button color="warn" (click)="declineRequest(request.id)">Decline</button>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
 
-  <div class="incoming-requests">
-    <h3>Incoming Requests</h3>
-    <ul>
-      <li *ngFor="let request of incomingRequests">
-        {{ request.sender.username }}
-        <button (click)="acceptRequest(request.id)" class="btn success">Accept</button>
-        <button (click)="declineRequest(request.id)" class="btn danger">Decline</button>
-      </li>
-    </ul>
-  </div>
-</div>
+    <div class="sent-requests">
+      <h3>Sent Requests</h3>
+      <mat-list>
+        <mat-list-item *ngFor="let request of sentRequests">
+          <span>{{ request.receiver.username }}</span>
+          <ng-container *ngIf="request.status === 'pending'">
+            <button mat-button color="warn" (click)="cancelRequest(request.id)">Cancel</button>
+          </ng-container>
+          <ng-container *ngIf="request.status === 'declined'">
+            <span class="declined">Declined</span>
+          </ng-container>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>

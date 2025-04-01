@@ -3,6 +3,10 @@ import { ChatService } from '../../services/chat/chat.service';
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user/user.service';
+import {MatCard, MatCardContent, MatCardHeader} from '@angular/material/card';
+import {MatButton} from '@angular/material/button';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-chat',
@@ -13,7 +17,14 @@ import { UserService } from '../../services/user/user.service';
     NgForOf,
     FormsModule,
     DatePipe,
-    NgIf
+    NgIf,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatButton,
+    MatFormField,
+    MatInput,
+    MatLabel
   ],
   standalone: true
 })
@@ -47,6 +58,7 @@ export class ChatComponent implements OnInit {
     this.chatService.sendMessage(this.senderId, this.receiverId, this.newMessage).subscribe((sentMessage) => {
       this.messages.push(sentMessage);
       this.newMessage = '';
+      this.scrollToBottom();
     });
   }
 

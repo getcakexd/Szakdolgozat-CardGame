@@ -1,27 +1,24 @@
-<div class="chat-box">
-  <h3>Chat with {{ receiverName }}</h3>
-  <button class="refresh-button" (click)="loadMessages()">Refresh</button>
-  <div class="messages" #messageContainer>
-    <div *ngFor="let msg of messages" [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId}">
-
-      <div class="message-content">
-        {{ msg.unsent ? '(Message Unsent)' : msg.content }}
+<mat-card>
+  <mat-card-header>
+    <h3>Chat with {{ receiverName }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <button mat-raised-button color="primary" (click)="loadMessages()">Refresh</button>
+    <div class="messages" #messageContainer>
+      <div *ngFor="let msg of messages" [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId}">
+        <div class="message-content">
+          {{ msg.unsent ? '(Message Unsent)' : msg.content }}
+        </div>
+        <div class="message-timestamp" [ngClass]="{'left-timestamp': msg.sender.id !== senderId, 'right-timestamp': msg.sender.id === senderId}">
+          {{ msg.timestamp | date:'short' }}
+        </div>
+        <button *ngIf="msg.sender.id === senderId && msg.status !== 'unsent'" mat-button (click)="unsendMessage(msg.id)">Unsend</button>
       </div>
-
-      <div class="message-timestamp" [ngClass]="{'left-timestamp': msg.sender.id !== senderId, 'right-timestamp': msg.sender.id === senderId}">
-        {{ msg.timestamp | date:'short' }}
-      </div>
-
-      <button *ngIf="msg.sender.id === senderId && msg.status !== 'unsent'"
-              (click)="unsendMessage(msg.id)">
-        Unsend
-      </button>
     </div>
-  </div>
-
-  <div class="chat-input">
-    <input [(ngModel)]="newMessage" placeholder="Type a message..." />
-    <br>
-    <button class="chat-send-button" (click)="sendMessage()">Send</button>
-  </div>
-</div>
+    <mat-form-field appearance="fill">
+      <mat-label>Type a message...</mat-label>
+      <input matInput [(ngModel)]="newMessage" />
+    </mat-form-field>
+    <button class="send" mat-button color="primary" (click)="sendMessage()">Send</button>
+  </mat-card-content>
+</mat-card>

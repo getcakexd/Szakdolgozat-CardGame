@@ -5,6 +5,11 @@ import {NgForOf, NgIf} from '@angular/common';
 import {Observable} from 'rxjs';
 import {UserService} from '../../services/user/user.service';
 import {FriendRequest} from '../../models/FriendRequest';
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatList, MatListItem} from '@angular/material/list';
+import {MatButton} from '@angular/material/button';
+import {MatInput} from '@angular/material/input';
 
 
 @Component({
@@ -14,7 +19,18 @@ import {FriendRequest} from '../../models/FriendRequest';
   imports: [
     FormsModule,
     NgIf,
-    NgForOf
+    NgForOf,
+    MatCard,
+    MatLabel,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatFormField,
+    MatError,
+    MatList,
+    MatListItem,
+    MatButton,
+    MatInput
   ],
   standalone: true
 })
@@ -52,17 +68,16 @@ export class FriendRequestsComponent implements OnInit {
       return;
     }
 
-    this.friendRequestService.sendFriendRequest(this.currentUserId, this.username).subscribe(
-      (response) => {
-        if (response.status === 'ok') {
-          this.username = '';
-          this.errorMessage = '';
-          this.loadRequests();
-        } else {
-          this.errorMessage = response.message;
-        }
+    this.friendRequestService.sendFriendRequest(this.currentUserId, this.username).subscribe({
+      next: () => {
+        this.loadRequests();
+        this.errorMessage = '';
+        this.username = '';
+      },
+      error: (error) => {
+        this.errorMessage = error.error.message
       }
-    );
+    });
   }
 
   cancelRequest(requestId: number) {

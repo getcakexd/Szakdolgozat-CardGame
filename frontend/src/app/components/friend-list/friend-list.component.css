@@ -1,8 +1,38 @@
-.unread-badge {
-  background-color: red;
-  color: white;
-  font-size: 12px;
-  padding: 3px 6px;
-  border-radius: 50%;
-  margin-left: 5px;
+.friend-list {
+  max-width: 600px;
+  margin: 0 auto;
 }
+
+.friend-item {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+  height: auto !important;
+}
+
+.friend-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.friend-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-container {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  width: 100%;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+}
+
+

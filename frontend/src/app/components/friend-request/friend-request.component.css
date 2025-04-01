@@ -1,0 +1,33 @@
+.friend-requests {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.send-request {
+  margin-bottom: 20px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+
+button {
+  margin-left: 10px;
+}
+
+.sent-requests,
+.incoming-requests {
+  margin-top: 20px;
+}
+
+.declined {
+  color: red;
+  font-weight: bold;
+}

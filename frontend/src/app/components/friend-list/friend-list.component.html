@@ -1,12 +1,25 @@
-<li *ngFor="let friend of friends">
-  {{ friend.username }}
-  <span *ngIf="unreadCounts[parseInt(friend.id)] && unreadCounts[parseInt(friend.id)] > 0" class="unread-badge">
-    {{ unreadCounts[parseInt(friend.id)] }}
-  </span>
-  <button (click)="deleteFriend(friend.id)">Remove</button>
-  <button (click)="toggleChat(friend.id)">
-    {{ openChats[parseInt(friend.id)] ? 'Close' : 'Message' }}
-  </button>
+<mat-list class="friend-list">
+  <mat-list-item *ngFor="let friend of friends" class="friend-item">
+    <div class="friend-content">
+      <span class="friend-name" [matBadge]="unreadCounts[parseInt(friend.id)]"
+            [matBadgeHidden]="!unreadCounts[parseInt(friend.id)] || unreadCounts[parseInt(friend.id)] <= 0"
+            matBadgeColor="accent">
+        {{ friend.username }}
+      </span>
 
-  <app-chat *ngIf="openChats[parseInt(friend.id)]" [receiverId]="friend.id"></app-chat>
-</li>
+      <div class="button-container">
+        <button mat-button color="warn" (click)="deleteFriend(friend.id)" aria-label="Remove friend">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+        <button mat-button color="primary" (click)="toggleChat(friend.id)">
+          {{ openChats[parseInt(friend.id)] ? 'Close' : 'Message' }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="openChats[parseInt(friend.id)]" class="chat-container">
+      <app-chat [receiverId]="friend.id"></app-chat>
+    </div>
+  </mat-list-item>
+</mat-list>

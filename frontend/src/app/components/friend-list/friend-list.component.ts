@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Friend } from '../../models/friend.model';
-import {NgForOf, NgIf} from '@angular/common';
-import {ChatComponent} from '../chat/chat.component';
-import {FriendshipService} from '../../services/friendship/friendship.service';
-import {ChatService} from '../../services/chat/chat.service';
+import { NgForOf, NgIf } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { ChatComponent } from '../chat/chat.component';
+import { FriendshipService } from '../../services/friendship/friendship.service';
+import { ChatService } from '../../services/chat/chat.service';
 
 @Component({
   selector: 'app-friend-list',
@@ -11,8 +16,13 @@ import {ChatService} from '../../services/chat/chat.service';
   styleUrls: ['./friend-list.component.css'],
   imports: [
     NgForOf,
-    ChatComponent,
-    NgIf
+    NgIf,
+    MatListModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatIconModule,
+    MatCardModule,
+    ChatComponent
   ],
   standalone: true
 })
@@ -20,18 +30,20 @@ export class FriendListComponent implements OnInit {
   friends: Friend[] = [];
   unreadCounts: { [key: number]: number } = {};
   openChats: { [key: number]: boolean } = {};
-  userId :number = parseInt(localStorage.getItem('id') || '');
+  userId: number = parseInt(localStorage.getItem('id') || '');
 
-  constructor(private friendshipService: FriendshipService, private chatService : ChatService) {}
+  constructor(
+    private friendshipService: FriendshipService,
+    private chatService: ChatService
+  ) {}
 
   ngOnInit(): void {
     this.loadFriends();
   }
 
-   loadFriends() {
+  loadFriends() {
     this.friendshipService.getFriends(this.userId).subscribe((data: Friend[]) => {
       this.friends = data;
-
       this.loadUnreadCounts();
     });
   }
