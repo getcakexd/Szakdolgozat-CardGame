@@ -34,7 +34,12 @@ public class UserRestService {
     @Autowired
     private IClubMessageRepository clubMessageRepository;
 
+    @Autowired
+    private IClubInviteRepository clubInviteRepository;
+
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private ClubInviteRestService clubInviteRestService;
 
     @GetMapping("all")
     public ResponseEntity<List<User>> all() {
@@ -79,7 +84,7 @@ public class UserRestService {
             user.setRole("ROLE_USER");
             userRepository.save(user);
 
-            response.put("message", "User not found.");
+            response.put("message", "User created.");
             return ResponseEntity.ok(response);
 
         }
@@ -167,6 +172,7 @@ public class UserRestService {
                 messageRepository.deleteAll(getMessages(user));
                 clubMemberRepository.delete(getClubMember(user));
                 clubMessageRepository.deleteAll(getClubMessages(user));
+                clubInviteRepository.deleteAll(getInvites(user));
                 userRepository.delete(user);
                 response.put("message", "User deleted.");
                 return ResponseEntity.ok(response);
@@ -265,5 +271,11 @@ public class UserRestService {
         } else {
             return new ClubMember();
         }
+    }
+
+    private List<ClubInvite> getInvites(User user) {
+        return clubInviteRepository.findAll().stream()
+                .filter(clubInvite -> clubInvite.getUser().getId() == user.getId())
+                .toList();
     }
 }

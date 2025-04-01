@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -66,6 +68,7 @@ public class ClubInviteRestService {
 
     @PostMapping("/add")
     public ResponseEntity<?> addClubInvite(@RequestParam long clubId, @RequestParam String username) {
+        Map<String, String> response = new HashMap<>();
         Optional<Club> club = clubRepository.findById(clubId);
         User user = findByUsername(username);
 
@@ -74,20 +77,27 @@ public class ClubInviteRestService {
                 .findFirst();
 
         Optional<ClubInvite> existingInvite = clubInviteRepository.findAll().stream()
-                .filter(invite -> invite.getClub().getId() == clubId && invite.getUser().getId() == user.getId())
+                .filter(invite ->
+                        invite.getClub().getId() == clubId &&
+                        invite.getUser().getId() == user.getId() &&
+                        invite.getStatus().equals("pending")
+                )
                 .findFirst();
 
 
         if (existingMember.isPresent()) {
-            return ResponseEntity.status(400).body("User is already a member of this club.");
+            response.put("message", "User is already a member of this club.");
+            return ResponseEntity.status(400).body(response);
         }
 
         if (existingInvite.isPresent()) {
-            return ResponseEntity.status(400).body("User already has a pending invite to this club.");
+            response.put("message", "Invite already sent.");
+            return ResponseEntity.status(400).body(response);
         }
 
         if (club.isEmpty()) {
-            return ResponseEntity.status(400).body("Club not found.");
+            response.put("message", "Club not found.");
+            return ResponseEntity.status(400).body(response);
         }
 
         ClubInvite clubInvite = new ClubInvite(club.get(), user);

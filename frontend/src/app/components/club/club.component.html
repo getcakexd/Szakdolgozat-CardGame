@@ -1,6 +1,9 @@
 <div class="club-details">
 
   <button (click)="goBack()">Back</button>
+  <button *ngIf="userRole !== 'admin'" (click)="leaveClub()" class="btn btn-danger">
+    Leave Club
+  </button>
 
   <h2 *ngIf="!editingName">{{ club.name }}</h2>
   <input *ngIf="editingName" [(ngModel)]="club.name" />

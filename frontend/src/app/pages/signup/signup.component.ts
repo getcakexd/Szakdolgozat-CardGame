@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { UserService, User } from '../../services/user/user.service';
+import { UserService } from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
 import {NgClass, NgIf} from '@angular/common';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-signup',
@@ -15,7 +16,7 @@ import {NgClass, NgIf} from '@angular/common';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-  newUser: User = { username: '', email: '', password: ''};
+  newUser: User = { id: 0, username: '', password: '', email: '', role: '' };
   message: string = '';
   isSuccess: boolean = false;
   isLoading: boolean = false;
@@ -66,7 +67,7 @@ export class SignupComponent {
   }
 
   private resetForm(): void {
-    this.newUser = {username: '', email: '', password: ''};
+    this.newUser = { id: 0, username: '', password: '', email: '', role: '' };
   }
 
   private isValidEmail(email: string): boolean {

@@ -131,6 +131,24 @@ public class ClubMemberRestService {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/leave")
+    public ResponseEntity<Map<String, String>> leaveClub(@RequestParam long clubId, @RequestParam long userId) {
+        Map<String, String> response = new HashMap<>();
+
+        ClubMember clubMember = clubMemberRepository.findAll().stream()
+                .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == userId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User is not a member of the club"));
+
+        if (clubMember.getRole().equals("admin")) {
+            response.put("message", "Admin cannot leave the club.");
+            return ResponseEntity.status(400).body(response);
+        }
+        clubMemberRepository.delete(clubMember);
+        response.put("message", "User left the club.");
+        return ResponseEntity.ok(response);
+    }
+
     private List<ClubMember> findByClubId(long clubId) {
         return clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId)
