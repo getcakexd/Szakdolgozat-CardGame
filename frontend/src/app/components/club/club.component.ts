@@ -58,7 +58,7 @@ export class ClubComponent implements OnInit {
           this.loadPendingInvites(clubId);
           this.loadInviteHistory(clubId);
         },
-          error: (error) => {
+        error: (error) => {
           if (error.status === 404) {
             this.router.navigate(['/clubs']);
           } else {
@@ -142,19 +142,7 @@ export class ClubComponent implements OnInit {
         this.inviteMessage = 'Invite sent';
       },
       error: (error) => {
-        switch (error.status) {
-          case 404:
-            this.inviteMessage = 'User not found';
-            break;
-          case 409:
-            this.inviteMessage = 'User is already a member';
-            break;
-          case 410:
-            this.inviteMessage = 'User is already invited';
-            break;
-          default:
-            this.inviteMessage = 'Error sending invite';
-        }
+        this.inviteMessage = error.message;
       }
     });
   }
@@ -175,6 +163,19 @@ export class ClubComponent implements OnInit {
     this.clubInviteService.cancelInvite(inviteId).subscribe(() => {
       window.location.reload();
     });
+  }
+
+  leaveClub() {
+    if (confirm('Are you sure you want to leave this club?')) {
+      this.clubMemberService.leaveClub(this.club.id, this.userId).subscribe({
+        next: (response) => {
+          this.router.navigate(['/clubs']);
+        },
+        error: (error) => {
+          alert(error.error?.message || 'Failed to leave the club.');
+        }
+      });
+    }
   }
 
   goBack() {

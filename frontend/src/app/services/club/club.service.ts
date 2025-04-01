@@ -74,7 +74,7 @@ export class ClubService {
   }
 
   deleteClub(id: number) {
-    return this.http.delete<any[]>(`${this.apiUrl}/delete`, {
+    return this.http.delete<any>(`${this.apiUrl}/delete`, {
       params: {
         clubId: id
       }

@@ -6,6 +6,7 @@ import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IFriendshipRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -22,29 +23,30 @@ public class FriendshipRestService {
     private IUserRepository userRepository;
 
     @GetMapping("/list")
-    public List<User> getFriends(@RequestParam long userId) {
+    public ResponseEntity<List<User>> getFriends(@RequestParam long userId) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
-            return Collections.emptyList();
+            return ResponseEntity.status(404).body(null);
         }
 
         User user = userOpt.get();
-        return friendshipRepository.findAll().stream()
+        List<User> list = friendshipRepository.findAll().stream()
                 .filter(friendship -> friendship.getUser1().equals(user) || friendship.getUser2().equals(user))
                 .map(friendship -> friendship.getUser1().equals(user) ? friendship.getUser2() : friendship.getUser1())
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
 
     @DeleteMapping("/remove")
-    public Map<String, String> removeFriend(@RequestParam long userId, @RequestParam long friendId) {
+    public ResponseEntity<Map<String, String>> removeFriend(@RequestParam long userId, @RequestParam long friendId) {
         Map<String, String> response = new HashMap<>();
         Optional<User> userOpt = userRepository.findById(userId);
         Optional<User> friendOpt = userRepository.findById(friendId);
 
-        if (userOpt.isEmpty() || friendOpt.isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "One or both users do not exist.");
-            return response;
+        if (userOpt.isEmpty() || friendOpt.isEmpty()){
+            response.put("message", "User or friend not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
         User user = userOpt.get();
@@ -58,13 +60,12 @@ public class FriendshipRestService {
 
         if (friendship.isPresent()) {
             friendshipRepository.delete(friendship.get());
-            response.put("status", "ok");
-            response.put("message", "Friend removed successfully.");
+            response.put("message", "Friendship removed.");
+            return ResponseEntity.ok(response);
         } else {
-            response.put("status", "error");
             response.put("message", "Friendship not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
-        return response;
     }
 }

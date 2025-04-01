@@ -3,12 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {Router} from '@angular/router';
 import {BACKEND_API_URL} from '../../../environments/api-config';
+import {User} from '../../models/user.model';
 
-export interface User {
-  username: string;
-  password: string;
-  email: string;
-}
+
 
 @Injectable({
   providedIn: 'root'
@@ -38,16 +35,14 @@ export class UserService {
   }
 
   login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, user).pipe(
-      tap((response : any) => {
-        if (response.status === 'ok') {
-          localStorage.setItem('id', response.userId);
-          localStorage.setItem('username', user.username);
-          localStorage.setItem('password', user.password);
+    return this.http.post<User>(`${this.apiUrl}/login`, user).pipe(
+      tap({
+        next: (response: User) => {
+          localStorage.setItem('id', response.id.toString());
+          localStorage.setItem('username', response.username);
           localStorage.setItem('email', response.email);
-          this.isLoggedInSubject.next(true);
-        } else{
-          this.isLoggedInSubject.next(false);
+          localStorage.setItem('password', response.password);
+          localStorage.setItem('role', response.role);
         }
       })
     );
@@ -56,8 +51,9 @@ export class UserService {
   logout(): void {
     localStorage.removeItem('id');
     localStorage.removeItem('username');
-    localStorage.removeItem('password');
     localStorage.removeItem('email');
+    localStorage.removeItem('password');
+    localStorage.removeItem('role');
     this.router.navigate(['/home']).then(() => {
       window.location.reload();
     });
@@ -73,7 +69,8 @@ export class UserService {
       params: {
         userId,
         newUsername
-      }
+      },
+      responseType: 'text'
     });
   }
 
@@ -82,7 +79,8 @@ export class UserService {
       params: {
         userId,
         newEmail
-      }
+      },
+      responseType: 'text'
     });
   }
 
@@ -92,15 +90,17 @@ export class UserService {
         userId,
         currentPassword,
         newPassword
-      }
+      },
+      responseType: 'text'
     });
   }
 
   deleteAccount(userId: number, password: string): Observable<any> {
     localStorage.removeItem('id');
     localStorage.removeItem('username');
-    localStorage.removeItem('password');
     localStorage.removeItem('email');
+    localStorage.removeItem('password');
+    localStorage.removeItem('role');
     return this.http.delete(`${this.apiUrl}/delete`, {
       params: {
         userId,
@@ -141,5 +141,11 @@ export class UserService {
 
   setLoggedInPassword(password: string): void {
     localStorage.setItem('password', password);
+  }
+
+  getLoggedInRole(): string {
+    let role = localStorage.getItem('role');
+    if (role !== null) return role;
+    return '';
   }
 }

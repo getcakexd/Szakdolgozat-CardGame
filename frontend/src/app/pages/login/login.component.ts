@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import { UserService, User } from '../../services/user/user.service';
+import {Component} from '@angular/core';
+import { UserService } from '../../services/user/user.service';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {NgIf} from '@angular/common';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -15,34 +16,34 @@ import {NgIf} from '@angular/common';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  user: User = {username: '', password: '', email: '' };
+  user: User = { id: 0, username: '', password: '', email: '', role: '' };
   message: string = '';
 
   constructor(private userService: UserService, private router: Router) {}
 
   login(): void {
     const user: User = {
+      id: 0,
       username: this.user.username,
       password: this.user.password,
       email: this.user.email,
+      role: this.user.role
     };
 
-    this.userService.login(user).subscribe(
-      (response) => {
-        if (response.status === 'ok') {
-          this.router.navigate(['/home']).then( () => {
-            window.location.reload();
-          });
-        } else {
-          this.message = 'Invalid username or password';
-        }
-
+    this.userService.login(user).subscribe({
+      next: () => {
+        this.router.navigate(['/home']).then( () => {
+          window.location.reload();
+        });
+      },
+      error: () => {
+        this.message = "Invalid username or password";
       }
-    );
+    });
   }
 
   private resetForm(): void {
-    this.user = {username: '', email: '', password: ''};
+    this.user = {id:0, username: '', email: '', password: '', role: ''};
   }
 
 }

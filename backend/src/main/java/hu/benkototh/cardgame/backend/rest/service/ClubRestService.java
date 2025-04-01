@@ -138,10 +138,10 @@ public class ClubRestService {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Map<String, String>> deleteClub(@RequestParam long clubId) {
-        Optional<Club> club = clubRepository.findById(clubId);
         Map<String, String> response = new HashMap<>();
+        Optional<Club> club = clubRepository.findById(clubId);
         if (club.isEmpty()) {
-            response.put("error", "Club not found");
+            response.put("message", "Club not found");
             return ResponseEntity.status(404).body(response);
         }
 
@@ -152,8 +152,7 @@ public class ClubRestService {
 
         clubMemberRepository.deleteAll(clubMembers);
         clubRepository.deleteById(clubId);
-
-        response.put("ok", "Club deleted successfull");
+        response.put("message", "Club deleted");
         return ResponseEntity.ok(response);
     }
 

@@ -28,7 +28,7 @@ public class ChatRestService {
     private IUserRepository userRepository;
 
     @GetMapping("/list")
-    public List<Message> getMessages(@RequestParam long userId, @RequestParam long friendId) {
+    public ResponseEntity<List<Message>> getMessages(@RequestParam long userId, @RequestParam long friendId) {
 
         List<Message> messages = findBySenderAndReceiver(userId, friendId);
 
@@ -38,7 +38,7 @@ public class ChatRestService {
                     msg.setStatus("read");
                     messageRepository.save(msg);
                 });
-        return messages;
+        return ResponseEntity.ok(messages);
     }
 
     @PostMapping("/send")
@@ -58,16 +58,16 @@ public class ChatRestService {
 
     @PutMapping("/unsend")
     public ResponseEntity<Map<String, String>> deleteMessage(@RequestParam long messageId) {
+        Map<String, String> response = new HashMap<>();
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found"));
 
         message.setStatus("unsent");
         message.setContent("This message has been unsent");
         messageRepository.save(message);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Message marked as unsent");
+        response.put("message", "Message unsent");
         return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/unread")

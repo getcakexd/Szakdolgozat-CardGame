@@ -55,49 +55,53 @@ export class ProfileComponent {
 
   updateUser(): void {
     if (this.editField === 'username') {
-      this.userService.updateUsername(this.userId, this.newUsername).subscribe(response => {
-        if (response.status === "ok") {
+      this.userService.updateUsername(this.userId, this.newUsername).subscribe({
+        next:(response) => {
           this.userService.setLoggedInUsername(this.newUsername);
           this.cancelEdit();
           this.router.navigate(['/profile']).then();
-        } else {
-          this.message = response.message;
+        },
+        error:(error) => {
+          this.message = error.message;
         }
       });
     } else if (this.editField === 'email') {
-      this.userService.updateEmail(this.userId, this.newEmail).subscribe(response => {
-        if (response.status === "ok") {
+      this.userService.updateEmail(this.userId, this.newEmail).subscribe({
+        next:(response) => {
           this.userService.setLoggedInEmail(this.newEmail);
           this.cancelEdit();
           this.router.navigate(['/profile']).then();
-        } else {
-          this.message = response.message;
+        },
+        error:(error) => {
+          this.message = error.message;
         }
-      });
+    });
     } else if (this.editField === 'password') {
-      this.userService.updatePassword(this.userId, this.userService.getLoggedInPassword(), this.newPassword).subscribe(response => {
-        if (response.status === "ok") {
+      this.userService.updatePassword(this.userId, this.userService.getLoggedInPassword(), this.newPassword).subscribe({
+        next:(response) => {
           this.userService.setLoggedInPassword(this.newPassword);
           this.cancelEdit();
           this.router.navigate(['/profile']).then();
-        } else {
-          this.message = response.message;
+        },
+        error:(error) => {
+          this.message = error.message;
         }
       });
     }
   }
 
   deleteProfile(): void {
-    this.userService.deleteAccount(this.userId, this.password).subscribe(response => {
-      if (response.status === 'ok') {
+    this.userService.deleteAccount(this.userId, this.password).subscribe({
+      next:(response) => {
         alert('Profile deleted successfully!');
         this.router.navigate(['/login']).then(
           () => {
             window.location.reload();
           }
         );
-      } else {
-        this.message = response.message;
+      },
+      error:(error) => {
+        this.message = error.message;
       }
     });
   }

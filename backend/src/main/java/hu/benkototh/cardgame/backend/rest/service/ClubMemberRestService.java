@@ -83,7 +83,7 @@ public class ClubMemberRestService {
 
     @GetMapping("/role")
     public ResponseEntity<Map<String, String>> getClubMemberRole(@RequestParam long clubId, @RequestParam long userId) {
-
+        Map<String, String> response = new HashMap<>();
         String role = clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId && clubMember.getUser().getId() == userId)
                 .map(ClubMember::getRole)
@@ -91,10 +91,8 @@ public class ClubMemberRestService {
                 .orElse(null);
 
         if (role == null) {
-            return ResponseEntity.status(404).body(null);
+            response.put("message", "User is not a member of the club.");
         }
-
-        Map<String, String> response = new HashMap<>();
         response.put("role", role);
         return ResponseEntity.ok(response);
     }
@@ -121,7 +119,7 @@ public class ClubMemberRestService {
 
     @DeleteMapping("/kick")
     public ResponseEntity<Map<String, String>> removeClubMember(@RequestParam long clubId, @RequestParam long userId) {
-
+        Map<String, String> response = new HashMap<>();
 
         ClubMember clubMember = clubMemberRepository.findAll().stream()
                 .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == userId)
@@ -129,8 +127,25 @@ public class ClubMemberRestService {
                 .orElseThrow(() -> new IllegalArgumentException("User is not a member of the club"));
 
         clubMemberRepository.delete(clubMember);
+        response.put("message", "User removed from the club.");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/leave")
+    public ResponseEntity<Map<String, String>> leaveClub(@RequestParam long clubId, @RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        response.put("ok", "Member removed successfully");
+
+        ClubMember clubMember = clubMemberRepository.findAll().stream()
+                .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == userId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User is not a member of the club"));
+
+        if (clubMember.getRole().equals("admin")) {
+            response.put("message", "Admin cannot leave the club.");
+            return ResponseEntity.status(400).body(response);
+        }
+        clubMemberRepository.delete(clubMember);
+        response.put("message", "User left the club.");
         return ResponseEntity.ok(response);
     }
 

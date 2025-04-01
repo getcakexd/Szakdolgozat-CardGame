@@ -3,6 +3,7 @@ package hu.benkototh.cardgame.backend.rest.service;
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,135 +34,135 @@ public class UserRestService {
     @Autowired
     private IClubMessageRepository clubMessageRepository;
 
+    @Autowired
+    private IClubInviteRepository clubInviteRepository;
+
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private ClubInviteRestService clubInviteRestService;
 
     @GetMapping("all")
-    public List<User> all() {
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> all() {
+        return ResponseEntity.ok(userRepository.findAll());
     }
 
     @GetMapping("/get")
-    public User getUser(@RequestParam long userId) {
-        return userRepository.findById(userId).orElse(null);
+    public ResponseEntity<User> getUser(@RequestParam long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        return ResponseEntity.ok(user.get());
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody User user) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<?> login(@RequestBody User user) {
         Optional<User> foundUser = Optional.ofNullable(findByUsername(user.getUsername()));
 
         if (foundUser.isPresent() && passwordEncoder.matches(user.getPassword(), foundUser.get().getPassword())) {
-            User loggedInUser = foundUser.get();
-            response.put("status", "ok");
-            response.put("userId", String.valueOf(loggedInUser.getId()));
-            response.put("email", loggedInUser.getEmail());
+            return ResponseEntity.ok(foundUser.get());
         } else {
-            response.put("status", "error");
-            response.put("message", "Invalid username or password");
+            return ResponseEntity.status(401).body("Invalid username or password");
         }
-        return response;
     }
 
 
     @PostMapping("/create")
-    public Map<String, String> create(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> create(@RequestBody User user) {
         Map<String, String> response = new HashMap<>();
-
         if (userExistsByUsername(user.getUsername())) {
-            response.put("status", "error");
-            response.put("message", "User already in use.");
+            response.put("message", "Username already in use.");
+            return ResponseEntity.status(400).body(response);
         } else if (userExistsByEmail(user.getUsername())) {
-            response.put("status", "error");
             response.put("message", "Email already in use.");
+            return ResponseEntity.status(400).body(response);
         } else {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
             user.setRole("ROLE_USER");
             userRepository.save(user);
-            response.put("status", "ok");
-            response.put("message", "User created successfully.");
+
+            response.put("message", "User created.");
+            return ResponseEntity.ok(response);
+
         }
-        return response;
     }
 
     @PutMapping("/update/username")
-    public Map<String, String> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (userExistsByUsername(newUsername)) {
-                response.put("status", "error");
                 response.put("message", "Username already in use.");
+                return ResponseEntity.status(400).body(response);
             } else {
                 user.setUsername(newUsername);
                 userRepository.save(user);
-                response.put("status", "ok");
                 response.put("message", "Username updated.");
+                return ResponseEntity.ok(response);
             }
         } else {
-            response.put("status", "error");
             response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
-        return response;
     }
 
     @PutMapping("/update/email")
-    public Map<String, String> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (userExistsByEmail(newEmail)) {
-                response.put("status", "error");
                 response.put("message", "Email already in use.");
+                return ResponseEntity.status(400).body(response);
             } else {
                 user.setEmail(newEmail);
                 userRepository.save(user);
-                response.put("status", "ok");
                 response.put("message", "Email updated.");
+                return ResponseEntity.ok(response);
             }
         } else {
-            response.put("status", "error");
             response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
-        return response;
     }
 
     @PutMapping("/update/password")
-    public Map<String, String> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(newPassword, user.getPassword())) {
-                response.put("status", "error");
-                response.put("message", "New password must be different from the current one.");
+                response.put("message", "New password cannot be the same as the old one.");
+                return ResponseEntity.status(400).body(response);
             } else if (passwordEncoder.matches(currentPassword, user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
-                response.put("status", "ok");
                 response.put("message", "Password updated.");
+                return ResponseEntity.ok(response);
             } else {
-                response.put("status", "error");
-                response.put("message", "Current password is incorrect.");
+                response.put("message", "Incorrect password.");
+                return ResponseEntity.status(400).body(response);
             }
         } else {
-            response.put("status", "error");
             response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
-        return response;
     }
 
     @DeleteMapping("/delete")
-    public Map<String, String> deleteUser(@RequestParam long userId, @RequestParam String password) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> deleteUser(@RequestParam long userId, @RequestParam String password) {
         Optional<User> userOptional = userRepository.findById(userId);
-
-
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -171,18 +172,18 @@ public class UserRestService {
                 messageRepository.deleteAll(getMessages(user));
                 clubMemberRepository.delete(getClubMember(user));
                 clubMessageRepository.deleteAll(getClubMessages(user));
+                clubInviteRepository.deleteAll(getInvites(user));
                 userRepository.delete(user);
-                response.put("status", "ok");
-                response.put("message", "Account deleted.");
+                response.put("message", "User deleted.");
+                return ResponseEntity.ok(response);
             } else {
-                response.put("status", "error");
                 response.put("message", "Incorrect password.");
+                return ResponseEntity.status(400).body(response);
             }
         } else {
-            response.put("status", "error");
             response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
-        return response;
     }
 
     private boolean authenticateUser(User user) {
@@ -270,5 +271,11 @@ public class UserRestService {
         } else {
             return new ClubMember();
         }
+    }
+
+    private List<ClubInvite> getInvites(User user) {
+        return clubInviteRepository.findAll().stream()
+                .filter(clubInvite -> clubInvite.getUser().getId() == user.getId())
+                .toList();
     }
 }

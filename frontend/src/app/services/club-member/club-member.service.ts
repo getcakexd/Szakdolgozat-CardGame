@@ -46,6 +46,15 @@ export class ClubMemberService {
     });
   }
 
+  leaveClub(clubId: number, userId: number) {
+    return this.http.delete<any>(`${this.apiUrl}/leave`, {
+      params: {
+        clubId: clubId,
+        userId: userId
+      }
+    });
+  }
+
   updateMemberRole(clubId: number, userId: number, newRole: string) {
     return this.http.put(`${this.apiUrl}/modify`, null, {
       params: {
