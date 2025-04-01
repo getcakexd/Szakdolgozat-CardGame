@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgClass, NgIf} from '@angular/common';
 import {User} from '../../models/user.model';
+import {MatError, MatFormField} from '@angular/material/form-field';
+import {MatCard} from '@angular/material/card';
+import {MatButton} from '@angular/material/button';
+import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-signup',
@@ -12,14 +16,23 @@ import {User} from '../../models/user.model';
     FormsModule,
     NgClass,
     NgIf,
+    MatError,
+    MatFormField,
+    MatCard,
+    ReactiveFormsModule,
+    MatButton,
+    MatInput,
   ],
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-  newUser: User = { id: 0, username: '', password: '', email: '', role: '' };
-  message: string = '';
-  isSuccess: boolean = false;
-  isLoading: boolean = false;
+  newUsernameFormControl = new FormControl('', [Validators.required]);
+  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+  newPasswordFormControl = new FormControl('', [Validators.required, Validators.minLength(6)]);
+
+  isLoading = false;
+  message: string | null = null;
+  isSuccess = false;
 
   constructor(private userService: UserService) {}
 
@@ -29,32 +42,40 @@ export class SignupComponent {
     }
 
     this.isLoading = true;
-    this.userService.createUser(this.newUser).subscribe(
-      (response) => {
+    const newUser: User = {
+      id: 0,
+      username: this.newUsernameFormControl.value!,
+      email: this.emailFormControl.value!,
+      password: this.newPasswordFormControl.value!,
+      role: ''
+    };
+
+    this.userService.createUser(newUser).subscribe({
+      next: (response) => {
         this.message = response.message;
         this.isSuccess = true;
         this.isLoading = false;
         this.resetForm();
       },
-      (error) => {
+      error: (error) => {
         this.message = error?.error?.message || 'Error creating user. Please try again.';
         this.isSuccess = false;
         this.isLoading = false;
         console.error(error);
       }
-    );
+    });
   }
 
   private validateForm(): boolean {
-    if (!this.newUser.username.trim()) {
+    if (!this.newUsernameFormControl.value?.trim()) {
       this.showError('Username is required.');
       return false;
     }
-    if (!this.newUser.email.trim() || !this.isValidEmail(this.newUser.email)) {
+    if (!this.emailFormControl.value?.trim() || !this.isValidEmail(this.emailFormControl.value)) {
       this.showError('A valid email is required.');
       return false;
     }
-    if (!this.newUser.password.trim() || this.newUser.password.length < 6) {
+    if (!this.newPasswordFormControl.value?.trim() || this.newPasswordFormControl.value.length < 6) {
       this.showError('Password must be at least 6 characters long.');
       return false;
     }
@@ -67,7 +88,9 @@ export class SignupComponent {
   }
 
   private resetForm(): void {
-    this.newUser = { id: 0, username: '', password: '', email: '', role: '' };
+    this.newUsernameFormControl.reset();
+    this.emailFormControl.reset();
+    this.newPasswordFormControl.reset();
   }
 
   private isValidEmail(email: string): boolean {

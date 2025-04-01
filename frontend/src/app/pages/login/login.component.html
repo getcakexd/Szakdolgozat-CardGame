@@ -1,12 +1,24 @@
 <div class="login-container">
   <h2>Log In</h2>
-  <form (ngSubmit)="login()">
-    <input type="text" placeholder="Username" [(ngModel)]="user.username" name="username" required>
-    <input type="password" placeholder="Password" [(ngModel)]="user.password" name="password" required>
-    <button type="submit">Login</button>
-  </form>
-  <p *ngIf="message">
-    {{ message }}
-  </p>
-</div>
+  <form class="login-form" (ngSubmit)="login()">
+    <mat-form-field class="login-full-width">
+      <input matInput placeholder="Username" [formControl]="usernameFormControl">
+      <mat-error *ngIf="usernameFormControl.hasError('required')">
+        Username is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
 
+    <mat-form-field class="login-full-width">
+      <input matInput placeholder="Password" type="password" [formControl]="passwordFormControl">
+      <mat-error *ngIf="passwordFormControl.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Login</button>
+  </form>
+
+  <mat-card *ngIf="message" class="message-card">
+    <p>{{ message }}</p>
+  </mat-card>
+</div>

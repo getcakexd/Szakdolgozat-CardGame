@@ -1,19 +1,37 @@
-<div class="register-container">
-  <form (ngSubmit)="createUser()">
-    <h1>Sign Up</h1>
-    <label>Username:</label>
-    <input type="text" [(ngModel)]="newUser.username" name="username" required>
+<div class="signup-container">
+  <h1>Sign Up</h1>
+  <form class="signup-form" (ngSubmit)="createUser()">
+    <mat-form-field class="signup-full-width">
+      <input matInput placeholder="Username" [formControl]="newUsernameFormControl">
+      <mat-error *ngIf="newUsernameFormControl.hasError('required')">
+        Username is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
 
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="newUser.email" name="email" required>
+    <mat-form-field class="signup-full-width">
+      <input matInput placeholder="Email" type="email" [formControl]="emailFormControl">
+      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+        Please enter a valid email address
+      </mat-error>
+      <mat-error *ngIf="emailFormControl.hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
 
-    <label>Password:</label>
-    <input type="password" [(ngModel)]="newUser.password" name="password" required minlength="6">
+    <mat-form-field class="signup-full-width">
+      <input matInput placeholder="Password" type="password" [formControl]="newPasswordFormControl">
+      <mat-error *ngIf="newPasswordFormControl.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="newPasswordFormControl.hasError('minlength')">
+        Password must be at least 6 characters long
+      </mat-error>
+    </mat-form-field>
 
-    <button type="submit" [disabled]="isLoading">Create User</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">Create User</button>
   </form>
 
-  <p *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}">
-    {{ message }}
-  </p>
+  <mat-card *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="message-card">
+    <p>{{ message }}</p>
+  </mat-card>
 </div>
