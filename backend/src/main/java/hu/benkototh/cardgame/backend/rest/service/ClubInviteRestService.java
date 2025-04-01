@@ -65,7 +65,7 @@ public class ClubInviteRestService {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ClubInvite> addClubInvite(@RequestParam long clubId, @RequestParam String username) {
+    public ResponseEntity<?> addClubInvite(@RequestParam long clubId, @RequestParam String username) {
         Optional<Club> club = clubRepository.findById(clubId);
         User user = findByUsername(username);
 
@@ -79,15 +79,15 @@ public class ClubInviteRestService {
 
 
         if (existingMember.isPresent()) {
-            return ResponseEntity.status(409).body(null);
+            return ResponseEntity.status(400).body("User is already a member of this club.");
         }
 
         if (existingInvite.isPresent()) {
-            return ResponseEntity.status(410).body(null);
+            return ResponseEntity.status(400).body("User already has a pending invite to this club.");
         }
 
         if (club.isEmpty()) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(400).body("Club not found.");
         }
 
         ClubInvite clubInvite = new ClubInvite(club.get(), user);

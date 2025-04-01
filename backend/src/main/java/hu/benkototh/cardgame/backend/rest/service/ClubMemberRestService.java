@@ -82,7 +82,7 @@ public class ClubMemberRestService {
     }
 
     @GetMapping("/role")
-    public ResponseEntity<Map<String, String>> getClubMemberRole(@RequestParam long clubId, @RequestParam long userId) {
+    public ResponseEntity<String> getClubMemberRole(@RequestParam long clubId, @RequestParam long userId) {
 
         String role = clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId && clubMember.getUser().getId() == userId)
@@ -94,9 +94,7 @@ public class ClubMemberRestService {
             return ResponseEntity.status(404).body(null);
         }
 
-        Map<String, String> response = new HashMap<>();
-        response.put("role", role);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(role);
     }
 
     @PutMapping("/modify")
@@ -120,7 +118,7 @@ public class ClubMemberRestService {
     }
 
     @DeleteMapping("/kick")
-    public ResponseEntity<Map<String, String>> removeClubMember(@RequestParam long clubId, @RequestParam long userId) {
+    public ResponseEntity<String> removeClubMember(@RequestParam long clubId, @RequestParam long userId) {
 
 
         ClubMember clubMember = clubMemberRepository.findAll().stream()
@@ -129,9 +127,7 @@ public class ClubMemberRestService {
                 .orElseThrow(() -> new IllegalArgumentException("User is not a member of the club"));
 
         clubMemberRepository.delete(clubMember);
-        Map<String, String> response = new HashMap<>();
-        response.put("ok", "Member removed successfully");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("User removed from the club.");
     }
 
     private List<ClubMember> findByClubId(long clubId) {
