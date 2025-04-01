@@ -26,35 +26,41 @@ public class FriendRequestRestService {
     private IUserRepository userRepository;
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendFriendRequest(@RequestParam long senderId, @RequestParam String receiverUsername) {
+    public ResponseEntity<Map<String, String>> sendFriendRequest(@RequestParam long senderId, @RequestParam String receiverUsername) {
         Map<String, String> response = new HashMap<>();
         Optional<User> senderOpt = userRepository.findById(senderId);
         Optional<User> receiverOpt = Optional.ofNullable(findByUsername(receiverUsername));
 
 
         if(receiverOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("Receiver not found.");
+            response.put("message", "Receiver not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
         if (senderOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("Sender not found.");
+            response.put("message", "Sender not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
         if (senderId == receiverOpt.get().getId()) {
-            return ResponseEntity.status(400).body("You cannot send friend request to yourself.");
+            response.put("message", "You cannot send friend request to yourself.");
+            return ResponseEntity.status(400).body(response);
         }
 
         if (requestExists(senderOpt.get(), receiverOpt.get())) {
-            return ResponseEntity.status(400).body("Friend request already sent.");
+            response.put("message", "Friend request already sent.");
+            return ResponseEntity.status(400).body(response);
         }
 
         if (friendshipExists(senderOpt.get(), receiverOpt.get())) {
-            return ResponseEntity.status(400).body("You are already friends.");
+            response.put("message", "You are already friends.");
+            return ResponseEntity.status(400).body(response);
         }
 
         FriendRequest friendRequest = new FriendRequest(senderOpt.get(), receiverOpt.get());
         friendRequestRepository.save(friendRequest);
-        return ResponseEntity.ok("Friend request sent.");
+        response.put("message", "Friend request sent.");
+        return ResponseEntity.ok(response);
     }
 
 
@@ -69,11 +75,13 @@ public class FriendRequestRestService {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<String> acceptFriendRequest(@RequestParam long requestId) {
+    public ResponseEntity<Map<String, String>> acceptFriendRequest(@RequestParam long requestId) {
         Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
+        Map<String, String> response = new HashMap<>();
 
         if (requestOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("Friend request not found.");
+            response.put("message", "Friend request not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
         FriendRequest request = requestOpt.get();
@@ -81,30 +89,41 @@ public class FriendRequestRestService {
         Friendship friendship = new Friendship(request.getSender(), request.getReceiver());
         friendRequestRepository.save(request);
         friendshipRepository.save(friendship);
-        return ResponseEntity.ok("Friend request accepted.");
+        response.put("message", "Friend request accepted.");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/decline")
-    public ResponseEntity<String> declineFriendRequest(@RequestParam long requestId) {
+    public ResponseEntity<Map<String, String>> declineFriendRequest(@RequestParam long requestId) {
+        Map<String, String> response = new HashMap<>();
         Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
 
-        if (requestOpt.isEmpty()) return ResponseEntity.status(404).body("Friend request not found.");
+        if (requestOpt.isEmpty()){
+            response.put("message", "Friend request not found.");
+            return ResponseEntity.status(404).body(response);
+        }
 
         FriendRequest request = requestOpt.get();
         request.setStatus("declined");
         friendRequestRepository.save(request);
-        return ResponseEntity.ok("Friend request declined.");
+        response.put("message", "Friend request declined.");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/cancel")
-    public ResponseEntity<String> cancelFriendRequest(@RequestParam long requestId) {
+    public ResponseEntity<Map<String, String>> cancelFriendRequest(@RequestParam long requestId) {
+        Map<String, String> response = new HashMap<>();
         Optional<FriendRequest> requestOpt = friendRequestRepository.findById(requestId);
 
-        if (requestOpt.isEmpty()) return ResponseEntity.status(404).body("Friend request not found.");
+        if (requestOpt.isEmpty()) {
+            response.put("message", "Friend request not found.");
+            return ResponseEntity.status(404).body(response);
+        }
 
         FriendRequest request = requestOpt.get();
         friendRequestRepository.delete(request);
-        return ResponseEntity.ok("Friend request cancelled.");
+        response.put("message", "Friend request cancelled.");
+        return ResponseEntity.ok(response);
     }
 
     private boolean requestExists(User user1, User user2) {

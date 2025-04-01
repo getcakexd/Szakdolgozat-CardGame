@@ -65,83 +65,99 @@ public class UserRestService {
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody User user) {
-
+    public ResponseEntity<Map<String, String>> create(@RequestBody User user) {
+        Map<String, String> response = new HashMap<>();
         if (userExistsByUsername(user.getUsername())) {
-            return ResponseEntity.status(400).body("Username already in use.");
+            response.put("message", "Username already in use.");
+            return ResponseEntity.status(400).body(response);
         } else if (userExistsByEmail(user.getUsername())) {
-            return ResponseEntity.status(400).body("Email already in use.");
+            response.put("message", "Email already in use.");
+            return ResponseEntity.status(400).body(response);
         } else {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
             user.setRole("ROLE_USER");
             userRepository.save(user);
-            return ResponseEntity.ok("User created.");
+
+            response.put("message", "User not found.");
+            return ResponseEntity.ok(response);
 
         }
     }
 
     @PutMapping("/update/username")
-    public ResponseEntity<String> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
+    public ResponseEntity<Map<String, String>> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (userExistsByUsername(newUsername)) {
-                return ResponseEntity.status(400).body("Username already in use.");
+                response.put("message", "Username already in use.");
+                return ResponseEntity.status(400).body(response);
             } else {
                 user.setUsername(newUsername);
                 userRepository.save(user);
-                return ResponseEntity.ok("Username updated.");
+                response.put("message", "Username updated.");
+                return ResponseEntity.ok(response);
             }
         } else {
-            return ResponseEntity.status(404).body("User not found.");
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
     @PutMapping("/update/email")
-    public ResponseEntity<String> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
+    public ResponseEntity<Map<String, String>> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (userExistsByEmail(newEmail)) {
-                return ResponseEntity.status(400).body("Email already in use.");
+                response.put("message", "Email already in use.");
+                return ResponseEntity.status(400).body(response);
             } else {
                 user.setEmail(newEmail);
                 userRepository.save(user);
-                return ResponseEntity.ok("Email updated.");
+                response.put("message", "Email updated.");
+                return ResponseEntity.ok(response);
             }
         } else {
-            return ResponseEntity.status(404).body("User not found.");
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<String> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
+    public ResponseEntity<Map<String, String>> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
         Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(newPassword, user.getPassword())) {
-                return ResponseEntity.status(400).body("New password cannot be the same as the old one.");
+                response.put("message", "New password cannot be the same as the old one.");
+                return ResponseEntity.status(400).body(response);
             } else if (passwordEncoder.matches(currentPassword, user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
-                return ResponseEntity.ok("Password updated.");
+                response.put("message", "Password updated.");
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(400).body("Incorrect password.");
+                response.put("message", "Incorrect password.");
+                return ResponseEntity.status(400).body(response);
             }
         } else {
-            return ResponseEntity.status(404).body("User not found.");
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(@RequestParam long userId, @RequestParam String password) {
+    public ResponseEntity<Map<String, String>> deleteUser(@RequestParam long userId, @RequestParam String password) {
         Optional<User> userOptional = userRepository.findById(userId);
-
-
+        Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -152,12 +168,15 @@ public class UserRestService {
                 clubMemberRepository.delete(getClubMember(user));
                 clubMessageRepository.deleteAll(getClubMessages(user));
                 userRepository.delete(user);
-                return ResponseEntity.ok("User deleted.");
+                response.put("message", "User deleted.");
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(400).body("Incorrect password.");
+                response.put("message", "Incorrect password.");
+                return ResponseEntity.status(400).body(response);
             }
         } else {
-            return ResponseEntity.status(404).body("User not found.");
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
         }
     }
 

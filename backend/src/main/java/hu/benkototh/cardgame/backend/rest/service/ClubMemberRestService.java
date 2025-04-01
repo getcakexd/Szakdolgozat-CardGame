@@ -82,8 +82,8 @@ public class ClubMemberRestService {
     }
 
     @GetMapping("/role")
-    public ResponseEntity<String> getClubMemberRole(@RequestParam long clubId, @RequestParam long userId) {
-
+    public ResponseEntity<Map<String, String>> getClubMemberRole(@RequestParam long clubId, @RequestParam long userId) {
+        Map<String, String> response = new HashMap<>();
         String role = clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId && clubMember.getUser().getId() == userId)
                 .map(ClubMember::getRole)
@@ -91,10 +91,10 @@ public class ClubMemberRestService {
                 .orElse(null);
 
         if (role == null) {
-            return ResponseEntity.status(404).body(null);
+            response.put("message", "User is not a member of the club.");
         }
-
-        return ResponseEntity.ok(role);
+        response.put("role", role);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/modify")
@@ -118,8 +118,8 @@ public class ClubMemberRestService {
     }
 
     @DeleteMapping("/kick")
-    public ResponseEntity<String> removeClubMember(@RequestParam long clubId, @RequestParam long userId) {
-
+    public ResponseEntity<Map<String, String>> removeClubMember(@RequestParam long clubId, @RequestParam long userId) {
+        Map<String, String> response = new HashMap<>();
 
         ClubMember clubMember = clubMemberRepository.findAll().stream()
                 .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == userId)
@@ -127,7 +127,8 @@ public class ClubMemberRestService {
                 .orElseThrow(() -> new IllegalArgumentException("User is not a member of the club"));
 
         clubMemberRepository.delete(clubMember);
-        return ResponseEntity.ok("User removed from the club.");
+        response.put("message", "User removed from the club.");
+        return ResponseEntity.ok(response);
     }
 
     private List<ClubMember> findByClubId(long clubId) {

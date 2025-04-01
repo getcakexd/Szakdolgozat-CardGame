@@ -39,11 +39,15 @@ public class FriendshipRestService {
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<String> removeFriend(@RequestParam long userId, @RequestParam long friendId) {
+    public ResponseEntity<Map<String, String>> removeFriend(@RequestParam long userId, @RequestParam long friendId) {
+        Map<String, String> response = new HashMap<>();
         Optional<User> userOpt = userRepository.findById(userId);
         Optional<User> friendOpt = userRepository.findById(friendId);
 
-        if (userOpt.isEmpty() || friendOpt.isEmpty()) return ResponseEntity.status(404).body("User not found.");
+        if (userOpt.isEmpty() || friendOpt.isEmpty()){
+            response.put("message", "User or friend not found.");
+            return ResponseEntity.status(404).body(response);
+        }
 
         User user = userOpt.get();
         User friend = friendOpt.get();
@@ -56,9 +60,11 @@ public class FriendshipRestService {
 
         if (friendship.isPresent()) {
             friendshipRepository.delete(friendship.get());
-            return ResponseEntity.ok("Friend removed.");
+            response.put("message", "Friendship removed.");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(404).body("Friendship not found.");
+            response.put("message", "Friendship not found.");
+            return ResponseEntity.status(404).body(response);
         }
 
     }
