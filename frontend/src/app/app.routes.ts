@@ -7,6 +7,7 @@ import {ProfileComponent} from './pages/profile/profile.component';
 import {SocialComponent} from './pages/social/social.component';
 import {ClubPageComponent} from './pages/club-page/club-page.component';
 import {ClubComponent} from './components/club/club.component';
+import {LobbyPageComponent} from './pages/lobby-page/lobby-page.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,7 +15,8 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'social', component: SocialComponent },
-  {path: 'clubs', component: ClubPageComponent},
+  { path: 'clubs', component: ClubPageComponent},
+  {path: 'lobby', component: LobbyPageComponent },
   { path: 'club/:id', component: ClubComponent },
   { path: '**', redirectTo: '' }
 ];
