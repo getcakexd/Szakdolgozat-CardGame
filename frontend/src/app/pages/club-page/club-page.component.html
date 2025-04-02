@@ -1,35 +1,72 @@
-<div class="club-page">
+<div class="club-page-container">
+  <h1 class="mat-headline-4">Clubs</h1>
 
-  <div>
-    <h2>My Clubs</h2>
+  <mat-tab-group animationDuration="300ms">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">group</mat-icon>
+        My Clubs
+      </ng-template>
 
-    <app-club-list [isUserClubs]="true" (clubClick)="goToClub($event)"></app-club-list>
-  </div>
+      <div class="tab-content">
+        <app-club-list [isUserClubs]="true" (clubClick)="goToClub($event)"></app-club-list>
+      </div>
+    </mat-tab>
 
-  <div>
-    <button (click)="toggleJoinClub()">
-      {{ showJoinClub ? 'Cancel' : 'Join a Club' }}
-    </button>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">group_add</mat-icon>
+        Join Clubs
+      </ng-template>
 
-    <app-club-list *ngIf="showJoinClub" [isUserClubs]="false"></app-club-list>
-  </div>
+      <div class="tab-content">
+        <app-club-list [isUserClubs]="false"></app-club-list>
+      </div>
+    </mat-tab>
 
-  <div>
-    <h2>Invites</h2>
-    <div *ngFor="let invite of invites">
-      <span>Invite to: {{ invite.club.name }}</span>
-      <button (click)="acceptInvite(invite.id)">Accept</button>
-      <button (click)="declineInvite(invite.id)">Decline</button>
-    </div>
-  </div>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <div class="badge-container">
+          <mat-icon class="tab-icon">mail</mat-icon>
+          <span>Invites</span>
+          <span *ngIf="invites.length > 0" class="invite-badge">{{invites.length}}</span>
+        </div>
+      </ng-template>
 
-  <div>
-    <button (click)="toggleCreateClub()">
-      {{ showCreateClub ? 'Cancel' : 'Create Club' }}
-    </button>
+      <div class="tab-content">
+        <mat-card *ngIf="invites.length === 0 && !isLoading" class="empty-card">
+          <mat-card-content>
+            <p>You don't have any pending invites</p>
+          </mat-card-content>
+        </mat-card>
 
-    <app-club-create *ngIf="showCreateClub"></app-club-create>
-  </div>
+        <div *ngIf="isLoading" class="loading-message">
+          Loading invites...
+        </div>
 
+        <mat-card *ngFor="let invite of invites" class="invite-card">
+          <mat-card-header>
+            <mat-card-title>{{invite.club.name}}</mat-card-title>
+            <mat-card-subtitle *ngIf="invite.club.description">{{invite.club.description}}</mat-card-subtitle>
+          </mat-card-header>
 
+          <mat-card-actions align="end">
+            <button mat-button color="warn" (click)="declineInvite(invite.id)">Decline</button>
+            <button mat-raised-button color="primary" (click)="acceptInvite(invite.id)">Accept</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">add_circle</mat-icon>
+        Create Club
+      </ng-template>
+
+      <div class="tab-content">
+        <app-club-create></app-club-create>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

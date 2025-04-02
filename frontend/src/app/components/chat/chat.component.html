@@ -1,27 +1,68 @@
-<div class="chat-box">
-  <h3>Chat with {{ receiverName }}</h3>
-  <button class="refresh-button" (click)="loadMessages()">Refresh</button>
-  <div class="messages" #messageContainer>
-    <div *ngFor="let msg of messages" [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId}">
+<mat-card class="chat-card">
+  <mat-card-header>
+    <mat-card-title>
+      <div class="chat-header">
+        <h3>Chat with {{ receiverName }}</h3>
+        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="Refresh messages">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </mat-card-title>
+  </mat-card-header>
 
-      <div class="message-content">
-        {{ msg.unsent ? '(Message Unsent)' : msg.content }}
+  <mat-card-content>
+    <div class="messages-container" #messageContainer>
+      <div *ngIf="isLoading" class="loading-spinner">
+        <mat-spinner diameter="40"></mat-spinner>
       </div>
 
-      <div class="message-timestamp" [ngClass]="{'left-timestamp': msg.sender.id !== senderId, 'right-timestamp': msg.sender.id === senderId}">
-        {{ msg.timestamp | date:'short' }}
+      <div *ngIf="messages.length === 0 && !isLoading" class="no-messages">
+        <p>No messages yet. Start the conversation!</p>
       </div>
 
-      <button *ngIf="msg.sender.id === senderId && msg.status !== 'unsent'"
-              (click)="unsendMessage(msg.id)">
-        Unsend
+      <div *ngFor="let msg of messages"
+           class="message-wrapper"
+           [ngClass]="{'my-message-wrapper': msg.sender.id === senderId, 'other-message-wrapper': msg.sender.id !== senderId}">
+
+        <div class="message-bubble"
+             [ngClass]="{'my-message': msg.sender.id === senderId, 'other-message': msg.sender.id !== senderId,
+                        'unsent-message': msg.unsent}">
+
+          <div class="message-content">
+            <ng-container *ngIf="msg.unsent">
+              <em>(Message unsent)</em>
+            </ng-container>
+            <ng-container *ngIf="!msg.unsent">
+              {{ msg.content }}
+            </ng-container>
+          </div>
+
+          <div class="message-footer">
+            <span class="message-timestamp">{{ msg.timestamp | date:'short' }}</span>
+
+            <div class="message-actions" *ngIf="!msg.unsent && msg.sender.id === senderId">
+              <button mat-icon-button size="small" (click)="unsendMessage(msg.id)" matTooltip="Unsend message">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="chat-input-container">
+      <mat-form-field appearance="outline" class="chat-input">
+        <mat-label>Type a message...</mat-label>
+        <input matInput [(ngModel)]="newMessage"
+               placeholder="Type a message..."
+               (keypress)="onKeyPress($event)">
+      </mat-form-field>
+
+      <button mat-mini-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="Send message">
+        <mat-icon>send</mat-icon>
       </button>
     </div>
-  </div>
-
-  <div class="chat-input">
-    <input [(ngModel)]="newMessage" placeholder="Type a message..." />
-    <br>
-    <button class="chat-send-button" (click)="sendMessage()">Send</button>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

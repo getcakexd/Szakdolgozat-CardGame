@@ -1,25 +1,41 @@
-<div class="club-list">
-  <div *ngIf="clubs.length === 0 && isUserClubs" class="no-clubs">
-    <p>You are not part of any club at the moment.</p>
-    <p>Join one below!</p>
-  </div>
+<div class="club-list-container">
+  <mat-card *ngIf="clubs.length === 0 && isUserClubs" class="empty-state-card">
+    <mat-card-content>
+      <div class="empty-state-content">
+        <h2 class="mat-h2">You are not part of any club at the moment.</h2>
+        <p class="mat-body-1">Join one below!</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-  <div *ngIf="clubs.length === 0 && !isUserClubs" class="no-clubs">
-    <p>No clubs available at the moment.</p>
-    <p>Check back later!</p>
-  </div>
+  <mat-card *ngIf="clubs.length === 0 && !isUserClubs" class="empty-state-card">
+    <mat-card-content>
+      <div class="empty-state-content">
+        <h2 class="mat-h2">No clubs available at the moment.</h2>
+        <p class="mat-bod2y-1">Check back later!</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-  <div *ngFor="let club of clubs" class="club-item">
-    <div class="club-name" (click)="onClubClick(club.id)">
-      <h3>{{ club.name }}</h3>
+  <mat-list *ngIf="clubs.length > 0">
+    <div *ngFor="let club of clubs; last as isLast">
+      <mat-card class="club-card">
+        <mat-card-header (click)="onClubClick(club.id)" class="clickable-header">
+          <mat-card-title>{{ club.name }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content *ngIf="!isUserClubs">
+          <p class="mat-body-1">{{ club.description }}</p>
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="!isUserClubs" align="end">
+          <button mat-raised-button color="primary" (click)="JoinClub(club.id)">
+            Join Club
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-divider *ngIf="!isLast"></mat-divider>
     </div>
-
-    <div *ngIf="!isUserClubs" class="club-description">
-      <p>{{ club.description }}</p>
-    </div>
-
-    <div *ngIf="!isUserClubs">
-      <button (click)="JoinClub(club.id)">Join Club</button>
-    </div>
-  </div>
+  </mat-list>
 </div>

@@ -1,19 +1,69 @@
-<div class="register-container">
-  <form (ngSubmit)="createUser()">
-    <h1>Sign Up</h1>
-    <label>Username:</label>
-    <input type="text" [(ngModel)]="newUser.username" name="username" required>
+<div class="signup-container">
+  <mat-card class="signup-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>Create an Account</h2>
+      </mat-card-title>
+    </mat-card-header>
 
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="newUser.email" name="email" required>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
-    <label>Password:</label>
-    <input type="password" [(ngModel)]="newUser.password" name="password" required minlength="6">
+    <mat-card-content>
+      <form [formGroup]="signupForm" (ngSubmit)="createUser()" class="signup-form">
+        <mat-form-field appearance="outline" class="signup-full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="Choose a username">
+          <mat-icon matPrefix>person</mat-icon>
+          <mat-error *ngIf="signupForm.get('username')?.invalid">
+            {{ getErrorMessage('username') }}
+          </mat-error>
+        </mat-form-field>
 
-    <button type="submit" [disabled]="isLoading">Create User</button>
-  </form>
+        <mat-form-field appearance="outline" class="signup-full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Enter your email" type="email">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="signupForm.get('email')?.invalid">
+            {{ getErrorMessage('email') }}
+          </mat-error>
+        </mat-form-field>
 
-  <p *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}">
-    {{ message }}
-  </p>
+        <mat-form-field appearance="outline" class="signup-full-width">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'"
+                 formControlName="password"
+                 placeholder="Create a password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button"
+                  (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-hint>Password must be at least 6 characters long</mat-hint>
+          <mat-error *ngIf="signupForm.get('password')?.invalid">
+            {{ getErrorMessage('password') }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="signup-actions">
+          <button mat-raised-button color="primary"
+                  type="submit"
+                  [disabled]="isLoading || signupForm.invalid">
+            Create Account
+          </button>
+
+          <a mat-button routerLink="/login" color="accent">
+            Already have an account? Log in
+          </a>
+        </div>
+      </form>
+
+      <div *ngIf="message"
+           class="message-card"
+           [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}">
+        {{ message }}
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

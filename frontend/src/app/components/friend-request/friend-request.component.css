@@ -1,0 +1,116 @@
+.friend-requests-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+}
+
+.simple-form {
+  padding: 10px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.basic-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  margin-top: 15px;
+}
+
+.basic-button {
+  padding: 10px 15px;
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.basic-button:hover {
+  background-color: #5e35b1;
+}
+
+.error-text {
+  color: red;
+  margin-top: 10px;
+}
+
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.request-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  background-color: #f0f0f0;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.request-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.accept-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.decline-button, .cancel-button {
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.loading-text {
+  text-align: center;
+  padding: 20px;
+  color: #757575;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 30px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  color: #757575;
+}

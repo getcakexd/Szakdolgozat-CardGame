@@ -1,9 +1,16 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
-import {NgIf} from '@angular/common';
-import {User} from '../../models/user.model';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { User } from '../../models/user.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -11,39 +18,73 @@ import {User} from '../../models/user.model';
   standalone: true,
   imports: [
     FormsModule,
-    NgIf
+    NgIf,
+    MatFormFieldModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatProgressBarModule
   ],
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  user: User = { id: 0, username: '', password: '', email: '', role: '' };
-  message: string = '';
+  loginForm = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required])
+  });
 
-  constructor(private userService: UserService, private router: Router) {}
+  message: string | null = null;
+  isLoading = false;
+  hidePassword = true;
+
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
 
   login(): void {
-    const user: User = {
-      id: 0,
-      username: this.user.username,
-      password: this.user.password,
-      email: this.user.email,
-      role: this.user.role
-    };
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      const user: User = {
+        id: 0,
+        username: this.loginForm.get('username')?.value!,
+        password: this.loginForm.get('password')?.value!,
+        email: '',
+        role: ''
+      };
 
-    this.userService.login(user).subscribe({
-      next: () => {
-        this.router.navigate(['/home']).then( () => {
-          window.location.reload();
-        });
-      },
-      error: () => {
-        this.message = "Invalid username or password";
-      }
-    });
+      this.userService.login(user).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/home']).then(() => {
+            window.location.reload();
+          });
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.message = error?.error?.message || "Invalid username or password";
+          if (this.message != null) {
+            this.snackBar.open(this.message, 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        }
+      });
+    } else {
+      this.message = 'Please fill out all fields correctly.';
+      this.loginForm.markAllAsTouched();
+    }
   }
 
-  private resetForm(): void {
-    this.user = {id:0, username: '', email: '', password: '', role: ''};
+  getErrorMessage(field: string): string {
+    const control = this.loginForm.get(field);
+    if (control?.hasError('required')) {
+      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+    }
+    return '';
   }
-
 }

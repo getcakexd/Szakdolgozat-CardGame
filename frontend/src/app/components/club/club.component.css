@@ -1,0 +1,248 @@
+.club-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.club-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.club-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.club-title h1 {
+  margin: 0;
+}
+
+.club-title-edit {
+  flex: 1;
+}
+
+.club-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.club-description {
+  display: flex;
+  align-items: flex-start;
+  margin: 16px 0;
+}
+
+.club-description p {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.club-description-edit {
+  margin: 16px 0;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.club-tabs {
+  margin-top: 24px;
+}
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.member-item, .invite-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.member-name {
+  font-weight: 500;
+}
+
+.member-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.invite-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.invite-input {
+  flex: 1;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.invite-badge {
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.chat-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+::ng-deep mat-list-item {
+  height: auto !important;
+  min-height: 48px;
+}
+
+::ng-deep .mat-mdc-list-item-line {
+  margin: 16px 0 !important;
+}
+
+::ng-deep .mat-mdc-chip-listbox {
+  margin: 0 !important;
+}
+
+::ng-deep .mat-mdc-chip {
+  margin: 0 4px !important;
+}
+
+mat-card {
+  margin-bottom: 16px;
+}
+
+mat-card-content {
+  padding: 16px 0;
+}
+
+.simple-form {
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.basic-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.basic-input:focus {
+  outline: none;
+  border-color: #673ab7;
+  box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
+}
+
+.form-actions {
+  margin-top: 16px;
+}
+
+.basic-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.basic-button:hover {
+  background-color: #5e35b1;
+}
+
+.message-text {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.error-text {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+@media (max-width: 768px) {
+  .club-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .club-title {
+    margin-bottom: 16px;
+  }
+
+  .club-actions {
+    align-self: flex-end;
+  }
+
+  .admin-actions {
+    flex-direction: column;
+  }
+
+  .invite-form {
+    flex-direction: column;
+  }
+
+  .invite-input {
+    width: 100%;
+  }
+}

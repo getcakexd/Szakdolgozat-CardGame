@@ -1,75 +1,210 @@
-<div class="club-details">
+<div class="club-container" *ngIf="!isLoading">
+  <div class="club-header">
+    <button mat-icon-button (click)="goBack()" aria-label="Back to clubs">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-  <button (click)="goBack()">Back</button>
-  <button *ngIf="userRole !== 'admin'" (click)="leaveClub()" class="btn btn-danger">
-    Leave Club
-  </button>
+    <div class="club-title" *ngIf="!editingName">
+      <h1 class="mat-headline-4">{{ club.name }}</h1>
+      <mat-chip-listbox>
+        <mat-chip-option *ngIf="club.public" color="primary" selected disabled>Public</mat-chip-option>
+        <mat-chip-option *ngIf="!club.public" color="warn" selected disabled>Private</mat-chip-option>
+      </mat-chip-listbox>
+    </div>
 
-  <h2 *ngIf="!editingName">{{ club.name }}</h2>
-  <input *ngIf="editingName" [(ngModel)]="club.name" />
+    <div class="club-title-edit" *ngIf="editingName">
+      <mat-form-field appearance="outline">
+        <mat-label>Club Name</mat-label>
+        <input matInput [(ngModel)]="club.name" placeholder="Club name">
+      </mat-form-field>
+    </div>
 
-  <p *ngIf="!editingDescription">{{ club.description }}</p>
-  <textarea *ngIf="editingDescription" [(ngModel)]="club.description"></textarea>
-
-  <button *ngIf="userRole === 'admin' || userRole === 'moderator'" (click)="toggleEditName()">
-    {{ editingName ? 'Save Name' : 'Edit Name' }}
-  </button>
-  <button *ngIf="userRole === 'admin' || userRole === 'moderator'" (click)="toggleEditDescription()">
-    {{ editingDescription ? 'Save Description' : 'Edit Description' }}
-  </button>
-
-  <button *ngIf="userRole === 'admin'" (click)="toggleVisibility()">
-    {{ club.public ? 'Make Private' : 'Make Public' }}
-  </button>
-  <button *ngIf="userRole === 'admin'" (click)="deleteClub()">Delete Club</button>
-</div>
-
-<div class="members-list">
-  <h3>Members</h3>
-  <ul>
-    <li *ngFor="let member of members">
-      <span>{{ member.username }} ({{ member.role }})</span>
-
-      <button *ngIf="(userRole === 'admin' || userRole === 'moderator') && (member.role === 'member' || (userRole === 'admin' && member.role === 'moderator'))"
-              (click)="kickMember(member)">
-        Kick
+    <div class="club-actions">
+      <button mat-icon-button *ngIf="userRole === 'admin' || userRole === 'moderator'"
+              (click)="toggleEditName()" matTooltip="{{ editingName ? 'Save Name' : 'Edit Name' }}">
+        <mat-icon>{{ editingName ? 'save' : 'edit' }}</mat-icon>
       </button>
 
-      <button *ngIf="userRole === 'admin' && member.role !== 'admin'" (click)="toggleModerator(member)">
-        {{ member.role === 'moderator' ? 'Demote' : 'Promote' }}
+      <button mat-raised-button color="warn" *ngIf="userRole !== 'admin'" (click)="leaveClub()">
+        <mat-icon>exit_to_app</mat-icon> Leave Club
       </button>
-    </li>
-  </ul>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="club-description" *ngIf="!editingDescription">
+    <p class="mat-body-1">{{ club.description }}</p>
+    <button mat-icon-button *ngIf="userRole === 'admin' || userRole === 'moderator'"
+            (click)="toggleEditDescription()" matTooltip="Edit Description">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+
+  <div class="club-description-edit" *ngIf="editingDescription">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Club Description</mat-label>
+      <textarea matInput [(ngModel)]="club.description" rows="3" placeholder="Club description"></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="toggleEditDescription()">
+      Save Description
+    </button>
+  </div>
+
+  <div class="admin-actions" *ngIf="userRole === 'admin'">
+    <button mat-raised-button color="primary" (click)="toggleVisibility()">
+      <mat-icon>{{ club.public ? 'lock' : 'public' }}</mat-icon>
+      {{ club.public ? 'Make Private' : 'Make Public' }}
+    </button>
+
+    <button mat-raised-button color="warn" (click)="deleteClub()">
+      <mat-icon>delete</mat-icon> Delete Club
+    </button>
+  </div>
+
+  <mat-tab-group animationDuration="300ms" class="club-tabs">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">people</mat-icon>
+        Members ({{ members.length }})
+      </ng-template>
+
+      <mat-card>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let member of members">
+              <div class="member-item">
+                <div class="member-info">
+                  <span class="member-name">{{ member.username }}</span>
+                  <mat-chip-listbox>
+                    <mat-chip-option [color]="getRoleColor(member.role)" selected disabled>{{ member.role }}</mat-chip-option>
+                  </mat-chip-listbox>
+                </div>
+
+                <div class="member-actions">
+                  <button mat-icon-button color="warn" *ngIf="canKickMember(member) && member.role !== 'admin'"
+                          (click)="kickMember(member)" matTooltip="Remove member">
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+
+                  <button mat-icon-button *ngIf="userRole === 'admin' && canToggleRole(member)"
+                          (click)="toggleModerator(member)"
+                          matTooltip="{{ member.role === 'moderator' ? 'Demote to Member' : 'Promote to Moderator' }}">
+                    <mat-icon>{{ member.role === 'moderator' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">mail</mat-icon>
+        Invites
+        <span *ngIf="pendingInvites.length > 0" class="invite-badge">{{ pendingInvites.length }}</span>
+      </ng-template>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Invite New Member</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <form (submit)="inviteUser(inviteUsername); $event.preventDefault();" class="simple-form">
+            <div class="form-group">
+              <label for="inviteUsername">Username:</label>
+              <input
+                type="text"
+                id="inviteUsername"
+                name="inviteUsername"
+                [(ngModel)]="inviteUsername"
+                placeholder="Enter username to invite"
+                class="basic-input"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="basic-button">
+                <mat-icon>person_add</mat-icon> Send Invite
+              </button>
+            </div>
+
+            <div *ngIf="inviteMessage" class="message-text" [class.error-text]="inviteError">
+              {{ inviteMessage }}
+            </div>
+          </form>
+
+          <h3 class="mat-h3">Pending Invites</h3>
+          <mat-list *ngIf="pendingInvites.length > 0">
+            <mat-list-item *ngFor="let invite of pendingInvites">
+              <div class="invite-item">
+                <span>{{ invite.user.username }}</span>
+                <button mat-icon-button color="warn" *ngIf="invite.status === 'pending'"
+                        (click)="cancelInvite(invite.id)" matTooltip="Cancel invite">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
+
+          <div *ngIf="pendingInvites.length === 0" class="empty-list">
+            <p>No pending invites</p>
+          </div>
+
+          <h3 class="mat-h3">Invite History</h3>
+          <mat-list *ngIf="inviteHistory.length > 0">
+            <mat-list-item *ngFor="let invite of inviteHistory">
+              <div class="invite-item">
+                <span>{{ invite.user.username }}</span>
+                <mat-chip-listbox>
+                  <mat-chip-option [color]="getStatusColor(invite.status)" selected disabled>{{ invite.status }}</mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
+
+          <div *ngIf="inviteHistory.length === 0" class="empty-list">
+            <p>No invite history</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">chat</mat-icon>
+        Club Chat
+      </ng-template>
+
+      <mat-card>
+        <mat-card-content>
+          <div *ngIf="!showChat" class="chat-toggle">
+            <button mat-raised-button color="primary" (click)="toggleChat()">
+              <mat-icon>chat</mat-icon> Open Chat
+            </button>
+          </div>
+
+          <app-club-chat *ngIf="showChat" [clubId]="club.id" [clubName]="club.name"></app-club-chat>
+
+          <div *ngIf="showChat" class="chat-toggle">
+            <button mat-button (click)="toggleChat()">
+              <mat-icon>close</mat-icon> Close Chat
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 
-<div class="member-invite">
-
-  <h3>Invite Somebody</h3>
-  <input type="text" [(ngModel)]="inviteUsername" placeholder="Enter username">
-  <button (click)="inviteUser(inviteUsername)">Invite</button>
-  <p *ngIf="inviteMessage">{{inviteMessage}}</p>
-
-  <h3>Pending Invites</h3>
-  <ul>
-    <li *ngFor="let invite of pendingInvites">
-      {{ invite.user.username }}
-      <button *ngIf="invite.status === 'pending'" (click)="cancelInvite(invite.id)">Cancel</button>
-    </li>
-  </ul>
-
-  <h3>Invite History</h3>
-  <ul>
-    <li *ngFor="let invite of inviteHistory">
-      {{ invite.user.username}} - {{ invite.status }}
-    </li>
-  </ul>
-</div>
-
-<div class="club-chat">
-  <h2>Club Details</h2>
-
-  <button (click)="toggleChat()">Open Chat</button>
-
-  <app-club-chat *ngIf="showChat" [clubId]="club.id" [clubName]="club.name"></app-club-chat>
-
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading club details...</p>
 </div>

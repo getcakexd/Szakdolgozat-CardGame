@@ -154,8 +154,8 @@ public class FriendRequestRestService {
 
     private List<FriendRequest> findBySenderId(Long userId) {
         return friendRequestRepository.findAll().stream()
-                .filter(request ->
-                        request.getSender().getId() == userId)
+                .filter(request -> request.getSender().getId() == userId)
+                .sorted(Comparator.comparing(FriendRequest::getId).reversed())
                 .toList();
     }
 

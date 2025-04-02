@@ -1,15 +1,39 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {ClubChatService} from '../../services/club-chat/club-chat.service';
-import {ClubMessage} from '../../models/club-message.model';
-import {FormsModule} from '@angular/forms';
-import {ClubService} from '../../services/club/club.service';
-import {Club} from '../../models/club.model';
-import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
-import {ClubMemberService} from '../../services/club-member/club-member.service';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ClubChatService } from '../../services/club-chat/club-chat.service';
+import { ClubMessage } from '../../models/club-message.model';
+import { FormsModule } from '@angular/forms';
+import { ClubService } from '../../services/club/club.service';
+import { Club } from '../../models/club.model';
+import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { ClubMemberService } from '../../services/club-member/club-member.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-club-chat',
-  imports: [FormsModule, NgForOf, NgClass, DatePipe, NgIf],
+  imports: [
+    FormsModule,
+    NgForOf,
+    NgClass,
+    DatePipe,
+    NgIf,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './club-chat.component.html',
   standalone: true,
   styleUrls: ['./club-chat.component.css']
@@ -18,11 +42,13 @@ export class ClubChatComponent implements OnInit {
   @Input() clubId!: number;
   @Input() clubName!: string;
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
+
   club: any;
   messages: ClubMessage[] = [];
   newMessage: string = '';
   senderId = parseInt(localStorage.getItem('id') || '');
-  hasPermission:boolean = false;
+  hasPermission: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private clubChatService: ClubChatService,
@@ -44,9 +70,18 @@ export class ClubChatComponent implements OnInit {
 
   loadMessages() {
     if (!this.clubId) return;
-    this.clubChatService.getMessages(this.clubId).subscribe((messages) => {
-      this.messages = messages;
-      this.scrollToBottom();
+
+    this.isLoading = true;
+    this.clubChatService.getMessages(this.clubId).subscribe({
+      next: (messages) => {
+        this.messages = messages;
+        this.scrollToBottom();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading messages:', error);
+        this.isLoading = false;
+      }
     });
   }
 
@@ -57,22 +92,39 @@ export class ClubChatComponent implements OnInit {
   }
 
   sendMessage() {
-    this.clubChatService.sendMessage(this.clubId, this.senderId, this.newMessage).subscribe((sentMessage: ClubMessage) => {
-      this.messages.push(sentMessage);
-      this.newMessage = '';
-      this.scrollToBottom();
+    if (!this.newMessage.trim()) return;
+
+    this.clubChatService.sendMessage(this.clubId, this.senderId, this.newMessage).subscribe({
+      next: (sentMessage: ClubMessage) => {
+        this.messages.push(sentMessage);
+        this.newMessage = '';
+        this.scrollToBottom();
+      },
+      error: (error) => {
+        console.error('Error sending message:', error);
+      }
     });
   }
 
   unsendMessage(messageId: number) {
-    this.clubChatService.unsendMessage(messageId).subscribe(() => {
-      this.loadMessages();
+    this.clubChatService.unsendMessage(messageId).subscribe({
+      next: () => {
+        this.loadMessages();
+      },
+      error: (error) => {
+        console.error('Error unsending message:', error);
+      }
     });
   }
 
   removeMessage(messageId: number) {
-    this.clubChatService.removeMessage(messageId).subscribe(() => {
-      this.loadMessages();
+    this.clubChatService.removeMessage(messageId).subscribe({
+      next: () => {
+        this.loadMessages();
+      },
+      error: (error) => {
+        console.error('Error removing message:', error);
+      }
     });
   }
 
@@ -83,6 +135,13 @@ export class ClubChatComponent implements OnInit {
       }, 100);
     } catch (err) {
       console.error('Scroll error:', err);
+    }
+  }
+
+  onKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
     }
   }
 }
