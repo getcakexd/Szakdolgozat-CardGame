@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="member-actions">
-                  <button mat-icon-button color="warn" *ngIf="canKickMember(member)"
+                  <button mat-icon-button color="warn" *ngIf="canKickMember(member) && member.role !== 'admin'"
                           (click)="kickMember(member)" matTooltip="Remove member">
                     <mat-icon>person_remove</mat-icon>
                   </button>
@@ -114,17 +114,30 @@
         </mat-card-header>
 
         <mat-card-content>
-          <div class="invite-form">
-            <mat-form-field appearance="outline" class="invite-input">
-              <mat-label>Username</mat-label>
-              <input matInput [(ngModel)]="inviteUsername" placeholder="Enter username">
-              <mat-hint *ngIf="inviteMessage">{{ inviteMessage }}</mat-hint>
-            </mat-form-field>
 
-            <button mat-raised-button color="primary" (click)="inviteUser(inviteUsername)">
-              <mat-icon>person_add</mat-icon> Invite
-            </button>
-          </div>
+          <form (submit)="inviteUser(inviteUsername); $event.preventDefault();" class="simple-form">
+            <div class="form-group">
+              <label for="inviteUsername">Username:</label>
+              <input
+                type="text"
+                id="inviteUsername"
+                name="inviteUsername"
+                [(ngModel)]="inviteUsername"
+                placeholder="Enter username to invite"
+                class="basic-input"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="basic-button">
+                <mat-icon>person_add</mat-icon> Send Invite
+              </button>
+            </div>
+
+            <div *ngIf="inviteMessage" class="message-text" [class.error-text]="inviteError">
+              {{ inviteMessage }}
+            </div>
+          </form>
 
           <h3 class="mat-h3">Pending Invites</h3>
           <mat-list *ngIf="pendingInvites.length > 0">

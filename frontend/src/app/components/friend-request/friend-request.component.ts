@@ -34,7 +34,7 @@ import { MatChipsModule } from '@angular/material/chips';
   ],
   standalone: true
 })
-export class FriendRequestsComponent implements OnInit {
+export class FriendRequestComponent implements OnInit {
   username: string = '';
   errorMessage: string = '';
   sentRequests: FriendRequest[] = [];

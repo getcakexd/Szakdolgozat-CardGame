@@ -62,6 +62,7 @@ export class ClubComponent implements OnInit {
   inviteUsername: string = '';
   showChat: boolean = false;
   isLoading: boolean = true;
+  inviteError: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -249,22 +250,26 @@ export class ClubComponent implements OnInit {
     });
   }
 
-  inviteUser(username: string) {
-    if (!username.trim()) {
+  inviteUser(username: string): void {
+    if (!username || username.trim() === '') {
       this.inviteMessage = 'Please enter a username';
+      this.inviteError = true;
       return;
     }
 
+    this.inviteMessage = '';
+    this.inviteError = false;
+
     this.clubInviteService.inviteUser(this.club.id, username).subscribe({
-      next: () => {
-        this.inviteMessage = 'Invite sent successfully';
-        this.snackBar.open(`Invite sent to ${username}`, 'Close', { duration: 3000 });
+      next: (response) => {
         this.inviteUsername = '';
+        this.inviteMessage = 'Invitation sent successfully';
+        this.inviteError = false;
         this.loadPendingInvites(this.club.id);
       },
       error: (error) => {
-        this.inviteMessage = error.message || 'Failed to send invite';
-        this.snackBar.open(this.inviteMessage, 'Close', { duration: 3000 });
+        this.inviteMessage = error.error?.message || 'Failed to send invite';
+        this.inviteError = true;
       }
     });
   }

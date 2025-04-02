@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FriendRequestsComponent } from '../../components/friend-request/friend-request.component';
+import { FriendRequestComponent } from '../../components/friend-request/friend-request.component';
 import { FriendListComponent } from '../../components/friend-list/friend-list.component';
 import { FriendRequestService } from '../../services/friend-request/friend-request.service';
 import { Subscription } from 'rxjs';
@@ -11,12 +11,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 @Component({
   selector: 'app-social',
   imports: [
-    FriendRequestsComponent,
     FriendListComponent,
     MatIconModule,
     MatCardModule,
     MatDividerModule,
-    MatTabsModule
+    MatTabsModule,
+    FriendRequestComponent
   ],
   templateUrl: './social.component.html',
   standalone: true,

@@ -72,6 +72,11 @@ public class ClubInviteRestService {
         Optional<Club> club = clubRepository.findById(clubId);
         User user = findByUsername(username);
 
+        if (user == null) {
+            response.put("message", "User not found.");
+            return ResponseEntity.status(400).body(response);
+        }
+
         Optional<ClubMember> existingMember = clubMemberRepository.findAll().stream()
                 .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == user.getId())
                 .findFirst();
@@ -84,6 +89,10 @@ public class ClubInviteRestService {
                 )
                 .findFirst();
 
+        if (club.isEmpty()) {
+            response.put("message", "Club not found.");
+            return ResponseEntity.status(400).body(response);
+        }
 
         if (existingMember.isPresent()) {
             response.put("message", "User is already a member of this club.");
@@ -95,10 +104,7 @@ public class ClubInviteRestService {
             return ResponseEntity.status(400).body(response);
         }
 
-        if (club.isEmpty()) {
-            response.put("message", "Club not found.");
-            return ResponseEntity.status(400).body(response);
-        }
+
 
         ClubInvite clubInvite = new ClubInvite(club.get(), user);
         clubInviteRepository.save(clubInvite);
