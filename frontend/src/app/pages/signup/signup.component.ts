@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgClass, NgIf} from '@angular/common';
-import {User} from '../../models/user.model';
-import {MatError, MatFormField} from '@angular/material/form-field';
-import {MatCard} from '@angular/material/card';
-import {MatButton} from '@angular/material/button';
-import {MatInput} from '@angular/material/input';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgClass, NgIf } from '@angular/common';
+import { User } from '../../models/user.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -16,84 +20,100 @@ import {MatInput} from '@angular/material/input';
     FormsModule,
     NgClass,
     NgIf,
-    MatError,
-    MatFormField,
-    MatCard,
+    MatFormFieldModule,
+    MatCardModule,
     ReactiveFormsModule,
-    MatButton,
-    MatInput,
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    MatProgressBarModule,
+    RouterLink
   ],
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-  newUsernameFormControl = new FormControl('', [Validators.required]);
-  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
-  newPasswordFormControl = new FormControl('', [Validators.required, Validators.minLength(6)]);
+  signupForm = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
+  });
 
   isLoading = false;
   message: string | null = null;
   isSuccess = false;
+  hidePassword = true;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) {}
 
   createUser(): void {
-    if (!this.validateForm()) {
-      return;
+    if (this.signupForm.valid) {
+      this.isLoading = true;
+      const newUser: User = {
+        id: 0,
+        username: this.signupForm.get('username')?.value!,
+        email: this.signupForm.get('email')?.value!,
+        password: this.signupForm.get('password')?.value!,
+        role: ''
+      };
+
+      this.userService.createUser(newUser).subscribe({
+        next: (response) => {
+          this.message = response.message;
+          this.isSuccess = true;
+          this.isLoading = false;
+          this.resetForm();
+
+          this.snackBar.open('Account created successfully! You can now log in.', 'Close', {
+            duration: 5000,
+            panelClass: ['success-snackbar']
+          });
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
+        },
+        error: (error) => {
+          this.message = error?.error?.message || 'Error creating user. Please try again.';
+          this.isSuccess = false;
+          this.isLoading = false;
+
+          if (this.message != null) {
+            this.snackBar.open(this.message, 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        }
+      });
+    } else {
+      this.signupForm.markAllAsTouched();
+      this.message = 'Please fill out all fields correctly.';
+      this.isSuccess = false;
     }
-
-    this.isLoading = true;
-    const newUser: User = {
-      id: 0,
-      username: this.newUsernameFormControl.value!,
-      email: this.emailFormControl.value!,
-      password: this.newPasswordFormControl.value!,
-      role: ''
-    };
-
-    this.userService.createUser(newUser).subscribe({
-      next: (response) => {
-        this.message = response.message;
-        this.isSuccess = true;
-        this.isLoading = false;
-        this.resetForm();
-      },
-      error: (error) => {
-        this.message = error?.error?.message || 'Error creating user. Please try again.';
-        this.isSuccess = false;
-        this.isLoading = false;
-        console.error(error);
-      }
-    });
   }
 
-  private validateForm(): boolean {
-    if (!this.newUsernameFormControl.value?.trim()) {
-      this.showError('Username is required.');
-      return false;
+  getErrorMessage(field: string): string {
+    const control = this.signupForm.get(field);
+    if (control?.hasError('required')) {
+      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
     }
-    if (!this.emailFormControl.value?.trim() || !this.isValidEmail(this.emailFormControl.value)) {
-      this.showError('A valid email is required.');
-      return false;
+    if (field === 'email' && control?.hasError('email')) {
+      return 'Please enter a valid email address';
     }
-    if (!this.newPasswordFormControl.value?.trim() || this.newPasswordFormControl.value.length < 6) {
-      this.showError('Password must be at least 6 characters long.');
-      return false;
+    if (field === 'password' && control?.hasError('minlength')) {
+      return 'Password must be at least 6 characters long';
     }
-    return true;
-  }
-
-  private showError(message: string): void {
-    this.message = message;
-    this.isSuccess = false;
+    return '';
   }
 
   private resetForm(): void {
-    this.newUsernameFormControl.reset();
-    this.emailFormControl.reset();
-    this.newPasswordFormControl.reset();
-  }
-
-  private isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    this.signupForm.reset();
+    Object.keys(this.signupForm.controls).forEach(key => {
+      this.signupForm.get(key)?.setErrors(null);
+    });
   }
 }

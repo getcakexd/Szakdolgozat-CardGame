@@ -1,44 +1,81 @@
-<mat-card class="friend-requests">
-  <mat-card-header>
-    <mat-card-title><h3>Friend Requests</h3></mat-card-title>
-  </mat-card-header>
+<div class="friend-requests-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Add a Friend</mat-card-title>
+    </mat-card-header>
 
-  <mat-card-content>
-    <div class="send-request">
-      <mat-form-field appearance="fill">
-        <mat-label>Enter username</mat-label>
-        <input matInput [(ngModel)]="username" placeholder="Enter username" />
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="sendRequest()">Send Request</button>
-      <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
-    </div>
+    <mat-card-content>
+      <form (submit)="sendRequest(); $event.preventDefault();" class="simple-form">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Enter username"
+            class="basic-input"
+          />
+        </div>
 
-    <div class="incoming-requests">
-      <h3>Incoming Requests</h3>
-      <mat-list>
-        <mat-list-item *ngFor="let request of incomingRequests">
-          <span>{{ request.sender.username }}</span>
-          <div class="button-container">
-            <button mat-button color="primary" (click)="acceptRequest(request.id)">Accept</button>
-            <button mat-button color="warn" (click)="declineRequest(request.id)">Decline</button>
+        <div class="form-actions">
+          <button type="submit" class="basic-button">Send Friend Request</button>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-text">
+          {{ errorMessage }}
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="incomingRequests.length > 0">
+    <mat-card-header>
+      <mat-card-title>Incoming Requests ({{ incomingRequests.length }})</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="isLoading" class="loading-text">Loading...</div>
+
+      <div *ngIf="!isLoading" class="request-list">
+        <div *ngFor="let request of incomingRequests" class="request-item">
+          <div class="request-info">
+            <span>{{ request.sender.username }}</span>
           </div>
-        </mat-list-item>
-      </mat-list>
-    </div>
 
-    <div class="sent-requests">
-      <h3>Sent Requests</h3>
-      <mat-list>
-        <mat-list-item *ngFor="let request of sentRequests">
-          <span>{{ request.receiver.username }}</span>
-          <ng-container *ngIf="request.status === 'pending'">
-            <button mat-button color="warn" (click)="cancelRequest(request.id)">Cancel</button>
-          </ng-container>
-          <ng-container *ngIf="request.status === 'declined'">
-            <span class="declined">Declined</span>
-          </ng-container>
-        </mat-list-item>
-      </mat-list>
-    </div>
-  </mat-card-content>
-</mat-card>
+          <div class="request-buttons">
+            <button class="accept-button" (click)="acceptRequest(request.id)">Accept</button>
+            <button class="decline-button" (click)="declineRequest(request.id)">Decline</button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="sentRequests.length > 0">
+    <mat-card-header>
+      <mat-card-title>Sent Requests ({{ sentRequests.length }})</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="isLoading" class="loading-text">Loading...</div>
+
+      <div *ngIf="!isLoading" class="request-list">
+        <div *ngFor="let request of sentRequests" class="request-item">
+          <div class="request-info">
+            <span>{{ request.receiver.username }}</span>
+            <span class="status-badge">{{ request.status }}</span>
+          </div>
+
+          <div class="request-buttons" *ngIf="request.status === 'pending'">
+            <button class="cancel-button" (click)="cancelRequest(request.id)">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!isLoading && incomingRequests.length === 0 && sentRequests.length === 0" class="empty-message">
+    <p>No friend requests yet. Send a request to connect with friends.</p>
+  </div>
+</div>

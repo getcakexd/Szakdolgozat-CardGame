@@ -1,8 +1,13 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {ClubService} from '../../services/club/club.service';
-import {Club} from '../../models/club.model';
-import {ClubMemberService} from '../../services/club-member/club-member.service';
-import {NgForOf, NgIf} from '@angular/common';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ClubService } from '../../services/club/club.service';
+import { Club } from '../../models/club.model';
+import { ClubMemberService } from '../../services/club-member/club-member.service';
+import { NgForOf, NgIf } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-club-list',
@@ -10,7 +15,12 @@ import {NgForOf, NgIf} from '@angular/common';
   standalone: true,
   imports: [
     NgIf,
-    NgForOf
+    NgForOf,
+    MatCardModule,
+    MatButtonModule,
+    MatListModule,
+    MatIconModule,
+    MatDividerModule
   ],
   styleUrl: './club-list.component.css'
 })

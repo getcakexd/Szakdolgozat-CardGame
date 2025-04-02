@@ -1,22 +1,44 @@
-<mat-toolbar color="primary" class="navbar">
-  <div class="navbar-logo">
-    <!-- Logo content goes here -->
-  </div>
-  <div class="navbar-left">
-    <ng-container *ngIf="isLoggedIn">
-      <button class="navbar-button" mat-button routerLink="/home">Home</button>
-      <button class="navbar-button" mat-button routerLink="/social">Social</button>
-      <button class="navbar-button" mat-button routerLink="/clubs">Clubs</button>
-    </ng-container>
-  </div>
-  <div class="navbar-right">
-    <ng-container *ngIf="isLoggedIn">
-      <button class="navbar-button" mat-button routerLink="/profile">{{ localStorage.getItem("username") }}</button>
-      <button class="navbar-button" mat-button (click)="userService.logout()">Logout</button>
-    </ng-container>
-    <ng-container *ngIf="!isLoggedIn">
-      <button class="navbar-button" mat-button routerLink="/login">Login</button>
-      <button class="navbar-button" mat-button routerLink="/signup">Signup</button>
-    </ng-container>
+<mat-toolbar class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-left">
+
+      <ng-container *ngIf="isLoggedIn">
+        <button class="navbar-button" mat-button routerLink="/home">
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </button>
+        <button class="navbar-button" mat-button routerLink="/social">
+          <mat-icon>people</mat-icon>
+          <span>Social</span>
+        </button>
+        <button class="navbar-button" mat-button routerLink="/clubs">
+          <mat-icon>groups</mat-icon>
+          <span>Clubs</span>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="navbar-right">
+      <ng-container *ngIf="isLoggedIn">
+        <button class="navbar-button" mat-button routerLink="/profile">
+          <mat-icon>account_circle</mat-icon>
+          <span>{{ username }}</span>
+        </button>
+        <button class="navbar-button" mat-button (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoggedIn">
+        <button class="navbar-button" mat-button routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        <button class="navbar-button" mat-raised-button color="accent" routerLink="/signup">
+          <span>Signup</span>
+        </button>
+      </ng-container>
+    </div>
   </div>
 </mat-toolbar>

@@ -1,5 +1,30 @@
-<h2>Social Hub</h2>
-<app-friend-list></app-friend-list>
-<app-friend-request></app-friend-request>
+<div class="social-container">
+  <div class="social-header">
+    <h1>Social Hub</h1>
+    <p>Connect with friends and manage your social network</p>
+  </div>
 
+  <mat-card class="social-card">
+    <mat-tab-group animationDuration="300ms">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">people</mat-icon>
+          <span>Friends</span>
+        </ng-template>
+        <div class="tab-content">
+          <app-friend-list></app-friend-list>
+        </div>
+      </mat-tab>
 
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person_add</mat-icon>
+          <span>Friend Requests</span>
+        </ng-template>
+        <div class="tab-content">
+          <app-friend-request></app-friend-request>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

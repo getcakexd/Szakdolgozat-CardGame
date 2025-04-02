@@ -1,0 +1,80 @@
+.social-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.social-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.social-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #424242;
+}
+
+.social-header p {
+  color: #757575;
+  font-size: 16px;
+  margin: 0;
+}
+
+.social-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.tab-content {
+  padding: 16px;
+}
+
+::ng-deep .mat-mdc-tab-header {
+  background-color: #f5f5f5;
+}
+
+::ng-deep .mat-mdc-tab-label-active {
+  background-color: rgba(103, 58, 183, 0.1);
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .social-container {
+    padding: 16px 8px;
+  }
+
+  .social-header h1 {
+    font-size: 24px;
+  }
+
+  .social-header p {
+    font-size: 14px;
+  }
+
+  .tab-content {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep .mat-mdc-tab-label {
+    padding: 0 12px !important;
+  }
+
+  ::ng-deep .mat-mdc-tab-label-content span {
+    display: none;
+  }
+
+  .tab-icon {
+    margin-right: 0;
+  }
+}

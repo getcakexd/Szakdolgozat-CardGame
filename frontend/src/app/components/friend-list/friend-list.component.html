@@ -1,25 +1,55 @@
-<mat-list class="friend-list">
-  <mat-list-item *ngFor="let friend of friends" class="friend-item">
-    <div class="friend-content">
-      <span class="friend-name" [matBadge]="unreadCounts[parseInt(friend.id)]"
-            [matBadgeHidden]="!unreadCounts[parseInt(friend.id)] || unreadCounts[parseInt(friend.id)] <= 0"
-            matBadgeColor="accent">
-        {{ friend.username }}
-      </span>
+<mat-card class="friends-card">
+  <mat-card-header>
+    <mat-card-title>My Friends</mat-card-title>
+  </mat-card-header>
 
-      <div class="button-container">
-        <button mat-button color="warn" (click)="deleteFriend(friend.id)" aria-label="Remove friend">
-          <mat-icon>delete</mat-icon>
-        </button>
-
-        <button mat-button color="primary" (click)="toggleChat(friend.id)">
-          {{ openChats[parseInt(friend.id)] ? 'Close' : 'Message' }}
-        </button>
-      </div>
+  <mat-card-content>
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading friends...</p>
     </div>
 
-    <div *ngIf="openChats[parseInt(friend.id)]" class="chat-container">
-      <app-chat [receiverId]="friend.id"></app-chat>
+    <div *ngIf="!isLoading && friends.length === 0" class="empty-list">
+      <mat-icon class="empty-icon">people_outline</mat-icon>
+      <p>You don't have any friends yet</p>
     </div>
-  </mat-list-item>
-</mat-list>
+
+    <mat-list *ngIf="!isLoading && friends.length > 0" class="friend-list">
+      <ng-container *ngFor="let friend of friends; last as isLast">
+        <mat-list-item class="friend-item">
+          <div class="friend-content">
+            <div class="friend-info">
+              <mat-icon class="friend-icon">person</mat-icon>
+              <span class="friend-name"
+                    [matBadge]="unreadCounts[parseInt(friend.id)]"
+                    [matBadgeHidden]="!unreadCounts[parseInt(friend.id)] || unreadCounts[parseInt(friend.id)] <= 0"
+                    matBadgeColor="accent"
+                    matBadgeSize="small"
+                    matBadgeOverlap="true">
+                {{ friend.username }}
+              </span>
+            </div>
+
+            <div class="friend-actions">
+              <button mat-icon-button color="warn" (click)="deleteFriend(friend.id)"
+                      aria-label="Remove friend" matTooltip="Remove friend">
+                <mat-icon>delete</mat-icon>
+              </button>
+
+              <button mat-icon-button color="primary" (click)="toggleChat(friend.id)"
+                      [matTooltip]="openChats[parseInt(friend.id)] ? 'Close chat' : 'Open chat'">
+                <mat-icon>{{ openChats[parseInt(friend.id)] ? 'close' : 'chat' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-list-item>
+
+        <div *ngIf="openChats[parseInt(friend.id)]" class="chat-container">
+          <app-chat [receiverId]="friend.id"></app-chat>
+        </div>
+
+        <mat-divider *ngIf="!isLast"></mat-divider>
+      </ng-container>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

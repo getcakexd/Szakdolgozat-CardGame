@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
@@ -41,7 +41,6 @@ button:hover {
   background: #218838;
 }
 
-/* User List Styling */
 .user-list-container {
   background: #fff;
   padding: 20px;
@@ -79,7 +78,6 @@ button:hover {
   margin-bottom: 0;
 }
 
-/* Heartbeat Card Styling */
 .heartbeat-container {
   display: flex;
   justify-content: center;

@@ -1,72 +1,169 @@
-<mat-card class="profile-container">
-  <mat-card-header>
-    <mat-card-title>Your Profile</mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-    <div class="user-info">
-      <div class="info-item">
-        <strong>Username:</strong> {{ userService.getLoggedInUsername() }}
-        <button mat-button (click)="toggleEditForm('username')">Change Username</button>
-        <form *ngIf="editField === 'username'" (ngSubmit)="updateUser()">
-          <mat-form-field>
-            <mat-label>New Username</mat-label>
-            <input matInput [(ngModel)]="newUsername" name="newUsername" required />
-          </mat-form-field>
-          <div class="button-group">
-            <button mat-raised-button color="primary" type="submit">Submit</button>
-            <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
-          </div>
-        </form>
+<div class="profile-page-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div class="profile-header">
+        <mat-card-title>Your Profile</mat-card-title>
+        <mat-icon class="profile-icon">account_circle</mat-icon>
       </div>
+    </mat-card-header>
 
-      <div class="info-item">
-        <strong>Email:</strong> {{ userService.getLoggedInEmail() }}
-        <button mat-button (click)="toggleEditForm('email')">Change Email</button>
-        <form *ngIf="editField === 'email'" (ngSubmit)="updateUser()">
-          <mat-form-field>
-            <mat-label>New Email</mat-label>
-            <input matInput [(ngModel)]="newEmail" name="newEmail" required />
-          </mat-form-field>
-          <div class="button-group">
-            <button mat-raised-button color="primary" type="submit">Submit</button>
-            <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <div class="user-info-section">
+        <div class="info-item">
+          <div class="info-label">
+            <mat-icon>person</mat-icon>
+            <span>Username</span>
           </div>
-        </form>
-      </div>
-
-      <div class="info-item">
-        <button mat-button (click)="toggleEditForm('password')">Change Password</button>
-        <form *ngIf="editField === 'password'" (ngSubmit)="updateUser()">
-          <mat-form-field>
-            <mat-label>Current Password</mat-label>
-            <input matInput [(ngModel)]="currentPassword" name="currentPassword" type="password" required />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>New Password</mat-label>
-            <input matInput [(ngModel)]="newPassword" name="newPassword" type="password" required />
-          </mat-form-field>
-          <div class="button-group">
-            <button mat-raised-button color="primary" type="submit">Submit</button>
-            <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+          <div class="info-content">
+            <span class="info-value">{{ userService.getLoggedInUsername() }}</span>
+            <button mat-stroked-button color="primary" (click)="toggleEditForm('username')" *ngIf="editField !== 'username'">
+              <mat-icon>edit</mat-icon> Change
+            </button>
           </div>
-        </form>
-      </div>
 
-      <button mat-warn (click)="toggleDeleteForm()">Delete Profile</button>
-      <div *ngIf="deleteFormVisible">
-        <h3>Confirm Profile Deletion</h3>
-        <mat-form-field>
-          <mat-label>Enter your password</mat-label>
-          <input matInput [(ngModel)]="password" type="password" required />
-        </mat-form-field>
-        <div class="button-group">
-          <button mat-raised-button color="warn" (click)="deleteProfile()">Delete</button>
-          <button mat-button (click)="toggleDeleteForm()">Cancel</button>
+          <div class="edit-form" *ngIf="editField === 'username'">
+            <form (ngSubmit)="updateUser()">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>New Username</mat-label>
+                <input matInput [(ngModel)]="newUsername" name="newUsername" required />
+                <mat-icon matPrefix>person</mat-icon>
+              </mat-form-field>
+              <div class="form-actions">
+                <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+                  Save
+                </button>
+                <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-item">
+          <div class="info-label">
+            <mat-icon>email</mat-icon>
+            <span>Email</span>
+          </div>
+          <div class="info-content">
+            <span class="info-value">{{ userService.getLoggedInEmail() }}</span>
+            <button mat-stroked-button color="primary" (click)="toggleEditForm('email')" *ngIf="editField !== 'email'">
+              <mat-icon>edit</mat-icon> Change
+            </button>
+          </div>
+
+          <div class="edit-form" *ngIf="editField === 'email'">
+            <form (ngSubmit)="updateUser()">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>New Email</mat-label>
+                <input matInput [(ngModel)]="newEmail" name="newEmail" type="email" required />
+                <mat-icon matPrefix>email</mat-icon>
+              </mat-form-field>
+              <div class="form-actions">
+                <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+                  Save
+                </button>
+                <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-item">
+          <div class="info-label">
+            <mat-icon>lock</mat-icon>
+            <span>Password</span>
+          </div>
+          <div class="info-content">
+            <span class="info-value">••••••••</span>
+            <button mat-stroked-button color="primary" (click)="toggleEditForm('password')" *ngIf="editField !== 'password'">
+              <mat-icon>edit</mat-icon> Change
+            </button>
+          </div>
+
+          <div class="edit-form" *ngIf="editField === 'password'">
+            <form (ngSubmit)="updateUser()">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Current Password</mat-label>
+                <input matInput [(ngModel)]="currentPassword" name="currentPassword"
+                       [type]="hideCurrentPassword ? 'password' : 'text'" required />
+                <mat-icon matPrefix>lock</mat-icon>
+                <button mat-icon-button matSuffix type="button"
+                        (click)="hideCurrentPassword = !hideCurrentPassword">
+                  <mat-icon>{{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>New Password</mat-label>
+                <input matInput [(ngModel)]="newPassword" name="newPassword"
+                       [type]="hideNewPassword ? 'password' : 'text'" required />
+                <mat-icon matPrefix>lock_open</mat-icon>
+                <button mat-icon-button matSuffix type="button"
+                        (click)="hideNewPassword = !hideNewPassword">
+                  <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+                  Save
+                </button>
+                <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-item">
+          <div class="info-label danger">
+            <mat-icon>delete_forever</mat-icon>
+            <span>Delete Account</span>
+          </div>
+          <div class="info-content">
+            <button mat-stroked-button color="warn" (click)="confirmDelete()" *ngIf="!deleteFormVisible">
+              <mat-icon>delete</mat-icon> Delete Profile
+            </button>
+          </div>
+
+          <div class="edit-form" *ngIf="deleteFormVisible">
+            <h3 class="delete-warning">This action cannot be undone!</h3>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Enter your password to confirm</mat-label>
+              <input matInput [(ngModel)]="password" [type]="hidePassword ? 'password' : 'text'" required />
+              <mat-icon matPrefix>lock</mat-icon>
+              <button mat-icon-button matSuffix type="button"
+                      (click)="hidePassword = !hidePassword">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+            <div class="form-actions">
+              <button mat-raised-button color="warn" (click)="deleteProfile()" [disabled]="isLoading">
+                Delete My Account
+              </button>
+              <button mat-button type="button" (click)="toggleDeleteForm()" [disabled]="isLoading">
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <p *ngIf="message">{{ message }}</p>
-    </div>
-  </mat-card-content>
-</mat-card>
+      <div *ngIf="message" class="message-container error-message">
+        {{ message }}
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

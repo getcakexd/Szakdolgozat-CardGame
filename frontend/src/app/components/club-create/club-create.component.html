@@ -1,16 +1,39 @@
-<div class="club-form">
-  <h3>Create Club</h3>
+<mat-card class="club-form-card">
+  <mat-card-header>
+    <mat-card-title>Create Club</mat-card-title>
+  </mat-card-header>
 
-  <label for="name">Club Name</label>
-  <input type="text" id="name" [(ngModel)]="name" placeholder="Enter club name" />
+  <mat-card-content>
+    <form (ngSubmit)="createClub()" class="club-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Club Name</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required placeholder="Enter club name">
+        <mat-hint>Choose a unique name for your club</mat-hint>
+      </mat-form-field>
 
-  <label for="description">Description</label>
-  <input type="text" id="description" [(ngModel)]="description" placeholder="Enter description" />
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput [(ngModel)]="description" name="description" placeholder="Enter description" rows="3"></textarea>
+        <mat-hint>Describe what your club is about</mat-hint>
+      </mat-form-field>
 
-  <label for="isPublic">Public</label>
-  <input type="checkbox" id="isPublic" [(ngModel)]="isPublic" />
+      <div class="checkbox-container">
+        <mat-checkbox [(ngModel)]="isPublic" name="isPublic" color="primary">
+          Public Club
+        </mat-checkbox>
+        <span class="checkbox-hint">Public clubs can be found and joined by anyone</span>
+      </div>
 
-  <div class="form-buttons">
-    <button (click)="createClub()">Create</button>
-  </div>
-</div>
+      <div *ngIf="message" class="error-message">
+        {{ message }}
+      </div>
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button (click)="resetForm()" [disabled]="isSubmitting">Reset</button>
+    <button mat-raised-button color="primary" (click)="createClub()" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Creating...' : 'Create Club' }}
+    </button>
+  </mat-card-actions>
+</mat-card>
