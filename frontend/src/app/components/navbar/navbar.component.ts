@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import {AuthService} from '../../services/auth/auth.service';
+import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +17,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    ThemeToggleComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']

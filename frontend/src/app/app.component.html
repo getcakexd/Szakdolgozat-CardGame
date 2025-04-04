@@ -4,9 +4,12 @@
 </div>
 -->
 
-<div class="app-container">
+<div class="app-container" [ngClass]="{'dark-theme': isDarkMode$ | async}">
   <app-navbar></app-navbar>
-</div>
 
-<router-outlet></router-outlet>
-<app-contact-form></app-contact-form>
+  <div class="content-container">
+    <router-outlet></router-outlet>
+  </div>
+
+  <app-contact-form></app-contact-form>
+</div>

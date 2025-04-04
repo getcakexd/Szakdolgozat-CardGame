@@ -1,0 +1,87 @@
+.admin-dashboard-container {
+  padding: 20px 0;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.dashboard-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  transition: all var(--transition-normal) ease;
+}
+
+.tab-content {
+  padding: 24px 16px;
+}
+
+.action-bar {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.description-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.admin {
+    background-color: #7b1fa2;
+    color: white;
+  }
+
+  &.agent {
+    background-color: #0288d1;
+    color: white;
+  }
+
+  &.user {
+    background-color: #388e3c;
+    color: white;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .tab-content {
+    padding: 16px 8px;
+  }
+}

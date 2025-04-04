@@ -29,6 +29,8 @@
     </div>
 
     <div class="navbar-right">
+      <app-theme-toggle></app-theme-toggle>
+
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/profile">
           <mat-icon>account_circle</mat-icon>
