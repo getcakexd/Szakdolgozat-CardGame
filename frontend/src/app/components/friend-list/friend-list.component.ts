@@ -14,6 +14,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatComponent } from '../chat/chat.component';
 import { FriendshipService } from '../../services/friendship/friendship.service';
 import { ChatService } from '../../services/chat/chat.service';
+import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-friend-list',
@@ -40,15 +43,18 @@ export class FriendListComponent implements OnInit {
   friends: Friend[] = [];
   unreadCounts: { [key: number]: number } = {};
   openChats: { [key: number]: boolean } = {};
-  userId: number = parseInt(localStorage.getItem('id') || '');
+  userId: number = 0;
   isLoading: boolean = false;
 
   constructor(
+    private authService: AuthService,
     private friendshipService: FriendshipService,
     private chatService: ChatService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.userId = this.authService.getCurrentUserId() || 0;
+  }
 
   ngOnInit(): void {
     this.loadFriends();
@@ -112,25 +118,4 @@ export class FriendListComponent implements OnInit {
   }
 
   protected readonly parseInt = parseInt;
-}
-
-import { Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-
-@Component({
-  selector: 'confirm-dialog',
-  template: `
-    <h2 mat-dialog-title>{{data.title}}</h2>
-    <mat-dialog-content>{{data.message}}</mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" [mat-dialog-close]="true">Confirm</button>
-    </mat-dialog-actions>
-  `,
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule]
-})
-export class ConfirmDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {title: string, message: string}) {}
 }

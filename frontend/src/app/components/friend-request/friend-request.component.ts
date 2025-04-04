@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-friend-request',
@@ -44,11 +45,11 @@ export class FriendRequestComponent implements OnInit {
   isSending: boolean = false;
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private friendRequestService: FriendRequestService,
     private snackBar: MatSnackBar
   ) {
-    this.currentUserId = this.userService.getLoggedInId();
+    this.currentUserId = this.authService.getCurrentUserId() || 0;
   }
 
   ngOnInit(): void {

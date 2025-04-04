@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import {UserService} from './services/user/user.service';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {RouterModule, RouterOutlet} from '@angular/router';
+import {AuthService} from './services/auth/auth.service';
+import {ContactFormComponent} from './components/contact-form/contact-form.component';
 
 @Component({
   selector: 'app-root',
   imports: [
     NavbarComponent,
-    RouterOutlet, RouterModule,
+    RouterOutlet, RouterModule, ContactFormComponent,
   ],
   templateUrl: './app.component.html',
   standalone: true,
@@ -15,16 +17,16 @@ import {RouterModule, RouterOutlet} from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'frontend';
-  isLoggedIn = false;
   username: string | null = null;
 
-  constructor(private userService : UserService) {}
+  constructor(
+    private authService : AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.userService.isLoggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-      if (status) {
-        this.username = localStorage.getItem('username');
+    this.authService.currentUser$.subscribe(user => {
+      if (user !== null) {
+        this.username = user.username;
       } else {
         this.username = null;
       }

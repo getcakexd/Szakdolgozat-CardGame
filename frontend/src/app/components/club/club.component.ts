@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClubService } from '../../services/club/club.service';
 import { NgForOf, NgIf } from '@angular/common';
@@ -6,9 +6,7 @@ import { ClubMember } from '../../models/club-member.model';
 import { ClubMemberService } from '../../services/club-member/club-member.service';
 import { FormsModule } from '@angular/forms';
 import { ClubInviteService } from '../../services/club-invite/club-invite.service';
-import { ClubInvite } from '../../models/club-invite.model';
 import { ClubChatComponent } from '../club-chat/club-chat.component';
-import { UserService } from '../../services/user/user.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +21,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {AuthService} from '../../services/auth/auth.service';
+import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-club',
@@ -54,7 +54,7 @@ export class ClubComponent implements OnInit {
   protected members: ClubMember[] = [];
   protected pendingInvites: any[] = [];
   protected inviteHistory: any[] = [];
-  protected userId: number;
+  protected userId: number = 0;
   inviteMessage: string = '';
   userRole: string = '';
   editingName = false;
@@ -66,7 +66,7 @@ export class ClubComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private authService: AuthService,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService,
     private clubInviteService: ClubInviteService,
@@ -74,7 +74,12 @@ export class ClubComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {
-    this.userId = this.userService.getLoggedInId();
+    this.userId = this.authService.getCurrentUserId() || 0;
+    if (this.userId === 0) {
+      this.router.navigate(['/login']).then(() => {
+        window.location.reload();
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -354,19 +359,3 @@ export class ClubComponent implements OnInit {
   }
 }
 
-@Component({
-  selector: 'confirm-dialog',
-  template: `
-    <h2 mat-dialog-title>{{data.title}}</h2>
-    <mat-dialog-content>{{data.message}}</mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" [mat-dialog-close]="true">Confirm</button>
-    </mat-dialog-actions>
-  `,
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule]
-})
-export class ConfirmDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {title: string, message: string}) {}
-}

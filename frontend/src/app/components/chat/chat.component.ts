@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -41,14 +42,17 @@ export class ChatComponent implements OnInit {
   receiverName = '';
   messages: any[] = [];
   newMessage: string = '';
-  senderId = parseInt(localStorage.getItem('id') || '');
+  senderId = 0;
   isLoading: boolean = false;
 
   constructor(
     private chatService: ChatService,
     private userService: UserService,
+    private authService: AuthService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.senderId = this.authService.getCurrentUserId() || 0;
+  }
 
   ngOnInit(): void {
     this.loadMessages();

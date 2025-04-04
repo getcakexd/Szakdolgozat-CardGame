@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-club-list',
@@ -29,9 +30,15 @@ export class ClubListComponent implements OnInit {
   @Output() clubClick = new EventEmitter<number>();
 
   protected clubs: Club[] = [];
-  private userId: number = parseInt(localStorage.getItem('id') || '');
+  private userId: number = 0;
 
-  constructor(private clubService: ClubService, private clubMemberService: ClubMemberService) {}
+  constructor(
+    private authService: AuthService,
+    private clubService: ClubService,
+    private clubMemberService: ClubMemberService
+  ) {
+    this.userId = this.authService.getCurrentUserId() || 0;
+  }
 
   ngOnInit() {
     this.LoadClubs();

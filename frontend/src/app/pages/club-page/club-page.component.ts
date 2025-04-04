@@ -14,6 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-club-page',
@@ -44,10 +45,11 @@ export class ClubPageComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
+    private authService: AuthService,
     private clubInviteService: ClubInviteService,
     private snackBar: MatSnackBar
   ) {
-    this.userId = this.userService.getLoggedInId();
+    this.userId = this.authService.getCurrentUserId() || 0;
   }
 
   ngOnInit() {

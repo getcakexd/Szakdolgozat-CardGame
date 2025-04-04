@@ -17,7 +17,7 @@
             <span>Username</span>
           </div>
           <div class="info-content">
-            <span class="info-value">{{ userService.getLoggedInUsername() }}</span>
+            <span class="info-value">{{ authService.currentUser?.username }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('username')" *ngIf="editField !== 'username'">
               <mat-icon>edit</mat-icon> Change
             </button>
@@ -50,7 +50,7 @@
             <span>Email</span>
           </div>
           <div class="info-content">
-            <span class="info-value">{{ userService.getLoggedInEmail() }}</span>
+            <span class="info-value">{{ authService.currentUser?.email }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('email')" *ngIf="editField !== 'email'">
               <mat-icon>edit</mat-icon> Change
             </button>
