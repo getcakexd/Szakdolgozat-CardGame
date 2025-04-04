@@ -13,6 +13,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {AuthService} from '../../services/auth/auth.service';
+import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -53,12 +55,13 @@ export class ProfileComponent {
 
   constructor(
     protected userService: UserService,
+    protected authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {
-    this.userId = this.userService.getLoggedInId();
-    if (!this.userService.isLoggedIn()) {
+    this.userId = this.authService.getCurrentUserId() || 0;
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']).then();
     }
   }
@@ -69,9 +72,9 @@ export class ProfileComponent {
     this.message = '';
 
     if (field === 'username') {
-      this.newUsername = this.userService.getLoggedInUsername();
+      this.newUsername = this.authService.currentUser?.username || '';
     } else if (field === 'email') {
-      this.newEmail = this.userService.getLoggedInEmail();
+      this.newEmail = this.authService.currentUser?.email || '';
     }
   }
 
@@ -87,7 +90,7 @@ export class ProfileComponent {
     if (this.editField === 'username') {
       this.userService.updateUsername(this.userId, this.newUsername).subscribe({
         next: (response) => {
-          this.userService.setLoggedInUsername(this.newUsername);
+          this.authService.currentUser!.username = this.newUsername;
           this.cancelEdit();
           this.isLoading = false;
           this.snackBar.open('Username updated successfully!', 'Close', { duration: 3000 });
@@ -101,7 +104,7 @@ export class ProfileComponent {
     } else if (this.editField === 'email') {
       this.userService.updateEmail(this.userId, this.newEmail).subscribe({
         next: (response) => {
-          this.userService.setLoggedInEmail(this.newEmail);
+          this.authService.currentUser!.email = this.newEmail;
           this.cancelEdit();
           this.isLoading = false;
           this.snackBar.open('Email updated successfully!', 'Close', { duration: 3000 });
@@ -115,7 +118,7 @@ export class ProfileComponent {
     } else if (this.editField === 'password') {
       this.userService.updatePassword(this.userId, this.currentPassword, this.newPassword).subscribe({
         next: (response) => {
-          this.userService.setLoggedInPassword(this.newPassword);
+          this.authService.currentUser!.password = this.newPassword;
           this.cancelEdit();
           this.isLoading = false;
           this.snackBar.open('Password updated successfully!', 'Close', { duration: 3000 });
@@ -176,22 +179,4 @@ export class ProfileComponent {
   }
 }
 
-import { Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-@Component({
-  selector: 'confirm-dialog',
-  template: `
-    <h2 mat-dialog-title>{{data.title}}</h2>
-    <mat-dialog-content>{{data.message}}</mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" [mat-dialog-close]="true">Confirm</button>
-    </mat-dialog-actions>
-  `,
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule]
-})
-export class ConfirmDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {title: string, message: string}) {}
-}

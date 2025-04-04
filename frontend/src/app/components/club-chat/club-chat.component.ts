@@ -15,6 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-club-chat',
@@ -46,17 +47,19 @@ export class ClubChatComponent implements OnInit {
   club: any;
   messages: ClubMessage[] = [];
   newMessage: string = '';
-  senderId = parseInt(localStorage.getItem('id') || '');
+  senderId = 0;
   hasPermission: boolean = false;
   isLoading: boolean = false;
 
   constructor(
+    private authService: AuthService,
     private clubChatService: ClubChatService,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService
   ) {}
 
   ngOnInit(): void {
+    this.senderId = this.authService.getCurrentUserId() || 0;
     this.getClub(this.clubId);
     this.loadMessages();
     this.setHasPermission();

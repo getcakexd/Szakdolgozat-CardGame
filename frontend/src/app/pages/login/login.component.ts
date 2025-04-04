@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -41,6 +42,7 @@ export class LoginComponent {
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
@@ -48,15 +50,10 @@ export class LoginComponent {
   login(): void {
     if (this.loginForm.valid) {
       this.isLoading = true;
-      const user: User = {
-        id: 0,
-        username: this.loginForm.get('username')?.value!,
-        password: this.loginForm.get('password')?.value!,
-        email: '',
-        role: ''
-      };
+      let username = this.loginForm.get('username')?.value!;
+      let password = this.loginForm.get('password')?.value!;
 
-      this.userService.login(user).subscribe({
+      this.authService.login(username, password).subscribe({
         next: () => {
           this.isLoading = false;
           this.router.navigate(['/home']).then(() => {

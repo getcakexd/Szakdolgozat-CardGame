@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgIf } from '@angular/common';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-club-create',
@@ -28,14 +29,17 @@ export class ClubCreateComponent {
   name: string = '';
   description: string = '';
   isPublic: boolean = true;
-  userId: number = parseInt(localStorage.getItem('id') || '');
+  userId: number = 0;
   message: string = '';
   isSubmitting: boolean = false;
 
   constructor(
+    private authService: AuthService,
     private clubService: ClubService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.userId = this.authService.getCurrentUserId() || 0;
+  }
 
   createClub() {
     if (!this.name.trim()) {
