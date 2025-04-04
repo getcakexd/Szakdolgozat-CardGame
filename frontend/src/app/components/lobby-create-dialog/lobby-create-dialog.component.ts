@@ -42,15 +42,6 @@ import {MatButton} from '@angular/material/button';
             <mat-option value="advanced">Advanced</mat-option>
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Max Players</mat-label>
-          <mat-select formControlName="maxPlayers">
-            <mat-option [value]="2">2 Players</mat-option>
-            <mat-option [value]="3">3 Players</mat-option>
-            <mat-option [value]="4">4 Players</mat-option>
-          </mat-select>
-        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -103,7 +94,7 @@ export class LobbyCreateDialogComponent {
       isPublic: [false],
       withPoints: [true],
       gameMode: ['classic'],
-      maxPlayers: [4]
+      maxPlayers: [2]
     });
   }
 

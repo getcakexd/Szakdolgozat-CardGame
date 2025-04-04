@@ -41,11 +41,10 @@ export class LobbyService {
     });
 
     // Load current user
-    this.userService.getUserById(this.userService.getLoggedInId()).subscribe((user) => {
-      this.currentUser = user;
-      // Load current lobby after user is loaded
-      this.getCurrentLobby().subscribe();
-    });
+    this.currentUser = this.userService.getLoggedInUser();
+
+    // Load current lobby
+    this.getCurrentLobby().subscribe();
   }
 
   private generateSessionId(): string {
@@ -88,13 +87,14 @@ export class LobbyService {
   }
 
   public getCurrentLobby(): Observable<Lobby | null> {
-    if (!this.currentUser) {
+    const userId = this.userService.getLoggedInId();
+    if (!userId) {
       return of(null);
     }
 
     return this.http.get<Lobby>(`${this.apiUrl}/current`, {
       params: {
-        userId: this.userService.getLoggedInId().toString()
+        userId: userId.toString()
       }
     }).pipe(
       tap((lobby: Lobby) => {
@@ -123,13 +123,14 @@ export class LobbyService {
   }
 
   public createLobby(lobbyData: Partial<Lobby>): Observable<Lobby> {
+    this.userService.getLoggedInId();
     return this.http.post<Lobby>(
       `${this.apiUrl}/create`,
       lobbyData,
       {
         headers: this.getSessionHeaders(),
         params: {
-          userId: this.userService.getLoggedInId().toString()
+          userId: this.userService.getLoggedInId()
         }
       }
     ).pipe(
@@ -272,19 +273,18 @@ export class LobbyService {
 
   public isUserLobbyLeader(): boolean {
     const lobby = this.currentLobbySubject.value;
-    if (!lobby || !this.currentUser) return false;
+    if (!lobby) return false;
 
-
-    // @ts-ignore
-    return lobby.players.find((player: LobbyPlayer) => player.user.id === this.currentUser.id)?.isLeader || false;
+    const currentUserId = this.userService.getLoggedInId();
+    return lobby.players.some((player: LobbyPlayer) => player.user.id === currentUserId && player.isLeader);
   }
 
   public getCurrentUserInLobby(): LobbyPlayer | null {
     const lobby = this.currentLobbySubject.value;
-    if (!lobby || !this.currentUser) return null;
+    if (!lobby) return null;
 
-    // @ts-ignore
-    return lobby.players.find((player: LobbyPlayer) => player.user.id === this.currentUser.id) || null;
+    const currentUserId = this.userService.getLoggedInId();
+    return lobby.players.find((player: LobbyPlayer) => player.user.id === currentUserId) || null;
   }
 
   public areAllPlayersReady(): boolean {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 import { BehaviorSubject } from 'rxjs';
 import { BACKEND_API_URL } from '../../../environments/api-config';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class WebSocketService {
   private pendingSubscriptions: Array<{topic: string, callback: (data: any) => void}> = [];
   private sockJsLoaded = false;
 
-  constructor() {
+  constructor(private userService: UserService) {
     // Load SockJS script dynamically to avoid "global is not defined" error
     this.loadSockJsScript().then(() => {
       this.initializeClient();
@@ -55,18 +56,24 @@ export class WebSocketService {
       return;
     }
 
+    // Get credentials from UserService
+    const username = this.userService.getLoggedInUsername();
+    const password = this.userService.getLoggedInPassword();
+
     // Create Basic Auth header
-    const username = 'root';
-    const password = 'example';
     const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
 
     // Get the SockJS constructor from the window object
     const SockJS = (window as any).SockJS;
 
+    // Make sure we're using the correct endpoint
+    const wsEndpoint = `${BACKEND_API_URL}/ws`;
+    console.log('Connecting to WebSocket endpoint:', wsEndpoint);
+
     this.client = new Client({
       webSocketFactory: () => {
         // Use SockJS with the correct endpoint
-        const sockjsInstance = new SockJS(`${BACKEND_API_URL}/ws`);
+        const sockjsInstance = new SockJS(wsEndpoint);
         console.log('Created SockJS instance:', sockjsInstance);
         return sockjsInstance;
       },
@@ -110,99 +117,63 @@ export class WebSocketService {
 
   public connect(): void {
     if (!this.client) {
-      console.error('STOMP client not initialized yet');
-      return;
-    }
-
-    try {
-      // Activate the connection
-      this.client.activate();
-    } catch (error) {
-      console.error('Error activating STOMP client:', error);
-    }
-  }
-
-  private processPendingSubscriptions(): void {
-    while (this.pendingSubscriptions.length > 0) {
-      const subscription = this.pendingSubscriptions.shift();
-      if (subscription) {
-        this.subscribeNow(subscription.topic, subscription.callback);
-      }
-    }
-  }
-
-  private subscribeNow(topic: string, callback: (data: any) => void): void {
-    if (!this.client) {
       console.error('STOMP client not initialized');
       return;
     }
 
-    try {
-      // Create Basic Auth header
-      const username = 'root';
-      const password = 'example';
-      const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
-
-      this.client.subscribe(topic, (message: IMessage) => {
-        try {
-          const data = JSON.parse(message.body);
-          callback(data);
-        } catch (e) {
-          console.error('Error parsing message body', e);
-          callback(message.body);
-        }
-      }, {
-        // Add auth headers to subscription
-        Authorization: authHeader
-      });
-      console.log(`Successfully subscribed to ${topic}`);
-    } catch (error) {
-      console.error(`Error subscribing to ${topic}`, error);
+    if (this.client.active) {
+      console.log('Already connected to STOMP server');
+      return;
     }
+
+    console.log('Connecting to STOMP server...');
+    this.client.activate();
+  }
+
+  public disconnect(): void {
+    if (!this.client || !this.client.active) {
+      console.log('Not connected to STOMP server');
+      return;
+    }
+
+    console.log('Disconnecting from STOMP server...');
+    this.client.deactivate();
+  }
+
+  public isConnected(): boolean {
+    return this.client !== null && this.client.active;
   }
 
   public subscribe(topic: string, callback: (data: any) => void): void {
-    if (!this.client || !this.client.connected) {
-      console.log(`Connection not ready, queuing subscription to ${topic}`);
+    if (!this.client || !this.client.active) {
+      console.log('Not connected to STOMP server, adding to pending subscriptions');
       this.pendingSubscriptions.push({ topic, callback });
       return;
     }
 
-    this.subscribeNow(topic, callback);
+    console.log('Subscribing to topic:', topic);
+    this.client.subscribe(topic, (message: IMessage) => {
+      try {
+        const data = JSON.parse(message.body);
+        callback(data);
+      } catch (error) {
+        console.error('Error parsing message body:', error);
+        callback(message.body);
+      }
+    });
   }
 
-  public send(destination: string, body: any): void {
-    if (!this.client || !this.client.connected) {
-      console.error('Cannot send message: STOMP client not connected');
+  private processPendingSubscriptions(): void {
+    if (!this.client || !this.client.active || this.pendingSubscriptions.length === 0) {
       return;
     }
 
-    try {
-      // Create Basic Auth header
-      const username = 'root';
-      const password = 'example';
-      const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
+    console.log('Processing pending subscriptions:', this.pendingSubscriptions.length);
 
-      this.client.publish({
-        destination,
-        body: JSON.stringify(body),
-        headers: {
-          Authorization: authHeader
-        }
-      });
-    } catch (error) {
-      console.error('Error sending message', error);
-    }
-  }
+    this.pendingSubscriptions.forEach(({ topic, callback }) => {
+      this.subscribe(topic, callback);
+    });
 
-  public disconnect(): void {
-    if (this.client) {
-      this.client.deactivate();
-    }
-    this.state.next(false);
-  }
-
-  public isConnected(): boolean {
-    return this.state.value;
+    this.pendingSubscriptions = [];
   }
 }

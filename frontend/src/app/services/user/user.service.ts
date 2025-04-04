@@ -60,6 +60,16 @@ export class UserService {
     this.isLoggedInSubject.next(false);
   }
 
+  getLoggedInUser(): User {
+    return {
+      id: parseInt(localStorage.getItem('id') || '0'),
+      username: localStorage.getItem('username') || '',
+      email: localStorage.getItem('email') || '',
+      password: localStorage.getItem('password') || '',
+      role: localStorage.getItem('role') || ''
+    }
+  }
+
   isLoggedIn(): boolean {
     return localStorage.getItem('id') !== null;
   }

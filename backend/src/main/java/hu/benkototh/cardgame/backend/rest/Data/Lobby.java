@@ -1,113 +1,183 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
-@Table(name = "lobbies")
-@Data
-@NoArgsConstructor
 public class Lobby {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String code;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private boolean isPublic = false;
-
-    @Column(nullable = false)
-    private boolean withPoints = true;
-
-    @Column(nullable = false)
-    private String gameMode = "classic";
-
-    @Column(nullable = false)
-    private int maxPlayers = 4;
-
-    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LobbyPlayer> players = new HashSet<>();
-
-    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LobbyMessage> messages = new HashSet<>();
-
-    @CreationTimestamp
+    private String code;
+    private boolean isPublic;
+    private String gameMode;
+    private boolean withPoints;
+    private int maxPlayers;
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // This annotation helps with JSON serialization
+    private List<LobbyPlayer> players = new ArrayList<>();
 
-    @PrePersist
-    public void prePersist() {
-        if (code == null || code.isEmpty()) {
-            code = generateUniqueCode();
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // This annotation helps with JSON serialization
+    private List<LobbyMessage> messages = new ArrayList<>();
+
+    // Default constructor
+    public Lobby() {
+        this.createdAt = LocalDateTime.now();
+        this.code = generateCode();
+    }
+
+    // Generate a random 6-character code
+    private String generateCode() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 6; i++) {
+            code.append(chars.charAt(random.nextInt(chars.length())));
         }
+
+        return code.toString();
     }
 
-    private String generateUniqueCode() {
-        return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    // Getters and setters
+    public Long getId() {
+        return id;
     }
 
-    public boolean isLeader(Long userId) {
-        return players.stream()
-                .filter(player -> player.isLeader())
-                .anyMatch(player -> player.getUser().getId() == userId);
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public LobbyPlayer getLeader() {
-        return players.stream()
-                .filter(player -> player.isLeader())
-                .findFirst()
-                .orElse(null);
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public boolean isWithPoints() {
+        return withPoints;
+    }
+
+    public void setWithPoints(boolean withPoints) {
+        this.withPoints = withPoints;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<LobbyPlayer> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<LobbyPlayer> players) {
+        this.players = players;
+    }
+
+    public List<LobbyMessage> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<LobbyMessage> messages) {
+        this.messages = messages;
+    }
+
+    // Helper methods
+    public void addPlayer(LobbyPlayer player) {
+        players.add(player);
+        player.setLobby(this);
+    }
+
+    public void removePlayer(LobbyPlayer player) {
+        players.remove(player);
+        player.setLobby(null);
     }
 
     public void promoteNextLeader() {
         if (players.isEmpty()) return;
 
-        LobbyPlayer currentLeader = getLeader();
-        if (currentLeader != null) {
-            currentLeader.setLeader(false);
-        }
-
-        players.stream()
-                .findFirst()
-                .ifPresent(player -> player.setLeader(true));
+        players.get(0).setLeader(true);
     }
 
-    public boolean addPlayer(LobbyPlayer player) {
-        if (players.size() >= maxPlayers) {
-            return false;
-        }
-
-        player.setLobby(this);
-        if (players.isEmpty()) {
-            player.setLeader(true);
-        }
-
-        return players.add(player);
+    public boolean isLeader(long userId) {
+        return players.stream()
+                .anyMatch(p -> p.getUser().getId() == userId && p.isLeader());
     }
 
-    public boolean removePlayer(LobbyPlayer player) {
-        boolean removed = players.remove(player);
+    // Override hashCode and equals to avoid circular reference
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, code, isPublic, gameMode, withPoints, maxPlayers, createdAt);
+    }
 
-        if (removed && player.isLeader() && !players.isEmpty()) {
-            promoteNextLeader();
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lobby lobby = (Lobby) o;
+        return id != null && id.equals(lobby.id);
+    }
 
-        return removed;
+    @Override
+    public String toString() {
+        return "Lobby{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", isPublic=" + isPublic +
+                ", gameMode='" + gameMode + '\'' +
+                ", withPoints=" + withPoints +
+                ", maxPlayers=" + maxPlayers +
+                ", createdAt=" + createdAt +
+                ", playersCount=" + (players != null ? players.size() : 0) +
+                ", messagesCount=" + (messages != null ? messages.size() : 0) +
+                '}';
     }
 }
