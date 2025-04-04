@@ -3,12 +3,13 @@ import {UserService} from './services/user/user.service';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {AuthService} from './services/auth/auth.service';
+import {ContactFormComponent} from './components/contact-form/contact-form.component';
 
 @Component({
   selector: 'app-root',
   imports: [
     NavbarComponent,
-    RouterOutlet, RouterModule,
+    RouterOutlet, RouterModule, ContactFormComponent,
   ],
   templateUrl: './app.component.html',
   standalone: true,

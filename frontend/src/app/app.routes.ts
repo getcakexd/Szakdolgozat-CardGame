@@ -7,6 +7,11 @@ import {ProfileComponent} from './pages/profile/profile.component';
 import {SocialComponent} from './pages/social/social.component';
 import {ClubPageComponent} from './pages/club-page/club-page.component';
 import {ClubComponent} from './components/club/club.component';
+import {AdminDashboardComponent} from './components/admin-dashboard/admin-dashboard.component';
+import {AgentDashboardComponent} from './components/agent-dashboard/agent-dashboard.component';
+import {AuthGuard} from './guards/auth.guard';
+import {AgentGuard} from './guards/agent.guard';
+import {AdminGuard} from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,6 +21,8 @@ export const routes: Routes = [
   { path: 'social', component: SocialComponent },
   {path: 'clubs', component: ClubPageComponent},
   { path: 'club/:id', component: ClubComponent },
+  { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
   { path: '**', redirectTo: '' }
 ];
 

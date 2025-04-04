@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../services/user/user.service';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,12 +24,16 @@ import {AuthService} from '../../services/auth/auth.service';
 export class NavbarComponent implements OnInit {
   isLoggedIn: boolean = false;
   username: string = '';
+  isAdmin: boolean = false;
+  isAgent: boolean = false;
 
   constructor(protected authService: AuthService) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
     this.username = localStorage.getItem('username') || '';
+    this.isAdmin = this.authService.isAdmin();
+    this.isAgent = this.authService.isAgent();
   }
 
   logout(): void {

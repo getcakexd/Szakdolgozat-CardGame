@@ -50,10 +50,10 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.currentUser?.role === "ROLE_ADMIN"
+    return this.currentUser?.role === "ROLE_ADMIN";
   }
 
   isAgent(): boolean {
-    return this.currentUser?.role === "ROLE_AGENT"
+    return this.currentUser?.role === "ROLE_AGENT";
   }
 }

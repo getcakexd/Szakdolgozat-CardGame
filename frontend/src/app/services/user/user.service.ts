@@ -14,7 +14,7 @@ import {UserHistory} from '../../models/user-history.model';
 export class UserService {
   private apiUrl = BACKEND_API_URL + '/users';
   private adminApiUrl = BACKEND_API_URL + '/admin';
-  private agentApiUrl = BACKEND_API_URL + '/agent';
+  private agentApiUrl = BACKEND_API_URL + '/agent/users';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -76,11 +76,11 @@ export class UserService {
   }
 
   adminCreateUser(user: User): Observable<any> {
-    return this.http.post(`${this.adminApiUrl}/create`, user)
+    return this.http.post(`${this.adminApiUrl}/users/create`, user)
   }
 
   adminDeleteUser(userId: number): Observable<any> {
-    return this.http.delete(`${this.adminApiUrl}/delete?userId=${userId}`)
+    return this.http.delete(`${this.adminApiUrl}/users/delete?userId=${userId}`)
   }
 
   unlockUser(userId: number): Observable<any> {

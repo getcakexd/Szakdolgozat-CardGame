@@ -111,3 +111,63 @@ button:hover {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
+
+/* Global styles */
+.full-width-table {
+  width: 100%;
+}
+
+.tab-content {
+  padding: 16px 0;
+}
+
+.action-bar {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.locked {
+    background-color: #ffcdd2;
+    color: #c62828;
+  }
+
+  &.active {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+  }
+
+  &.new {
+    background-color: #bbdefb;
+    color: #1565c0;
+  }
+
+  &.in-progress {
+    background-color: #fff9c4;
+    color: #f57f17;
+  }
+
+  &.resolved {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+  }
+}
+
+.error-snackbar {
+  background-color: #f44336;
+  color: white;
+}
+
+.no-history {
+  padding: 16px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}
+

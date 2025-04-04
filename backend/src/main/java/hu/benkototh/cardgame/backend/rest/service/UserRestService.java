@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,15 @@ public class UserRestService {
     @Autowired
     private IClubInviteRepository clubInviteRepository;
 
+    @Autowired
+    private IUserHistoryRepository userHistoryRepository;
+
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private ClubInviteRestService clubInviteRestService;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 5;
 
     @GetMapping("all")
     public ResponseEntity<List<User>> all() {
@@ -61,13 +68,31 @@ public class UserRestService {
     public ResponseEntity<?> login(@RequestBody User user) {
         Optional<User> foundUser = Optional.ofNullable(findByUsername(user.getUsername()));
 
-        if (foundUser.isPresent() && passwordEncoder.matches(user.getPassword(), foundUser.get().getPassword())) {
-            return ResponseEntity.ok(foundUser.get());
+        if (foundUser.isEmpty()) {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+
+        User existingUser = foundUser.get();
+
+        if (existingUser.isLocked()) {
+            return ResponseEntity.status(401).body("Account is locked. Please contact support.");
+        }
+
+        if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            existingUser.setFailedLoginAttempts(0);
+            userRepository.save(existingUser);
+            return ResponseEntity.ok(existingUser);
         } else {
+            existingUser.setFailedLoginAttempts(existingUser.getFailedLoginAttempts() + 1);
+
+            if (existingUser.getFailedLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
+                existingUser.setLocked(true);
+            }
+
+            userRepository.save(existingUser);
             return ResponseEntity.status(401).body("Invalid username or password");
         }
     }
-
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> create(@RequestBody User user) {
@@ -75,18 +100,19 @@ public class UserRestService {
         if (userExistsByUsername(user.getUsername())) {
             response.put("message", "Username already in use.");
             return ResponseEntity.status(400).body(response);
-        } else if (userExistsByEmail(user.getUsername())) {
+        } else if (userExistsByEmail(user.getEmail())) {
             response.put("message", "Email already in use.");
             return ResponseEntity.status(400).body(response);
         } else {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
             user.setRole("ROLE_USER");
+            user.setLocked(false);
+            user.setFailedLoginAttempts(0);
             userRepository.save(user);
 
             response.put("message", "User created.");
             return ResponseEntity.ok(response);
-
         }
     }
 
@@ -101,8 +127,12 @@ public class UserRestService {
                 response.put("message", "Username already in use.");
                 return ResponseEntity.status(400).body(response);
             } else {
+                String oldUsername = user.getUsername();
                 user.setUsername(newUsername);
                 userRepository.save(user);
+
+                saveUserHistory(user, oldUsername, null, "self");
+
                 response.put("message", "Username updated.");
                 return ResponseEntity.ok(response);
             }
@@ -123,8 +153,12 @@ public class UserRestService {
                 response.put("message", "Email already in use.");
                 return ResponseEntity.status(400).body(response);
             } else {
+                String oldEmail = user.getEmail();
                 user.setEmail(newEmail);
                 userRepository.save(user);
+
+                saveUserHistory(user, null, oldEmail, "self");
+
                 response.put("message", "Email updated.");
                 return ResponseEntity.ok(response);
             }
@@ -166,7 +200,7 @@ public class UserRestService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
+            if (passwordEncoder.matches(password, user.getPassword()) || password.equals(user.getPassword())) {
                 friendRequestRepository.deleteAll(getFriendRequests(user));
                 friendshipRepository.deleteAll(getFriendships(user));
                 messageRepository.deleteAll(getMessages(user));
@@ -184,6 +218,22 @@ public class UserRestService {
             response.put("message", "User not found.");
             return ResponseEntity.status(404).body(response);
         }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<UserHistory>> getUserHistory(@RequestParam long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        User user = userOptional.get();
+        List<UserHistory> history = userHistoryRepository.findAll().stream()
+                .filter(h -> h.getUser().getId() == user.getId())
+                .toList();
+
+        return ResponseEntity.ok(history);
     }
 
     private boolean authenticateUser(User user) {
@@ -223,11 +273,21 @@ public class UserRestService {
         return false;
     }
 
+    private void saveUserHistory(User user, String previousUsername, String previousEmail, String changedBy) {
+        UserHistory history = new UserHistory();
+        history.setUser(user);
+        history.setPreviousUsername(previousUsername);
+        history.setPreviousEmail(previousEmail);
+        history.setChangedAt(new Date());
+        history.setChangedBy(changedBy);
+        userHistoryRepository.save(history);
+    }
+
     private List<FriendRequest> getFriendRequests(User user) {
         return friendRequestRepository.findAll().stream()
                 .filter(friendRequest ->
                         friendRequest.getReceiver().getId() == user.getId() ||
-                        friendRequest.getSender().getId() == user.getId()
+                                friendRequest.getSender().getId() == user.getId()
                 )
                 .toList();
     }
@@ -236,7 +296,7 @@ public class UserRestService {
         return friendshipRepository.findAll().stream()
                 .filter(friendship ->
                         friendship.getUser1().getId() == user.getId() ||
-                        friendship.getUser2().getId() == user.getId()
+                                friendship.getUser2().getId() == user.getId()
                 )
                 .toList();
     }
@@ -245,7 +305,7 @@ public class UserRestService {
         return messageRepository.findAll().stream()
                 .filter(message ->
                         message.getSender().getId() == user.getId() ||
-                        message.getReceiver().getId() == user.getId()
+                                message.getReceiver().getId() == user.getId()
                 )
                 .toList();
     }
