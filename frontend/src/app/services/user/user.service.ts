@@ -83,6 +83,26 @@ export class UserService {
     return this.http.delete(`${this.adminApiUrl}/users/delete?userId=${userId}`)
   }
 
+  promoteToAgent(userId: number): Observable<any> {
+    return this.http.put(`${this.adminApiUrl}/users/promote-to-agent?userId=${userId}`, {})
+  }
+
+  demoteFromAgent(userId: number): Observable<any> {
+    return this.http.put(`${this.adminApiUrl}/users/demote-from-agent?userId=${userId}`, {})
+  }
+
+  promoteToAdmin(userId: number): Observable<any> {
+    return this.http.put(`${this.adminApiUrl}/users/promote-to-admin?userId=${userId}`, {})
+  }
+
+  demoteFromAdmin(userId: number): Observable<any> {
+    return this.http.put(`${this.adminApiUrl}/users/demote-from-admin?userId=${userId}`, {})
+  }
+
+  formatRole(role: string): string {
+    return role.replace("ROLE_", "")
+  }
+
   unlockUser(userId: number): Observable<any> {
     return this.http.put(`${this.agentApiUrl}/unlock?userId=${userId}`, {})
   }

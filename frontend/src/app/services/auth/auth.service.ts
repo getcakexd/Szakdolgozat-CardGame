@@ -56,4 +56,8 @@ export class AuthService {
   isAgent(): boolean {
     return this.currentUser?.role === "ROLE_AGENT";
   }
+
+  isRoot(): boolean {
+    return this.currentUser?.role === "ROLE_ROOT";
+  }
 }

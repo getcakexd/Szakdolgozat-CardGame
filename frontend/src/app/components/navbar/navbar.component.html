@@ -15,12 +15,12 @@
           <mat-icon>groups</mat-icon>
           <span>Clubs</span>
         </button>
-        <button *ngIf="isAdmin" class="navbar-button" mat-button routerLink="/admin">
+        <button *ngIf="isAdmin || isRoot" class="navbar-button" mat-button routerLink="/admin">
           <mat-icon>admin_panel_settings</mat-icon>
           <span>Admin</span>
         </button>
 
-        <button *ngIf="isAdmin || isAgent" class="navbar-button" mat-button routerLink="/agent">
+        <button *ngIf="isAdmin || isAgent || isRoot" class="navbar-button" mat-button routerLink="/agent">
           <mat-icon>support_agent</mat-icon>
           <span>Agent</span>
         </button>
