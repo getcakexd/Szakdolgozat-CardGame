@@ -11,7 +11,7 @@ export class AdminGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    if (this.authService.isAdmin()) {
+    if (this.authService.isAdmin() || this.authService.isRoot()) {
       return true
     }
 

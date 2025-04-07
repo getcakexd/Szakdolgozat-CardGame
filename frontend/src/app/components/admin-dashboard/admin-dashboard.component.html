@@ -31,13 +31,37 @@
 
               <ng-container matColumnDef="role">
                 <th mat-header-cell *matHeaderCellDef>Role</th>
-                <td mat-cell *matCellDef="let user">{{user.role}}</td>
+                <td mat-cell *matCellDef="let user">
+                  <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                    {{formatRole(user.role)}}
+                  </span>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let user">
-                  <button mat-icon-button color="warn" (click)="deleteUser(user)" aria-label="Delete user">
+                  <button mat-icon-button color="primary" *ngIf="canPromoteToAgent(user)"
+                          (click)="promoteToAgent(user)" matTooltip="Promote to Agent">
+                    <mat-icon>arrow_upward</mat-icon>
+                  </button>
+
+                  <button mat-icon-button color="warn" *ngIf="canDemoteFromAgent(user)"
+                          (click)="demoteFromAgent(user)" matTooltip="Demote from Agent">
+                    <mat-icon>arrow_downward</mat-icon>
+                  </button>
+
+                  <button mat-icon-button color="primary" *ngIf="canPromoteToAdmin(user)"
+                          (click)="promoteToAdmin(user)" matTooltip="Promote to Admin">
+                    <mat-icon>admin_panel_settings</mat-icon>
+                  </button>
+
+                  <button mat-icon-button color="warn" *ngIf="canDemoteFromAdmin(user)"
+                          (click)="demoteFromAdmin(user)" matTooltip="Demote from Admin">
+                    <mat-icon>remove_moderator</mat-icon>
+                  </button>
+
+                  <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="Delete user">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -84,7 +108,7 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let game">
-                  <button mat-icon-button color="warn" (click)="deleteGame(game)" aria-label="Delete game">
+                  <button mat-icon-button color="warn" (click)="deleteGame(game)" matTooltip="Delete game">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>

@@ -2,13 +2,16 @@ package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.Game;
 import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
+import hu.benkototh.cardgame.backend.rest.repository.IUserHistoryRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,7 @@ public class AdminRestService {
     private IGameRepository gameRepository;
 
     @Autowired
-    private UserRestService userRestService;
+    private IUserHistoryRepository userHistoryRepository;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -62,9 +65,7 @@ public class AdminRestService {
         Map<String, String> response = new HashMap<>();
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            userRestService.deleteUser(user.getId(), user.getPassword());
-            //userRepository.delete(user);
+            userRepository.delete(userOptional.get());
             response.put("message", "User deleted successfully.");
             return ResponseEntity.ok(response);
         } else {
@@ -73,20 +74,105 @@ public class AdminRestService {
         }
     }
 
+    @PutMapping("/users/promote-to-agent")
+    public ResponseEntity<Map<String, String>> promoteToAgent(@RequestParam long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
+
+        if (userOptional.isEmpty()) {
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        User user = userOptional.get();
+
+        if (!user.getRole().equals("ROLE_USER")) {
+            response.put("message", "Only regular users can be promoted to agents.");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        user.setRole("ROLE_AGENT");
+        userRepository.save(user);
+
+        response.put("message", "User promoted to agent successfully.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/demote-from-agent")
+    public ResponseEntity<Map<String, String>> demoteFromAgent(@RequestParam long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
+
+        if (userOptional.isEmpty()) {
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        User user = userOptional.get();
+
+        if (!user.getRole().equals("ROLE_AGENT")) {
+            response.put("message", "Only agents can be demoted to users.");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        user.setRole("ROLE_USER");
+        userRepository.save(user);
+
+        response.put("message", "User demoted from agent successfully.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/promote-to-admin")
+    public ResponseEntity<Map<String, String>> promoteToAdmin(@RequestParam long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
+
+        if (userOptional.isEmpty()) {
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        User user = userOptional.get();
+
+        if (user.getRole().equals("ROLE_ADMIN") || user.getRole().equals("ROLE_ROOT")) {
+            response.put("message", "User already has admin or higher privileges.");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        user.setRole("ROLE_ADMIN");
+        userRepository.save(user);
+
+        response.put("message", "User promoted to admin successfully.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/demote-from-admin")
+    public ResponseEntity<Map<String, String>> demoteFromAdmin(@RequestParam long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Map<String, String> response = new HashMap<>();
+
+        if (userOptional.isEmpty()) {
+            response.put("message", "User not found.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        User user = userOptional.get();
+
+        if (!user.getRole().equals("ROLE_ADMIN")) {
+            response.put("message", "Only admins can be demoted.");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        user.setRole("ROLE_AGENT");
+        userRepository.save(user);
+
+        response.put("message", "User demoted from admin successfully.");
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/games/all")
     public ResponseEntity<List<Game>> getAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
-    }
-
-    @GetMapping("/games/get")
-    public ResponseEntity<Game> getGame(@RequestParam long gameId) {
-        Optional<Game> game = gameRepository.findById(gameId);
-
-        if (game.isEmpty()) {
-            return ResponseEntity.status(404).body(null);
-        }
-
-        return ResponseEntity.ok(game.get());
     }
 
     @PostMapping("/games/create")
@@ -101,32 +187,6 @@ public class AdminRestService {
             response.put("message", "Game created successfully.");
             return ResponseEntity.ok(response);
         }
-    }
-
-    @PutMapping("/games/update")
-    public ResponseEntity<Map<String, String>> updateGame(@RequestBody Game game) {
-        Optional<Game> gameOptional = gameRepository.findById(game.getId());
-        Map<String, String> response = new HashMap<>();
-
-        if (gameOptional.isEmpty()) {
-            response.put("message", "Game not found.");
-            return ResponseEntity.status(404).body(response);
-        }
-
-        Game existingGame = gameOptional.get();
-
-        if (!existingGame.getName().equals(game.getName()) && gameExistsByName(game.getName())) {
-            response.put("message", "Game with this name already exists.");
-            return ResponseEntity.status(400).body(response);
-        }
-
-        existingGame.setName(game.getName());
-        existingGame.setDescription(game.getDescription());
-        existingGame.setActive(game.isActive());
-        gameRepository.save(existingGame);
-
-        response.put("message", "Game updated successfully.");
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/games/delete")
@@ -159,3 +219,4 @@ public class AdminRestService {
                 .anyMatch(game -> game.getName().equals(name));
     }
 }
+

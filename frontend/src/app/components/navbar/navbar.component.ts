@@ -28,6 +28,7 @@ export class NavbarComponent implements OnInit {
   username: string = '';
   isAdmin: boolean = false;
   isAgent: boolean = false;
+  isRoot: boolean = false;
 
   constructor(protected authService: AuthService) {}
 
@@ -36,6 +37,7 @@ export class NavbarComponent implements OnInit {
     this.username = localStorage.getItem('username') || '';
     this.isAdmin = this.authService.isAdmin();
     this.isAgent = this.authService.isAgent();
+    this.isRoot = this.authService.isRoot();
   }
 
   logout(): void {
