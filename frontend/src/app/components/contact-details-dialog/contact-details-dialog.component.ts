@@ -39,7 +39,6 @@ export class ContactDetailsDialogComponent {
   }
 
   sendEmail(): void {
-    // This would normally send an email, but for now just show a notification
     this.snackBar.open("Email functionality will be implemented in the future.", "Close", {
       duration: 3000,
     })

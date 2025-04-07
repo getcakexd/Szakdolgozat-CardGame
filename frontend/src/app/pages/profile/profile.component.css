@@ -2,8 +2,9 @@
   display: flex;
   justify-content: center;
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: var(--background-color);
   min-height: calc(100vh - 64px);
+  transition: background-color var(--transition-normal) ease;
 }
 
 .profile-card {
@@ -11,7 +12,10 @@
   max-width: 600px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  transition: box-shadow var(--transition-normal) ease, background-color var(--transition-normal) ease;
 }
 
 .profile-header {
@@ -20,8 +24,9 @@
   align-items: center;
   width: 100%;
   padding: 16px;
-  background-color: #757575;
+  background-color: var(--primary-color);
   color: white;
+  transition: background-color var(--transition-normal) ease;
 }
 
 .profile-icon {
@@ -49,12 +54,12 @@ mat-card-title {
   align-items: center;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #616161;
+  color: var(--text-secondary);
 }
 
 .info-label mat-icon {
   margin-right: 8px;
-  color: #757575;
+  color: var(--text-secondary);
 }
 
 .info-content {
@@ -66,13 +71,15 @@ mat-card-title {
 
 .info-value {
   font-size: 16px;
+  color: var(--text-primary);
 }
 
 .edit-form {
-  background-color: #f9f9f9;
+  background-color: var(--background-color);
   padding: 16px;
   border-radius: 4px;
   margin-top: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .form-field {
@@ -94,27 +101,28 @@ mat-card-title {
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(var(--error-color-rgb), 0.1);
+  color: var(--error-color);
 }
 
 .success-message {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: rgba(var(--success-color-rgb), 0.1);
+  color: var(--success-color);
 }
 
 .danger {
-  color: #d32f2f;
+  color: var(--error-color);
 }
 
 .delete-warning {
-  color: #d32f2f;
+  color: var(--error-color);
   font-weight: 500;
   margin-top: 0;
 }
 
 mat-divider {
   margin: 0;
+  border-top-color: var(--border-color);
 }
 
 @media (max-width: 600px) {
@@ -140,3 +148,4 @@ mat-divider {
     width: 100%;
   }
 }
+

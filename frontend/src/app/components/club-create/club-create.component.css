@@ -1,6 +1,9 @@
 .club-form-card {
   max-width: 600px;
   margin: 16px 0;
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-medium);
 }
 
 .club-form {
@@ -22,16 +25,17 @@
 
 .checkbox-hint {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
   margin-top: 4px;
   margin-left: 24px;
 }
 
 .error-message {
-  color: #f44336;
+  color: var(--error-color);
   margin: 8px 0;
 }
 
 mat-card-actions {
   padding: 16px;
 }
+

@@ -17,15 +17,23 @@
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  color: var(--text-primary);
 }
 
 .basic-input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
   box-sizing: border-box;
+  background-color: var(--card-background);
+  color: var(--text-primary);
+}
+
+.basic-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
 }
 
 .form-actions {
@@ -34,20 +42,21 @@
 
 .basic-button {
   padding: 10px 15px;
-  background-color: #673ab7;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color var(--transition-fast) ease;
 }
 
 .basic-button:hover {
-  background-color: #5e35b1;
+  background-color: var(--primary-dark);
 }
 
 .error-text {
-  color: red;
+  color: var(--error-color);
   margin-top: 10px;
 }
 
@@ -62,7 +71,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .request-info {
@@ -72,10 +81,11 @@
 }
 
 .status-badge {
-  background-color: #f0f0f0;
+  background-color: var(--hover-overlay);
   padding: 3px 8px;
   border-radius: 10px;
   font-size: 12px;
+  color: var(--text-primary);
 }
 
 .request-buttons {
@@ -85,32 +95,47 @@
 
 .accept-button {
   padding: 5px 10px;
-  background-color: #4caf50;
+  background-color: var(--success-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color var(--transition-fast) ease;
 }
 
-.decline-button, .cancel-button {
+.accept-button:hover {
+  background-color: var(--success-color);
+  filter: brightness(0.9);
+}
+
+.decline-button,
+.cancel-button {
   padding: 5px 10px;
-  background-color: #f44336;
+  background-color: var(--error-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color var(--transition-fast) ease;
+}
+
+.decline-button:hover,
+.cancel-button:hover {
+  background-color: var(--error-color);
+  filter: brightness(0.9);
 }
 
 .loading-text {
   text-align: center;
   padding: 20px;
-  color: #757575;
+  color: var(--text-secondary);
 }
 
 .empty-message {
   text-align: center;
   padding: 30px;
-  background-color: #f5f5f5;
+  background-color: var(--background-color);
   border-radius: 4px;
-  color: #757575;
+  color: var(--text-secondary);
 }
+

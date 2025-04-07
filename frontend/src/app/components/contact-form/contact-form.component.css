@@ -9,18 +9,18 @@
 }
 
 .contact-button {
-  background-color: #3f51b5;
+  background-color: var(--primary-color);
   color: white;
   padding: 12px 20px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-medium);
+  transition: all var(--transition-fast) ease;
 
   &:hover {
-    background-color: #303f9f;
+    background-color: var(--primary-dark);
   }
 
   mat-icon {
@@ -29,12 +29,13 @@
 }
 
 .contact-form-container {
-  background-color: white;
+  background-color: var(--card-background);
   border-radius: 4px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-large);
   width: 100%;
   overflow: visible;
   animation: slide-up 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .contact-form-header {
@@ -42,8 +43,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom: 1px solid var(--border-color);
 
   h2 {
     margin: 0;
@@ -74,11 +76,14 @@ form {
   min-width: 200px !important;
   max-width: 200px !important;
   z-index: 10000 !important;
+  background-color: var(--card-background) !important;
+  color: var(--text-primary) !important;
 }
 
 .message-guidance {
-  background-color: #e8f5e9;
-  border-left: 4px solid #4caf50;
+  background-color: var(--success-color);
+  background-opacity: 0.1;
+  border-left: 4px solid var(--success-color);
   padding: 12px;
   margin-bottom: 16px;
   border-radius: 4px;
@@ -86,7 +91,7 @@ form {
   p {
     margin: 0;
     font-size: 14px;
-    color: #2e7d32;
+    color: var(--success-color);
   }
 }
 

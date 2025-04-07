@@ -14,18 +14,26 @@
 
 .invite-card {
   margin-bottom: 16px;
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-medium);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
 }
 
 .empty-card {
   text-align: center;
   padding: 32px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: var(--shadow-small);
+  transition: background-color var(--transition-normal) ease;
 }
 
 .loading-message {
   text-align: center;
   padding: 24px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
 }
 
 .badge-container {
@@ -35,7 +43,7 @@
 }
 
 .invite-badge {
-  background-color: #f44336;
+  background-color: var(--error-color);
   color: white;
   border-radius: 50%;
   padding: 2px 6px;
@@ -43,6 +51,7 @@
   position: absolute;
   top: -8px;
   right: -16px;
+  transition: background-color var(--transition-normal) ease;
 }
 
 mat-card-actions {
@@ -51,5 +60,7 @@ mat-card-actions {
 
 h1 {
   margin-bottom: 24px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
 }
+
