@@ -4,25 +4,29 @@ import { MatSnackBar } from "@angular/material/snack-bar"
 import { User } from "../../models/user.model"
 import { ModifyUserDialogComponent } from "../modify-user-dialog/modify-user-dialog.component"
 import { UserHistoryDialogComponent } from "../user-history-dialog/user-history-dialog.component"
-import {ContactRequest} from '../../models/contact-request.model';
-import {UserHistory} from '../../models/user-history.model';
-import {UserService} from '../../services/user/user.service';
-import {ContactService} from '../../services/contact/contact.service';
-import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
+import { ContactRequest } from "../../models/contact-request.model"
+import { UserHistory } from "../../models/user-history.model"
+import { UserService } from "../../services/user/user.service"
+import { ContactService } from "../../services/contact/contact.service"
+import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component"
+import { ContactDetailsDialogComponent } from "../contact-details-dialog/contact-details-dialog.component"
 import {
   MatCell,
-  MatCellDef, MatColumnDef, MatHeaderCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
   MatRow,
-  MatRowDef, MatTable
-} from '@angular/material/table';
-import {MatIcon} from '@angular/material/icon';
-import {MatIconButton} from '@angular/material/button';
-import {DatePipe, NgClass, NgIf} from '@angular/common';
-import {MatTab, MatTabGroup} from '@angular/material/tabs';
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+  MatRowDef,
+  MatTable,
+} from "@angular/material/table"
+import { MatIcon } from "@angular/material/icon"
+import { MatIconButton } from "@angular/material/button"
+import { DatePipe, NgClass, NgIf } from "@angular/common"
+import { MatTab, MatTabGroup } from "@angular/material/tabs"
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
 
 @Component({
   selector: "app-agent-dashboard",
@@ -49,9 +53,9 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/mat
     MatCardContent,
     MatCardTitle,
     MatCardHeader,
-    MatCard
+    MatCard,
   ],
-  standalone: true
+  standalone: true,
 })
 export class AgentDashboardComponent implements OnInit {
   users: User[] = []
@@ -147,6 +151,19 @@ export class AgentDashboardComponent implements OnInit {
       },
       (error) => this.showError("Failed to update request status"),
     )
+  }
+
+  viewContactDetails(request: ContactRequest): void {
+    this.dialog.open(ContactDetailsDialogComponent, {
+      width: "600px",
+      data: { request },
+    })
+  }
+
+  sendEmail(request: ContactRequest): void {
+    this.snackBar.open("Email functionality will be implemented in the future.", "Close", {
+      duration: 3000,
+    })
   }
 
   private showSuccess(message: string): void {

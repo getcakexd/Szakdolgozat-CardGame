@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Contact Request Details</h2>
+<mat-dialog-content>
+  <div class="contact-details">
+    <div class="detail-row">
+      <span class="label">ID:</span>
+      <span class="value">{{data.request.id}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Name:</span>
+      <span class="value">{{data.request.name}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Email:</span>
+      <span class="value">{{data.request.email}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Problem Type:</span>
+      <span class="value">{{formatProblemType(data.request.problemType)}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Subject:</span>
+      <span class="value">{{data.request.subject}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Status:</span>
+      <span class="value status-badge" [ngClass]="data.request.status">{{data.request.status}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Created:</span>
+      <span class="value">{{data.request.createdAt | date:'medium'}}</span>
+    </div>
+    <div class="detail-row message">
+      <span class="label">Message:</span>
+      <div class="message-content">{{data.request.message}}</div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-raised-button color="primary" (click)="sendEmail()">Send Email</button>
+</mat-dialog-actions>
+

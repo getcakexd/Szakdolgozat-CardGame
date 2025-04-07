@@ -90,6 +90,9 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let request">
+                  <button mat-icon-button color="primary" (click)="viewContactDetails(request)" aria-label="View contact details">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
                   <button mat-icon-button color="primary" *ngIf="request.status === 'new'"
                           (click)="updateContactStatus(request, 'in-progress')" aria-label="Start working on request">
                     <mat-icon>play_arrow</mat-icon>
@@ -97,6 +100,9 @@
                   <button mat-icon-button color="accent" *ngIf="request.status === 'in-progress'"
                           (click)="updateContactStatus(request, 'resolved')" aria-label="Mark as resolved">
                     <mat-icon>check_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button color="primary" (click)="sendEmail(request)" aria-label="Send email">
+                    <mat-icon>email</mat-icon>
                   </button>
                 </td>
               </ng-container>

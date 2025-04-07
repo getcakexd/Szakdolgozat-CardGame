@@ -438,6 +438,14 @@ function hasModifierKey(event, ...modifiers) {
   return event.altKey || event.shiftKey || event.ctrlKey || event.metaKey;
 }
 
+// node_modules/@angular/cdk/fesm2022/coercion/private.mjs
+function coerceObservable(data) {
+  if (!isObservable(data)) {
+    return of(data);
+  }
+  return data;
+}
+
 // node_modules/@angular/cdk/fesm2022/coercion.mjs
 function coerceBooleanProperty(value) {
   return value != null && `${value}` !== "false";
@@ -912,14 +920,6 @@ var Breakpoints = {
   TabletLandscape: "(min-width: 960px) and (max-width: 1279.98px) and (orientation: landscape)",
   WebLandscape: "(min-width: 1280px) and (orientation: landscape)"
 };
-
-// node_modules/@angular/cdk/fesm2022/coercion/private.mjs
-function coerceObservable(data) {
-  if (!isObservable(data)) {
-    return of(data);
-  }
-  return data;
-}
 
 // node_modules/@angular/cdk/fesm2022/a11y.mjs
 var ID_DELIMITER = " ";
@@ -3588,6 +3588,17 @@ function MatOption_Conditional_6_Template(rf, ctx) {
 var _c5 = ["mat-internal-form-field", ""];
 var _c6 = ["*"];
 var VERSION2 = new Version("19.1.0");
+var AnimationCurves = class {
+  static STANDARD_CURVE = "cubic-bezier(0.4,0.0,0.2,1)";
+  static DECELERATION_CURVE = "cubic-bezier(0.0,0.0,0.2,1)";
+  static ACCELERATION_CURVE = "cubic-bezier(0.4,0.0,1,1)";
+  static SHARP_CURVE = "cubic-bezier(0.4,0.0,0.6,1)";
+};
+var AnimationDurations = class {
+  static COMPLEX = "375ms";
+  static ENTERING = "225ms";
+  static EXITING = "195ms";
+};
 var MATERIAL_SANITY_CHECKS = new InjectionToken("mat-sanity-checks", {
   providedIn: "root",
   factory: () => true
@@ -4268,6 +4279,23 @@ var MatLine = class _MatLine {
     }]
   }], null, null);
 })();
+function setLines(lines, element, prefix = "mat") {
+  lines.changes.pipe(startWith(lines)).subscribe(({
+    length
+  }) => {
+    setClass(element, `${prefix}-2-line`, false);
+    setClass(element, `${prefix}-3-line`, false);
+    setClass(element, `${prefix}-multi-line`, false);
+    if (length === 2 || length === 3) {
+      setClass(element, `${prefix}-${length}-line`, true);
+    } else if (length > 3) {
+      setClass(element, `${prefix}-multi-line`, true);
+    }
+  });
+}
+function setClass(element, className, isAdd) {
+  element.nativeElement.classList.toggle(className, isAdd);
+}
 var MatLineModule = class _MatLineModule {
   static ɵfac = function MatLineModule_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _MatLineModule)();
@@ -5717,18 +5745,40 @@ export {
   _IdGenerator,
   Directionality,
   BidiModule,
+  VERSION2 as VERSION,
+  AnimationCurves,
+  AnimationDurations,
+  MATERIAL_SANITY_CHECKS,
   MatCommonModule,
   _ErrorStateTracker,
+  MAT_DATE_LOCALE,
+  MAT_DATE_LOCALE_FACTORY,
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  NativeDateAdapter,
+  MAT_NATIVE_DATE_FORMATS,
+  NativeDateModule,
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+  ShowOnDirtyErrorStateMatcher,
   ErrorStateMatcher,
   _StructuralStylesLoader,
+  MatLine,
+  setLines,
+  MatLineModule,
+  RippleState,
+  RippleRef,
+  defaultRippleAnimationConfig,
   RippleRenderer,
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatRipple,
   MatRippleModule,
+  MatPseudoCheckbox,
   MatPseudoCheckboxModule,
   MAT_OPTION_PARENT_COMPONENT,
   MAT_OPTGROUP,
   MatOptgroup,
+  MatOptionSelectionChange,
   MatOption,
   _countGroupLabelsBeforeOption,
   _getOptionScrollPosition,
@@ -5736,4 +5786,4 @@ export {
   MatRippleLoader,
   _MatInternalFormField
 };
-//# sourceMappingURL=chunk-NYN3WN3S.js.map
+//# sourceMappingURL=chunk-WP2DXOSH.js.map
