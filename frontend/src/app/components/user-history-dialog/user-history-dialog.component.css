@@ -1,0 +1,13 @@
+@import "../../../css/dialog.css";
+
+.full-width-table {
+  margin-top: 16px;
+}
+
+.no-history {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--background-color);
+  border-radius: 4px;
+}
+

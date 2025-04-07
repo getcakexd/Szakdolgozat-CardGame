@@ -57,7 +57,6 @@ export class ContactFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The form starts collapsed by default
   }
 
   toggleExpand(): void {

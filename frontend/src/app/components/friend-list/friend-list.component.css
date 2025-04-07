@@ -1,6 +1,9 @@
 .friends-card {
   margin-bottom: 16px;
   border-radius: 8px;
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-medium);
 }
 
 .friend-list {
@@ -26,11 +29,12 @@
 }
 
 .friend-icon {
-  color: #5c6bc0;
+  color: var(--primary-color);
 }
 
 .friend-name {
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .friend-actions {
@@ -40,7 +44,7 @@
 
 .chat-container {
   padding: 16px;
-  background-color: #f5f5f5;
+  background-color: var(--background-color);
   border-radius: 4px;
   margin: 0 16px 16px;
 }
@@ -60,7 +64,7 @@
   align-items: center;
   justify-content: center;
   padding: 32px;
-  color: #757575;
+  color: var(--text-secondary);
 }
 
 .empty-icon {
@@ -68,7 +72,7 @@
   height: 48px;
   width: 48px;
   margin-bottom: 16px;
-  color: #9e9e9e;
+  color: var(--text-secondary);
 }
 
 ::ng-deep .mat-mdc-list-item-unscoped-content {
@@ -86,3 +90,4 @@
     align-self: flex-end;
   }
 }
+
