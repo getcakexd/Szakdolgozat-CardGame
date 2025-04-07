@@ -3,48 +3,62 @@
   <span>Contact Support</span>
 </div>
 
-<mat-card>
-  <div *ngIf="isExpanded" class="contact-form-container">
-    <div class="contact-form-header">
-      <h2>Contact Support</h2>
-      <button mat-icon-button (click)="toggleExpand()" aria-label="Close form">
-        <mat-icon>close</mat-icon>
-      </button>
+<mat-card *ngIf="isExpanded" class="contact-form-container">
+  <div class="contact-form-header">
+    <h2>Contact Support</h2>
+    <button mat-icon-button (click)="toggleExpand()" aria-label="Close form">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error *ngIf="contactForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="contactForm.get('email')?.hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="contactForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width problem-type-field">
+      <mat-label>Problem Type</mat-label>
+      <mat-select formControlName="problemType" required [panelClass]="customPanelClass">
+        <mat-option value="locked-account">Locked Account</mat-option>
+        <mat-option value="stolen-account">Stolen Account</mat-option>
+        <mat-option value="report-user">Reporting Another User</mat-option>
+        <mat-option value="other">Other</mat-option>
+      </mat-select>
+      <mat-error *ngIf="contactForm.get('problemType')?.hasError('required')">Problem type is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Subject</mat-label>
+      <input matInput formControlName="subject" required>
+      <mat-error *ngIf="contactForm.get('subject')?.hasError('required')">Subject is required</mat-error>
+    </mat-form-field>
+
+    <div class="message-guidance">
+      <mat-hint>Please provide as much detail as possible about your issue. For account-related problems, include your previous email address or username to help us verify your identity.</mat-hint>
     </div>
 
-    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name" required>
-        <mat-error *ngIf="contactForm.get('name')?.hasError('required')">Name is required</mat-error>
-      </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Message</mat-label>
+      <textarea matInput formControlName="message" rows="4" required></textarea>
+      <mat-error *ngIf="contactForm.get('message')?.hasError('required')">Message is required</mat-error>
+      <mat-error *ngIf="contactForm.get('message')?.hasError('minlength')">Message must be at least 10 characters</mat-error>
+    </mat-form-field>
 
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" required>
-        <mat-error *ngIf="contactForm.get('email')?.hasError('required')">Email is required</mat-error>
-        <mat-error *ngIf="contactForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Subject</mat-label>
-        <input matInput formControlName="subject" required>
-        <mat-error *ngIf="contactForm.get('subject')?.hasError('required')">Subject is required</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Message</mat-label>
-        <textarea matInput formControlName="message" rows="4" required></textarea>
-        <mat-error *ngIf="contactForm.get('message')?.hasError('required')">Message is required</mat-error>
-        <mat-error *ngIf="contactForm.get('message')?.hasError('minlength')">Message must be at least 10 characters</mat-error>
-      </mat-form-field>
-
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid || isSubmitting">
-          <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
-          <span *ngIf="!isSubmitting">Send</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid || isSubmitting">
+        <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+        <span *ngIf="!isSubmitting">Send</span>
+      </button>
+    </div>
+  </form>
 </mat-card>
+

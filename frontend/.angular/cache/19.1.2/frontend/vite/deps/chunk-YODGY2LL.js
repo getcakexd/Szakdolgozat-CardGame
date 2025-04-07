@@ -5,7 +5,7 @@ import {
   MatRippleModule,
   _CdkPrivateStyleLoader,
   _StructuralStylesLoader
-} from "./chunk-NYN3WN3S.js";
+} from "./chunk-WP2DXOSH.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionStrategy,
@@ -1026,4 +1026,4 @@ export {
   MatIconAnchor,
   MatButtonModule
 };
-//# sourceMappingURL=chunk-FM5JUZZJ.js.map
+//# sourceMappingURL=chunk-YODGY2LL.js.map

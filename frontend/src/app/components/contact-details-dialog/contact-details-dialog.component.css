@@ -1,0 +1,57 @@
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.label {
+  font-weight: 500;
+  min-width: 100px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.value {
+  flex: 1;
+}
+
+.message {
+  flex-direction: column;
+
+  .message-content {
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    white-space: pre-line;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.new {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &.in-progress {
+    background-color: #fff8e1;
+    color: #ff8f00;
+  }
+
+  &.resolved {
+    background-color: #e8f5e9;
+    color: #388e3c;
+  }
+}
+
