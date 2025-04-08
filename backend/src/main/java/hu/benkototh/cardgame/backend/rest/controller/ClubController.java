@@ -1,7 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
 import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +28,17 @@ public class ClubController {
     @Lazy
     @Autowired
     private ClubInviteController clubInviteController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public List<Club> getAllClubs() {
+        auditLogController.logAction("ALL_CLUBS_VIEWED", 0L, "All clubs viewed");
         return clubRepository.findAll();
     }
 
     public List<Club> getPublicClubs() {
+        auditLogController.logAction("PUBLIC_CLUBS_VIEWED", 0L, "Public clubs viewed");
         return clubRepository.findAll().stream().filter(Club::isPublic).toList();
     }
 
@@ -45,10 +49,12 @@ public class ClubController {
             return null;
         }
         
+        auditLogController.logAction("JOINABLE_CLUBS_VIEWED", userId, "Joinable clubs viewed");
         return getJoinableClubs(user);
     }
 
     public List<Club> getJoinableClubs(User user) {
+        auditLogController.logAction("JOINABLE_CLUBS_VIEWED", user, "Joinable clubs viewed");
         return clubRepository.findAll().stream()
                 .filter(club -> club.isPublic() &&
                         !clubMemberController.isMember(user, club))
@@ -56,7 +62,13 @@ public class ClubController {
     }
 
     public Club getClub(long clubId) {
-        return clubRepository.findById(clubId).orElse(null);
+        Club club = clubRepository.findById(clubId).orElse(null);
+        
+        if (club != null) {
+            auditLogController.logAction("CLUB_VIEWED", 0L, "Club viewed: " + clubId);
+        }
+        
+        return club;
     }
 
     public List<Club> getClubsByUser(long userId) {
@@ -66,6 +78,7 @@ public class ClubController {
             return null;
         }
         
+        auditLogController.logAction("USER_CLUBS_VIEWED", userId, "User's clubs viewed");
         return clubMemberController.getClubsByUser(user);
     }
 
@@ -80,6 +93,9 @@ public class ClubController {
         club = clubRepository.save(club);
 
         clubMemberController.addClubMember(club, user, "admin");
+        
+        auditLogController.logAction("CLUB_CREATED", userId,
+                "Club created: " + name + " (ID: " + club.getId() + ")");
         
         return club;
     }
@@ -96,7 +112,12 @@ public class ClubController {
         club.setDescription(description);
         club.setPublic(isPublic);
         
-        return clubRepository.save(club);
+        Club updatedClub = clubRepository.save(club);
+        
+        auditLogController.logAction("CLUB_UPDATED", 0L,
+                "Club updated: " + clubId + " - New name: " + name);
+        
+        return updatedClub;
     }
 
     public boolean deleteClub(long clubId) {
@@ -110,6 +131,9 @@ public class ClubController {
         clubMemberController.deleteClubMembersByClub(club.get());
 
         clubRepository.deleteById(clubId);
+        
+        auditLogController.logAction("CLUB_DELETED", 0L,
+                "Club deleted: " + clubId + " - " + club.get().getName());
         
         return true;
     }
