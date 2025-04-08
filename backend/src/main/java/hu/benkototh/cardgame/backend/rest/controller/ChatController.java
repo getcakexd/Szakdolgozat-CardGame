@@ -23,6 +23,9 @@ public class ChatController {
     @Lazy
     @Autowired
     private UserController userController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public List<Message> getMessages(long userId, long friendId) {
         List<Message> messages = findBySenderAndReceiver(userId, friendId);
@@ -33,6 +36,9 @@ public class ChatController {
                     msg.setStatus("read");
                     messageRepository.save(msg);
                 });
+        
+        auditLogController.logAction("MESSAGES_VIEWED", userId,
+                "Chat messages viewed with user: " + friendId);
                 
         return messages;
     }
@@ -46,7 +52,12 @@ public class ChatController {
         }
 
         Message message = new Message(sender, receiver, content);
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        
+        auditLogController.logAction("MESSAGE_SENT", userId,
+                "Message sent to user " + friendId + ": " + (content.length() > 50 ? content.substring(0, 47) + "..." : content));
+        
+        return savedMessage;
     }
 
     public Message unsendMessage(long messageId) {
@@ -60,7 +71,12 @@ public class ChatController {
         message.setStatus("unsent");
         message.setContent("This message has been unsent");
         
-        return messageRepository.save(message);
+        Message updatedMessage = messageRepository.save(message);
+        
+        auditLogController.logAction("MESSAGE_UNSENT", message.getSender().getId(),
+                "Message unsent: " + messageId);
+        
+        return updatedMessage;
     }
 
     public Map<Long, Integer> getUnreadMessageCounts(long userId) {
@@ -70,6 +86,12 @@ public class ChatController {
 
         Map<Long, Integer> unreadCounts = new HashMap<>();
         unreadMessages.forEach(msg -> unreadCounts.merge(msg.getSender().getId(), 1, Integer::sum));
+
+        auditLogController.logAction("UNREAD_MESSAGE_COUNTS_CHECKED", userId,
+                "Unread message counts checked for user: " + userId);
+
+        auditLogController.logAction("UNREAD_MESSAGE_COUNTS_CHECKED", userId,
+                "Unread message counts:" + unreadCounts);
 
         return unreadCounts;
     }
@@ -90,5 +112,8 @@ public class ChatController {
                 .toList();
         
         messageRepository.deleteAll(messages);
+        
+        auditLogController.logAction("MESSAGES_DELETED", user,
+                "All messages deleted for user");
     }
 }

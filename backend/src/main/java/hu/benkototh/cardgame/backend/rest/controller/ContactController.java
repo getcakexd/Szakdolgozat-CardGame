@@ -20,18 +20,37 @@ public class ContactController {
     @Lazy
     @Autowired
     private UserController userController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public ContactRequest submitContactRequest(ContactRequest request) {
         request.setStatus("new");
-        return contactRequestRepository.save(request);
+        ContactRequest savedRequest = contactRequestRepository.save(request);
+
+        User user = new User();
+        user.setUsername(request.getName());
+        user.setEmail(request.getEmail());
+
+        auditLogController.logAction("CONTACT_REQUEST_SUBMITTED", user,
+                "Contact request submitted with subject: " + request.getSubject());
+        
+        return savedRequest;
     }
     
     public List<ContactRequest> getAllContactRequests() {
+        auditLogController.logAction("ALL_CONTACT_REQUESTS_VIEWED", 0L, "All contact requests viewed");
         return contactRequestRepository.findAll();
     }
     
     public ContactRequest getContactRequest(long requestId) {
-        return contactRequestRepository.findById(requestId).orElse(null);
+        ContactRequest request = contactRequestRepository.findById(requestId).orElse(null);
+        
+        if (request != null) {
+            auditLogController.logAction("CONTACT_REQUEST_VIEWED", 0L, "Contact request viewed: " + requestId);
+        }
+        
+        return request;
     }
     
     public ContactRequest updateContactRequestStatus(Map<String, Object> requestData) {
@@ -53,6 +72,11 @@ public class ContactController {
         ContactRequest contactRequest = requestOptional.get();
         contactRequest.setStatus(status);
         contactRequest.setAssignedTo(agent);
-        return contactRequestRepository.save(contactRequest);
+        ContactRequest updatedRequest = contactRequestRepository.save(contactRequest);
+        
+        auditLogController.logAction("CONTACT_REQUEST_STATUS_UPDATED", agentId,
+                "Contact request " + requestId + " status updated to: " + status);
+        
+        return updatedRequest;
     }
 }

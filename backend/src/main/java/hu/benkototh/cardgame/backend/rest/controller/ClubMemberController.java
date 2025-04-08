@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class ClubMemberController {
@@ -25,6 +24,9 @@ public class ClubMemberController {
     @Lazy
     @Autowired
     private ClubController clubController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public List<ClubMember> getClubMembers(long clubId) {
         List<ClubMember> clubMembers = findByClubId(clubId);
@@ -38,6 +40,9 @@ public class ClubMemberController {
                 member.setUsername(member.getUser().getUsername());
             }
         }
+        
+        auditLogController.logAction("CLUB_MEMBERS_VIEWED", 0L,
+                "Club members viewed for club: " + clubId);
 
         return clubMembers;
     }
@@ -53,6 +58,9 @@ public class ClubMemberController {
         if (club == null) {
             return null;
         }
+        
+        auditLogController.logAction("CLUB_MEMBER_CHECKED", userId,
+                "Club membership checked for club: " + clubId);
 
         return clubMemberRepository.findAll().stream()
                 .filter(member -> member.getClub().getId() == club.getId() && member.getUser().getId() == user.getId())
@@ -76,15 +84,28 @@ public class ClubMemberController {
         }
 
         ClubMember clubMember = new ClubMember(club, user);
-        return clubMemberRepository.save(clubMember);
+        ClubMember savedMember = clubMemberRepository.save(clubMember);
+        
+        auditLogController.logAction("CLUB_MEMBER_ADDED", userId,
+                "User joined club: " + clubId);
+        
+        return savedMember;
     }
     
     public ClubMember addClubMember(Club club, User user, String role) {
         ClubMember clubMember = new ClubMember(club, user, role);
-        return clubMemberRepository.save(clubMember);
+        ClubMember savedMember = clubMemberRepository.save(clubMember);
+        
+        auditLogController.logAction("CLUB_MEMBER_ADDED_WITH_ROLE", user.getId(),
+                "User added to club " + club.getId() + " with role: " + role);
+        
+        return savedMember;
     }
 
     public String getClubMemberRole(long clubId, long userId) {
+        auditLogController.logAction("CLUB_MEMBER_ROLE_CHECKED", userId,
+                "Club member role checked for club: " + clubId);
+                
         return clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId && clubMember.getUser().getId() == userId)
                 .map(ClubMember::getRole)
@@ -108,7 +129,12 @@ public class ClubMemberController {
         }
 
         clubMember.setRole(role);
-        return clubMemberRepository.save(clubMember);
+        ClubMember updatedMember = clubMemberRepository.save(clubMember);
+        
+        auditLogController.logAction("CLUB_MEMBER_ROLE_MODIFIED", 0L,
+                "Club member role modified for user " + userId + " in club " + clubId + " to: " + role);
+        
+        return updatedMember;
     }
 
     public boolean removeClubMember(long clubId, long userId) {
@@ -121,11 +147,18 @@ public class ClubMemberController {
         }
         
         clubMemberRepository.delete(clubMemberOpt.get());
+        
+        auditLogController.logAction("CLUB_MEMBER_REMOVED", 0L,
+                "User " + userId + " removed from club: " + clubId);
+        
         return true;
     }
     
     public void deleteClubMember(ClubMember clubMember) {
         clubMemberRepository.delete(clubMember);
+        
+        auditLogController.logAction("CLUB_MEMBER_DELETED", clubMember.getUser().getId(),
+                "Club membership deleted for club: " + clubMember.getClub().getId());
     }
 
     public boolean leaveClub(long clubId, long userId) {
@@ -144,6 +177,10 @@ public class ClubMemberController {
         }
         
         clubMemberRepository.delete(clubMember);
+        
+        auditLogController.logAction("CLUB_LEFT", userId,
+                "User left club: " + clubId);
+        
         return true;
     }
 
@@ -173,5 +210,8 @@ public class ClubMemberController {
                 .toList();
         
         clubMemberRepository.deleteAll(clubMembers);
+        
+        auditLogController.logAction("CLUB_MEMBERS_DELETED", 0L,
+                "All members deleted for club: " + club.getId());
     }
 }

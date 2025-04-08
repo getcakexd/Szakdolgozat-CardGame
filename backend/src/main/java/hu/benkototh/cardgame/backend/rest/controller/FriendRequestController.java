@@ -1,7 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
 import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
-import hu.benkototh.cardgame.backend.rest.Data.Friendship;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,9 @@ public class FriendRequestController {
     @Lazy
     @Autowired
     private FriendshipController friendshipController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public FriendRequest sendFriendRequest(long senderId, String receiverUsername) {
         User sender = userController.getUser(senderId);
@@ -47,14 +49,23 @@ public class FriendRequestController {
         }
 
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
-        return friendRequestRepository.save(friendRequest);
+        FriendRequest savedRequest = friendRequestRepository.save(friendRequest);
+        
+        auditLogController.logAction("FRIEND_REQUEST_SENT", senderId,
+                "Friend request sent to: " + receiverUsername);
+        
+        return savedRequest;
     }
 
     public List<FriendRequest> getPendingRequests(long userId) {
+        auditLogController.logAction("PENDING_FRIEND_REQUESTS_VIEWED", userId,
+                "Pending friend requests viewed");
         return findByReceiverId(userId);
     }
 
     public List<FriendRequest> getSentRequests(long userId) {
+        auditLogController.logAction("SENT_FRIEND_REQUESTS_VIEWED", userId,
+                "Sent friend requests viewed");
         return findBySenderId(userId);
     }
 
@@ -70,7 +81,12 @@ public class FriendRequestController {
 
         friendshipController.createFriendship(request.getSender(), request.getReceiver());
         
-        return friendRequestRepository.save(request);
+        FriendRequest updatedRequest = friendRequestRepository.save(request);
+        
+        auditLogController.logAction("FRIEND_REQUEST_ACCEPTED", request.getReceiver().getId(),
+                "Friend request accepted from: " + request.getSender().getUsername());
+        
+        return updatedRequest;
     }
 
     public FriendRequest declineFriendRequest(long requestId) {
@@ -82,7 +98,12 @@ public class FriendRequestController {
 
         FriendRequest request = requestOpt.get();
         request.setStatus("declined");
-        return friendRequestRepository.save(request);
+        FriendRequest updatedRequest = friendRequestRepository.save(request);
+        
+        auditLogController.logAction("FRIEND_REQUEST_DECLINED", request.getReceiver().getId(),
+                "Friend request declined from: " + request.getSender().getUsername());
+        
+        return updatedRequest;
     }
 
     public boolean cancelFriendRequest(long requestId) {
@@ -94,6 +115,10 @@ public class FriendRequestController {
 
         FriendRequest request = requestOpt.get();
         friendRequestRepository.delete(request);
+        
+        auditLogController.logAction("FRIEND_REQUEST_CANCELED", request.getSender().getId(),
+                "Friend request canceled to: " + request.getReceiver().getUsername());
+        
         return true;
     }
 
@@ -130,5 +155,8 @@ public class FriendRequestController {
                 .toList();
         
         friendRequestRepository.deleteAll(requests);
+        
+        auditLogController.logAction("FRIEND_REQUESTS_DELETED", user,
+                "All friend requests deleted for user");
     }
 }
