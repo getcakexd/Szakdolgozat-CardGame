@@ -4,9 +4,8 @@ import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
 import hu.benkototh.cardgame.backend.rest.Data.Friendship;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IFriendshipRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.Comparator;
@@ -18,23 +17,22 @@ public class FriendRequestController {
 
     @Autowired
     private IFriendRequestRepository friendRequestRepository;
-
+    
+    @Lazy
     @Autowired
-    private IFriendshipRepository friendshipRepository;
-
+    private UserController userController;
+    
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private FriendshipController friendshipController;
 
     public FriendRequest sendFriendRequest(long senderId, String receiverUsername) {
-        Optional<User> senderOpt = userRepository.findById(senderId);
-        Optional<User> receiverOpt = Optional.ofNullable(findByUsername(receiverUsername));
+        User sender = userController.getUser(senderId);
+        User receiver = userController.findByUsername(receiverUsername);
 
-        if (receiverOpt.isEmpty() || senderOpt.isEmpty()) {
+        if (receiver == null || sender == null) {
             return null;
         }
-
-        User sender = senderOpt.get();
-        User receiver = receiverOpt.get();
 
         if (senderId == receiver.getId()) {
             return null;
@@ -44,7 +42,7 @@ public class FriendRequestController {
             return null;
         }
 
-        if (friendshipExists(sender, receiver)) {
+        if (friendshipController.friendshipExists(sender, receiver)) {
             return null;
         }
 
@@ -69,10 +67,10 @@ public class FriendRequestController {
 
         FriendRequest request = requestOpt.get();
         request.setStatus("accepted");
-        Friendship friendship = new Friendship(request.getSender(), request.getReceiver());
-        friendRequestRepository.save(request);
-        friendshipRepository.save(friendship);
-        return request;
+
+        friendshipController.createFriendship(request.getSender(), request.getReceiver());
+        
+        return friendRequestRepository.save(request);
     }
 
     public FriendRequest declineFriendRequest(long requestId) {
@@ -109,14 +107,6 @@ public class FriendRequestController {
                 );
     }
 
-    public boolean friendshipExists(User user1, User user2) {
-        return friendshipRepository.findAll().stream()
-                .anyMatch(friendship ->
-                        (friendship.getUser1().equals(user1) && friendship.getUser2().equals(user2)) ||
-                        (friendship.getUser1().equals(user2) && friendship.getUser2().equals(user1))
-                );
-    }
-
     public List<FriendRequest> findByReceiverId(Long userId) {
         return friendRequestRepository.findAll().stream()
                 .filter(request ->
@@ -130,11 +120,15 @@ public class FriendRequestController {
                 .sorted(Comparator.comparing(FriendRequest::getId).reversed())
                 .toList();
     }
-
-    public User findByUsername(String username) {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+    
+    public void deleteFriendRequestsByUser(User user) {
+        List<FriendRequest> requests = friendRequestRepository.findAll().stream()
+                .filter(request ->
+                        request.getReceiver().getId() == user.getId() ||
+                        request.getSender().getId() == user.getId()
+                )
+                .toList();
+        
+        friendRequestRepository.deleteAll(requests);
     }
 }

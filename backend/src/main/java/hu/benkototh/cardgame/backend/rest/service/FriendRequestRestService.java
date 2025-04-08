@@ -2,6 +2,8 @@ package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.controller.FriendRequestController;
 import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
+import hu.benkototh.cardgame.backend.rest.controller.FriendshipController;
+import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,10 @@ public class FriendRequestRestService {
 
     @Autowired
     private FriendRequestController friendRequestController;
+    @Autowired
+    private UserController userController;
+    @Autowired
+    private FriendshipController friendshipController;
 
     @PostMapping("/send")
     public ResponseEntity<Map<String, String>> sendFriendRequest(@RequestParam long senderId, @RequestParam String receiverUsername) {
@@ -24,26 +30,26 @@ public class FriendRequestRestService {
         FriendRequest request = friendRequestController.sendFriendRequest(senderId, receiverUsername);
         
         if (request == null) {
-            if (friendRequestController.findByUsername(receiverUsername) == null) {
+            if (userController.findByUsername(receiverUsername) == null) {
                 response.put("message", "Receiver not found.");
                 return ResponseEntity.status(404).body(response);
             }
             
-            if (senderId == friendRequestController.findByUsername(receiverUsername).getId()) {
+            if (senderId == userController.findByUsername(receiverUsername).getId()) {
                 response.put("message", "You cannot send friend request to yourself.");
                 return ResponseEntity.status(400).body(response);
             }
             
             if (friendRequestController.requestExists(
-                    friendRequestController.findByUsername(receiverUsername), 
-                    friendRequestController.findByUsername(receiverUsername))) {
+                    userController.findByUsername(receiverUsername),
+                    userController.findByUsername(receiverUsername))) {
                 response.put("message", "Friend request already sent.");
                 return ResponseEntity.status(400).body(response);
             }
             
-            if (friendRequestController.friendshipExists(
-                    friendRequestController.findByUsername(receiverUsername), 
-                    friendRequestController.findByUsername(receiverUsername))) {
+            if (friendshipController.friendshipExists(
+                    userController.findByUsername(receiverUsername),
+                    userController.findByUsername(receiverUsername))) {
                 response.put("message", "You are already friends.");
                 return ResponseEntity.status(400).body(response);
             }

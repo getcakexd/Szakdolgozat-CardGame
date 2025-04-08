@@ -4,13 +4,13 @@ import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubMemberRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class ClubMemberController {
@@ -18,11 +18,13 @@ public class ClubMemberController {
     @Autowired
     private IClubMemberRepository clubMemberRepository;
 
+    @Lazy
     @Autowired
-    private IClubRepository clubRepository;
+    private UserController userController;
 
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private ClubController clubController;
 
     public List<ClubMember> getClubMembers(long clubId) {
         List<ClubMember> clubMembers = findByClubId(clubId);
@@ -41,28 +43,44 @@ public class ClubMemberController {
     }
 
     public ClubMember getClubMember(long clubId, long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Club> club = clubRepository.findById(clubId);
+        User user = userController.getUser(userId);
+        Club club = clubController.getClub(clubId);
+        
+        if (user == null) {
+            return null;
+        }
 
-        if (user.isEmpty() || club.isEmpty()) {
+        if (club == null) {
             return null;
         }
 
         return clubMemberRepository.findAll().stream()
-                .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == userId)
+                .filter(member -> member.getClub().getId() == club.getId() && member.getUser().getId() == user.getId())
+                .findFirst()
+                .orElse(null);
+    }
+    
+    public ClubMember getClubMemberByUser(User user) {
+        return clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getUser().getId() == user.getId())
                 .findFirst()
                 .orElse(null);
     }
 
     public ClubMember addClubMember(long clubId, long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Club> club = clubRepository.findById(clubId);
-
-        if (user.isEmpty() || club.isEmpty()) {
+        User user = userController.getUser(userId);
+        Club club = clubController.getClub(clubId);
+        
+        if (user == null || club == null) {
             return null;
         }
 
-        ClubMember clubMember = new ClubMember(club.get(), user.get());
+        ClubMember clubMember = new ClubMember(club, user);
+        return clubMemberRepository.save(clubMember);
+    }
+    
+    public ClubMember addClubMember(Club club, User user, String role) {
+        ClubMember clubMember = new ClubMember(club, user, role);
         return clubMemberRepository.save(clubMember);
     }
 
@@ -105,6 +123,10 @@ public class ClubMemberController {
         clubMemberRepository.delete(clubMemberOpt.get());
         return true;
     }
+    
+    public void deleteClubMember(ClubMember clubMember) {
+        clubMemberRepository.delete(clubMember);
+    }
 
     public boolean leaveClub(long clubId, long userId) {
         Optional<ClubMember> clubMemberOpt = clubMemberRepository.findAll().stream()
@@ -129,5 +151,27 @@ public class ClubMemberController {
         return clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId)
                 .toList();
+    }
+    
+    public boolean isMember(User user, Club club) {
+        return clubMemberRepository.findAll().stream()
+                .anyMatch(clubMember -> 
+                    clubMember.getUser().equals(user) && 
+                    clubMember.getClub().equals(club));
+    }
+    
+    public List<Club> getClubsByUser(User user) {
+        return clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getUser().equals(user))
+                .map(ClubMember::getClub)
+                .toList();
+    }
+    
+    public void deleteClubMembersByClub(Club club) {
+        List<ClubMember> clubMembers = clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getClub().equals(club))
+                .toList();
+        
+        clubMemberRepository.deleteAll(clubMembers);
     }
 }

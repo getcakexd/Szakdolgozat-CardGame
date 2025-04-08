@@ -3,34 +3,33 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
 import hu.benkototh.cardgame.backend.rest.repository.IUserHistoryRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class AgentController {
 
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
-
+    private UserController userController;
+    
     @Autowired
     private IUserHistoryRepository userHistoryRepository;
 
     public User unlockUser(long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+        User user = userController.getUser(userId);
         
-        if (userOptional.isEmpty()) {
+        if (user == null) {
             return null;
         }
 
-        User user = userOptional.get();
         user.setLocked(false);
         user.setFailedLoginAttempts(0);
-        return userRepository.save(user);
+        return userController.userRepository.save(user);
     }
 
     public User modifyUserData(Map<String, Object> userData) {
@@ -39,13 +38,12 @@ public class AgentController {
         }
 
         long userId = Long.parseLong(userData.get("userId").toString());
-        Optional<User> userOptional = userRepository.findById(userId);
+        User user = userController.getUser(userId);
 
-        if (userOptional.isEmpty()) {
+        if (user == null) {
             return null;
         }
 
-        User user = userOptional.get();
         String previousUsername = null;
         String previousEmail = null;
         boolean modified = false;
@@ -53,7 +51,7 @@ public class AgentController {
         if (userData.containsKey("username") && !userData.get("username").equals(user.getUsername())) {
             String newUsername = userData.get("username").toString();
 
-            if (userExistsByUsername(newUsername)) {
+            if (userController.userExistsByUsername(newUsername)) {
                 return null;
             }
 
@@ -65,7 +63,7 @@ public class AgentController {
         if (userData.containsKey("email") && !userData.get("email").equals(user.getEmail())) {
             String newEmail = userData.get("email").toString();
 
-            if (userExistsByEmail(newEmail)) {
+            if (userController.userExistsByEmail(newEmail)) {
                 return null;
             }
 
@@ -75,7 +73,7 @@ public class AgentController {
         }
 
         if (modified) {
-            userRepository.save(user);
+            userController.userRepository.save(user);
 
             UserHistory history = new UserHistory();
             history.setUser(user);
@@ -87,15 +85,5 @@ public class AgentController {
         }
 
         return user;
-    }
-
-    public boolean userExistsByUsername(String username) {
-        return userRepository.findAll().stream()
-                .anyMatch(user -> user.getUsername().equals(username));
-    }
-
-    public boolean userExistsByEmail(String email) {
-        return userRepository.findAll().stream()
-                .anyMatch(user -> user.getEmail().equals(email));
     }
 }

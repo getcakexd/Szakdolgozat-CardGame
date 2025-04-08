@@ -3,8 +3,8 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.rest.Data.Message;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IMessageRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,8 +20,9 @@ public class ChatController {
     @Autowired
     private IMessageRepository messageRepository;
 
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private UserController userController;
 
     public List<Message> getMessages(long userId, long friendId) {
         List<Message> messages = findBySenderAndReceiver(userId, friendId);
@@ -37,11 +38,12 @@ public class ChatController {
     }
 
     public Message sendMessage(long userId, long friendId, String content) {
-        User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender not found"));
+        User sender = userController.getUser(userId);
+        User receiver = userController.getUser(friendId);
 
-        User receiver = userRepository.findById(friendId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver not found"));
+        if (sender == null || receiver == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sender or receiver not found");
+        }
 
         Message message = new Message(sender, receiver, content);
         return messageRepository.save(message);
@@ -77,5 +79,16 @@ public class ChatController {
                 message.getSender().getId() == userId && message.getReceiver().getId() == friendId ||
                 message.getSender().getId() == friendId && message.getReceiver().getId() == userId
         ).toList();
+    }
+    
+    public void deleteMessagesByUser(User user) {
+        List<Message> messages = messageRepository.findAll().stream()
+                .filter(message ->
+                        message.getSender().getId() == user.getId() ||
+                        message.getReceiver().getId() == user.getId()
+                )
+                .toList();
+        
+        messageRepository.deleteAll(messages);
     }
 }

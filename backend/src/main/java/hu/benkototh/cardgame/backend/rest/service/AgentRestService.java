@@ -2,6 +2,7 @@ package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.controller.AgentController;
 import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,8 @@ public class AgentRestService {
 
     @Autowired
     private AgentController agentController;
+    @Autowired
+    private UserController userController;
 
     @PutMapping("/unlock")
     public ResponseEntity<Map<String, String>> unlockUser(@RequestParam long userId) {
@@ -42,12 +45,12 @@ public class AgentRestService {
                 return ResponseEntity.status(400).body(response);
             }
             
-            if (userData.containsKey("username") && agentController.userExistsByUsername(userData.get("username").toString())) {
+            if (userData.containsKey("username") && userController.userExistsByUsername(userData.get("username").toString())) {
                 response.put("message", "Username already in use.");
                 return ResponseEntity.status(400).body(response);
             }
             
-            if (userData.containsKey("email") && agentController.userExistsByEmail(userData.get("email").toString())) {
+            if (userData.containsKey("email") && userController.userExistsByEmail(userData.get("email").toString())) {
                 response.put("message", "Email already in use.");
                 return ResponseEntity.status(400).body(response);
             }

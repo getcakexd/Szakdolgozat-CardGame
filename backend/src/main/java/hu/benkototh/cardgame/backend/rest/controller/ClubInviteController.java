@@ -5,10 +5,8 @@ import hu.benkototh.cardgame.backend.rest.Data.ClubInvite;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubInviteRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IClubMemberRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -20,14 +18,17 @@ public class ClubInviteController {
     @Autowired
     private IClubInviteRepository clubInviteRepository;
 
+    @Lazy
     @Autowired
-    private IClubMemberRepository clubMemberRepository;
-
+    private UserController userController;
+    
+    @Lazy
     @Autowired
-    private IClubRepository clubRepository;
-
+    private ClubController clubController;
+    
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private ClubMemberController clubMemberController;
 
     public List<ClubInvite> getClubInvites(long userId) {
         return clubInviteRepository.findAll().stream()
@@ -55,16 +56,16 @@ public class ClubInviteController {
     }
 
     public ClubInvite addClubInvite(long clubId, String username) {
-        Optional<Club> club = clubRepository.findById(clubId);
-        User user = findByUsername(username);
+        Club club = clubController.getClub(clubId);
+        User user = userController.findByUsername(username);
 
-        if (user == null || club.isEmpty()) {
+        if (user == null || club == null) {
             return null;
         }
 
-        Optional<ClubMember> existingMember = clubMemberRepository.findAll().stream()
-                .filter(member -> member.getClub().getId() == clubId && member.getUser().getId() == user.getId())
-                .findFirst();
+        if (clubMemberController.isMember(user, club)) {
+            return null;
+        }
 
         Optional<ClubInvite> existingInvite = clubInviteRepository.findAll().stream()
                 .filter(invite ->
@@ -74,11 +75,11 @@ public class ClubInviteController {
                 )
                 .findFirst();
 
-        if (existingMember.isPresent() || existingInvite.isPresent()) {
+        if (existingInvite.isPresent()) {
             return null;
         }
 
-        ClubInvite clubInvite = new ClubInvite(club.get(), user);
+        ClubInvite clubInvite = new ClubInvite(club, user);
         return clubInviteRepository.save(clubInvite);
     }
 
@@ -91,9 +92,9 @@ public class ClubInviteController {
 
         ClubInvite clubInvite = clubInviteOpt.get();
         clubInvite.setStatus("accepted");
-        ClubMember clubMember = new ClubMember(clubInvite.getClub(), clubInvite.getUser());
 
-        clubMemberRepository.save(clubMember);
+        clubMemberController.addClubMember(clubInvite.getClub(), clubInvite.getUser(), "member");
+        
         return clubInviteRepository.save(clubInvite);
     }
 
@@ -119,11 +120,20 @@ public class ClubInviteController {
         clubInviteRepository.delete(clubInvite.get());
         return true;
     }
+    
+    public void deleteInvitesByUser(User user) {
+        List<ClubInvite> invites = clubInviteRepository.findAll().stream()
+                .filter(clubInvite -> clubInvite.getUser().getId() == user.getId())
+                .toList();
+        
+        clubInviteRepository.deleteAll(invites);
+    }
 
-    public User findByUsername(String username) {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+    public void deleteInvitesByClub(Club club) {
+        List<ClubInvite> invites = clubInviteRepository.findAll().stream()
+                .filter(clubInvite -> clubInvite.getClub().getId() == club.getId())
+                .toList();
+
+        clubInviteRepository.deleteAll(invites);
     }
 }

@@ -4,9 +4,8 @@ import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMessage;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubMessageRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -18,11 +17,13 @@ public class ClubChatController {
     @Autowired
     private IClubMessageRepository clubMessageRepository;
 
+    @Lazy
     @Autowired
-    private IClubRepository clubRepository;
-
+    private UserController userController;
+    
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private ClubController clubController;
 
     public List<ClubMessage> getClubChatHistory(long clubId) {
         return clubMessageRepository.findAll().stream()
@@ -31,14 +32,14 @@ public class ClubChatController {
     }
 
     public ClubMessage sendClubMessage(long clubId, long senderId, String content) {
-        Optional<Club> club = clubRepository.findById(clubId);
-        Optional<User> user = userRepository.findById(senderId);
+        User user = userController.getUser(senderId);
+        Club club = clubController.getClub(clubId);
 
-        if (club.isEmpty() || user.isEmpty()) {
+        if (club == null || user == null) {
             return null;
         }
 
-        ClubMessage message = new ClubMessage(club.get(), user.get(), content);
+        ClubMessage message = new ClubMessage(club, user, content);
         return clubMessageRepository.save(message);
     }
 
@@ -64,5 +65,13 @@ public class ClubChatController {
         message.get().setStatus("removed");
         message.get().setContent("This message has been removed by a moderator.");
         return clubMessageRepository.save(message.get());
+    }
+    
+    public void deleteMessagesByUser(User user) {
+        List<ClubMessage> messages = clubMessageRepository.findAll().stream()
+                .filter(clubMessage -> clubMessage.getSender().getId() == user.getId())
+                .toList();
+        
+        clubMessageRepository.deleteAll(messages);
     }
 }

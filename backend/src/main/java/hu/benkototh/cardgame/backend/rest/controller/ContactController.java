@@ -3,8 +3,8 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.rest.Data.ContactRequest;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IContactRequestRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -17,8 +17,9 @@ public class ContactController {
     @Autowired
     private IContactRequestRepository contactRequestRepository;
     
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private UserController userController;
 
     public ContactRequest submitContactRequest(ContactRequest request) {
         request.setStatus("new");
@@ -43,15 +44,13 @@ public class ContactController {
         long agentId = Long.parseLong(requestData.get("agentId").toString());
 
         Optional<ContactRequest> requestOptional = contactRequestRepository.findById(requestId);
-        Optional<User> agentOptional = userRepository.findById(agentId);
+        User agent = userController.getUser(agentId);
 
-        if (requestOptional.isEmpty() || agentOptional.isEmpty()) {
+        if (requestOptional.isEmpty() || agent == null) {
             return null;
         }
 
         ContactRequest contactRequest = requestOptional.get();
-        User agent = agentOptional.get();
-
         contactRequest.setStatus(status);
         contactRequest.setAssignedTo(agent);
         return contactRequestRepository.save(contactRequest);

@@ -3,6 +3,7 @@ package hu.benkototh.cardgame.backend.rest.service;
 import hu.benkototh.cardgame.backend.rest.controller.ClubController;
 import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
+import hu.benkototh.cardgame.backend.rest.controller.ClubMemberController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ public class ClubRestService {
 
     @Autowired
     private ClubController clubController;
+    @Autowired
+    private ClubMemberController clubMemberController;
 
     @GetMapping("/list")
     public ResponseEntity<List<Club>> getClubs() {
@@ -63,7 +66,7 @@ public class ClubRestService {
 
     @GetMapping("/members")
     public ResponseEntity<?> getClubMembers(@RequestParam long clubId) {
-        List<ClubMember> clubMembers = clubController.getClubMembers(clubId);
+        List<ClubMember> clubMembers = clubMemberController.getClubMembers(clubId);
         
         if (clubMembers == null) {
             return ResponseEntity.status(404).body("Club not found");

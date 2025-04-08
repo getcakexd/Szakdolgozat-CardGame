@@ -2,8 +2,8 @@ package hu.benkototh.cardgame.backend.rest.controller;
 
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
-import hu.benkototh.cardgame.backend.rest.service.ClubRestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -15,28 +15,38 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private IUserRepository userRepository;
-
-    @Autowired
-    private IFriendRequestRepository friendRequestRepository;
-
-    @Autowired
-    private IFriendshipRepository friendshipRepository;
-
-    @Autowired
-    private IMessageRepository messageRepository;
-
-    @Autowired
-    private IClubMemberRepository clubMemberRepository;
-
-    @Autowired
-    private IClubMessageRepository clubMessageRepository;
-
-    @Autowired
-    private IClubInviteRepository clubInviteRepository;
+    public IUserRepository userRepository;
 
     @Autowired
     private IUserHistoryRepository userHistoryRepository;
+
+    @Lazy
+    @Autowired
+    private FriendRequestController friendRequestController;
+    
+    @Lazy
+    @Autowired
+    private FriendshipController friendshipController;
+    
+    @Lazy
+    @Autowired
+    private ChatController chatController;
+    
+    @Lazy
+    @Autowired
+    private ClubMemberController clubMemberController;
+    
+    @Lazy
+    @Autowired
+    private ClubChatController clubChatController;
+    
+    @Lazy
+    @Autowired
+    private ClubInviteController clubInviteController;
+    
+    @Lazy
+    @Autowired
+    private ClubController clubController;
 
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -158,13 +168,22 @@ public class UserController {
         if (!passwordEncoder.matches(password, user.getPassword()) && !password.equals(user.getPassword())) {
             return false;
         }
+
+        friendRequestController.deleteFriendRequestsByUser(user);
+        friendshipController.deleteFriendshipsByUser(user);
+        chatController.deleteMessagesByUser(user);
+
+        ClubMember clubMember = clubMemberController.getClubMemberByUser(user);
+        if (clubMember != null) {
+            if (clubMember.getRole().equals("admin")) {
+                clubController.deleteClub(clubMember.getClub().getId());
+            }
+            clubMemberController.deleteClubMember(clubMember);
+        }
         
-        friendRequestRepository.deleteAll(getFriendRequests(user));
-        friendshipRepository.deleteAll(getFriendships(user));
-        messageRepository.deleteAll(getMessages(user));
-        clubMemberRepository.delete(getClubMember(user));
-        clubMessageRepository.deleteAll(getClubMessages(user));
-        clubInviteRepository.deleteAll(getInvites(user));
+        clubChatController.deleteMessagesByUser(user);
+        clubInviteController.deleteInvitesByUser(user);
+
         userRepository.delete(user);
         
         return true;
@@ -228,61 +247,5 @@ public class UserController {
         history.setChangedAt(new Date());
         history.setChangedBy(changedBy);
         userHistoryRepository.save(history);
-    }
-
-    private List<FriendRequest> getFriendRequests(User user) {
-        return friendRequestRepository.findAll().stream()
-                .filter(friendRequest ->
-                        friendRequest.getReceiver().getId() == user.getId() ||
-                                friendRequest.getSender().getId() == user.getId()
-                )
-                .toList();
-    }
-
-    private List<Friendship> getFriendships(User user) {
-        return friendshipRepository.findAll().stream()
-                .filter(friendship ->
-                        friendship.getUser1().getId() == user.getId() ||
-                                friendship.getUser2().getId() == user.getId()
-                )
-                .toList();
-    }
-
-    private List<Message> getMessages(User user) {
-        return messageRepository.findAll().stream()
-                .filter(message ->
-                        message.getSender().getId() == user.getId() ||
-                                message.getReceiver().getId() == user.getId()
-                )
-                .toList();
-    }
-
-    private List<ClubMessage> getClubMessages(User user) {
-        return clubMessageRepository.findAll().stream()
-                .filter(clubMessage -> clubMessage.getSender().getId() == user.getId())
-                .toList();
-    }
-
-    private ClubMember getClubMember(User user) {
-        ClubMember member = clubMemberRepository.findAll().stream()
-                .filter(clubMember -> clubMember.getUser().getId() == user.getId())
-                .findFirst()
-                .orElse(null);
-
-        if (member != null) {
-            if (member.getRole().equals("admin")){
-                ClubRestService clubRestService = new ClubRestService();
-                clubRestService.deleteClub(member.getClub().getId());
-            }
-            return member;
-        } else {
-            return new ClubMember();
-        }
-    }
-
-    private List<ClubInvite> getInvites(User user) {
-        return clubInviteRepository.findAll().stream()
-                .filter(clubInvite -> clubInvite.getUser().getId() == user.getId())
-                .toList();
     }
 }

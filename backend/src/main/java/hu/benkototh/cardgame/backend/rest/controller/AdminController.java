@@ -18,9 +18,6 @@ public class AdminController {
     private IUserRepository userRepository;
 
     @Autowired
-    private UserController userController;
-
-    @Autowired
     private IGameRepository gameRepository;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -48,7 +45,7 @@ public class AdminController {
             return false;
         }
         
-        userController.deleteUser(userOptional.get().getId(), userOptional.get().getPassword());
+        userRepository.delete(userOptional.get());
         return true;
     }
 

@@ -3,10 +3,9 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.ClubMember;
 import hu.benkototh.cardgame.backend.rest.Data.User;
-import hu.benkototh.cardgame.backend.rest.repository.IClubMemberRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
-import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -19,11 +18,17 @@ public class ClubController {
     @Autowired
     private IClubRepository clubRepository;
 
+    @Lazy
     @Autowired
-    private IUserRepository userRepository;
+    private UserController userController;
+    
+    @Lazy
+    @Autowired
+    private ClubMemberController clubMemberController;
 
+    @Lazy
     @Autowired
-    private IClubMemberRepository clubMemberRepository;
+    private ClubInviteController clubInviteController;
 
     public List<Club> getAllClubs() {
         return clubRepository.findAll();
@@ -34,20 +39,19 @@ public class ClubController {
     }
 
     public List<Club> getJoinableClubs(long userId) {
-        Optional<User> user = userRepository.findById(userId);
+        User user = userController.getUser(userId);
         
-        if (user.isEmpty()) {
+        if (user == null) {
             return null;
         }
         
-        return getJoinableClubs(user.get());
+        return getJoinableClubs(user);
     }
 
     public List<Club> getJoinableClubs(User user) {
         return clubRepository.findAll().stream()
                 .filter(club -> club.isPublic() &&
-                        clubMemberRepository.findAll().stream()
-                                .noneMatch(clubMember -> clubMember.getUser().equals(user) && clubMember.getClub().equals(club)))
+                        !clubMemberController.isMember(user, club))
                 .collect(Collectors.toList());
     }
 
@@ -56,39 +60,26 @@ public class ClubController {
     }
 
     public List<Club> getClubsByUser(long userId) {
-        Optional<User> user = userRepository.findById(userId);
+        User user = userController.getUser(userId);
         
-        if (user.isEmpty()) {
+        if (user == null) {
             return null;
         }
         
-        return findClubsByUser(user.get());
-    }
-
-    public List<ClubMember> getClubMembers(long clubId) {
-        Optional<Club> club = clubRepository.findById(clubId);
-        
-        if (club.isEmpty()) {
-            return null;
-        }
-        
-        return clubMemberRepository.findAll().stream()
-                .filter(clubMember -> clubMember.getClub().equals(club.get()))
-                .toList();
+        return clubMemberController.getClubsByUser(user);
     }
 
     public Club createClub(String name, String description, boolean isPublic, long userId) {
-        Optional<User> user = userRepository.findById(userId);
+        User user = userController.getUser(userId);
         
-        if (user.isEmpty()) {
+        if (user == null) {
             return null;
         }
         
         Club club = new Club(name, description, isPublic);
-        ClubMember clubMember = new ClubMember(club, user.get(), "admin");
-        
-        clubRepository.save(club);
-        clubMemberRepository.save(clubMember);
+        club = clubRepository.save(club);
+
+        clubMemberController.addClubMember(club, user, "admin");
         
         return club;
     }
@@ -114,21 +105,12 @@ public class ClubController {
         if (club.isEmpty()) {
             return false;
         }
-        
-        List<ClubMember> clubMembers = clubMemberRepository.findAll().stream()
-                .filter(clubMember -> clubMember.getClub().equals(club.get()))
-                .toList();
-        
-        clubMemberRepository.deleteAll(clubMembers);
+
+        clubInviteController.deleteInvitesByClub(club.get());
+        clubMemberController.deleteClubMembersByClub(club.get());
+
         clubRepository.deleteById(clubId);
         
         return true;
-    }
-
-    public List<Club> findClubsByUser(User user) {
-        return clubMemberRepository.findAll().stream()
-                .filter(clubMember -> clubMember.getUser().equals(user))
-                .map(ClubMember::getClub)
-                .toList();
     }
 }
