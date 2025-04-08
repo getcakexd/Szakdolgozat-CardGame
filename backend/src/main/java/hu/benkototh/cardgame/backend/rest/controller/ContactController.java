@@ -28,29 +28,19 @@ public class ContactController {
         request.setStatus("new");
         ContactRequest savedRequest = contactRequestRepository.save(request);
 
-        User user = new User();
-        user.setUsername(request.getName());
-        user.setEmail(request.getEmail());
-
-        auditLogController.logAction("CONTACT_REQUEST_SUBMITTED", user,
+        auditLogController.logAction("CONTACT_REQUEST_SUBMITTED", 0L,
                 "Contact request submitted with subject: " + request.getSubject());
         
         return savedRequest;
     }
     
     public List<ContactRequest> getAllContactRequests() {
-        auditLogController.logAction("ALL_CONTACT_REQUESTS_VIEWED", 0L, "All contact requests viewed");
         return contactRequestRepository.findAll();
     }
     
     public ContactRequest getContactRequest(long requestId) {
-        ContactRequest request = contactRequestRepository.findById(requestId).orElse(null);
-        
-        if (request != null) {
-            auditLogController.logAction("CONTACT_REQUEST_VIEWED", 0L, "Contact request viewed: " + requestId);
-        }
-        
-        return request;
+
+        return contactRequestRepository.findById(requestId).orElse(null);
     }
     
     public ContactRequest updateContactRequestStatus(Map<String, Object> requestData) {

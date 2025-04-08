@@ -27,8 +27,6 @@ public class AdminController {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<User> getAllUsers() {
-        auditLogController.logAction("ADMIN_VIEWED_ALL_USERS", 0L,
-                "Admin viewed all users");
         return userRepository.findAll();
     }
 
@@ -46,7 +44,7 @@ public class AdminController {
         User createdUser = userRepository.save(user);
 
         auditLogController.logAction("ADMIN_CREATED_USER", 0L,
-                "Admin created user: " + user.getUsername() + " with role: " + user.getRole());
+                "Admin created user: " + user.getUsername() + " with role: " + user.getRole() + " (ID: " + createdUser.getId() + ")");
 
         return createdUser;
     }
@@ -174,8 +172,6 @@ public class AdminController {
     }
 
     public List<Game> getAllGames() {
-        auditLogController.logAction("ADMIN_VIEWED_ALL_GAMES", 0L,
-                "Admin viewed all games");
         return gameRepository.findAll();
     }
 

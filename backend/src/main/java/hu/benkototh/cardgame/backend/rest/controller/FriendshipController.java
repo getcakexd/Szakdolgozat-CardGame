@@ -30,8 +30,6 @@ public class FriendshipController {
         if (user == null) {
             return null;
         }
-
-        auditLogController.logAction("FRIENDS_LIST_VIEWED", userId, "User viewed their friends list");
         
         return friendshipRepository.findAll().stream()
                 .filter(friendship -> friendship.getUser1().equals(user) || friendship.getUser2().equals(user))

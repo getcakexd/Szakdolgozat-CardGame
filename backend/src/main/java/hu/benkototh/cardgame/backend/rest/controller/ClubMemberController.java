@@ -40,9 +40,6 @@ public class ClubMemberController {
                 member.setUsername(member.getUser().getUsername());
             }
         }
-        
-        auditLogController.logAction("CLUB_MEMBERS_VIEWED", 0L,
-                "Club members viewed for club: " + clubId);
 
         return clubMembers;
     }
@@ -58,9 +55,6 @@ public class ClubMemberController {
         if (club == null) {
             return null;
         }
-        
-        auditLogController.logAction("CLUB_MEMBER_CHECKED", userId,
-                "Club membership checked for club: " + clubId);
 
         return clubMemberRepository.findAll().stream()
                 .filter(member -> member.getClub().getId() == club.getId() && member.getUser().getId() == user.getId())
@@ -103,8 +97,6 @@ public class ClubMemberController {
     }
 
     public String getClubMemberRole(long clubId, long userId) {
-        auditLogController.logAction("CLUB_MEMBER_ROLE_CHECKED", userId,
-                "Club member role checked for club: " + clubId);
                 
         return clubMemberRepository.findAll().stream()
                 .filter(clubMember -> clubMember.getClub().getId() == clubId && clubMember.getUser().getId() == userId)

@@ -86,13 +86,6 @@ public class ChatController {
 
         Map<Long, Integer> unreadCounts = new HashMap<>();
         unreadMessages.forEach(msg -> unreadCounts.merge(msg.getSender().getId(), 1, Integer::sum));
-
-        auditLogController.logAction("UNREAD_MESSAGE_COUNTS_CHECKED", userId,
-                "Unread message counts checked for user: " + userId);
-
-        auditLogController.logAction("UNREAD_MESSAGE_COUNTS_CHECKED", userId,
-                "Unread message counts:" + unreadCounts);
-
         return unreadCounts;
     }
 
@@ -113,7 +106,7 @@ public class ChatController {
         
         messageRepository.deleteAll(messages);
         
-        auditLogController.logAction("MESSAGES_DELETED", user,
+        auditLogController.logAction("MESSAGES_DELETED", user.getId(),
                 "All messages deleted for user");
     }
 }
