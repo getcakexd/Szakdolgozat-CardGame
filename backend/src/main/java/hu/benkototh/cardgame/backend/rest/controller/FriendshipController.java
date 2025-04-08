@@ -20,6 +20,9 @@ public class FriendshipController {
     @Lazy
     @Autowired
     private UserController userController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public List<User> getFriends(long userId) {
         User user = userController.getUser(userId);
@@ -28,6 +31,8 @@ public class FriendshipController {
             return null;
         }
 
+        auditLogController.logAction("FRIENDS_LIST_VIEWED", userId, "User viewed their friends list");
+        
         return friendshipRepository.findAll().stream()
                 .filter(friendship -> friendship.getUser1().equals(user) || friendship.getUser2().equals(user))
                 .map(friendship -> friendship.getUser1().equals(user) ? friendship.getUser2() : friendship.getUser1())
@@ -53,12 +58,19 @@ public class FriendshipController {
         }
         
         friendshipRepository.delete(friendship.get());
+        
+        auditLogController.logAction("FRIEND_REMOVED", userId, "User removed friend with ID: " + friendId);
+        
         return true;
     }
     
     public Friendship createFriendship(User user1, User user2) {
         Friendship friendship = new Friendship(user1, user2);
-        return friendshipRepository.save(friendship);
+        Friendship savedFriendship = friendshipRepository.save(friendship);
+        
+        auditLogController.logAction("FRIENDSHIP_CREATED", user1, "Friendship created with user: " + user2.getUsername());
+        
+        return savedFriendship;
     }
     
     public boolean friendshipExists(User user1, User user2) {
@@ -78,5 +90,7 @@ public class FriendshipController {
                 .toList();
         
         friendshipRepository.deleteAll(friendships);
+        
+        auditLogController.logAction("FRIENDSHIPS_DELETED", user, "All friendships deleted for user");
     }
 }

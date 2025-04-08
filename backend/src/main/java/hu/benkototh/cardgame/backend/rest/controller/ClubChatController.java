@@ -24,8 +24,12 @@ public class ClubChatController {
     @Lazy
     @Autowired
     private ClubController clubController;
+    
+    @Autowired
+    private AuditLogController auditLogController;
 
     public List<ClubMessage> getClubChatHistory(long clubId) {
+        auditLogController.logAction("CLUB_CHAT_HISTORY_VIEWED", 0L, "Club chat history viewed for club: " + clubId);
         return clubMessageRepository.findAll().stream()
                 .filter(message -> message.getClub().getId() == clubId)
                 .toList();
@@ -40,7 +44,12 @@ public class ClubChatController {
         }
 
         ClubMessage message = new ClubMessage(club, user, content);
-        return clubMessageRepository.save(message);
+        ClubMessage savedMessage = clubMessageRepository.save(message);
+        
+        auditLogController.logAction("CLUB_MESSAGE_SENT", senderId,
+                "Message sent to club " + clubId + ": " + (content.length() > 50 ? content.substring(0, 47) + "..." : content));
+        
+        return savedMessage;
     }
 
     public ClubMessage unsendClubMessage(long messageId) {
@@ -52,7 +61,12 @@ public class ClubChatController {
 
         message.get().setStatus("unsent");
         message.get().setContent("This message has been unsent.");
-        return clubMessageRepository.save(message.get());
+        ClubMessage updatedMessage = clubMessageRepository.save(message.get());
+        
+        auditLogController.logAction("CLUB_MESSAGE_UNSENT", message.get().getSender().getId(),
+                "Club message unsent: " + messageId);
+        
+        return updatedMessage;
     }
 
     public ClubMessage removeClubMessage(long messageId) {
@@ -64,7 +78,12 @@ public class ClubChatController {
 
         message.get().setStatus("removed");
         message.get().setContent("This message has been removed by a moderator.");
-        return clubMessageRepository.save(message.get());
+        ClubMessage updatedMessage = clubMessageRepository.save(message.get());
+        
+        auditLogController.logAction("CLUB_MESSAGE_REMOVED", 0L,
+                "Club message removed by moderator: " + messageId + " from user: " + message.get().getSender().getId());
+        
+        return updatedMessage;
     }
     
     public void deleteMessagesByUser(User user) {
@@ -73,5 +92,8 @@ public class ClubChatController {
                 .toList();
         
         clubMessageRepository.deleteAll(messages);
+        
+        auditLogController.logAction("CLUB_MESSAGES_DELETED", user,
+                "All club messages deleted for user");
     }
 }
