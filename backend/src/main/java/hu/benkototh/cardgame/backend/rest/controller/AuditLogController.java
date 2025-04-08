@@ -4,6 +4,7 @@ import hu.benkototh.cardgame.backend.rest.Data.AuditLog;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.repository.IAuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -14,6 +15,10 @@ public class AuditLogController {
 
     @Autowired
     private IAuditLogRepository auditLogRepository;
+
+    @Lazy
+    @Autowired
+    private UserController userController;
 
     public AuditLog logAction(String action, User user, String details) {
         AuditLog log = new AuditLog();
@@ -27,7 +32,7 @@ public class AuditLogController {
     public AuditLog logAction(String action, Long userId, String details) {
         AuditLog log = new AuditLog();
         log.setAction(action);
-        log.setUserId(userId);
+        log.setUser(userController.getUser(userId));
         log.setDetails(details);
         log.setTimestamp(new Date());
         return auditLogRepository.save(log);
