@@ -58,14 +58,10 @@ public class FriendRequestController {
     }
 
     public List<FriendRequest> getPendingRequests(long userId) {
-        auditLogController.logAction("PENDING_FRIEND_REQUESTS_VIEWED", userId,
-                "Pending friend requests viewed");
         return findByReceiverId(userId);
     }
 
     public List<FriendRequest> getSentRequests(long userId) {
-        auditLogController.logAction("SENT_FRIEND_REQUESTS_VIEWED", userId,
-                "Sent friend requests viewed");
         return findBySenderId(userId);
     }
 

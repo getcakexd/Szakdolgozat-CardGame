@@ -29,7 +29,6 @@ public class ClubChatController {
     private AuditLogController auditLogController;
 
     public List<ClubMessage> getClubChatHistory(long clubId) {
-        auditLogController.logAction("CLUB_CHAT_HISTORY_VIEWED", 0L, "Club chat history viewed for club: " + clubId);
         return clubMessageRepository.findAll().stream()
                 .filter(message -> message.getClub().getId() == clubId)
                 .toList();
@@ -93,7 +92,7 @@ public class ClubChatController {
         
         clubMessageRepository.deleteAll(messages);
         
-        auditLogController.logAction("CLUB_MESSAGES_DELETED", user,
+        auditLogController.logAction("CLUB_MESSAGES_DELETED", user.getId(),
                 "All club messages deleted for user");
     }
 }

@@ -56,7 +56,6 @@ public class UserController {
     private static final int MAX_LOGIN_ATTEMPTS = 5;
 
     public List<User> getAllUsers() {
-        auditLogController.logAction("ALL_USERS_VIEWED", 0L, "All users viewed");
         return userRepository.findAll();
     }
 
@@ -248,9 +247,6 @@ public class UserController {
         }
 
         User user = userOptional.get();
-        
-        auditLogController.logAction("USER_HISTORY_VIEWED", userId,
-                "User history viewed");
                 
         return userHistoryRepository.findAll().stream()
                 .filter(h -> h.getUser().getId() == user.getId())

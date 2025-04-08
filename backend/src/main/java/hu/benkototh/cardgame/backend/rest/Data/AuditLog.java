@@ -27,9 +27,6 @@ public class AuditLog {
     @Column(length = 1000)
     private String details;
 
-    @Column(name = "ip_address")
-    private String ipAddress;
-
     public Long getId() {
         return id;
     }
@@ -76,13 +73,5 @@ public class AuditLog {
 
     public void setDetails(String details) {
         this.details = details;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
     }
 }

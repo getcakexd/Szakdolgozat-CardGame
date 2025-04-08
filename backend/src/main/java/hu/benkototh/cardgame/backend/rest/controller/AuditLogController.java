@@ -21,7 +21,6 @@ public class AuditLogController {
         log.setUser(user);
         log.setDetails(details);
         log.setTimestamp(new Date());
-        log.setIpAddress(getClientIpAddress());
         return auditLogRepository.save(log);
     }
 
@@ -31,7 +30,6 @@ public class AuditLogController {
         log.setUserId(userId);
         log.setDetails(details);
         log.setTimestamp(new Date());
-        log.setIpAddress(getClientIpAddress());
         return auditLogRepository.save(log);
     }
 
@@ -45,11 +43,5 @@ public class AuditLogController {
 
     public List<AuditLog> getLogsByDateRange(Date startDate, Date endDate) {
         return auditLogRepository.findByTimestampBetween(startDate, endDate);
-    }
-
-    private String getClientIpAddress() {
-        // In a real implementation, you would get this from the request context
-        // For now, we'll return a placeholder
-        return "0.0.0.0";
     }
 }
