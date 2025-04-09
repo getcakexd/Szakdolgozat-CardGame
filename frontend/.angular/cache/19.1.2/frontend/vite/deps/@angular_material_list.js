@@ -1,12 +1,9 @@
 import {
-  SelectionModel
-} from "./chunk-NT3GBGJZ.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-DCITRCVI.js";
-import {
   MatDividerModule
 } from "./chunk-NIBFBKAD.js";
+import {
+  SelectionModel
+} from "./chunk-NT3GBGJZ.js";
 import {
   A,
   CdkObserveContent,
@@ -27,6 +24,9 @@ import {
   coerceNumberProperty,
   hasModifierKey
 } from "./chunk-WP2DXOSH.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-DCITRCVI.js";
 import {
   NgTemplateOutlet
 } from "./chunk-K3BM3WHD.js";

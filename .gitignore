@@ -2,6 +2,13 @@
 .DS_Store
 Thumbs.db
 
+#Secrets
+/backend/src/main/resources/application-local.properties
+/frontend/src/environments/secrets.ts
+
+
+/frontend/.angular/cache
+
 # IntelliJ IDEA
 .idea/
 *.iws
@@ -29,8 +36,9 @@ bin/
 /tmp
 /out-tsc
 /bazel-out
-/.angular/cache
-node_modules/
+frontend/.angular/cache
+frontend/node_modules
+frontend/dist
 npm-debug.log
 yarn-error.log
 

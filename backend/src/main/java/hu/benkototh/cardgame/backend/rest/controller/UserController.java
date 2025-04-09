@@ -2,14 +2,18 @@ package hu.benkototh.cardgame.backend.rest.controller;
 
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
+import hu.benkototh.cardgame.backend.rest.util.GoogleTokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class UserController {
@@ -51,9 +55,14 @@ public class UserController {
     @Autowired
     private AuditLogController auditLogController;
 
+    @Autowired
+    private GoogleTokenVerifier googleTokenVerifier;
+
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private static final int MAX_LOGIN_ATTEMPTS = 5;
+    private static final String GOOGLE_AUTH_PREFIX = "google_auth_";
+    private static final String GOOGLE_AUTH_SUFFIX = "54b96774-c25f-460f-9c01-aaf10a394dd9";
 
     public List<User> getAllUsers() {
         auditLogController.logAction("ALL_USERS_VIEWED", 0L, "All users viewed");
@@ -122,6 +131,55 @@ public class UserController {
                 "New user created: " + savedUser.getUsername());
         
         return savedUser;
+    }
+
+    public User loginWithGoogle(GoogleAuthRequest googleAuthRequest) {
+        try {
+            var payload = googleTokenVerifier.verify(googleAuthRequest.getToken());
+
+            if (payload == null) {
+                auditLogController.logAction("GOOGLE_LOGIN_FAILED", 0L,
+                        "Google login failed: Invalid token");
+                return null;
+            }
+
+            String email = payload.get("email").toString();
+
+            synchronized (this) {
+                User existingUser = findByEmail(email);
+
+                if (existingUser != null) {
+                    auditLogController.logAction("GOOGLE_LOGIN_SUCCESS", existingUser.getId(),
+                            "User logged in with Google: " + existingUser.getUsername());
+                    return existingUser;
+                } else {
+                    User newUser = new User();
+                    newUser.setEmail(email);
+
+                    String name = googleAuthRequest.getName();
+                    String username = generateUsername(name != null ? name : email);
+                    newUser.setUsername(username);
+
+                    String randomPassword = GOOGLE_AUTH_PREFIX + GOOGLE_AUTH_SUFFIX;
+                    newUser.setPassword(passwordEncoder.encode(randomPassword));
+
+                    newUser.setRole("ROLE_USER");
+                    newUser.setLocked(false);
+                    newUser.setFailedLoginAttempts(0);
+
+                    User savedUser = userRepository.save(newUser);
+
+                    auditLogController.logAction("USER_CREATED_VIA_GOOGLE", savedUser.getId(),
+                            "New user created via Google: " + savedUser.getUsername());
+
+                    return savedUser;
+                }
+            }
+        } catch (Exception e) {
+            auditLogController.logAction("GOOGLE_LOGIN_FAILED", 0L,
+                    "Google login failed: " + e.getMessage());
+            return null;
+        }
     }
 
     public User updateUsername(long userId, String newUsername) {
@@ -240,6 +298,40 @@ public class UserController {
         return true;
     }
 
+    public boolean hasGoogleAuthPassword(long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+
+        User user = userOptional.get();
+
+        String testPassword = GOOGLE_AUTH_PREFIX + GOOGLE_AUTH_SUFFIX;
+
+        return passwordEncoder.matches(testPassword, user.getPassword());
+    }
+
+    public User setPassword(long userId, String newPassword) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            auditLogController.logAction("PASSWORD_SET_FAILED", userId,
+                    "Password set failed: User not found");
+            return null;
+        }
+
+        User user = userOptional.get();
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        User updatedUser = userRepository.save(user);
+
+        auditLogController.logAction("PASSWORD_SET", userId,
+                "Password set successfully for Google auth user");
+
+        return updatedUser;
+    }
+
     public List<UserHistory> getUserHistory(long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 
@@ -278,6 +370,31 @@ public class UserController {
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+
+
+    public User findByEmail(String email) {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String generateUsername(String base) {
+        String cleanBase = base.replaceAll("[^a-zA-Z0-9]", "");
+
+        if (!userExistsByUsername(cleanBase)) {
+            return cleanBase;
+        }
+
+        for (int i = 1; i <= 100; i++) {
+            String username = cleanBase + i;
+            if (!userExistsByUsername(username)) {
+                return username;
+            }
+        }
+
+        return "user_" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     public boolean userExistsByUsername(String username) {
