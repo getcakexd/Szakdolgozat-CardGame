@@ -59,6 +59,14 @@
         </div>
       </form>
 
+      <div *ngIf="!authService.isLoggedIn()" class="social-login-divider">
+        <span>OR</span>
+      </div>
+
+      <div *ngIf="!authService.isLoggedIn()" class="social-login-buttons">
+        <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+      </div>
+
       <div *ngIf="message"
            class="message-card"
            [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}">

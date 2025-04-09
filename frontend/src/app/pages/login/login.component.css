@@ -68,3 +68,29 @@ mat-card-title h2 {
   }
 }
 
+
+.social-login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.social-login-divider::before,
+.social-login-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.social-login-divider span {
+  padding: 0 10px;
+  color: #757575;
+  font-size: 14px;
+}
+
+.social-login-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}

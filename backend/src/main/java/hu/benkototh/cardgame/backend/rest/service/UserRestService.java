@@ -1,5 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
+import hu.benkototh.cardgame.backend.rest.Data.GoogleAuthRequest;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
@@ -73,6 +74,19 @@ public class UserRestService {
         
         response.put("message", "User created.");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/google-auth")
+    public ResponseEntity<?> googleAuth(@RequestBody GoogleAuthRequest googleAuthRequest) {
+        User user = userController.loginWithGoogle(googleAuthRequest);
+
+        if (user == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Failed to authenticate with Google");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/update/username")
@@ -155,6 +169,35 @@ public class UserRestService {
         }
         
         response.put("message", "User deleted.");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/has-google-auth-password")
+    public ResponseEntity<Map<String, Boolean>> hasGoogleAuthPassword(@RequestParam long userId) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean hasGoogleAuthPassword = userController.hasGoogleAuthPassword(userId);
+        response.put("hasGoogleAuthPassword", hasGoogleAuthPassword);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/set-password")
+    public ResponseEntity<Map<String, String>> setPassword(@RequestParam long userId, @RequestParam String newPassword) {
+        Map<String, String> response = new HashMap<>();
+        User updatedUser = userController.setPassword(userId, newPassword);
+
+        if (updatedUser == null) {
+            User user = userController.getUser(userId);
+
+            if (user == null) {
+                response.put("message", "User not found.");
+                return ResponseEntity.status(404).body(response);
+            } else {
+                response.put("message", "Failed to set password.");
+                return ResponseEntity.status(400).body(response);
+            }
+        }
+
+        response.put("message", "Password set successfully.");
         return ResponseEntity.ok(response);
     }
 

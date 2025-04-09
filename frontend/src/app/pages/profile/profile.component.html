@@ -83,15 +83,17 @@
             <span>Password</span>
           </div>
           <div class="info-content">
-            <span class="info-value">••••••••</span>
+            <span class="info-value">{{ isGoogleAuthUser ? 'Not set (Google login)' : '••••••••' }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('password')" *ngIf="editField !== 'password'">
-              <mat-icon>edit</mat-icon> Change
+              <mat-icon>edit</mat-icon> {{ isGoogleAuthUser ? 'Add Password' : 'Change Password' }}
             </button>
           </div>
 
+          <!-- Different password forms for Google auth users vs regular users -->
           <div class="edit-form" *ngIf="editField === 'password'">
             <form (ngSubmit)="updateUser()">
-              <mat-form-field appearance="outline" class="form-field">
+              <!-- Only show current password field for non-Google auth users -->
+              <mat-form-field appearance="outline" class="form-field" *ngIf="!isGoogleAuthUser">
                 <mat-label>Current Password</mat-label>
                 <input matInput [(ngModel)]="currentPassword" name="currentPassword"
                        [type]="hideCurrentPassword ? 'password' : 'text'" required />
@@ -103,7 +105,7 @@
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="form-field">
-                <mat-label>New Password</mat-label>
+                <mat-label>{{ isGoogleAuthUser ? 'New Password' : 'New Password' }}</mat-label>
                 <input matInput [(ngModel)]="newPassword" name="newPassword"
                        [type]="hideNewPassword ? 'password' : 'text'" required />
                 <mat-icon matPrefix>lock_open</mat-icon>
@@ -115,7 +117,7 @@
 
               <div class="form-actions">
                 <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
-                  Save
+                  {{ isGoogleAuthUser ? 'Set Password' : 'Update Password' }}
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
                   Cancel
