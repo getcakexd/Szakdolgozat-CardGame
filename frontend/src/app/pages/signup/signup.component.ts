@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
@@ -10,10 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {Router, RouterLink} from '@angular/router';
-import {GoogleSigninButtonModule, SocialAuthService, SocialUser} from '@abacritt/angularx-social-login';
-import {AuthService} from '../../services/auth/auth.service';
-import {Subscription} from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { AuthService } from '../../services/auth/auth.service';
+import { Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-signup",
@@ -32,6 +33,7 @@ import {Subscription} from 'rxjs';
     MatProgressBarModule,
     RouterLink,
     GoogleSigninButtonModule,
+    TranslateModule
   ],
   styleUrls: ["./signup.component.css"],
 })
@@ -55,6 +57,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private socialAuthService: SocialAuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -88,9 +91,9 @@ export class SignupComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isLoading = false
-        this.message = error?.error?.message || "Error signing up with Google"
+        this.message = error?.error?.message || this.translate.instant('ERRORS.GOOGLE_SIGNUP_ERROR')
         if (this.message != null) {
-          this.snackBar.open(this.message, "Close", {
+          this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
             duration: 5000,
             panelClass: ["error-snackbar"],
           })
@@ -117,22 +120,26 @@ export class SignupComponent implements OnInit, OnDestroy {
           this.isLoading = false
           this.resetForm()
 
-          this.snackBar.open("Account created successfully! You can now log in.", "Close", {
-            duration: 5000,
-            panelClass: ["success-snackbar"],
-          })
+          this.snackBar.open(
+            this.translate.instant('SUCCESS.ACCOUNT_CREATED'),
+            this.translate.instant('CLOSE'),
+            {
+              duration: 5000,
+              panelClass: ["success-snackbar"],
+            }
+          )
 
           setTimeout(() => {
             this.router.navigate(["/login"])
           }, 1500)
         },
         error: (error) => {
-          this.message = error?.error?.message || "Error creating user. Please try again."
+          this.message = error?.error?.message || this.translate.instant('ERRORS.USER_CREATE_ERROR')
           this.isSuccess = false
           this.isLoading = false
 
           if (this.message != null) {
-            this.snackBar.open(this.message, "Close", {
+            this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
               duration: 5000,
               panelClass: ["error-snackbar"],
             })
@@ -141,7 +148,7 @@ export class SignupComponent implements OnInit, OnDestroy {
       })
     } else {
       this.signupForm.markAllAsTouched()
-      this.message = "Please fill out all fields correctly."
+      this.message = this.translate.instant('ERRORS.FILL_ALL_FIELDS')
       this.isSuccess = false
     }
   }
@@ -149,13 +156,16 @@ export class SignupComponent implements OnInit, OnDestroy {
   getErrorMessage(field: string): string {
     const control = this.signupForm.get(field)
     if (control?.hasError("required")) {
-      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
+      if (field === 'username') return this.translate.instant('ERRORS.USERNAME_REQUIRED')
+      if (field === 'email') return this.translate.instant('ERRORS.EMAIL_REQUIRED')
+      if (field === 'password') return this.translate.instant('ERRORS.PASSWORD_REQUIRED')
+      return this.translate.instant('ERRORS.REQUIRED_FIELD')
     }
     if (field === "email" && control?.hasError("email")) {
-      return "Please enter a valid email address"
+      return this.translate.instant('ERRORS.EMAIL_INVALID')
     }
     if (field === "password" && control?.hasError("minlength")) {
-      return "Password must be at least 6 characters long"
+      return this.translate.instant('ERRORS.PASSWORD_MIN_LENGTH')
     }
     return ""
   }

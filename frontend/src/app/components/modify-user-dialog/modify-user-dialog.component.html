@@ -1,24 +1,23 @@
-<h2 mat-dialog-title>Modify User</h2>
+<h2 mat-dialog-title>{{ 'AGENT.USER_MANAGEMENT' | translate }}</h2>
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Username</mat-label>
+      <mat-label>{{ 'ADMIN.USERNAME' | translate }}</mat-label>
       <input matInput formControlName="username" required>
-      <mat-error *ngIf="userForm.get('username')?.hasError('required')">Username is required</mat-error>
-      <mat-error *ngIf="userForm.get('username')?.hasError('minlength')">Username must be at least 3 characters</mat-error>
+      <mat-error *ngIf="userForm.get('username')?.hasError('required')">{{ 'ERRORS.USERNAME_REQUIRED' | translate }}</mat-error>
+      <mat-error *ngIf="userForm.get('username')?.hasError('minlength')">{{ 'ADD_USER.USERNAME_MIN_LENGTH' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'ADMIN.EMAIL' | translate }}</mat-label>
       <input matInput formControlName="email" type="email" required>
-      <mat-error *ngIf="userForm.get('email')?.hasError('required')">Email is required</mat-error>
-      <mat-error *ngIf="userForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+      <mat-error *ngIf="userForm.get('email')?.hasError('required')">{{ 'ERRORS.EMAIL_REQUIRED' | translate }}</mat-error>
+      <mat-error *ngIf="userForm.get('email')?.hasError('email')">{{ 'ERRORS.EMAIL_INVALID' | translate }}</mat-error>
     </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Save Changes</button>
+    <button mat-button type="button" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">{{ 'PROFILE.SAVE' | translate }}</button>
   </mat-dialog-actions>
 </form>
-

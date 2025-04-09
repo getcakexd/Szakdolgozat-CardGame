@@ -2,8 +2,8 @@
   <mat-card-header>
     <mat-card-title>
       <div class="chat-header">
-        <h2>{{ clubName }} Chat</h2>
-        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="Refresh messages">
+        <h2>{{ clubName }} {{ 'CLUB_CHAT.CHAT' | translate }}</h2>
+        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CLUB_CHAT.REFRESH' | translate }}">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -17,7 +17,7 @@
       </div>
 
       <div *ngIf="messages.length === 0 && !isLoading" class="no-messages">
-        <p>No messages yet. Start the conversation!</p>
+        <p>{{ 'CLUB_CHAT.NO_MESSAGES' | translate }}</p>
       </div>
 
       <div *ngFor="let msg of messages"
@@ -34,10 +34,10 @@
 
           <div class="message-content">
             <ng-container *ngIf="msg.status === 'unsent'">
-              <em>(Message unsent)</em>
+              <em>{{ 'CLUB_CHAT.MESSAGE_UNSENT' | translate }}</em>
             </ng-container>
             <ng-container *ngIf="msg.status === 'removed'">
-              <em>(Message removed)</em>
+              <em>{{ 'CLUB_CHAT.MESSAGE_REMOVED' | translate }}</em>
             </ng-container>
             <ng-container *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
               {{ msg.content }}
@@ -49,12 +49,12 @@
 
             <div class="message-actions" *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
               <button mat-icon-button size="small" *ngIf="msg.sender.id === senderId"
-                      (click)="unsendMessage(msg.id)" matTooltip="Unsend message">
+                      (click)="unsendMessage(msg.id)" matTooltip="{{ 'CLUB_CHAT.UNSEND_MESSAGE' | translate }}">
                 <mat-icon>delete_outline</mat-icon>
               </button>
 
               <button mat-icon-button size="small" *ngIf="hasPermission && msg.sender.id !== senderId"
-                      (click)="removeMessage(msg.id)" matTooltip="Remove message">
+                      (click)="removeMessage(msg.id)" matTooltip="{{ 'CLUB_CHAT.REMOVE_MESSAGE' | translate }}">
                 <mat-icon>block</mat-icon>
               </button>
             </div>
@@ -67,13 +67,13 @@
 
     <div class="chat-input-container">
       <mat-form-field appearance="outline" class="chat-input">
-        <mat-label>Type a message...</mat-label>
+        <mat-label>{{ 'CLUB_CHAT.TYPE_MESSAGE' | translate }}</mat-label>
         <input matInput [(ngModel)]="newMessage"
-               placeholder="Type a message..."
+               placeholder="{{ 'CLUB_CHAT.TYPE_MESSAGE' | translate }}"
                (keypress)="onKeyPress($event)">
       </mat-form-field>
 
-      <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="Send message">
+      <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="{{ 'CLUB_CHAT.SEND_MESSAGE' | translate }}">
         <mat-icon>send</mat-icon>
       </button>
     </div>

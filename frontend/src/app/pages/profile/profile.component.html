@@ -2,7 +2,7 @@
   <mat-card class="profile-card">
     <mat-card-header>
       <div class="profile-header">
-        <mat-card-title>Your Profile</mat-card-title>
+        <mat-card-title>{{ 'PROFILE.TITLE' | translate }}</mat-card-title>
         <mat-icon class="profile-icon">account_circle</mat-icon>
       </div>
     </mat-card-header>
@@ -14,28 +14,28 @@
         <div class="info-item">
           <div class="info-label">
             <mat-icon>person</mat-icon>
-            <span>Username</span>
+            <span>{{ 'PROFILE.USERNAME' | translate }}</span>
           </div>
           <div class="info-content">
             <span class="info-value">{{ authService.currentUser?.username }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('username')" *ngIf="editField !== 'username'">
-              <mat-icon>edit</mat-icon> Change
+              <mat-icon>edit</mat-icon> {{ 'PROFILE.CHANGE' | translate }}
             </button>
           </div>
 
           <div class="edit-form" *ngIf="editField === 'username'">
             <form (ngSubmit)="updateUser()">
               <mat-form-field appearance="outline" class="form-field">
-                <mat-label>New Username</mat-label>
+                <mat-label>{{ 'PROFILE.NEW_USERNAME' | translate }}</mat-label>
                 <input matInput [(ngModel)]="newUsername" name="newUsername" required />
                 <mat-icon matPrefix>person</mat-icon>
               </mat-form-field>
               <div class="form-actions">
                 <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
-                  Save
+                  {{ 'PROFILE.SAVE' | translate }}
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
-                  Cancel
+                  {{ 'PROFILE.CANCEL' | translate }}
                 </button>
               </div>
             </form>
@@ -47,28 +47,28 @@
         <div class="info-item">
           <div class="info-label">
             <mat-icon>email</mat-icon>
-            <span>Email</span>
+            <span>{{ 'PROFILE.EMAIL' | translate }}</span>
           </div>
           <div class="info-content">
             <span class="info-value">{{ authService.currentUser?.email }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('email')" *ngIf="editField !== 'email'">
-              <mat-icon>edit</mat-icon> Change
+              <mat-icon>edit</mat-icon> {{ 'PROFILE.CHANGE' | translate }}
             </button>
           </div>
 
           <div class="edit-form" *ngIf="editField === 'email'">
             <form (ngSubmit)="updateUser()">
               <mat-form-field appearance="outline" class="form-field">
-                <mat-label>New Email</mat-label>
+                <mat-label>{{ 'PROFILE.NEW_EMAIL' | translate }}</mat-label>
                 <input matInput [(ngModel)]="newEmail" name="newEmail" type="email" required />
                 <mat-icon matPrefix>email</mat-icon>
               </mat-form-field>
               <div class="form-actions">
                 <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
-                  Save
+                  {{ 'PROFILE.SAVE' | translate }}
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
-                  Cancel
+                  {{ 'PROFILE.CANCEL' | translate }}
                 </button>
               </div>
             </form>
@@ -80,21 +80,19 @@
         <div class="info-item">
           <div class="info-label">
             <mat-icon>lock</mat-icon>
-            <span>Password</span>
+            <span>{{ 'PROFILE.PASSWORD' | translate }}</span>
           </div>
           <div class="info-content">
-            <span class="info-value">{{ isGoogleAuthUser ? 'Not set (Google login)' : '••••••••' }}</span>
+            <span class="info-value">{{ isGoogleAuthUser ? ('PROFILE.NOT_SET' | translate) : '••••••••' }}</span>
             <button mat-stroked-button color="primary" (click)="toggleEditForm('password')" *ngIf="editField !== 'password'">
-              <mat-icon>edit</mat-icon> {{ isGoogleAuthUser ? 'Add Password' : 'Change Password' }}
+              <mat-icon>edit</mat-icon> {{ isGoogleAuthUser ? ('PROFILE.ADD_PASSWORD' | translate) : ('PROFILE.CHANGE_PASSWORD' | translate) }}
             </button>
           </div>
 
-          <!-- Different password forms for Google auth users vs regular users -->
           <div class="edit-form" *ngIf="editField === 'password'">
             <form (ngSubmit)="updateUser()">
-              <!-- Only show current password field for non-Google auth users -->
               <mat-form-field appearance="outline" class="form-field" *ngIf="!isGoogleAuthUser">
-                <mat-label>Current Password</mat-label>
+                <mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label>
                 <input matInput [(ngModel)]="currentPassword" name="currentPassword"
                        [type]="hideCurrentPassword ? 'password' : 'text'" required />
                 <mat-icon matPrefix>lock</mat-icon>
@@ -105,7 +103,7 @@
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="form-field">
-                <mat-label>{{ isGoogleAuthUser ? 'New Password' : 'New Password' }}</mat-label>
+                <mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label>
                 <input matInput [(ngModel)]="newPassword" name="newPassword"
                        [type]="hideNewPassword ? 'password' : 'text'" required />
                 <mat-icon matPrefix>lock_open</mat-icon>
@@ -117,10 +115,10 @@
 
               <div class="form-actions">
                 <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
-                  {{ isGoogleAuthUser ? 'Set Password' : 'Update Password' }}
+                  {{ isGoogleAuthUser ? ('PROFILE.SET_PASSWORD' | translate) : ('PROFILE.UPDATE_PASSWORD' | translate) }}
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
-                  Cancel
+                  {{ 'PROFILE.CANCEL' | translate }}
                 </button>
               </div>
             </form>
@@ -132,18 +130,18 @@
         <div class="info-item">
           <div class="info-label danger">
             <mat-icon>delete_forever</mat-icon>
-            <span>Delete Account</span>
+            <span>{{ 'PROFILE.DELETE_ACCOUNT' | translate }}</span>
           </div>
           <div class="info-content">
             <button mat-stroked-button color="warn" (click)="confirmDelete()" *ngIf="!deleteFormVisible">
-              <mat-icon>delete</mat-icon> Delete Profile
+              <mat-icon>delete</mat-icon> {{ 'PROFILE.DELETE_PROFILE' | translate }}
             </button>
           </div>
 
           <div class="edit-form" *ngIf="deleteFormVisible">
-            <h3 class="delete-warning">This action cannot be undone!</h3>
+            <h3 class="delete-warning">{{ 'PROFILE.DELETE_WARNING' | translate }}</h3>
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>Enter your password to confirm</mat-label>
+              <mat-label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</mat-label>
               <input matInput [(ngModel)]="password" [type]="hidePassword ? 'password' : 'text'" required />
               <mat-icon matPrefix>lock</mat-icon>
               <button mat-icon-button matSuffix type="button"
@@ -153,10 +151,10 @@
             </mat-form-field>
             <div class="form-actions">
               <button mat-raised-button color="warn" (click)="deleteProfile()" [disabled]="isLoading">
-                Delete My Account
+                {{ 'PROFILE.DELETE_BUTTON' | translate }}
               </button>
               <button mat-button type="button" (click)="toggleDeleteForm()" [disabled]="isLoading">
-                Cancel
+                {{ 'PROFILE.CANCEL' | translate }}
               </button>
             </div>
           </div>

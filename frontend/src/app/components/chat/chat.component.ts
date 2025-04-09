@@ -12,7 +12,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat',
@@ -31,7 +32,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatIconModule,
     MatDividerModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    TranslateModule
   ],
   standalone: true
 })
@@ -49,7 +51,8 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService,
     private userService: UserService,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.senderId = this.authService.getCurrentUserId() || 0;
   }
@@ -83,7 +86,11 @@ export class ChatComponent implements OnInit {
       error: (error) => {
         console.error('Error loading messages:', error);
         this.isLoading = false;
-        this.snackBar.open('Failed to load messages', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CHAT.FAILED_LOAD'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -99,7 +106,11 @@ export class ChatComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error sending message:', error);
-        this.snackBar.open('Failed to send message', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CHAT.FAILED_SEND'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -113,7 +124,11 @@ export class ChatComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error unsending message:', error);
-        this.snackBar.open('Failed to unsend message', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CHAT.FAILED_UNSEND'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }

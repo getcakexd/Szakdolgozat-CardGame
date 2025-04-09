@@ -1,4 +1,9 @@
 import {
+  CheckboxRequiredValidator,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR
+} from "./chunk-DCITRCVI.js";
+import {
   MatCommonModule,
   MatRipple,
   _CdkPrivateStyleLoader,
@@ -6,11 +11,6 @@ import {
   _MatInternalFormField,
   _StructuralStylesLoader
 } from "./chunk-WP2DXOSH.js";
-import {
-  CheckboxRequiredValidator,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR
-} from "./chunk-DCITRCVI.js";
 import "./chunk-K3BM3WHD.js";
 import {
   ANIMATION_MODULE_TYPE,

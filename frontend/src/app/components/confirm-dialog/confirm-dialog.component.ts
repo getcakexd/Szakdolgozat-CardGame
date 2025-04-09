@@ -6,7 +6,8 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from "@angular/material/dialog"
-import {MatButton} from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: "app-confirm-dialog",
@@ -16,7 +17,8 @@ import {MatButton} from '@angular/material/button';
     MatButton,
     MatDialogActions,
     MatDialogContent,
-    MatDialogTitle
+    MatDialogTitle,
+    TranslateModule
   ],
   standalone: true
 })
@@ -34,4 +36,3 @@ export class ConfirmDialogComponent {
     this.dialogRef.close(true)
   }
 }
-

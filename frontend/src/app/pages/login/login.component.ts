@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -10,10 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {AuthService} from '../../services/auth/auth.service';
-import {GoogleSigninButtonModule, SocialAuthService, SocialUser} from '@abacritt/angularx-social-login';
-import {Subscription} from 'rxjs';
-
+import { AuthService } from '../../services/auth/auth.service';
+import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-login",
@@ -31,6 +31,7 @@ import {Subscription} from 'rxjs';
     MatProgressBarModule,
     GoogleSigninButtonModule,
     RouterLink,
+    TranslateModule
   ],
   styleUrls: ["./login.component.css"],
 })
@@ -52,6 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackBar: MatSnackBar,
     private socialAuthService: SocialAuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -85,9 +87,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isLoading = false
-        this.message = error?.error?.message || "Error logging in with Google"
+        this.message = error?.error?.message || this.translate.instant('ERRORS.GOOGLE_LOGIN_ERROR')
         if (this.message != null) {
-          this.snackBar.open(this.message, "Close", {
+          this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
             duration: 5000,
             panelClass: ["error-snackbar"],
           })
@@ -111,9 +113,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isLoading = false
-          this.message = error?.error?.message || "Invalid username or password"
+          this.message = error?.error?.message || this.translate.instant('ERRORS.INVALID_CREDENTIALS')
           if (this.message != null) {
-            this.snackBar.open(this.message, "Close", {
+            this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
               duration: 5000,
               panelClass: ["error-snackbar"],
             })
@@ -121,7 +123,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
       })
     } else {
-      this.message = "Please fill out all fields correctly."
+      this.message = this.translate.instant('ERRORS.FILL_ALL_FIELDS')
       this.loginForm.markAllAsTouched()
     }
   }
@@ -129,7 +131,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   getErrorMessage(field: string): string {
     const control = this.loginForm.get(field)
     if (control?.hasError("required")) {
-      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
+      return field === 'username'
+        ? this.translate.instant('ERRORS.USERNAME_REQUIRED')
+        : this.translate.instant('ERRORS.PASSWORD_REQUIRED')
     }
     return ""
   }

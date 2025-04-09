@@ -1,11 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {AuthService} from '../../services/auth/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
   imports: [
-    NgIf
+    NgIf,
+    TranslateModule
   ],
   templateUrl: './home.component.html',
   standalone: true,

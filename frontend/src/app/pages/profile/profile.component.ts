@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
@@ -13,8 +13,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {AuthService} from '../../services/auth/auth.service';
-import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../services/auth/auth.service';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-profile",
@@ -29,6 +30,7 @@ import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-di
     MatDividerModule,
     MatDialogModule,
     MatProgressBarModule,
+    TranslateModule
   ],
   templateUrl: "./profile.component.html",
   standalone: true,
@@ -60,6 +62,7 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0
     if (!this.authService.isLoggedIn()) {
@@ -110,12 +113,20 @@ export class ProfileComponent implements OnInit {
           this.authService.currentUser!.username = this.newUsername
           this.cancelEdit()
           this.isLoading = false
-          this.snackBar.open("Username updated successfully!", "Close", { duration: 3000 })
+          this.snackBar.open(
+            this.translate.instant('SUCCESS.USERNAME_UPDATED'),
+            this.translate.instant('CLOSE'),
+            { duration: 3000 }
+          )
         },
         error: (error) => {
-          this.message = error.message || "Failed to update username"
+          this.message = error.message || this.translate.instant('ERRORS.USERNAME_UPDATE_ERROR')
           this.isLoading = false
-          this.snackBar.open(this.message, "Close", { duration: 5000, panelClass: ["error-snackbar"] })
+          this.snackBar.open(
+            this.message,
+            this.translate.instant('CLOSE'),
+            { duration: 5000, panelClass: ["error-snackbar"] }
+          )
         },
       })
     } else if (this.editField === "email") {
@@ -124,27 +135,43 @@ export class ProfileComponent implements OnInit {
           this.authService.currentUser!.email = this.newEmail
           this.cancelEdit()
           this.isLoading = false
-          this.snackBar.open("Email updated successfully!", "Close", { duration: 3000 })
+          this.snackBar.open(
+            this.translate.instant('SUCCESS.EMAIL_UPDATED'),
+            this.translate.instant('CLOSE'),
+            { duration: 3000 }
+          )
         },
         error: (error) => {
-          this.message = error.message || "Failed to update email"
+          this.message = error.message || this.translate.instant('ERRORS.EMAIL_UPDATE_ERROR')
           this.isLoading = false
-          this.snackBar.open(this.message, "Close", { duration: 5000, panelClass: ["error-snackbar"] })
+          this.snackBar.open(
+            this.message,
+            this.translate.instant('CLOSE'),
+            { duration: 5000, panelClass: ["error-snackbar"] }
+          )
         },
       })
     } else if (this.editField === "password") {
       if (this.isGoogleAuthUser) {
         this.userService.setPassword(this.userId, this.newPassword).subscribe({
           next: (response) => {
-            this.isGoogleAuthUser = false // User now has a real password
+            this.isGoogleAuthUser = false
             this.cancelEdit()
             this.isLoading = false
-            this.snackBar.open("Password set successfully!", "Close", { duration: 3000 })
+            this.snackBar.open(
+              this.translate.instant('SUCCESS.PASSWORD_SET'),
+              this.translate.instant('CLOSE'),
+              { duration: 3000 }
+            )
           },
           error: (error) => {
-            this.message = error.message || "Failed to set password"
+            this.message = error.message || this.translate.instant('ERRORS.PASSWORD_SET_ERROR')
             this.isLoading = false
-            this.snackBar.open(this.message, "Close", { duration: 5000, panelClass: ["error-snackbar"] })
+            this.snackBar.open(
+              this.message,
+              this.translate.instant('CLOSE'),
+              { duration: 5000, panelClass: ["error-snackbar"] }
+            )
           },
         })
       } else {
@@ -152,12 +179,20 @@ export class ProfileComponent implements OnInit {
           next: (response) => {
             this.cancelEdit()
             this.isLoading = false
-            this.snackBar.open("Password updated successfully!", "Close", { duration: 3000 })
+            this.snackBar.open(
+              this.translate.instant('SUCCESS.PASSWORD_UPDATED'),
+              this.translate.instant('CLOSE'),
+              { duration: 3000 }
+            )
           },
           error: (error) => {
-            this.message = error.message || "Failed to update password"
+            this.message = error.message || this.translate.instant('ERRORS.PASSWORD_UPDATE_ERROR')
             this.isLoading = false
-            this.snackBar.open(this.message, "Close", { duration: 5000, panelClass: ["error-snackbar"] })
+            this.snackBar.open(
+              this.message,
+              this.translate.instant('CLOSE'),
+              { duration: 5000, panelClass: ["error-snackbar"] }
+            )
           },
         })
       }
@@ -166,7 +201,7 @@ export class ProfileComponent implements OnInit {
 
   deleteProfile(): void {
     if (!this.password) {
-      this.message = "Password is required to delete your account"
+      this.message = this.translate.instant('ERRORS.PASSWORD_REQUIRED_DELETE')
       return
     }
 
@@ -175,15 +210,23 @@ export class ProfileComponent implements OnInit {
     this.userService.deleteAccount(this.userId, this.password).subscribe({
       next: (response) => {
         this.isLoading = false
-        this.snackBar.open("Profile deleted successfully!", "Close", { duration: 3000 })
+        this.snackBar.open(
+          this.translate.instant('SUCCESS.PROFILE_DELETED'),
+          this.translate.instant('CLOSE'),
+          { duration: 3000 }
+        )
         this.router.navigate(["/login"]).then(() => {
           window.location.reload()
         })
       },
       error: (error) => {
-        this.message = error.message || "Failed to delete account"
+        this.message = error.message || this.translate.instant('ERRORS.PROFILE_DELETE_ERROR')
         this.isLoading = false
-        this.snackBar.open(this.message, "Close", { duration: 5000, panelClass: ["error-snackbar"] })
+        this.snackBar.open(
+          this.message,
+          this.translate.instant('CLOSE'),
+          { duration: 5000, panelClass: ["error-snackbar"] }
+        )
       },
     })
   }
@@ -201,8 +244,8 @@ export class ProfileComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "350px",
       data: {
-        title: "Delete Account",
-        message: "Are you sure you want to delete your account? This action cannot be undone.",
+        title: this.translate.instant('PROFILE.DELETE_ACCOUNT'),
+        message: this.translate.instant('PROFILE.DELETE_WARNING'),
       },
     })
 

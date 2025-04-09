@@ -1,7 +1,7 @@
 <div class="social-container">
   <div class="social-header">
-    <h1>Social Hub</h1>
-    <p>Connect with friends and manage your social network</p>
+    <h1>{{ 'SOCIAL.TITLE' | translate }}</h1>
+    <p>{{ 'SOCIAL.SUBTITLE' | translate }}</p>
   </div>
 
   <mat-card class="social-card">
@@ -9,7 +9,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">people</mat-icon>
-          <span>Friends</span>
+          <span>{{ 'SOCIAL.FRIENDS' | translate }}</span>
         </ng-template>
         <div class="tab-content">
           <app-friend-list></app-friend-list>
@@ -19,7 +19,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">person_add</mat-icon>
-          <span>Friend Requests</span>
+          <span>{{ 'SOCIAL.FRIEND_REQUESTS' | translate }}</span>
         </ng-template>
         <div class="tab-content">
           <app-friend-request></app-friend-request>

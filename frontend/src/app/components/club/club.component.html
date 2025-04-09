@@ -1,32 +1,32 @@
 <div class="club-container" *ngIf="!isLoading">
   <div class="club-header">
-    <button mat-icon-button (click)="goBack()" aria-label="Back to clubs">
+    <button mat-icon-button (click)="goBack()" [attr.aria-label]="'CLUB.BACK' | translate">
       <mat-icon>arrow_back</mat-icon>
     </button>
 
     <div class="club-title" *ngIf="!editingName">
       <h1 class="mat-headline-4">{{ club.name }}</h1>
       <mat-chip-listbox>
-        <mat-chip-option *ngIf="club.public" color="primary" selected disabled>Public</mat-chip-option>
-        <mat-chip-option *ngIf="!club.public" color="warn" selected disabled>Private</mat-chip-option>
+        <mat-chip-option *ngIf="club.public" color="primary" selected disabled>{{ 'CLUB.PUBLIC' | translate }}</mat-chip-option>
+        <mat-chip-option *ngIf="!club.public" color="warn" selected disabled>{{ 'CLUB.PRIVATE' | translate }}</mat-chip-option>
       </mat-chip-listbox>
     </div>
 
     <div class="club-title-edit" *ngIf="editingName">
       <mat-form-field appearance="outline">
-        <mat-label>Club Name</mat-label>
-        <input matInput [(ngModel)]="club.name" placeholder="Club name">
+        <mat-label>{{ 'CLUB.CLUB_NAME' | translate }}</mat-label>
+        <input matInput [(ngModel)]="club.name" placeholder="{{ 'CLUB.CLUB_NAME' | translate }}">
       </mat-form-field>
     </div>
 
     <div class="club-actions">
       <button mat-icon-button *ngIf="userRole === 'admin' || userRole === 'moderator'"
-              (click)="toggleEditName()" matTooltip="{{ editingName ? 'Save Name' : 'Edit Name' }}">
+              (click)="toggleEditName()" matTooltip="{{ editingName ? ('CLUB.SAVE_NAME' | translate) : ('CLUB.EDIT_NAME' | translate) }}">
         <mat-icon>{{ editingName ? 'save' : 'edit' }}</mat-icon>
       </button>
 
       <button mat-raised-button color="warn" *ngIf="userRole !== 'admin'" (click)="leaveClub()">
-        <mat-icon>exit_to_app</mat-icon> Leave Club
+        <mat-icon>exit_to_app</mat-icon> {{ 'CLUB.LEAVE_CLUB' | translate }}
       </button>
     </div>
   </div>
@@ -36,29 +36,29 @@
   <div class="club-description" *ngIf="!editingDescription">
     <p class="mat-body-1">{{ club.description }}</p>
     <button mat-icon-button *ngIf="userRole === 'admin' || userRole === 'moderator'"
-            (click)="toggleEditDescription()" matTooltip="Edit Description">
+            (click)="toggleEditDescription()" matTooltip="{{ 'CLUB.EDIT_DESCRIPTION' | translate }}">
       <mat-icon>edit</mat-icon>
     </button>
   </div>
 
   <div class="club-description-edit" *ngIf="editingDescription">
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Club Description</mat-label>
-      <textarea matInput [(ngModel)]="club.description" rows="3" placeholder="Club description"></textarea>
+      <mat-label>{{ 'CLUB.CLUB_DESCRIPTION' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="club.description" rows="3" placeholder="{{ 'CLUB.CLUB_DESCRIPTION' | translate }}"></textarea>
     </mat-form-field>
     <button mat-raised-button color="primary" (click)="toggleEditDescription()">
-      Save Description
+      {{ 'CLUB.SAVE_DESCRIPTION' | translate }}
     </button>
   </div>
 
   <div class="admin-actions" *ngIf="userRole === 'admin'">
     <button mat-raised-button color="primary" (click)="toggleVisibility()">
       <mat-icon>{{ club.public ? 'lock' : 'public' }}</mat-icon>
-      {{ club.public ? 'Make Private' : 'Make Public' }}
+      {{ club.public ? ('CLUB.MAKE_PRIVATE' | translate) : ('CLUB.MAKE_PUBLIC' | translate) }}
     </button>
 
     <button mat-raised-button color="warn" (click)="deleteClub()">
-      <mat-icon>delete</mat-icon> Delete Club
+      <mat-icon>delete</mat-icon> {{ 'CLUB.DELETE_CLUB' | translate }}
     </button>
   </div>
 
@@ -66,7 +66,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">people</mat-icon>
-        Members ({{ members.length }})
+        {{ 'CLUB.MEMBERS' | translate }} ({{ members.length }})
       </ng-template>
 
       <mat-card>
@@ -83,13 +83,13 @@
 
                 <div class="member-actions">
                   <button mat-icon-button color="warn" *ngIf="canKickMember(member) && member.role !== 'admin'"
-                          (click)="kickMember(member)" matTooltip="Remove member">
+                          (click)="kickMember(member)" matTooltip="{{ 'CLUB.REMOVE_MEMBER' | translate }}">
                     <mat-icon>person_remove</mat-icon>
                   </button>
 
                   <button mat-icon-button *ngIf="userRole === 'admin' && canToggleRole(member)"
                           (click)="toggleModerator(member)"
-                          matTooltip="{{ member.role === 'moderator' ? 'Demote to Member' : 'Promote to Moderator' }}">
+                          matTooltip="{{ member.role === 'moderator' ? ('CLUB.DEMOTE_TO_MEMBER' | translate) : ('CLUB.PROMOTE_TO_MODERATOR' | translate) }}">
                     <mat-icon>{{ member.role === 'moderator' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
                   </button>
                 </div>
@@ -104,33 +104,33 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">mail</mat-icon>
-        Invites
+        {{ 'CLUB.INVITES' | translate }}
         <span *ngIf="pendingInvites.length > 0" class="invite-badge">{{ pendingInvites.length }}</span>
       </ng-template>
 
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Invite New Member</mat-card-title>
+          <mat-card-title>{{ 'CLUB.INVITE_NEW_MEMBER' | translate }}</mat-card-title>
         </mat-card-header>
 
         <mat-card-content>
 
           <form (submit)="inviteUser(inviteUsername); $event.preventDefault();" class="simple-form">
             <div class="form-group">
-              <label for="inviteUsername">Username:</label>
+              <label for="inviteUsername">{{ 'CLUB.USERNAME' | translate }}</label>
               <input
                 type="text"
                 id="inviteUsername"
                 name="inviteUsername"
                 [(ngModel)]="inviteUsername"
-                placeholder="Enter username to invite"
+                placeholder="{{ 'CLUB.ENTER_USERNAME' | translate }}"
                 class="basic-input"
               />
             </div>
 
             <div class="form-actions">
               <button type="submit" class="basic-button">
-                <mat-icon>person_add</mat-icon> Send Invite
+                <mat-icon>person_add</mat-icon> {{ 'CLUB.SEND_INVITE' | translate }}
               </button>
             </div>
 
@@ -139,13 +139,13 @@
             </div>
           </form>
 
-          <h3 class="mat-h3">Pending Invites</h3>
+          <h3 class="mat-h3">{{ 'CLUB.PENDING_INVITES' | translate }}</h3>
           <mat-list *ngIf="pendingInvites.length > 0">
             <mat-list-item *ngFor="let invite of pendingInvites">
               <div class="invite-item">
                 <span>{{ invite.user.username }}</span>
                 <button mat-icon-button color="warn" *ngIf="invite.status === 'pending'"
-                        (click)="cancelInvite(invite.id)" matTooltip="Cancel invite">
+                        (click)="cancelInvite(invite.id)" matTooltip="{{ 'CLUB.CANCEL_INVITE' | translate }}">
                   <mat-icon>cancel</mat-icon>
                 </button>
               </div>
@@ -154,10 +154,10 @@
           </mat-list>
 
           <div *ngIf="pendingInvites.length === 0" class="empty-list">
-            <p>No pending invites</p>
+            <p>{{ 'CLUB.NO_PENDING_INVITES' | translate }}</p>
           </div>
 
-          <h3 class="mat-h3">Invite History</h3>
+          <h3 class="mat-h3">{{ 'CLUB.INVITE_HISTORY' | translate }}</h3>
           <mat-list *ngIf="inviteHistory.length > 0">
             <mat-list-item *ngFor="let invite of inviteHistory">
               <div class="invite-item">
@@ -171,7 +171,7 @@
           </mat-list>
 
           <div *ngIf="inviteHistory.length === 0" class="empty-list">
-            <p>No invite history</p>
+            <p>{{ 'CLUB.NO_INVITE_HISTORY' | translate }}</p>
           </div>
         </mat-card-content>
       </mat-card>
@@ -180,14 +180,14 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">chat</mat-icon>
-        Club Chat
+        {{ 'CLUB.CLUB_CHAT' | translate }}
       </ng-template>
 
       <mat-card>
         <mat-card-content>
           <div *ngIf="!showChat" class="chat-toggle">
             <button mat-raised-button color="primary" (click)="toggleChat()">
-              <mat-icon>chat</mat-icon> Open Chat
+              <mat-icon>chat</mat-icon> {{ 'CLUB.OPEN_CHAT' | translate }}
             </button>
           </div>
 
@@ -195,7 +195,7 @@
 
           <div *ngIf="showChat" class="chat-toggle">
             <button mat-button (click)="toggleChat()">
-              <mat-icon>close</mat-icon> Close Chat
+              <mat-icon>close</mat-icon> {{ 'CLUB.CLOSE_CHAT' | translate }}
             </button>
           </div>
         </mat-card-content>
@@ -206,5 +206,5 @@
 
 <div *ngIf="isLoading" class="loading-container">
   <mat-spinner></mat-spinner>
-  <p>Loading club details...</p>
+  <p>{{ 'CLUB.LOADING_DETAILS' | translate }}</p>
 </div>
