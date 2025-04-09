@@ -1,23 +1,23 @@
-<h2 mat-dialog-title>User History - {{data.user.username}}</h2>
+<h2 mat-dialog-title>{{ 'AGENT.USER_HISTORY' | translate }} - {{data.user.username}}</h2>
 <mat-dialog-content>
   <table mat-table [dataSource]="data.history" class="mat-elevation-z8 full-width-table">
     <ng-container matColumnDef="changedAt">
-      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.DATE' | translate }}</th>
       <td mat-cell *matCellDef="let item">{{item.changedAt | date:'medium'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="changedBy">
-      <th mat-header-cell *matHeaderCellDef>Changed By</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.CHANGED_BY' | translate }}</th>
       <td mat-cell *matCellDef="let item">{{item.changedBy}}</td>
     </ng-container>
 
     <ng-container matColumnDef="previousUsername">
-      <th mat-header-cell *matHeaderCellDef>Previous Username</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.PREVIOUS_USERNAME' | translate }}</th>
       <td mat-cell *matCellDef="let item">{{item.previousUsername || '-'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="previousEmail">
-      <th mat-header-cell *matHeaderCellDef>Previous Email</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.PREVIOUS_EMAIL' | translate }}</th>
       <td mat-cell *matCellDef="let item">{{item.previousEmail || '-'}}</td>
     </ng-container>
 
@@ -26,10 +26,9 @@
   </table>
 
   <div *ngIf="data.history.length === 0" class="no-history">
-    No history records found for this user.
+    {{ 'AGENT.NO_HISTORY_RECORDS' | translate }}
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button mat-dialog-close>{{ 'COMMON.CLOSE' | translate }}</button>
 </mat-dialog-actions>
-

@@ -13,7 +13,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-friend-request',
@@ -31,7 +32,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatChipsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslateModule
   ],
   standalone: true
 })
@@ -47,7 +49,8 @@ export class FriendRequestComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private friendRequestService: FriendRequestService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.currentUserId = this.authService.getCurrentUserId() || 0;
   }
@@ -66,7 +69,11 @@ export class FriendRequestComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.snackBar.open('Failed to load sent requests', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_LOAD_SENT_REQUESTS'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -79,14 +86,18 @@ export class FriendRequestComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.snackBar.open('Failed to load incoming requests', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_LOAD_INCOMING_REQUESTS'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
 
   sendRequest() {
     if (!this.username.trim()) {
-      this.errorMessage = 'Username cannot be empty.';
+      this.errorMessage = this.translate.instant('SOCIAL.USERNAME_EMPTY');
       return;
     }
 
@@ -98,12 +109,20 @@ export class FriendRequestComponent implements OnInit {
         this.loadRequests();
         this.username = '';
         this.isSending = false;
-        this.snackBar.open('Friend request sent successfully!', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.REQUEST_SENT'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       },
       error: (error) => {
-        this.errorMessage = error.error?.message || 'Failed to send friend request';
+        this.errorMessage = error.error?.message || this.translate.instant('SOCIAL.FAILED_SEND_REQUEST');
         this.isSending = false;
-        this.snackBar.open(this.errorMessage, 'Close', { duration: 5000 });
+        this.snackBar.open(
+          this.errorMessage,
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 5000 }
+        );
       }
     });
   }
@@ -112,10 +131,18 @@ export class FriendRequestComponent implements OnInit {
     this.friendRequestService.cancelFriendRequest(requestId).subscribe({
       next: () => {
         this.loadRequests();
-        this.snackBar.open('Friend request cancelled', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.REQUEST_CANCELLED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       },
       error: (error) => {
-        this.snackBar.open('Failed to cancel request', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_CANCEL_REQUEST'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -124,11 +151,19 @@ export class FriendRequestComponent implements OnInit {
     this.friendRequestService.acceptFriendRequest(requestId).subscribe({
       next: () => {
         this.loadRequests();
-        this.snackBar.open('Friend request accepted!', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.REQUEST_ACCEPTED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
         window.location.reload();
       },
       error: (error) => {
-        this.snackBar.open('Failed to accept request', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_ACCEPT_REQUEST'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -137,10 +172,18 @@ export class FriendRequestComponent implements OnInit {
     this.friendRequestService.declineFriendRequest(requestId).subscribe({
       next: () => {
         this.loadRequests();
-        this.snackBar.open('Friend request declined', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.REQUEST_DECLINED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       },
       error: (error) => {
-        this.snackBar.open('Failed to decline request', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_DECLINE_REQUEST'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }

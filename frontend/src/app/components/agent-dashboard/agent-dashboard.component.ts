@@ -27,6 +27,7 @@ import { MatIconButton } from "@angular/material/button"
 import { DatePipe, NgClass, NgIf } from "@angular/common"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-agent-dashboard",
@@ -54,6 +55,7 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/m
     MatCardTitle,
     MatCardHeader,
     MatCard,
+    TranslateModule
   ],
   standalone: true,
 })
@@ -70,6 +72,7 @@ export class AgentDashboardComponent implements OnInit {
     private contactService: ContactService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -80,31 +83,34 @@ export class AgentDashboardComponent implements OnInit {
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users) => (this.users = users),
-      (error) => this.showError("Failed to load users"),
+      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_USERS')),
     )
   }
 
   loadContactRequests(): void {
     this.contactService.getAllContactRequests().subscribe(
       (requests) => (this.contactRequests = requests),
-      (error) => this.showError("Failed to load contact requests"),
+      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_REQUESTS')),
     )
   }
 
   unlockUser(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
-      data: { title: "Confirm Unlock", message: `Are you sure you want to unlock user ${user.username}?` },
+      data: {
+        title: this.translate.instant('COMMON.CONFIRM'),
+        message: this.translate.instant('AGENT.CONFIRM_UNLOCK', { username: user.username })
+      },
     })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.unlockUser(user.id).subscribe(
           () => {
-            this.showSuccess("User unlocked successfully")
+            this.showSuccess(this.translate.instant('AGENT.USER_UNLOCKED'))
             this.loadUsers()
           },
-          (error) => this.showError("Failed to unlock user"),
+          (error) => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
         )
       }
     })
@@ -120,10 +126,10 @@ export class AgentDashboardComponent implements OnInit {
       if (result) {
         this.userService.modifyUserData(user.id, result).subscribe(
           () => {
-            this.showSuccess("User modified successfully")
+            this.showSuccess(this.translate.instant('AGENT.USER_MODIFIED'))
             this.loadUsers()
           },
-          (error) => this.showError("Failed to modify user"),
+          (error) => this.showError(this.translate.instant('AGENT.FAILED_MODIFY_USER')),
         )
       }
     })
@@ -138,7 +144,7 @@ export class AgentDashboardComponent implements OnInit {
           data: { user, history },
         })
       },
-      (error) => this.showError("Failed to load user history"),
+      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_HISTORY')),
     )
   }
 
@@ -146,10 +152,10 @@ export class AgentDashboardComponent implements OnInit {
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}")
     this.contactService.updateContactRequestStatus(request.id!, status, currentUser.id).subscribe(
       () => {
-        this.showSuccess(`Request marked as ${status}`)
+        this.showSuccess(this.translate.instant('AGENT.REQUEST_MARKED', { status: status }))
         this.loadContactRequests()
       },
-      (error) => this.showError("Failed to update request status"),
+      (error) => this.showError(this.translate.instant('AGENT.FAILED_UPDATE_STATUS')),
     )
   }
 
@@ -161,17 +167,18 @@ export class AgentDashboardComponent implements OnInit {
   }
 
   sendEmail(request: ContactRequest): void {
-    this.snackBar.open("Email functionality will be implemented in the future.", "Close", {
-      duration: 3000,
-    })
+    this.snackBar.open(
+      this.translate.instant('AGENT.EMAIL_FUTURE'),
+      this.translate.instant('COMMON.CLOSE'),
+      { duration: 3000 }
+    )
   }
 
   private showSuccess(message: string): void {
-    this.snackBar.open(message, "Close", { duration: 3000 })
+    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 3000 })
   }
 
   private showError(message: string): void {
-    this.snackBar.open(message, "Close", { duration: 5000, panelClass: "error-snackbar" })
+    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 5000, panelClass: "error-snackbar" })
   }
 }
-

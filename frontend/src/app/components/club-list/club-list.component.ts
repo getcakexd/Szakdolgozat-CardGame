@@ -8,7 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-club-list',
@@ -21,7 +22,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatButtonModule,
     MatListModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    TranslateModule
   ],
   styleUrl: './club-list.component.css'
 })
@@ -35,7 +37,8 @@ export class ClubListComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private clubService: ClubService,
-    private clubMemberService: ClubMemberService
+    private clubMemberService: ClubMemberService,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0;
   }

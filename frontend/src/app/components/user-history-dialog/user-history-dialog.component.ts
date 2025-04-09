@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from "@angular/material/dialog"
 import { User } from "../../models/user.model"
-import {UserHistory} from '../../models/user-history.model';
+import { UserHistory } from '../../models/user-history.model';
 import {
   MatCell,
   MatCellDef, MatColumnDef, MatHeaderCell,
@@ -18,8 +18,9 @@ import {
   MatRowDef,
   MatTable
 } from '@angular/material/table';
-import {DatePipe, NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import { DatePipe, NgIf } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-user-history-dialog",
@@ -42,13 +43,16 @@ import {MatButton} from '@angular/material/button';
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    MatDialogTitle
+    MatDialogTitle,
+    TranslateModule
   ],
   standalone: true
 })
 export class UserHistoryDialogComponent {
   displayedColumns: string[] = ["changedAt", "changedBy", "previousUsername", "previousEmail"];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { user: User, history: UserHistory[] }) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { user: User, history: UserHistory[] },
+    private translateService: TranslateService
+  ) {}
 }
-

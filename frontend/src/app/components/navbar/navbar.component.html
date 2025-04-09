@@ -5,24 +5,24 @@
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/home">
           <mat-icon>home</mat-icon>
-          <span>Home</span>
+          <span>{{ 'NAVBAR.HOME' | translate }}</span>
         </button>
         <button class="navbar-button" mat-button routerLink="/social">
           <mat-icon>people</mat-icon>
-          <span>Social</span>
+          <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
         </button>
         <button class="navbar-button" mat-button routerLink="/clubs">
           <mat-icon>groups</mat-icon>
-          <span>Clubs</span>
+          <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
         </button>
         <button *ngIf="isAdmin || isRoot" class="navbar-button" mat-button routerLink="/admin">
           <mat-icon>admin_panel_settings</mat-icon>
-          <span>Admin</span>
+          <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
         </button>
 
         <button *ngIf="isAdmin || isAgent || isRoot" class="navbar-button" mat-button routerLink="/agent">
           <mat-icon>support_agent</mat-icon>
-          <span>Agent</span>
+          <span>{{ 'NAVBAR.AGENT' | translate }}</span>
         </button>
       </ng-container>
 
@@ -31,6 +31,8 @@
     <div class="navbar-right">
       <app-theme-toggle></app-theme-toggle>
 
+      <app-language-selector></app-language-selector>
+
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/profile">
           <mat-icon>account_circle</mat-icon>
@@ -38,17 +40,17 @@
         </button>
         <button class="navbar-button" mat-button (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
-          <span>Logout</span>
+          <span>{{ 'NAVBAR.LOGOUT' | translate }}</span>
         </button>
       </ng-container>
 
       <ng-container *ngIf="!isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/login">
           <mat-icon>login</mat-icon>
-          <span>Login</span>
+          <span>{{ 'NAVBAR.LOGIN' | translate }}</span>
         </button>
         <button class="navbar-button" mat-raised-button color="accent" routerLink="/signup">
-          <span>Signup</span>
+          <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
         </button>
       </ng-container>
     </div>

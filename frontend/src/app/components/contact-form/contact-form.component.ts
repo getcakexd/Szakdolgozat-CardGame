@@ -12,6 +12,7 @@ import { MatIcon } from "@angular/material/icon"
 import { MatCard } from "@angular/material/card"
 import { MatOption } from "@angular/material/core"
 import { MatSelect } from "@angular/material/select"
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-contact-form",
@@ -34,6 +35,7 @@ import { MatSelect } from "@angular/material/select"
     MatOption,
     MatSelect,
     MatHint,
+    TranslateModule
   ],
 })
 export class ContactFormComponent implements OnInit {
@@ -46,6 +48,7 @@ export class ContactFormComponent implements OnInit {
     private fb: FormBuilder,
     private contactService: ContactService,
     private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.contactForm = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(2)]],
@@ -78,22 +81,21 @@ export class ContactFormComponent implements OnInit {
           this.isSubmitting = false
           this.contactForm.reset()
           this.isExpanded = false
-          this.showSuccess("Your message has been sent. An agent will contact you soon.")
+          this.showSuccess(this.translate.instant('CONTACT.SUCCESS_MESSAGE'))
         },
         (error) => {
           this.isSubmitting = false
-          this.showError("Failed to send your message. Please try again later.")
+          this.showError(this.translate.instant('CONTACT.ERROR_MESSAGE'))
         },
       )
     }
   }
 
   private showSuccess(message: string): void {
-    this.snackBar.open(message, "Close", { duration: 5000 })
+    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 5000 })
   }
 
   private showError(message: string): void {
-    this.snackBar.open(message, "Close", { duration: 5000, panelClass: "error-snackbar" })
+    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 5000, panelClass: "error-snackbar" })
   }
 }
-

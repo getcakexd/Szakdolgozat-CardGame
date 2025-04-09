@@ -1,4 +1,5 @@
-<button mat-icon-button class="theme-toggle-button" (click)="toggleTheme()" [matTooltip]="(isDarkMode$ | async) ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+<button mat-icon-button class="theme-toggle-button" (click)="toggleTheme()"
+        [matTooltip]="(isDarkMode$ | async) ? ('THEME.SWITCH_TO_LIGHT' | translate) : ('THEME.SWITCH_TO_DARK' | translate)">
   <mat-icon *ngIf="!(isDarkMode$ | async)">dark_mode</mat-icon>
   <mat-icon *ngIf="isDarkMode$ | async">light_mode</mat-icon>
 </button>

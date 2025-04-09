@@ -2,8 +2,8 @@
   <mat-card *ngIf="clubs.length === 0 && isUserClubs" class="empty-state-card">
     <mat-card-content>
       <div class="empty-state-content">
-        <h2 class="mat-h2">You are not part of any club at the moment.</h2>
-        <p class="mat-body-1">Join one below!</p>
+        <h2 class="mat-h2">{{ 'CLUB_LIST.NO_USER_CLUBS' | translate }}</h2>
+        <p class="mat-body-1">{{ 'CLUB_LIST.JOIN_BELOW' | translate }}</p>
       </div>
     </mat-card-content>
   </mat-card>
@@ -11,8 +11,8 @@
   <mat-card *ngIf="clubs.length === 0 && !isUserClubs" class="empty-state-card">
     <mat-card-content>
       <div class="empty-state-content">
-        <h2 class="mat-h2">No clubs available at the moment.</h2>
-        <p class="mat-bod2y-1">Check back later!</p>
+        <h2 class="mat-h2">{{ 'CLUB_LIST.NO_AVAILABLE_CLUBS' | translate }}</h2>
+        <p class="mat-body-1">{{ 'CLUB_LIST.CHECK_BACK' | translate }}</p>
       </div>
     </mat-card-content>
   </mat-card>
@@ -30,7 +30,7 @@
 
         <mat-card-actions *ngIf="!isUserClubs" align="end">
           <button mat-raised-button color="primary" (click)="JoinClub(club.id)">
-            Join Club
+            {{ 'CLUB_LIST.JOIN_CLUB' | translate }}
           </button>
         </mat-card-actions>
       </mat-card>

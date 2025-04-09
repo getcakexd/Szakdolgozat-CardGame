@@ -14,7 +14,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-club-page',
@@ -29,7 +30,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatIconModule,
     MatDividerModule,
     MatExpansionModule,
-    MatBadgeModule
+    MatBadgeModule,
+    TranslateModule
   ],
   templateUrl: './club-page.component.html',
   standalone: true,
@@ -47,7 +49,8 @@ export class ClubPageComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private clubInviteService: ClubInviteService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0;
   }
@@ -82,7 +85,11 @@ export class ClubPageComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.snackBar.open('Failed to load invites', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUBS.FAILED_LOAD_INVITES'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
         this.isLoading = false;
       }
     });
@@ -91,11 +98,19 @@ export class ClubPageComponent implements OnInit {
   acceptInvite(id: number) {
     this.clubInviteService.acceptInvite(id).subscribe({
       next: () => {
-        this.snackBar.open('Invite accepted', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUBS.INVITE_ACCEPTED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
         window.location.reload();
       },
       error: (error) => {
-        this.snackBar.open('Failed to accept invite', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUBS.FAILED_ACCEPT_INVITE'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -103,11 +118,19 @@ export class ClubPageComponent implements OnInit {
   declineInvite(id: number) {
     this.clubInviteService.declineInvite(id).subscribe({
       next: () => {
-        this.snackBar.open('Invite declined', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUBS.INVITE_DECLINED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
         window.location.reload();
       },
       error: (error) => {
-        this.snackBar.open('Failed to decline invite', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUBS.FAILED_DECLINE_INVITE'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }

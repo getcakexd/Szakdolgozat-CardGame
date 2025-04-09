@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-social',
@@ -16,7 +17,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatCardModule,
     MatDividerModule,
     MatTabsModule,
-    FriendRequestComponent
+    FriendRequestComponent,
+    TranslateModule
   ],
   templateUrl: './social.component.html',
   standalone: true,

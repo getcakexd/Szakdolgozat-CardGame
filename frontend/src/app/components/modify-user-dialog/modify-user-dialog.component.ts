@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core"
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms"
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -8,10 +8,11 @@ import {
   MatDialogTitle
 } from "@angular/material/dialog"
 import { User } from "../../models/user.model"
-import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatInput} from '@angular/material/input';
-import {NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { NgIf } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-modify-user-dialog",
@@ -27,7 +28,8 @@ import {MatButton} from '@angular/material/button';
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    MatDialogTitle
+    MatDialogTitle,
+    TranslateModule
   ],
   standalone: true
 })
@@ -37,7 +39,8 @@ export class ModifyUserDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ModifyUserDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { user: User }
+    @Inject(MAT_DIALOG_DATA) public data: { user: User },
+    private translateService: TranslateService
   ) {
     this.userForm = this.fb.group({
       username: [data.user.username, [Validators.required, Validators.minLength(3)]],
@@ -55,4 +58,3 @@ export class ModifyUserDialogComponent {
     this.dialogRef.close()
   }
 }
-
