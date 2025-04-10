@@ -8,6 +8,7 @@ import {provideAnimations} from '@angular/platform-browser/animations';
 import {socialAuthServiceConfig} from '../environments/social-auth.config';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {provideNativeDateAdapter} from '@angular/material/core';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/i18n/', '.json');
@@ -16,7 +17,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const AppConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-
+    provideNativeDateAdapter(),
     provideAnimations(),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),

@@ -8,7 +8,8 @@
     "PROFILE": "Profil",
     "LOGOUT": "Kijelentkezés",
     "LOGIN": "Bejelentkezés",
-    "SIGNUP": "Regisztráció"
+    "SIGNUP": "Regisztráció",
+    "AUDIT_LOGS": "Audit Naplók"
   },
   "HOME": {
     "WELCOME": "Üdvözöljük a CardHUB-on",
@@ -383,5 +384,22 @@
     "CLOSE": "Bezárás",
     "CONFIRM": "Megerősítés",
     "CANCEL": "Mégse"
+  },
+  "AUDIT_LOGS": {
+    "TITLE": "Audit Naplók",
+    "FILTERS": "Szűrők",
+    "USER_ID": "Felhasználó ID",
+    "ACTION": "Művelet",
+    "START_DATE": "Kezdő dátum",
+    "END_DATE": "Záró dátum",
+    "FILTER_BY_USER_ID": "Szűrés felhasználó ID alapján",
+    "ALL_ACTIONS": "Összes művelet",
+    "RESET_FILTERS": "Szűrők törlése",
+    "ID": "ID",
+    "USER": "Felhasználó",
+    "TIMESTAMP": "Időbélyeg",
+    "DETAILS": "Részletek",
+    "NO_LOGS_FOUND": "Nem található audit napló",
+    "LOADING": "Audit naplók betöltése..."
   }
 }
