@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: jawsdb-maria
+      as: DATABASE
+build:
+  docker:
+    web: ./backend/Dockerfile
+    frontend: ./frontend/Dockerfile
+run:
+  web: java -jar /app/backend-0.0.1-SNAPSHOT.jar
+  frontend: nginx -g 'daemon off;'
