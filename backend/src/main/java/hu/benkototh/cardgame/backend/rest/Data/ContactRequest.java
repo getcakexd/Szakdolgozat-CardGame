@@ -12,6 +12,7 @@ public class ContactRequest {
     private String name;
     private String email;
     private String subject;
+    private String problemType;
 
     @Column(length = 1000)
     private String message;
@@ -56,6 +57,14 @@ public class ContactRequest {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getProblemType() {
+        return problemType;
+    }
+
+    public void setProblemType(String problemType) {
+        this.problemType = problemType;
     }
 
     public String getMessage() {
