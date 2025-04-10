@@ -12,6 +12,8 @@ import {AgentDashboardComponent} from './components/agent-dashboard/agent-dashbo
 import {AuthGuard} from './guards/auth.guard';
 import {AgentGuard} from './guards/agent.guard';
 import {AdminGuard} from './guards/admin.guard';
+import {AuditLogsComponent} from './components/audit-logs/audit-logs.component';
+import {RootGuard} from './guards/root.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,10 +21,11 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'social', component: SocialComponent },
-  {path: 'clubs', component: ClubPageComponent},
+  { path: 'clubs', component: ClubPageComponent},
   { path: 'club/:id', component: ClubComponent },
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
+  { path: "audit-logs", component: AuditLogsComponent, canActivate: [AuthGuard, RootGuard] },
   { path: '**', redirectTo: '' }
 ];
 

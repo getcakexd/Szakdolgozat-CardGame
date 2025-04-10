@@ -24,6 +24,10 @@
           <mat-icon>support_agent</mat-icon>
           <span>{{ 'NAVBAR.AGENT' | translate }}</span>
         </button>
+        <button *ngIf="isRoot" class="navbar-button" mat-button routerLink="/audit-logs">
+          <mat-icon>history</mat-icon>
+          <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
+        </button>
       </ng-container>
 
     </div>

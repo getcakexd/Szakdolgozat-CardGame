@@ -8,7 +8,8 @@
     "PROFILE": "Profile",
     "LOGOUT": "Logout",
     "LOGIN": "Login",
-    "SIGNUP": "Sign Up"
+    "SIGNUP": "Sign Up",
+    "AUDIT_LOGS": "Audit Logs"
   },
   "HOME": {
     "WELCOME": "Welcome to CardHUB",
@@ -383,5 +384,23 @@
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
     "CANCEL": "Cancel"
+  },
+  "AUDIT_LOGS": {
+    "TITLE": "Audit Logs",
+    "FILTERS": "Filters",
+    "USER_ID": "User ID",
+    "ACTION": "Action",
+    "START_DATE": "Start Date",
+    "END_DATE": "End Date",
+    "FILTER_BY_USER_ID": "Filter by User ID",
+    "ALL_ACTIONS": "All Actions",
+    "RESET_FILTERS": "Reset Filters",
+    "ID": "ID",
+    "USER": "User",
+    "TIMESTAMP": "Timestamp",
+    "DETAILS": "Details",
+    "NO_LOGS_FOUND": "No audit logs found",
+    "LOADING": "Loading audit logs..."
   }
+
 }
