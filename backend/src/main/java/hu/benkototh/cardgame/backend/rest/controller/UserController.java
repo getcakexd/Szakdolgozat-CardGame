@@ -4,12 +4,11 @@ import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
 import hu.benkototh.cardgame.backend.rest.util.GoogleTokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +60,12 @@ public class UserController {
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private static final int MAX_LOGIN_ATTEMPTS = 5;
-    private static final String GOOGLE_AUTH_PREFIX = "google_auth_";
-    private static final String GOOGLE_AUTH_SUFFIX = "54b96774-c25f-460f-9c01-aaf10a394dd9";
+
+    @Value("${google.oauth.password.prefix}")
+    private String GOOGLE_AUTH_PREFIX;
+
+    @Value("${google.oauth.password.suffix}")
+    private String GOOGLE_AUTH_SUFFIX;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
