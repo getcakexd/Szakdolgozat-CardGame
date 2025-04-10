@@ -75,6 +75,24 @@ export class UserService {
     });
   }
 
+  hasGoogleAuthPassword(userId: number): Observable<{ hasGoogleAuthPassword: boolean }> {
+    return this.http.get<{ hasGoogleAuthPassword: boolean }>(`${this.apiUrl}/has-google-auth-password`, {
+      params: {
+        userId,
+      },
+    })
+  }
+
+  setPassword(userId: number, newPassword: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/set-password`, null, {
+      params: {
+        userId,
+        newPassword,
+      },
+      responseType: "text",
+    })
+  }
+
   adminCreateUser(user: User): Observable<any> {
     return this.http.post(`${this.adminApiUrl}/users/create`, user)
   }

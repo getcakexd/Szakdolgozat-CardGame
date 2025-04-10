@@ -1,11 +1,11 @@
 <div class="club-page-container">
-  <h1 class="mat-headline-4">Clubs</h1>
+  <h1 class="mat-headline-4">{{ 'CLUBS.TITLE' | translate }}</h1>
 
   <mat-tab-group animationDuration="300ms">
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">group</mat-icon>
-        My Clubs
+        {{ 'CLUBS.MY_CLUBS' | translate }}
       </ng-template>
 
       <div class="tab-content">
@@ -16,7 +16,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">group_add</mat-icon>
-        Join Clubs
+        {{ 'CLUBS.JOIN_CLUBS' | translate }}
       </ng-template>
 
       <div class="tab-content">
@@ -28,7 +28,7 @@
       <ng-template mat-tab-label>
         <div class="badge-container">
           <mat-icon class="tab-icon">mail</mat-icon>
-          <span>Invites</span>
+          <span>{{ 'CLUBS.INVITES' | translate }}</span>
           <span *ngIf="invites.length > 0" class="invite-badge">{{invites.length}}</span>
         </div>
       </ng-template>
@@ -36,12 +36,12 @@
       <div class="tab-content">
         <mat-card *ngIf="invites.length === 0 && !isLoading" class="empty-card">
           <mat-card-content>
-            <p>You don't have any pending invites</p>
+            <p>{{ 'CLUBS.NO_INVITES' | translate }}</p>
           </mat-card-content>
         </mat-card>
 
         <div *ngIf="isLoading" class="loading-message">
-          Loading invites...
+          {{ 'CLUBS.LOADING_INVITES' | translate }}
         </div>
 
         <mat-card *ngFor="let invite of invites" class="invite-card">
@@ -51,8 +51,8 @@
           </mat-card-header>
 
           <mat-card-actions align="end">
-            <button mat-button color="warn" (click)="declineInvite(invite.id)">Decline</button>
-            <button mat-raised-button color="primary" (click)="acceptInvite(invite.id)">Accept</button>
+            <button mat-button color="warn" (click)="declineInvite(invite.id)">{{ 'CLUBS.DECLINE' | translate }}</button>
+            <button mat-raised-button color="primary" (click)="acceptInvite(invite.id)">{{ 'CLUBS.ACCEPT' | translate }}</button>
           </mat-card-actions>
         </mat-card>
       </div>
@@ -61,7 +61,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">add_circle</mat-icon>
-        Create Club
+        {{ 'CLUBS.CREATE_CLUB' | translate }}
       </ng-template>
 
       <div class="tab-content">

@@ -1,27 +1,27 @@
 <mat-card class="club-form-card">
   <mat-card-header>
-    <mat-card-title>Create Club</mat-card-title>
+    <mat-card-title>{{ 'CLUB_CREATE.TITLE' | translate }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content>
     <form (ngSubmit)="createClub()" class="club-form">
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Club Name</mat-label>
-        <input matInput [(ngModel)]="name" name="name" required placeholder="Enter club name">
-        <mat-hint>Choose a unique name for your club</mat-hint>
+        <mat-label>{{ 'CLUB_CREATE.CLUB_NAME' | translate }}</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required placeholder="{{ 'CLUB_CREATE.ENTER_NAME' | translate }}">
+        <mat-hint>{{ 'CLUB_CREATE.NAME_HINT' | translate }}</mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Description</mat-label>
-        <textarea matInput [(ngModel)]="description" name="description" placeholder="Enter description" rows="3"></textarea>
-        <mat-hint>Describe what your club is about</mat-hint>
+        <mat-label>{{ 'CLUB_CREATE.DESCRIPTION' | translate }}</mat-label>
+        <textarea matInput [(ngModel)]="description" name="description" placeholder="{{ 'CLUB_CREATE.ENTER_DESCRIPTION' | translate }}" rows="3"></textarea>
+        <mat-hint>{{ 'CLUB_CREATE.DESCRIPTION_HINT' | translate }}</mat-hint>
       </mat-form-field>
 
       <div class="checkbox-container">
         <mat-checkbox [(ngModel)]="isPublic" name="isPublic" color="primary">
-          Public Club
+          {{ 'CLUB_CREATE.PUBLIC_CLUB' | translate }}
         </mat-checkbox>
-        <span class="checkbox-hint">Public clubs can be found and joined by anyone</span>
+        <span class="checkbox-hint">{{ 'CLUB_CREATE.PUBLIC_HINT' | translate }}</span>
       </div>
 
       <div *ngIf="message" class="error-message">
@@ -31,9 +31,9 @@
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button mat-button (click)="resetForm()" [disabled]="isSubmitting">Reset</button>
+    <button mat-button (click)="resetForm()" [disabled]="isSubmitting">{{ 'CLUB_CREATE.RESET' | translate }}</button>
     <button mat-raised-button color="primary" (click)="createClub()" [disabled]="isSubmitting">
-      {{ isSubmitting ? 'Creating...' : 'Create Club' }}
+      {{ isSubmitting ? ('CLUB_CREATE.CREATING' | translate) : ('CLUB_CREATE.CREATE' | translate) }}
     </button>
   </mat-card-actions>
 </mat-card>

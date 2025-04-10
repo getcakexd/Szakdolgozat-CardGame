@@ -1,36 +1,36 @@
 <div class="admin-dashboard-container">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Admin Dashboard</mat-card-title>
+      <mat-card-title>{{ 'ADMIN.TITLE' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <mat-tab-group>
-        <mat-tab label="User Management">
+        <mat-tab [label]="'ADMIN.USER_MANAGEMENT' | translate">
           <div class="tab-content">
             <div class="action-bar">
               <button mat-raised-button color="primary" (click)="openAddUserDialog()">
-                <mat-icon>add</mat-icon> Add User
+                <mat-icon>add</mat-icon> {{ 'ADMIN.ADD_USER' | translate }}
               </button>
             </div>
 
             <table mat-table [dataSource]="users" class="mat-elevation-z8 full-width-table">
               <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ID' | translate }}</th>
                 <td mat-cell *matCellDef="let user">{{user.id}}</td>
               </ng-container>
 
               <ng-container matColumnDef="username">
-                <th mat-header-cell *matHeaderCellDef>Username</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.USERNAME' | translate }}</th>
                 <td mat-cell *matCellDef="let user">{{user.username}}</td>
               </ng-container>
 
               <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.EMAIL' | translate }}</th>
                 <td mat-cell *matCellDef="let user">{{user.email}}</td>
               </ng-container>
 
               <ng-container matColumnDef="role">
-                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ROLE' | translate }}</th>
                 <td mat-cell *matCellDef="let user">
                   <span class="role-badge" [ngClass]="getRoleClass(user.role)">
                     {{formatRole(user.role)}}
@@ -39,29 +39,29 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ACTIONS' | translate }}</th>
                 <td mat-cell *matCellDef="let user">
                   <button mat-icon-button color="primary" *ngIf="canPromoteToAgent(user)"
-                          (click)="promoteToAgent(user)" matTooltip="Promote to Agent">
+                          (click)="promoteToAgent(user)" matTooltip="{{ 'ADMIN.PROMOTE_TO_AGENT' | translate }}">
                     <mat-icon>arrow_upward</mat-icon>
                   </button>
 
                   <button mat-icon-button color="warn" *ngIf="canDemoteFromAgent(user)"
-                          (click)="demoteFromAgent(user)" matTooltip="Demote from Agent">
+                          (click)="demoteFromAgent(user)" matTooltip="{{ 'ADMIN.DEMOTE_FROM_AGENT' | translate }}">
                     <mat-icon>arrow_downward</mat-icon>
                   </button>
 
                   <button mat-icon-button color="primary" *ngIf="canPromoteToAdmin(user)"
-                          (click)="promoteToAdmin(user)" matTooltip="Promote to Admin">
+                          (click)="promoteToAdmin(user)" matTooltip="{{ 'ADMIN.PROMOTE_TO_ADMIN' | translate }}">
                     <mat-icon>admin_panel_settings</mat-icon>
                   </button>
 
                   <button mat-icon-button color="warn" *ngIf="canDemoteFromAdmin(user)"
-                          (click)="demoteFromAdmin(user)" matTooltip="Demote from Admin">
+                          (click)="demoteFromAdmin(user)" matTooltip="{{ 'ADMIN.DEMOTE_FROM_ADMIN' | translate }}">
                     <mat-icon>remove_moderator</mat-icon>
                   </button>
 
-                  <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="Delete user">
+                  <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="{{ 'ADMIN.DELETE_USER' | translate }}">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -73,32 +73,32 @@
           </div>
         </mat-tab>
 
-        <mat-tab label="Game Management">
+        <mat-tab [label]="'ADMIN.GAME_MANAGEMENT' | translate">
           <div class="tab-content">
             <div class="action-bar">
               <button mat-raised-button color="primary" (click)="openAddGameDialog()">
-                <mat-icon>add</mat-icon> Add Game
+                <mat-icon>add</mat-icon> {{ 'ADMIN.ADD_GAME' | translate }}
               </button>
             </div>
 
             <table mat-table [dataSource]="games" class="mat-elevation-z8 full-width-table">
               <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ID' | translate }}</th>
                 <td mat-cell *matCellDef="let game">{{game.id}}</td>
               </ng-container>
 
               <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.NAME' | translate }}</th>
                 <td mat-cell *matCellDef="let game">{{game.name}}</td>
               </ng-container>
 
               <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.DESCRIPTION' | translate }}</th>
                 <td mat-cell *matCellDef="let game">{{game.description}}</td>
               </ng-container>
 
               <ng-container matColumnDef="active">
-                <th mat-header-cell *matHeaderCellDef>Active</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ACTIVE' | translate }}</th>
                 <td mat-cell *matCellDef="let game">
                   <mat-icon *ngIf="game.active" color="primary">check_circle</mat-icon>
                   <mat-icon *ngIf="!game.active" color="warn">cancel</mat-icon>
@@ -106,9 +106,9 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ACTIONS' | translate }}</th>
                 <td mat-cell *matCellDef="let game">
-                  <button mat-icon-button color="warn" (click)="deleteGame(game)" matTooltip="Delete game">
+                  <button mat-icon-button color="warn" (click)="deleteGame(game)" matTooltip="{{ 'ADMIN.DELETE_GAME' | translate }}">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -123,4 +123,3 @@
     </mat-card-content>
   </mat-card>
 </div>
-

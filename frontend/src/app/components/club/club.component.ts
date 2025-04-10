@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClubService } from '../../services/club/club.service';
-import { NgForOf, NgIf } from '@angular/common';
 import { ClubMember } from '../../models/club-member.model';
 import { ClubMemberService } from '../../services/club-member/club-member.service';
 import { FormsModule } from '@angular/forms';
 import { ClubInviteService } from '../../services/club-invite/club-invite.service';
-import { ClubChatComponent } from '../club-chat/club-chat.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,21 +16,21 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {AuthService} from '../../services/auth/auth.service';
-import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../services/auth/auth.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ClubChatComponent } from '../club-chat/club-chat.component';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-club',
   templateUrl: './club.component.html',
   standalone: true,
   imports: [
-    NgIf,
-    NgForOf,
     FormsModule,
-    ClubChatComponent,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -45,7 +43,11 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
     MatBadgeModule,
     MatTooltipModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    TranslateModule,
+    ClubChatComponent,
+    NgIf,
+    NgForOf
   ],
   styleUrls: ['./club.component.css']
 })
@@ -72,7 +74,8 @@ export class ClubComponent implements OnInit {
     private clubInviteService: ClubInviteService,
     private router: Router,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0;
     if (this.userId === 0) {
@@ -103,10 +106,18 @@ export class ClubComponent implements OnInit {
       error: (error) => {
         this.isLoading = false;
         if (error.status === 404) {
-          this.snackBar.open('Club not found', 'Close', { duration: 3000 });
+          this.snackBar.open(
+            this.translate.instant('CLUB.CLUB_NOT_FOUND'),
+            this.translate.instant('COMMON.CLOSE'),
+            { duration: 3000 }
+          );
           this.router.navigate(['/clubs']);
         } else {
-          this.snackBar.open('Error loading club', 'Close', { duration: 3000 });
+          this.snackBar.open(
+            this.translate.instant('CLUB.ERROR_LOADING'),
+            this.translate.instant('COMMON.CLOSE'),
+            { duration: 3000 }
+          );
           console.error('Error loading club:', error);
         }
       }
@@ -132,18 +143,29 @@ export class ClubComponent implements OnInit {
   kickMember(member: ClubMember) {
     if (this.userRole === 'admin' || (this.userRole === 'moderator' && member.role === 'member')) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: { title: 'Confirm Action', message: `Are you sure you want to remove ${member.username} from the club?` }
+        data: {
+          title: this.translate.instant('COMMON.CONFIRM'),
+          message: this.translate.instant('CLUB.CONFIRM_KICK', { username: member.username })
+        }
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.clubMemberService.kickMember(this.club.id, member.user.id).subscribe({
             next: () => {
-              this.snackBar.open(`${member.username} has been removed from the club`, 'Close', { duration: 3000 });
+              this.snackBar.open(
+                this.translate.instant('CLUB.MEMBER_REMOVED', { username: member.username }),
+                this.translate.instant('COMMON.CLOSE'),
+                { duration: 3000 }
+              );
               this.loadMembers(this.club.id);
             },
             error: (error) => {
-              this.snackBar.open('Failed to remove member', 'Close', { duration: 3000 });
+              this.snackBar.open(
+                this.translate.instant('CLUB.FAILED_REMOVE'),
+                this.translate.instant('COMMON.CLOSE'),
+                { duration: 3000 }
+              );
             }
           });
         }
@@ -158,8 +180,12 @@ export class ClubComponent implements OnInit {
 
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
-          title: 'Confirm Action',
-          message: `Are you sure you want to ${action} ${member.username} to ${newRole}?`
+          title: this.translate.instant('COMMON.CONFIRM'),
+          message: this.translate.instant('CLUB.CONFIRM_ROLE', {
+            action: action,
+            username: member.username,
+            role: newRole
+          })
         }
       });
 
@@ -167,11 +193,19 @@ export class ClubComponent implements OnInit {
         if (result) {
           this.clubMemberService.updateMemberRole(this.club.id, member.user.id, newRole).subscribe({
             next: () => {
-              this.snackBar.open(`${member.username} is now a ${newRole}`, 'Close', { duration: 3000 });
+              this.snackBar.open(
+                this.translate.instant('CLUB.ROLE_UPDATED', { username: member.username, role: newRole }),
+                this.translate.instant('COMMON.CLOSE'),
+                { duration: 3000 }
+              );
               this.loadMembers(this.club.id);
             },
             error: (error) => {
-              this.snackBar.open(`Failed to ${action} member`, 'Close', { duration: 3000 });
+              this.snackBar.open(
+                this.translate.instant('CLUB.FAILED_ROLE_UPDATE', { action: action }),
+                this.translate.instant('COMMON.CLOSE'),
+                { duration: 3000 }
+              );
             }
           });
         }
@@ -205,10 +239,18 @@ export class ClubComponent implements OnInit {
   saveClubChanges() {
     this.clubService.updateClub(this.club.id, this.club.name, this.club.description, this.club.public).subscribe({
       next: () => {
-        this.snackBar.open('Club details updated', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUB.CLUB_UPDATED'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       },
       error: (error) => {
-        this.snackBar.open('Failed to update club details', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('CLUB.FAILED_UPDATE'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
       }
     });
   }
@@ -219,8 +261,8 @@ export class ClubComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Confirm Action',
-        message: `Are you sure you want to make this club ${visibilityText}?`
+        title: this.translate.instant('COMMON.CONFIRM'),
+        message: this.translate.instant('CLUB.CONFIRM_VISIBILITY', { visibility: visibilityText })
       }
     });
 
@@ -235,8 +277,8 @@ export class ClubComponent implements OnInit {
   deleteClub() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete Club',
-        message: 'Are you sure you want to delete this club? This action cannot be undone.'
+        title: this.translate.instant('CLUB.DELETE_CLUB'),
+        message: this.translate.instant('CLUB.CONFIRM_DELETE')
       }
     });
 
@@ -244,11 +286,19 @@ export class ClubComponent implements OnInit {
       if (result) {
         this.clubService.deleteClub(this.club.id).subscribe({
           next: () => {
-            this.snackBar.open('Club deleted successfully', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('CLUB.CLUB_DELETED'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
             this.router.navigate(['/clubs']);
           },
           error: (error) => {
-            this.snackBar.open('Failed to delete club', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('CLUB.FAILED_DELETE'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
           }
         });
       }
@@ -257,7 +307,7 @@ export class ClubComponent implements OnInit {
 
   inviteUser(username: string): void {
     if (!username || username.trim() === '') {
-      this.inviteMessage = 'Please enter a username';
+      this.inviteMessage = this.translate.instant('CLUB.ENTER_USERNAME_ERROR');
       this.inviteError = true;
       return;
     }
@@ -268,12 +318,12 @@ export class ClubComponent implements OnInit {
     this.clubInviteService.inviteUser(this.club.id, username).subscribe({
       next: (response) => {
         this.inviteUsername = '';
-        this.inviteMessage = 'Invitation sent successfully';
+        this.inviteMessage = this.translate.instant('CLUB.INVITE_SENT');
         this.inviteError = false;
         this.loadPendingInvites(this.club.id);
       },
       error: (error) => {
-        this.inviteMessage = error.error?.message || 'Failed to send invite';
+        this.inviteMessage = error.error?.message || this.translate.instant('CLUB.FAILED_INVITE');
         this.inviteError = true;
       }
     });
@@ -293,18 +343,29 @@ export class ClubComponent implements OnInit {
 
   cancelInvite(inviteId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Confirm Action', message: 'Are you sure you want to cancel this invite?' }
+      data: {
+        title: this.translate.instant('COMMON.CONFIRM'),
+        message: this.translate.instant('CLUB.CONFIRM_CANCEL_INVITE')
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.clubInviteService.cancelInvite(inviteId).subscribe({
           next: () => {
-            this.snackBar.open('Invite cancelled', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('CLUB.INVITE_CANCELLED'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
             this.loadPendingInvites(this.club.id);
           },
           error: (error) => {
-            this.snackBar.open('Failed to cancel invite', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('CLUB.FAILED_CANCEL'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
           }
         });
       }
@@ -313,18 +374,29 @@ export class ClubComponent implements OnInit {
 
   leaveClub() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Leave Club', message: 'Are you sure you want to leave this club?' }
+      data: {
+        title: this.translate.instant('CLUB.LEAVE_CLUB'),
+        message: this.translate.instant('CLUB.CONFIRM_LEAVE')
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.clubMemberService.leaveClub(this.club.id, this.userId).subscribe({
           next: () => {
-            this.snackBar.open('You have left the club', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('CLUB.LEFT_CLUB'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
             this.router.navigate(['/clubs']);
           },
           error: (error) => {
-            this.snackBar.open(error.error?.message || 'Failed to leave the club', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              error.error?.message || this.translate.instant('CLUB.FAILED_LEAVE'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
           }
         });
       }
@@ -358,4 +430,3 @@ export class ClubComponent implements OnInit {
     }
   }
 }
-

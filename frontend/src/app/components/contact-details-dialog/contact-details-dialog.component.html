@@ -1,42 +1,41 @@
-<h2 mat-dialog-title>Contact Request Details</h2>
+<h2 mat-dialog-title>{{ 'AGENT.CONTACT_REQUEST_DETAILS' | translate }}</h2>
 <mat-dialog-content>
   <div class="contact-details">
     <div class="detail-row">
-      <span class="label">ID:</span>
+      <span class="label">{{ 'AGENT.ID' | translate }}:</span>
       <span class="value">{{data.request.id}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Name:</span>
+      <span class="label">{{ 'AGENT.NAME' | translate }}:</span>
       <span class="value">{{data.request.name}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Email:</span>
+      <span class="label">{{ 'AGENT.EMAIL' | translate }}:</span>
       <span class="value">{{data.request.email}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Problem Type:</span>
+      <span class="label">{{ 'AGENT.PROBLEM_TYPE' | translate }}:</span>
       <span class="value">{{formatProblemType(data.request.problemType)}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Subject:</span>
+      <span class="label">{{ 'AGENT.SUBJECT' | translate }}:</span>
       <span class="value">{{data.request.subject}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Status:</span>
+      <span class="label">{{ 'AGENT.STATUS' | translate }}:</span>
       <span class="value status-badge" [ngClass]="data.request.status">{{data.request.status}}</span>
     </div>
     <div class="detail-row">
-      <span class="label">Created:</span>
+      <span class="label">{{ 'AGENT.CREATED' | translate }}:</span>
       <span class="value">{{data.request.createdAt | date:'medium'}}</span>
     </div>
     <div class="detail-row message">
-      <span class="label">Message:</span>
+      <span class="label">{{ 'AGENT.MESSAGE' | translate }}:</span>
       <div class="message-content">{{data.request.message}}</div>
     </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
-  <button mat-raised-button color="primary" (click)="sendEmail()">Send Email</button>
+  <button mat-button mat-dialog-close>{{ 'COMMON.CLOSE' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="sendEmail()">{{ 'AGENT.SEND_EMAIL' | translate }}</button>
 </mat-dialog-actions>
-

@@ -7,6 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import {AuthService} from '../../services/auth/auth.service';
 import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
+import {TranslationService} from '../../services/translation/translation.service';
+import {LanguageSelectorComponent} from '../language-selector/language-selector.component';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +21,9 @@ import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    LanguageSelectorComponent,
+    TranslatePipe
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
@@ -30,7 +35,10 @@ export class NavbarComponent implements OnInit {
   isAgent: boolean = false;
   isRoot: boolean = false;
 
-  constructor(protected authService: AuthService) {}
+  constructor(
+    protected authService: AuthService,
+    public translationService: TranslationService
+  ) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();

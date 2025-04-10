@@ -1,12 +1,13 @@
 import { Component } from "@angular/core"
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms"
-import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog"
-import {MatIcon} from '@angular/material/icon';
-import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
-import {NgForOf, NgIf} from '@angular/common';
-import {MatOption, MatSelect} from '@angular/material/select';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {MatInput} from '@angular/material/input';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms"
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog"
+import { MatIcon } from '@angular/material/icon';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { NgForOf, NgIf } from '@angular/common';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatInput } from '@angular/material/input';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-add-user-dialog",
@@ -28,7 +29,8 @@ import {MatInput} from '@angular/material/input';
     MatDialogContent,
     ReactiveFormsModule,
     MatDialogActions,
-    MatButton
+    MatButton,
+    TranslateModule
   ],
   standalone: true
 })
@@ -40,6 +42,7 @@ export class AddUserDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
+    private translate: TranslateService
   ) {
     this.userForm = this.fb.group({
       username: ["", [Validators.required, Validators.minLength(3)]],
@@ -59,4 +62,3 @@ export class AddUserDialogComponent {
     this.dialogRef.close()
   }
 }
-

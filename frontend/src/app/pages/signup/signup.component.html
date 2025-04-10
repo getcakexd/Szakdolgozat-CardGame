@@ -2,7 +2,7 @@
   <mat-card class="signup-card">
     <mat-card-header>
       <mat-card-title>
-        <h2>Create an Account</h2>
+        <h2>{{ 'SIGNUP.TITLE' | translate }}</h2>
       </mat-card-title>
     </mat-card-header>
 
@@ -11,8 +11,8 @@
     <mat-card-content>
       <form [formGroup]="signupForm" (ngSubmit)="createUser()" class="signup-form">
         <mat-form-field appearance="outline" class="signup-full-width">
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" placeholder="Choose a username">
+          <mat-label>{{ 'SIGNUP.USERNAME' | translate }}</mat-label>
+          <input matInput formControlName="username" placeholder="{{ 'SIGNUP.CHOOSE_USERNAME' | translate }}">
           <mat-icon matPrefix>person</mat-icon>
           <mat-error *ngIf="signupForm.get('username')?.invalid">
             {{ getErrorMessage('username') }}
@@ -20,8 +20,8 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="signup-full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" placeholder="Enter your email" type="email">
+          <mat-label>{{ 'SIGNUP.EMAIL' | translate }}</mat-label>
+          <input matInput formControlName="email" placeholder="{{ 'SIGNUP.ENTER_EMAIL' | translate }}" type="email">
           <mat-icon matPrefix>email</mat-icon>
           <mat-error *ngIf="signupForm.get('email')?.invalid">
             {{ getErrorMessage('email') }}
@@ -29,10 +29,10 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="signup-full-width">
-          <mat-label>Password</mat-label>
+          <mat-label>{{ 'SIGNUP.PASSWORD' | translate }}</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'"
                  formControlName="password"
-                 placeholder="Create a password">
+                 placeholder="{{ 'SIGNUP.PASSWORD' | translate }}">
           <mat-icon matPrefix>lock</mat-icon>
           <button mat-icon-button matSuffix type="button"
                   (click)="hidePassword = !hidePassword"
@@ -40,7 +40,7 @@
                   [attr.aria-pressed]="hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          <mat-hint>Password must be at least 6 characters long</mat-hint>
+          <mat-hint>{{ 'SIGNUP.PASSWORD_HINT' | translate }}</mat-hint>
           <mat-error *ngIf="signupForm.get('password')?.invalid">
             {{ getErrorMessage('password') }}
           </mat-error>
@@ -50,14 +50,22 @@
           <button mat-raised-button color="primary"
                   type="submit"
                   [disabled]="isLoading || signupForm.invalid">
-            Create Account
+            {{ 'SIGNUP.CREATE_BUTTON' | translate }}
           </button>
 
           <a mat-button routerLink="/login" color="accent">
-            Already have an account? Log in
+            {{ 'SIGNUP.HAVE_ACCOUNT' | translate }}
           </a>
         </div>
       </form>
+
+      <div *ngIf="!authService.isLoggedIn()" class="social-login-divider">
+        <span>{{ 'SIGNUP.OR' | translate }}</span>
+      </div>
+
+      <div *ngIf="!authService.isLoggedIn()" class="social-login-buttons">
+        <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+      </div>
 
       <div *ngIf="message"
            class="message-card"

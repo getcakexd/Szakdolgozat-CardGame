@@ -8,7 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgIf } from '@angular/common';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-club-create',
@@ -21,7 +22,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatCheckboxModule,
     MatButtonModule,
     MatCardModule,
-    NgIf
+    NgIf,
+    TranslateModule
   ],
   styleUrls: ['./club-create.component.css']
 })
@@ -36,14 +38,19 @@ export class ClubCreateComponent {
   constructor(
     private authService: AuthService,
     private clubService: ClubService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0;
   }
 
   createClub() {
     if (!this.name.trim()) {
-      this.snackBar.open('Club name is required', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        this.translate.instant('CLUB_CREATE.NAME_REQUIRED'),
+        this.translate.instant('COMMON.CLOSE'),
+        { duration: 3000 }
+      );
       return;
     }
 
@@ -51,13 +58,21 @@ export class ClubCreateComponent {
     this.clubService.createClub(this.name, this.description, this.isPublic, this.userId)
       .subscribe({
         next: (response: any) => {
-          this.snackBar.open('Club created successfully!', 'Close', { duration: 3000 });
+          this.snackBar.open(
+            this.translate.instant('CLUB_CREATE.SUCCESS'),
+            this.translate.instant('COMMON.CLOSE'),
+            { duration: 3000 }
+          );
           this.resetForm();
           window.location.reload();
         },
         error: (err: any) => {
-          this.message = 'Something went wrong while creating club';
-          this.snackBar.open(this.message, 'Close', { duration: 3000 });
+          this.message = this.translate.instant('CLUB_CREATE.ERROR');
+          this.snackBar.open(
+            this.message,
+            this.translate.instant('COMMON.CLOSE'),
+            { duration: 3000 }
+          );
           this.isSubmitting = false;
         }
       });

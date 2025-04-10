@@ -2,8 +2,8 @@
   <mat-card-header>
     <mat-card-title>
       <div class="chat-header">
-        <h3>Chat with {{ receiverName }}</h3>
-        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="Refresh messages">
+        <h3>{{ 'CHAT.CHAT_WITH' | translate:{ username: receiverName } }}</h3>
+        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CHAT.REFRESH' | translate }}">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -17,7 +17,7 @@
       </div>
 
       <div *ngIf="messages.length === 0 && !isLoading" class="no-messages">
-        <p>No messages yet. Start the conversation!</p>
+        <p>{{ 'CHAT.NO_MESSAGES' | translate }}</p>
       </div>
 
       <div *ngFor="let msg of messages"
@@ -30,7 +30,7 @@
 
           <div class="message-content">
             <ng-container *ngIf="msg.unsent">
-              <em>(Message unsent)</em>
+              <em>{{ 'CHAT.MESSAGE_UNSENT' | translate }}</em>
             </ng-container>
             <ng-container *ngIf="!msg.unsent">
               {{ msg.content }}
@@ -41,7 +41,7 @@
             <span class="message-timestamp">{{ msg.timestamp | date:'short' }}</span>
 
             <div class="message-actions" *ngIf="!msg.unsent && msg.sender.id === senderId">
-              <button mat-icon-button size="small" (click)="unsendMessage(msg.id)" matTooltip="Unsend message">
+              <button mat-icon-button size="small" (click)="unsendMessage(msg.id)" matTooltip="{{ 'CHAT.UNSEND_MESSAGE' | translate }}">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>
@@ -54,13 +54,13 @@
 
     <div class="chat-input-container">
       <mat-form-field appearance="outline" class="chat-input">
-        <mat-label>Type a message...</mat-label>
+        <mat-label>{{ 'CHAT.TYPE_MESSAGE' | translate }}</mat-label>
         <input matInput [(ngModel)]="newMessage"
-               placeholder="Type a message..."
+               placeholder="{{ 'CHAT.TYPE_MESSAGE' | translate }}"
                (keypress)="onKeyPress($event)">
       </mat-form-field>
 
-      <button mat-mini-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="Send message">
+      <button mat-mini-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="{{ 'CHAT.SEND_MESSAGE' | translate }}">
         <mat-icon>send</mat-icon>
       </button>
     </div>

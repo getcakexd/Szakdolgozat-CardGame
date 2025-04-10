@@ -15,7 +15,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {AuthService} from '../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-club-chat',
@@ -33,7 +34,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatDividerModule,
     MatTooltipModule,
     MatBadgeModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    TranslateModule
   ],
   templateUrl: './club-chat.component.html',
   standalone: true,
@@ -55,7 +57,8 @@ export class ClubChatComponent implements OnInit {
     private authService: AuthService,
     private clubChatService: ClubChatService,
     private clubService: ClubService,
-    private clubMemberService: ClubMemberService
+    private clubMemberService: ClubMemberService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +85,7 @@ export class ClubChatComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading messages:', error);
+        console.error(this.translate.instant('CLUB_CHAT.ERROR_LOADING'), error);
         this.isLoading = false;
       }
     });
@@ -104,7 +107,7 @@ export class ClubChatComponent implements OnInit {
         this.scrollToBottom();
       },
       error: (error) => {
-        console.error('Error sending message:', error);
+        console.error(this.translate.instant('CLUB_CHAT.ERROR_SENDING'), error);
       }
     });
   }
@@ -115,7 +118,7 @@ export class ClubChatComponent implements OnInit {
         this.loadMessages();
       },
       error: (error) => {
-        console.error('Error unsending message:', error);
+        console.error(this.translate.instant('CLUB_CHAT.ERROR_UNSENDING'), error);
       }
     });
   }
@@ -126,7 +129,7 @@ export class ClubChatComponent implements OnInit {
         this.loadMessages();
       },
       error: (error) => {
-        console.error('Error removing message:', error);
+        console.error(this.translate.instant('CLUB_CHAT.ERROR_REMOVING'), error);
       }
     });
   }

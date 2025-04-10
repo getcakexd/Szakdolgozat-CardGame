@@ -1,10 +1,11 @@
 import { Component } from "@angular/core"
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms"
-import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog"
-import {MatSlideToggle} from '@angular/material/slide-toggle';
-import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog"
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { NgIf } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-add-game-dialog",
@@ -21,7 +22,8 @@ import {MatButton} from '@angular/material/button';
     MatDialogActions,
     MatButton,
     MatDialogContent,
-    MatDialogTitle
+    MatDialogTitle,
+    TranslateModule
   ],
   standalone: true
 })
@@ -31,6 +33,7 @@ export class AddGameDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddGameDialogComponent>,
+    private translate: TranslateService
   ) {
     this.gameForm = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(3)]],
@@ -49,4 +52,3 @@ export class AddGameDialogComponent {
     this.dialogRef.close()
   }
 }
-

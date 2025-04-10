@@ -14,9 +14,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatComponent } from '../chat/chat.component';
 import { FriendshipService } from '../../services/friendship/friendship.service';
 import { ChatService } from '../../services/chat/chat.service';
-import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {AuthService} from '../../services/auth/auth.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { AuthService } from '../../services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-friend-list',
@@ -35,7 +36,8 @@ import {AuthService} from '../../services/auth/auth.service';
     MatTooltipModule,
     MatDialogModule,
     ChatComponent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    TranslateModule
   ],
   standalone: true
 })
@@ -51,7 +53,8 @@ export class FriendListComponent implements OnInit {
     private friendshipService: FriendshipService,
     private chatService: ChatService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0;
   }
@@ -70,7 +73,11 @@ export class FriendListComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading friends:', error);
-        this.snackBar.open('Failed to load friends', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('SOCIAL.FAILED_LOAD_FRIENDS'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 3000 }
+        );
         this.isLoading = false;
       }
     });
@@ -89,19 +96,30 @@ export class FriendListComponent implements OnInit {
 
   deleteFriend(friendId: string) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Remove Friend', message: 'Are you sure you want to remove this friend?' }
+      data: {
+        title: this.translate.instant('SOCIAL.REMOVE_FRIEND'),
+        message: this.translate.instant('SOCIAL.CONFIRM_REMOVE_FRIEND')
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.friendshipService.deleteFriend(this.userId, parseInt(friendId)).subscribe({
           next: () => {
-            this.snackBar.open('Friend removed successfully', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('SOCIAL.FRIEND_REMOVED'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
             this.loadFriends();
           },
           error: (error) => {
             console.error('Error removing friend:', error);
-            this.snackBar.open('Failed to remove friend', 'Close', { duration: 3000 });
+            this.snackBar.open(
+              this.translate.instant('SOCIAL.FAILED_REMOVE_FRIEND'),
+              this.translate.instant('COMMON.CLOSE'),
+              { duration: 3000 }
+            );
           }
         });
       }
