@@ -11,5 +11,5 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     },
   });
 
-  return next(clonedRequest); // Pass the modified request to the next handler
+  return next(clonedRequest);
 };

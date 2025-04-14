@@ -1,0 +1,37 @@
+<div class="join-lobby-container">
+  <h2>{{ 'LOBBY.JOIN.TITLE' | translate }}</h2>
+
+  <form [formGroup]="joinForm" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'LOBBY.JOIN.ENTER_CODE' | translate }}</mat-label>
+        <input
+          matInput
+          formControlName="lobbyCode"
+          placeholder="ABCDEF"
+          autocomplete="off"
+          maxlength="6"
+          style="text-transform: uppercase;">
+        <mat-error *ngIf="joinForm.get('lobbyCode')?.hasError('required')">
+          {{ 'LOBBY.JOIN.CODE_REQUIRED' | translate }}
+        </mat-error>
+        <mat-error *ngIf="joinForm.get('lobbyCode')?.hasError('minlength') ||
+                          joinForm.get('lobbyCode')?.hasError('maxlength') ||
+                          joinForm.get('lobbyCode')?.hasError('pattern')">
+          {{ 'LOBBY.JOIN.CODE_FORMAT' | translate }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="joinForm.invalid || isSubmitting">
+        <mat-icon>login</mat-icon>
+        {{ isSubmitting ? ('LOBBY.JOIN.JOINING' | translate) : ('LOBBY.JOIN.JOIN_BUTTON' | translate) }}
+      </button>
+    </div>
+  </form>
+</div>

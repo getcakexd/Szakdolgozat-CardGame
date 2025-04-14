@@ -38,6 +38,8 @@ export class AddGameDialogComponent {
     this.gameForm = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(3)]],
       description: ["", Validators.required],
+      minPlayers: [2, [Validators.required, Validators.min(1), Validators.max(10)]],
+      maxPlayers: [4, [Validators.required, Validators.min(1), Validators.max(10)]],
       active: [true],
     })
   }

@@ -140,7 +140,6 @@ export class AuditLogsComponent implements OnInit {
       filter.endDate = new Date(endDate)
     }
 
-    // If no filters are applied, load all logs
     if (Object.keys(filter).length === 0) {
       this.loadAuditLogs()
       return

@@ -14,15 +14,19 @@ import {AgentGuard} from './guards/agent.guard';
 import {AdminGuard} from './guards/admin.guard';
 import {AuditLogsComponent} from './components/audit-logs/audit-logs.component';
 import {RootGuard} from './guards/root.guard';
+import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
+import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'social', component: SocialComponent },
-  { path: 'clubs', component: ClubPageComponent},
-  { path: 'club/:id', component: ClubComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'social', component: SocialComponent, canActivate: [AuthGuard] },
+  { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
+  { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
+  { path: 'lobby', component: LobbyHomeComponent, canActivate: [AuthGuard] },
+  { path: 'lobby/:id', component: LobbyDetailComponent, canActivate: [AuthGuard] },
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
   { path: "audit-logs", component: AuditLogsComponent, canActivate: [AuthGuard, RootGuard] },

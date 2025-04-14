@@ -40,7 +40,6 @@
   width: 100%;
 }
 
-/* Table specific styles for dark theme compatibility */
 :host ::ng-deep .mat-table,
 :host ::ng-deep .mat-mdc-table {
   background-color: var(--card-background) !important;
@@ -77,7 +76,6 @@
   border-bottom-color: var(--border-color) !important;
 }
 
-/* Status badge styles */
 .status-badge {
   padding: 4px 8px;
   border-radius: 4px;
@@ -112,7 +110,6 @@
   color: white;
 }
 
-/* Icon button styles */
 :host ::ng-deep .mat-icon-button {
   transition: background-color var(--transition-fast) ease;
 }
@@ -137,7 +134,6 @@
   color: var(--error-color);
 }
 
-/* Card styles */
 :host ::ng-deep mat-card {
   background-color: var(--card-background) !important;
   color: var(--text-primary) !important;
@@ -154,7 +150,6 @@
   margin: 0 !important;
 }
 
-/* Tab styles */
 :host ::ng-deep .mat-tab-label,
 :host ::ng-deep .mat-mdc-tab-label {
   color: var(--text-primary) !important;
