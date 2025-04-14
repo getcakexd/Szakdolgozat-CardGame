@@ -313,7 +313,7 @@
     "NAME_MIN_LENGTH": "Game name must be at least 3 characters long",
     "DESCRIPTION_REQUIRED": "Description is required",
     "MIN_PLAYERS": "Minimum Players",
-    "MAX_PLAYERS": "Maximum Players",
+    "MAX_PLAYERS": "Maximum Players"
   },
   "ADD_USER": {
     "TITLE": "Add New User",
