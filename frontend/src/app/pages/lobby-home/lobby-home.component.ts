@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatTab, MatTabGroup} from '@angular/material/tabs';
 import { User } from '../../models/user.model';
 import { Lobby } from '../../models/lobby.model';
 import {LobbyService} from '../../services/lobby/lobby.service';
 import {AuthService} from '../../services/auth/auth.service';
-import {TranslationService} from '../../services/translation/translation.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatButton} from '@angular/material/button';
@@ -19,7 +19,6 @@ import {
 } from '@angular/material/card';
 import {NgForOf, NgIf} from '@angular/common';
 import {LobbyJoinComponent} from '../../components/lobby-join/lobby-join.component';
-import {MatTab, MatTabGroup} from '@angular/material/tabs';
 import {LobbyCreateComponent} from '../../components/lobby-create/lobby-create.component';
 
 @Component({
@@ -46,6 +45,8 @@ import {LobbyCreateComponent} from '../../components/lobby-create/lobby-create.c
   styleUrls: ['./lobby-home.component.css']
 })
 export class LobbyHomeComponent implements OnInit {
+  @ViewChild('lobbyTabs') lobbyTabs!: MatTabGroup;
+
   currentUser: User | null = null;
   activeLobbies: Lobby[] = [];
   isLoading = false;
@@ -69,6 +70,11 @@ export class LobbyHomeComponent implements OnInit {
       );
       this.router.navigate(['/login']);
       return;
+    }
+
+    const savedTabIndex = localStorage.getItem('lobbyTabIndex');
+    if (savedTabIndex) {
+      this.selectedTabIndex = parseInt(savedTabIndex, 10);
     }
 
     this.checkExistingLobby();
@@ -111,14 +117,13 @@ export class LobbyHomeComponent implements OnInit {
   }
 
   onTabChange(event: any): void {
-    this.selectedTabIndex = event.index;
+    if (event && event.index !== undefined) {
+      this.selectedTabIndex = event.index;
+      localStorage.setItem('lobbyTabIndex', event.index.toString());
+    } else if (typeof event === 'number') {
+      this.selectedTabIndex = event;
+      localStorage.setItem('lobbyTabIndex', event.toString());
+    }
   }
 
-  navigateToCreateLobby(): void {
-    this.selectedTabIndex = 0;
-  }
-
-  navigateToJoinLobby(): void {
-    this.selectedTabIndex = 1;
-  }
 }

@@ -6,7 +6,10 @@
 
   <mat-card>
     <mat-card-content>
-      <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
+      <mat-tab-group #lobbyTabs
+                     [selectedIndex]="selectedTabIndex"
+                     (selectedIndexChange)="onTabChange($event)"
+                     animationDuration="300ms">
         <mat-tab [label]="'LOBBY.CREATE_LOBBY' | translate">
           <div class="tab-content">
             <app-lobby-create></app-lobby-create>
