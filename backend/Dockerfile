@@ -16,9 +16,9 @@ FROM amazoncorretto:17
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar /app/backend.jar
+COPY --from=builder /app/build/libs/*.jar /app/
 
 ENV PORT=8080
 EXPOSE $PORT
 
-CMD ["java", "-jar", "/app/backend.jar"]
+CMD java -jar /app/*.jar
