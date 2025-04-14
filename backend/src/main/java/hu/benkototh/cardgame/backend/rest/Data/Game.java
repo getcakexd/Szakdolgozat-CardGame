@@ -11,6 +11,8 @@ public class Game {
     private String name;
     private String description;
     private boolean active;
+    private int minPlayers;
+    private int maxPlayers;
 
     public Game() {
     }
@@ -45,5 +47,21 @@ public class Game {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 }

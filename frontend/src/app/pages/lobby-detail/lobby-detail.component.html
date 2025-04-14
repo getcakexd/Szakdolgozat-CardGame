@@ -1,0 +1,115 @@
+<div class="lobby-detail-container">
+  <mat-card *ngIf="lobby">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mat-icon>groups</mat-icon>
+      </div>
+      <mat-card-title>
+        {{ 'LOBBY.LOBBY_CODE' | translate }}: {{ lobby.code }}
+        <button mat-icon-button (click)="copyLobbyCode()" matTooltip="{{ 'LOBBY.COPY_CODE' | translate }}">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="status-badge" [ngClass]="{
+          'waiting': lobby.status === lobbyStatus.WAITING,
+          'in-game': lobby.status === lobbyStatus.IN_GAME,
+          'finished': lobby.status === lobbyStatus.FINISHED
+        }">
+          {{ 'LOBBY.STATUS.' + lobby.status | translate }}
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="lobby-content">
+        <div class="lobby-settings">
+          <h3>{{ 'LOBBY.GAME_SETTINGS' | translate }}</h3>
+          <form [formGroup]="settingsForm">
+            <div class="form-field">
+              <mat-form-field appearance="fill">
+                <mat-label>{{ 'LOBBY.GAME' | translate }}</mat-label>
+                <mat-select formControlName="gameId">
+                  <mat-option *ngFor="let game of games" [value]="game.id">
+                    {{ game.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-field">
+              <mat-slide-toggle formControlName="playWithPoints">
+                {{ 'LOBBY.PLAY_WITH_POINTS' | translate }}
+              </mat-slide-toggle>
+            </div>
+
+            <div class="game-info" *ngIf="getGameById(settingsForm.get('gameId')?.value)">
+              <p><strong>{{ 'LOBBY.DESCRIPTION' | translate }}:</strong> {{ getGameById(settingsForm.get('gameId')?.value)?.description }}</p>
+              <p><strong>{{ 'LOBBY.PLAYERS_NEEDED' | translate }}:</strong> {{ lobby.minPlayers }}</p>
+              <p><strong>{{ 'LOBBY.CURRENT_PLAYERS' | translate }}:</strong> {{ lobby.players.length }}</p>
+            </div>
+
+            <div class="settings-actions" *ngIf="isLeader && lobby.status === lobbyStatus.WAITING">
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="settingsForm.invalid || isLoading"
+                (click)="onSaveSettings()">
+                {{ 'LOBBY.SAVE_SETTINGS' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="lobby-players">
+          <h3>{{ 'LOBBY.PLAYERS' | translate }}</h3>
+          <mat-list>
+            <mat-list-item *ngFor="let player of lobby.players">
+              <div class="player-item">
+                <div class="player-info">
+                  <span class="player-name">{{ player.username }}</span>
+                  <span *ngIf="player.id === lobby.leader.id" class="leader-badge">{{ 'LOBBY.LEADER' | translate }}</span>
+                </div>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  *ngIf="isLeader && player.id !== currentUser?.id && lobby.status === lobbyStatus.WAITING"
+                  (click)="onKickPlayer(player)"
+                  matTooltip="{{ 'LOBBY.KICK_PLAYER' | translate }}">
+                  <mat-icon>person_remove</mat-icon>
+                </button>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button
+        mat-button
+        color="warn"
+        (click)="onLeaveLobby()"
+        [disabled]="isLoading">
+        <mat-icon>exit_to_app</mat-icon> {{ 'LOBBY.LEAVE_LOBBY' | translate }}
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
+        [disabled]="!canStartGame() || isLoading"
+        (click)="onStartGame()">
+        <mat-icon>play_arrow</mat-icon> {{ 'LOBBY.START_GAME' | translate }}
+      </button>
+    </mat-card-actions>
+
+    <mat-card-footer *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>
+
+  <div class="loading-container" *ngIf="!lobby && isLoading">
+    <mat-spinner></mat-spinner>
+    <p>{{ 'LOBBY.LOADING' | translate }}</p>
+  </div>
+</div>

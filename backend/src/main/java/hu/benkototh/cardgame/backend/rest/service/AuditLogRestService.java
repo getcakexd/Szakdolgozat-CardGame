@@ -16,10 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * REST controller for audit log operations.
- * Only accessible by users with ROOT role.
- */
 @RestController
 @RequestMapping("/api/audit-logs")
 public class AuditLogRestService {

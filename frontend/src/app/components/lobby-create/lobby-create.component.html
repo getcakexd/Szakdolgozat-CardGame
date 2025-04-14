@@ -1,0 +1,53 @@
+<div class="create-lobby-container">
+  <h2>{{ 'LOBBY.CREATE.TITLE' | translate }}</h2>
+
+  <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'LOBBY.CREATE.GAME_SELECT' | translate }}</mat-label>
+        <mat-select formControlName="gameId">
+          <mat-option *ngFor="let game of games" [value]="game.id">
+            {{ game.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="createForm.get('gameId')?.hasError('required')">
+          {{ 'LOBBY.CREATE.GAME_REQUIRED' | translate }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-field">
+      <mat-slide-toggle formControlName="playWithPoints" color="primary">
+        {{ 'LOBBY.CREATE.PLAY_WITH_POINTS' | translate }}
+      </mat-slide-toggle>
+      <div class="hint-text">
+        {{ 'LOBBY.CREATE.POINTS_DESCRIPTION' | translate }}
+      </div>
+    </div>
+
+    <div class="game-info" *ngIf="getSelectedGame()">
+      <mat-card>
+        <mat-card-content>
+          <p><strong>{{ 'LOBBY.DESCRIPTION' | translate }}:</strong> {{ getSelectedGame()?.description }}</p>
+          <p><strong>{{ 'LOBBY.PLAYERS_NEEDED' | translate }}:</strong> {{ getSelectedGame()?.minPlayers }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="createForm.invalid || isSubmitting">
+        <mat-icon>add</mat-icon>
+        {{ isSubmitting ? ('LOBBY.CREATE.CREATING' | translate) : ('LOBBY.CREATE.CREATE_BUTTON' | translate) }}
+      </button>
+    </div>
+  </form>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="30"></mat-spinner>
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  </div>
+</div>

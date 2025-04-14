@@ -1,0 +1,56 @@
+<div class="lobby-home-container">
+  <div class="lobby-header">
+    <h1>{{ 'LOBBY.TITLE' | translate }}</h1>
+    <p>{{ 'LOBBY.SUBTITLE' | translate }}</p>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
+        <mat-tab [label]="'LOBBY.CREATE_LOBBY' | translate">
+          <div class="tab-content">
+            <app-lobby-create></app-lobby-create>
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'LOBBY.JOIN_LOBBY' | translate">
+          <div class="tab-content">
+            <app-lobby-join></app-lobby-join>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="active-lobbies-section" *ngIf="activeLobbies.length > 0">
+    <h2>{{ 'LOBBY.ACTIVE_LOBBIES' | translate }}</h2>
+    <div class="lobbies-grid">
+      <mat-card *ngFor="let lobby of activeLobbies" class="lobby-card">
+        <mat-card-header>
+          <mat-card-title>{{ lobby.game.name }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ 'LOBBY.CODE' | translate }}: {{ lobby.code }} |
+            {{ 'LOBBY.PLAYERS' | translate }}: {{ lobby.players.length }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ 'LOBBY.LEADER' | translate }}: {{ lobby.leader.username }}</p>
+          <p>{{ 'LOBBY.POINTS' | translate }}: {{ lobby.playWithPoints ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="lobbyService.joinLobby(lobby.code, currentUser!.id).subscribe()">
+            {{ 'LOBBY.JOIN' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  </div>
+</div>

@@ -15,6 +15,11 @@
           <mat-icon>groups</mat-icon>
           <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
         </button>
+        <button class="navbar-button" mat-button routerLink="/lobby">
+          <mat-icon>casino</mat-icon>
+          <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+        </button>
+
         <button *ngIf="isAdmin || isRoot" class="navbar-button" mat-button routerLink="/admin">
           <mat-icon>admin_panel_settings</mat-icon>
           <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
