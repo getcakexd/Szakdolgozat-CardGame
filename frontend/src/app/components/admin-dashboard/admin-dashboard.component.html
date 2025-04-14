@@ -94,7 +94,17 @@
 
               <ng-container matColumnDef="description">
                 <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.DESCRIPTION' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{game.description}}</td>
+                <td mat-cell *matCellDef="let game" class="description-cell">{{game.description}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="minPlayers">
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.MIN_PLAYERS' | translate }}</th>
+                <td mat-cell *matCellDef="let game">{{game.minPlayers}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="maxPlayers">
+                <th mat-header-cell *matHeaderCellDef>{{ 'ADMIN.MAX_PLAYERS' | translate }}</th>
+                <td mat-cell *matCellDef="let game">{{game.maxPlayers}}</td>
               </ng-container>
 
               <ng-container matColumnDef="active">

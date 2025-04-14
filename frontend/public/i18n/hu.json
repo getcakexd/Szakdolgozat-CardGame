@@ -258,7 +258,8 @@
     "FAILED_DELETE_USER": "Nem sikerült törölni a felhasználót",
     "FAILED_DELETE_GAME": "Nem sikerült törölni a játékot",
     "FAILED_PROMOTE_USER": "Nem sikerült előléptetni a felhasználót",
-    "FAILED_DEMOTE_USER": "Nem sikerült lefokozni a felhasználót"
+    "FAILED_DEMOTE_USER": "Nem sikerült lefokozni a felhasználót",
+    "DELETE_GAME": "Játék törlése"
   },
   "AGENT": {
     "TITLE": "Ügynök vezérlőpult",
@@ -310,7 +311,9 @@
     "ADD_GAME": "Játék hozzáadása",
     "NAME_REQUIRED": "A játék neve kötelező",
     "NAME_MIN_LENGTH": "A játék nevének legalább 3 karakter hosszúnak kell lennie",
-    "DESCRIPTION_REQUIRED": "A leírás kötelező"
+    "DESCRIPTION_REQUIRED": "A leírás kötelező",
+    "MIN_PLAYERS": "Minimum játékosok",
+    "MAX_PLAYERS": "Maximum játékosok"
   },
   "ADD_USER": {
     "TITLE": "Új felhasználó hozzáadása",

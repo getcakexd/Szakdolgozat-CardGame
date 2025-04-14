@@ -258,7 +258,8 @@
     "FAILED_DELETE_USER": "Failed to delete user",
     "FAILED_DELETE_GAME": "Failed to delete game",
     "FAILED_PROMOTE_USER": "Failed to promote user",
-    "FAILED_DEMOTE_USER": "Failed to demote user"
+    "FAILED_DEMOTE_USER": "Failed to demote user",
+    "DELETE_GAME": "Delete Game"
   },
   "AGENT": {
     "TITLE": "Agent Dashboard",
@@ -310,7 +311,9 @@
     "ADD_GAME": "Add Game",
     "NAME_REQUIRED": "Game name is required",
     "NAME_MIN_LENGTH": "Game name must be at least 3 characters long",
-    "DESCRIPTION_REQUIRED": "Description is required"
+    "DESCRIPTION_REQUIRED": "Description is required",
+    "MIN_PLAYERS": "Minimum Players",
+    "MAX_PLAYERS": "Maximum Players",
   },
   "ADD_USER": {
     "TITLE": "Add New User",

@@ -64,7 +64,7 @@ export class AdminDashboardComponent implements OnInit {
   users: User[] = []
   games: Game[] = []
   userDisplayedColumns: string[] = ["id", "username", "email", "role", "actions"]
-  gameDisplayedColumns: string[] = ["id", "name", "description", "active", "actions"]
+  gameDisplayedColumns: string[] = ["id", "name", "description", "minPlayers", "maxPlayers", "active", "actions"]
 
   isRoot = false
   isAdmin = false
@@ -119,7 +119,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddGameDialog(): void {
     const dialogRef = this.dialog.open(AddGameDialogComponent, {
-      width: "400px",
+      width: "500px",
     })
 
     dialogRef.afterClosed().subscribe((result) => {
