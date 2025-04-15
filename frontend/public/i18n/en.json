@@ -59,7 +59,24 @@
     "ADD_PASSWORD": "Add Password",
     "CHANGE_PASSWORD": "Change Password",
     "SET_PASSWORD": "Set Password",
-    "UPDATE_PASSWORD": "Update Password"
+    "UPDATE_PASSWORD": "Update Password",
+    "THEME": "Theme",
+    "THEME_UPDATED": "Theme Updated",
+    "RELOAD_REQUIRED": "The page needs to reload to apply the new theme. Continue?",
+    "PALETTE": {
+      "RED": "Red",
+      "GREEN": "Green",
+      "BLUE": "Blue",
+      "YELLOW": "Yellow",
+      "CYAN": "Cyan",
+      "MAGENTA": "Magenta",
+      "ORANGE": "Orange",
+      "CHARTREUSE": "Chartreuse",
+      "SPRING_GREEN": "Spring Green",
+      "AZURE": "Azure",
+      "VIOLET": "Violet",
+      "ROSE": "Rose"
+    }
   },
   "SOCIAL": {
     "TITLE": "Social Hub",
@@ -335,7 +352,8 @@
   },
   "THEME": {
     "SWITCH_TO_LIGHT": "Switch to Light Mode",
-    "SWITCH_TO_DARK": "Switch to Dark Mode"
+    "SWITCH_TO_DARK": "Switch to Dark Mode",
+    "SELECT_PALETTE": "Select Color Palette"
   },
   "ERRORS": {
     "REQUIRED_FIELD": "This field is required",
@@ -357,7 +375,8 @@
     "PASSWORD_SET": "Password set successfully!",
     "PASSWORD_UPDATED": "Password updated successfully!",
     "PROFILE_DELETED": "Profile deleted successfully!",
-    "ACCOUNT_CREATED": "Account created successfully! You can now login."
+    "ACCOUNT_CREATED": "Account created successfully! You can now login.",
+    "THEME_UPDATED": "Theme updated successfully!"
   },
   "CONTACT": {
     "SUPPORT": "Contact Support",
@@ -478,5 +497,4 @@
     "NO_LOGS_FOUND": "No audit logs found",
     "LOADING": "Loading audit logs..."
   }
-
 }

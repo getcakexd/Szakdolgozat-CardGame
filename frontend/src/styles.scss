@@ -17,6 +17,174 @@ html {
   ));
 }
 
+html[data-theme-palette="red-palette"] {
+  @include mat.theme((
+    color: mat.$red-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="green-palette"] {
+  @include mat.theme((
+    color: mat.$green-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="blue-palette"] {
+  @include mat.theme((
+    color: mat.$blue-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="yellow-palette"] {
+  @include mat.theme((
+    color: mat.$yellow-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="cyan-palette"] {
+  @include mat.theme((
+    color: mat.$cyan-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="magenta-palette"] {
+  @include mat.theme((
+    color: mat.$magenta-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="orange-palette"] {
+  @include mat.theme((
+    color: mat.$orange-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="chartreuse-palette"] {
+  @include mat.theme((
+    color: mat.$chartreuse-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="spring-green-palette"] {
+  @include mat.theme((
+    color: mat.$spring-green-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="azure-palette"] {
+  @include mat.theme((
+    color: mat.$azure-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="violet-palette"] {
+  @include mat.theme((
+    color: mat.$violet-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
+html[data-theme-palette="rose-palette"] {
+  @include mat.theme((
+    color: mat.$rose-palette,
+    typography: (
+      brand-family: '"Montserrat", sans-serif',
+      plain-family: '"Montserrat", sans-serif',
+      bold-weight: 700,
+      medium-weight: 500,
+      regular-weight: 400,
+    ),
+    density: 0
+  ));
+}
+
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
@@ -77,4 +245,19 @@ body::before {
 .mat-mdc-table {
   border-radius: 8px;
   overflow: hidden;
+}
+
+:root {
+  --mat-red: #f44336;
+  --mat-green: #4CAF50;
+  --mat-blue: #2196F3;
+  --mat-yellow: #FFEB3B;
+  --mat-cyan: #00BCD4;
+  --mat-magenta: #E91E63;
+  --mat-orange: #FF9800;
+  --mat-chartreuse: #8BC34A;
+  --mat-spring-green: #00C853;
+  --mat-azure: #03A9F4;
+  --mat-violet: #673AB7;
+  --mat-rose: #FF4081;
 }

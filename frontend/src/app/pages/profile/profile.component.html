@@ -128,6 +128,31 @@
         <mat-divider></mat-divider>
 
         <div class="info-item">
+          <div class="info-label">
+            <mat-icon>palette</mat-icon>
+            <span>{{ 'PROFILE.THEME' | translate }}</span>
+          </div>
+          <div class="info-content">
+            <span class="info-value">{{ getPaletteDisplayName(selectedPalette) }}</span>
+          </div>
+
+          <div class="theme-palette-selector">
+            <div class="palette-chips">
+              <div *ngFor="let palette of availablePalettes"
+                   class="palette-chip"
+                   [class.selected]="selectedPalette === palette.value"
+                   [attr.data-palette]="palette.name"
+                   (click)="changePalette(palette.value)">
+                <div class="palette-color" [style.background-color]="'var(--mat-' + palette.name + ')'"></div>
+                <span class="palette-name">{{ palette.displayName }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-item">
           <div class="info-label danger">
             <mat-icon>delete_forever</mat-icon>
             <span>{{ 'PROFILE.DELETE_ACCOUNT' | translate }}</span>

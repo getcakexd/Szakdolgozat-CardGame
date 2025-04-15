@@ -59,7 +59,24 @@
     "ADD_PASSWORD": "Jelszó hozzáadása",
     "CHANGE_PASSWORD": "Jelszó módosítása",
     "SET_PASSWORD": "Jelszó beállítása",
-    "UPDATE_PASSWORD": "Jelszó frissítése"
+    "UPDATE_PASSWORD": "Jelszó frissítése",
+    "THEME": "Téma",
+    "THEME_UPDATED": "Téma váltás",
+    "RELOAD_REQUIRED": "Az oldalt újra kell tölteni az új téma alkalmazásához. Folytatja?",
+    "PALETTE": {
+      "RED": "Piros",
+      "GREEN": "Zöld",
+      "BLUE": "Kék",
+      "YELLOW": "Sárga",
+      "CYAN": "Cián",
+      "MAGENTA": "Magenta",
+      "ORANGE": "Narancs",
+      "CHARTREUSE": "Chartreuse",
+      "SPRING_GREEN": "Tavaszi zöld",
+      "AZURE": "Azúr",
+      "VIOLET": "Lila",
+      "ROSE": "Rózsaszín"
+    }
   },
   "SOCIAL": {
     "TITLE": "Közösségi központ",
@@ -335,7 +352,8 @@
   },
   "THEME": {
     "SWITCH_TO_LIGHT": "Váltás világos módra",
-    "SWITCH_TO_DARK": "Váltás sötét módra"
+    "SWITCH_TO_DARK": "Váltás sötét módra",
+    "SELECT_PALETTE": "Színpaletta kiválasztása"
   },
   "ERRORS": {
     "REQUIRED_FIELD": "Ez a mező kötelező",
@@ -357,7 +375,8 @@
     "PASSWORD_SET": "Jelszó sikeresen beállítva!",
     "PASSWORD_UPDATED": "Jelszó sikeresen frissítve!",
     "PROFILE_DELETED": "Profil sikeresen törölve!",
-    "ACCOUNT_CREATED": "Fiók sikeresen létrehozva! Most már bejelentkezhet."
+    "ACCOUNT_CREATED": "Fiók sikeresen létrehozva! Most már bejelentkezhet.",
+    "THEME_UPDATED": "Téma sikeresen frissítve!"
   },
   "CONTACT": {
     "SUPPORT": "Kapcsolat az ügyfélszolgálattal",

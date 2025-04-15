@@ -8,8 +8,11 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 })
 export class ThemeService {
   private renderer: Renderer2;
-  private themeMode = new BehaviorSubject<ThemeMode>('system');
+  private themeMode = new BehaviorSubject<'light' | 'dark' | 'system'>('system');
   themeMode$ = this.themeMode.asObservable();
+
+  private themePalette = new BehaviorSubject<string>('blue-palette');
+  themePalette$ = this.themePalette.asObservable();
 
   private isDarkMode = new BehaviorSubject<boolean>(false);
   isDarkMode$ = this.isDarkMode.asObservable();
@@ -20,9 +23,16 @@ export class ThemeService {
     setTimeout(() => {
       const savedTheme = localStorage.getItem('themeMode');
       if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-        this.setTheme(savedTheme as ThemeMode);
+        this.setTheme(savedTheme as 'light' | 'dark' | 'system');
       } else {
         this.setTheme('system');
+      }
+
+      const savedPalette = localStorage.getItem('themePalette');
+      if (savedPalette) {
+        this.setPalette(savedPalette);
+      } else {
+        this.setPalette('blue-palette');
       }
 
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -36,7 +46,7 @@ export class ThemeService {
     }, 0);
   }
 
-  setTheme(mode: ThemeMode): void {
+  setTheme(mode: 'light' | 'dark' | 'system'): void {
     this.themeMode.next(mode);
     localStorage.setItem('themeMode', mode);
 
@@ -53,6 +63,17 @@ export class ThemeService {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       this.updateDarkModeStatus(prefersDark);
     }
+  }
+
+  setPalette(palette: string): void {
+    this.themePalette.next(palette);
+    localStorage.setItem('themePalette', palette);
+
+    document.documentElement.setAttribute('data-theme-palette', palette);
+  }
+
+  applyPaletteChanges(): void {
+    window.location.reload();
   }
 
   toggleTheme(): void {
