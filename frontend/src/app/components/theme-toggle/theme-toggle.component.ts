@@ -1,39 +1,45 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Observable } from 'rxjs';
-import { ThemeService } from '../../services/theme/theme.service';
-import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatIconButton } from '@angular/material/button';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {ThemeMode, ThemeService} from '../../services/theme/theme.service';
 
 @Component({
   selector: 'app-theme-toggle',
-  templateUrl: './theme-toggle.component.html',
   standalone: true,
-  imports: [
-    MatIcon,
-    NgIf,
-    AsyncPipe,
-    MatTooltip,
-    MatIconButton,
-    TranslateModule
-  ],
-  styleUrls: ['./theme-toggle.component.scss']
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule],
+  template: `
+    <button mat-icon-button [matMenuTriggerFor]="themeMenu" aria-label="Theme selector">
+      <mat-icon>{{ (isDarkMode$ | async) ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
+    <mat-menu #themeMenu="matMenu">
+      <button mat-menu-item (click)="setTheme('light')">
+        <mat-icon>light_mode</mat-icon>
+        <span>Light</span>
+      </button>
+      <button mat-menu-item (click)="setTheme('dark')">
+        <mat-icon>dark_mode</mat-icon>
+        <span>Dark</span>
+      </button>
+      <button mat-menu-item (click)="setTheme('system')">
+        <mat-icon>settings_suggest</mat-icon>
+        <span>System</span>
+      </button>
+    </mat-menu>
+  `
 })
 export class ThemeToggleComponent implements OnInit {
-  isDarkMode$: Observable<boolean>;
+  isDarkMode$!: Observable<boolean>;
 
-  constructor(
-    private themeService: ThemeService,
-    private translateService: TranslateService
-  ) {
-    this.isDarkMode$ = this.themeService.darkMode$;
+  constructor(private themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    this.isDarkMode$ = this.themeService.isDarkMode$;
   }
 
-  ngOnInit(): void {}
-
-  toggleTheme(): void {
-    this.themeService.toggleDarkMode();
+  setTheme(mode: 'light' | 'dark' | 'system'): void {
+    this.themeService.setTheme(mode as ThemeMode);
   }
 }

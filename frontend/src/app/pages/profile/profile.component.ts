@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
@@ -13,15 +13,25 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../services/auth/auth.service';
+
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {ThemeService} from '../../services/theme/theme.service';
+
+interface ThemePalette {
+  name: string;
+  value: string;
+  displayName: string;
+}
 
 @Component({
   selector: "app-profile",
   imports: [
     FormsModule,
     NgIf,
+    NgFor,
     MatCardModule,
     MatFormFieldModule,
     MatButtonModule,
@@ -30,6 +40,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MatDividerModule,
     MatDialogModule,
     MatProgressBarModule,
+    MatChipsModule,
     TranslateModule
   ],
   templateUrl: "./profile.component.html",
@@ -52,6 +63,23 @@ export class ProfileComponent implements OnInit {
   hideNewPassword = true
   isGoogleAuthUser = false
 
+  availablePalettes: ThemePalette[] = [
+    { name: 'red', value: 'red-palette', displayName: 'Red' },
+    { name: 'green', value: 'green-palette', displayName: 'Green' },
+    { name: 'blue', value: 'blue-palette', displayName: 'Blue' },
+    { name: 'yellow', value: 'yellow-palette', displayName: 'Yellow' },
+    { name: 'cyan', value: 'cyan-palette', displayName: 'Cyan' },
+    { name: 'magenta', value: 'magenta-palette', displayName: 'Magenta' },
+    { name: 'orange', value: 'orange-palette', displayName: 'Orange' },
+    { name: 'chartreuse', value: 'chartreuse-palette', displayName: 'Chartreuse' },
+    { name: 'spring-green', value: 'spring-green-palette', displayName: 'Spring Green' },
+    { name: 'azure', value: 'azure-palette', displayName: 'Azure' },
+    { name: 'violet', value: 'violet-palette', displayName: 'Violet' },
+    { name: 'rose', value: 'rose-palette', displayName: 'Rose' }
+  ];
+
+  selectedPalette: string = '';
+
   private deleteSource = new Subject<void>()
   delete$ = this.deleteSource.asObservable()
   private userId: number
@@ -59,6 +87,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     protected userService: UserService,
     protected authService: AuthService,
+    private themeService: ThemeService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
@@ -83,6 +112,8 @@ export class ProfileComponent implements OnInit {
           this.isLoading = false
         },
       })
+
+      this.selectedPalette = localStorage.getItem('themePalette') || 'blue-palette';
     }
   }
 
@@ -254,5 +285,30 @@ export class ProfileComponent implements OnInit {
         this.toggleDeleteForm()
       }
     })
+  }
+
+  changePalette(palette: string): void {
+    const tempSelectedPalette = palette;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "350px",
+      data: {
+        title: this.translate.instant('PROFILE.THEME_UPDATED'),
+        message: this.translate.instant('PROFILE.RELOAD_REQUIRED'),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.selectedPalette = tempSelectedPalette;
+        this.themeService.setPalette(tempSelectedPalette);
+        this.themeService.applyPaletteChanges();
+      }
+    });
+  }
+
+  getPaletteDisplayName(value: string): string {
+    const palette = this.availablePalettes.find(p => p.value === value);
+    return palette ? palette.displayName : value;
   }
 }

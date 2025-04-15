@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     private authService : AuthService,
     private themeService: ThemeService
   ) {
-    this.isDarkMode$ = this.themeService.darkMode$;
+    this.isDarkMode$ = this.themeService.isDarkMode$;
   }
 
   ngOnInit(): void {
