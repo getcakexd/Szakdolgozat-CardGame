@@ -45,25 +45,14 @@ RUN echo 'server {\n\
 }\n' > /etc/nginx/conf.d/default.conf.template
 
 RUN echo '#!/bin/bash\n\
-# Create a simple runtime-config.js file with the Google Client ID\n\
-echo "Creating runtime-config.js with GOOGLE_CLIENT_ID..."\n\
 echo "window.GOOGLE_CLIENT_ID = \"${GOOGLE_CLIENT_ID}\";" > /usr/share/nginx/html/runtime-config.js\n\
-echo "Runtime config created successfully."\n\
 \n\
-# For backward compatibility, also create env-config.js\n\
 cat > /usr/share/nginx/html/env-config.js << EOF\n\
 window.env = {\n\
   GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"\n\
 };\n\
 EOF\n\
 \n\
-# Debug: Show the content of the config files\n\
-echo "Content of runtime-config.js:"\n\
-cat /usr/share/nginx/html/runtime-config.js\n\
-echo "Content of env-config.js:"\n\
-cat /usr/share/nginx/html/env-config.js\n\
-\n\
-# Process database URL if available\n\
 if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
   DB_URL=$(echo $JAWSDB_MARIA_URL | sed "s|mysql://||g")\n\
   DB_USERNAME=$(echo $DB_URL | cut -d: -f1)\n\
@@ -76,7 +65,6 @@ if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
   export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD\n\
 fi\n\
 \n\
-# Start the Java backend\n\
 java -Dserver.port=8081 \
 -Dspring.profiles.active=prod \
 -Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
@@ -91,13 +79,8 @@ java -Dserver.port=8081 \
 -Dgoogle.oauth.password.suffix=${GOOGLE_OAUTH_PASSWORD_SUFFIX:-default_suffix} \
 -jar /app/backend.jar &\n\
 \n\
-# Configure and start Nginx\n\
 sed -i "s/PORT/$PORT/g" /etc/nginx/conf.d/default.conf.template\n\
 cp /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf\n\
-\n\
-echo "Nginx configuration:"\n\
-cat /etc/nginx/conf.d/default.conf\n\
-echo "PORT: $PORT"\n\
 \n\
 nginx -g "daemon off;"\n' > /start.sh && chmod +x /start.sh
 
