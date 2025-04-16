@@ -2,17 +2,14 @@ import { type SocialAuthServiceConfig, GoogleLoginProvider } from "@abacritt/ang
 //FOR LOCAL DEV
 //import {GOOGLE_CLIENT_ID} from './secrets';
 
-declare global {
-  interface Window {
-    env: {
-      GOOGLE_CLIENT_ID: string;
-    };
-  }
-}
+type EnvConfig = {
+  GOOGLE_CLIENT_ID: string;
+};
 
 // For production
 // Remove for DEV
-const GOOGLE_CLIENT_ID = window.env?.GOOGLE_CLIENT_ID ;
+const env = (window as any).env as EnvConfig | undefined;
+const GOOGLE_CLIENT_ID = env?.GOOGLE_CLIENT_ID || '';
 
 
 export const socialAuthServiceConfig: SocialAuthServiceConfig = {
