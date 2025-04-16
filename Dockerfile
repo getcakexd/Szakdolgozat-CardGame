@@ -45,13 +45,20 @@ RUN echo 'server {\n\
 }\n' > /etc/nginx/conf.d/default.conf.template
 
 RUN echo '#!/bin/bash\n\
-echo "window.GOOGLE_CLIENT_ID = \"${GOOGLE_CLIENT_ID}\";" > /usr/share/nginx/html/runtime-config.js\n\
+echo "=== START.SH EXECUTION STARTED ==="\n\
+echo "GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}"\n\
 \n\
-if ! grep -q "runtime-config.js" /usr/share/nginx/html/index.html; then\n\
-  sed -i "s/<head>/<head>\\n<script src=\\"runtime-config.js\\"><\\/script>/" /usr/share/nginx/html/index.html\n\
-fi\n\
+echo "window.GOOGLE_CLIENT_ID = \"${GOOGLE_CLIENT_ID}\";" > /usr/share/nginx/html/runtime-config.js\n\
+echo "Created runtime-config.js:"\n\
+cat /usr/share/nginx/html/runtime-config.js\n\
+\n\
+echo "Injecting script tag into index.html"\n\
+sed -i "s/<head>/<head>\\n<script src=\\"runtime-config.js\\"><\\/script>/" /usr/share/nginx/html/index.html\n\
+echo "Modified index.html head:"\n\
+grep -A 5 "<head>" /usr/share/nginx/html/index.html\n\
 \n\
 if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
+  echo "Processing JAWSDB_MARIA_URL"\n\
   DB_URL=$(echo $JAWSDB_MARIA_URL | sed "s|mysql://||g")\n\
   DB_USERNAME=$(echo $DB_URL | cut -d: -f1)\n\
   DB_PASSWORD=$(echo $DB_URL | cut -d: -f2 | cut -d@ -f1)\n\
@@ -61,8 +68,10 @@ if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
   export SPRING_DATASOURCE_URL="jdbc:mariadb://$DB_HOST_PORT/$DB_NAME"\n\
   export SPRING_DATASOURCE_USERNAME=$DB_USERNAME\n\
   export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD\n\
+  echo "Database configuration set up"\n\
 fi\n\
 \n\
+echo "Starting Java backend"\n\
 java -Dserver.port=8081 \
 -Dspring.profiles.active=prod \
 -Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
@@ -77,9 +86,13 @@ java -Dserver.port=8081 \
 -Dgoogle.oauth.password.suffix=${GOOGLE_OAUTH_PASSWORD_SUFFIX:-default_suffix} \
 -jar /app/backend.jar &\n\
 \n\
+echo "Configuring Nginx"\n\
 sed -i "s/PORT/$PORT/g" /etc/nginx/conf.d/default.conf.template\n\
 cp /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf\n\
 \n\
+echo "=== START.SH EXECUTION COMPLETED ==="\n\
+\n\
+echo "Starting Nginx"\n\
 nginx -g "daemon off;"\n' > /start.sh && chmod +x /start.sh
 
 EXPOSE $PORT
