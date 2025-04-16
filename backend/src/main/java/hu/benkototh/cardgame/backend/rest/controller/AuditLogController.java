@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,46 +42,62 @@ public class AuditLogController {
     }
 
     public List<AuditLog> getLogsByUser(Long userId) {
-        return auditLogRepository.findByUserId(userId);
+        List<AuditLog> logs = new ArrayList<>(auditLogRepository.findByUserId(userId));
+        Collections.reverse(logs);
+        return logs;
     }
 
     public List<AuditLog> getLogsByAction(String action) {
-        return auditLogRepository.findByAction(action);
+        List<AuditLog> logs = new ArrayList<>(auditLogRepository.findByAction(action));
+        Collections.reverse(logs);
+        return logs;
     }
 
     public List<AuditLog> getLogsByDateRange(Date startDate, Date endDate) {
-        return auditLogRepository.findByTimestampBetween(startDate, endDate);
+        List<AuditLog> logs = new ArrayList<>(auditLogRepository.findByTimestampBetween(startDate, endDate));
+        Collections.reverse(logs);
+        return logs;
     }
 
     public List<AuditLog> getAllLogs() {
-        return auditLogRepository.findAll();
+        List<AuditLog> logs = new ArrayList<>(auditLogRepository.findAll());
+        Collections.reverse(logs);
+        return logs;
     }
 
     public List<AuditLog> getFilteredLogs(Long userId, String action) {
-        List<AuditLog> userLogs = getLogsByUser(userId);
-        return userLogs.stream()
+        List<AuditLog> logs = auditLogRepository.findByUserId(userId);
+        List<AuditLog> filteredLogs = logs.stream()
                 .filter(log -> log.getAction().equals(action))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
+        Collections.reverse(filteredLogs);
+        return filteredLogs;
     }
 
     public List<AuditLog> getFilteredLogs(Long userId, String action, Date startDate, Date endDate) {
-        List<AuditLog> dateRangeLogs = getLogsByDateRange(startDate, endDate);
-        return dateRangeLogs.stream()
+        List<AuditLog> logs = auditLogRepository.findByTimestampBetween(startDate, endDate);
+        List<AuditLog> filteredLogs = logs.stream()
                 .filter(log -> log.getUserId().equals(userId) && log.getAction().equals(action))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
+        Collections.reverse(filteredLogs);
+        return filteredLogs;
     }
 
     public List<AuditLog> getFilteredLogsByUserAndDateRange(Long userId, Date startDate, Date endDate) {
-        List<AuditLog> dateRangeLogs = getLogsByDateRange(startDate, endDate);
-        return dateRangeLogs.stream()
+        List<AuditLog> logs = auditLogRepository.findByTimestampBetween(startDate, endDate);
+        List<AuditLog> filteredLogs = logs.stream()
                 .filter(log -> log.getUserId().equals(userId))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
+        Collections.reverse(filteredLogs);
+        return filteredLogs;
     }
 
     public List<AuditLog> getFilteredLogsByActionAndDateRange(String action, Date startDate, Date endDate) {
-        List<AuditLog> dateRangeLogs = getLogsByDateRange(startDate, endDate);
-        return dateRangeLogs.stream()
+        List<AuditLog> logs = auditLogRepository.findByTimestampBetween(startDate, endDate);
+        List<AuditLog> filteredLogs = logs.stream()
                 .filter(log -> log.getAction().equals(action))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
+        Collections.reverse(filteredLogs);
+        return filteredLogs;
     }
 }
