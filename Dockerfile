@@ -47,11 +47,9 @@ RUN echo 'server {\n\
 RUN echo '#!/bin/bash\n\
 echo "window.GOOGLE_CLIENT_ID = \"${GOOGLE_CLIENT_ID}\";" > /usr/share/nginx/html/runtime-config.js\n\
 \n\
-cat > /usr/share/nginx/html/env-config.js << EOF\n\
-window.env = {\n\
-  GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"\n\
-};\n\
-EOF\n\
+if ! grep -q "runtime-config.js" /usr/share/nginx/html/index.html; then\n\
+  sed -i "s/<head>/<head>\\n<script src=\\"runtime-config.js\\"><\\/script>/" /usr/share/nginx/html/index.html\n\
+fi\n\
 \n\
 if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
   DB_URL=$(echo $JAWSDB_MARIA_URL | sed "s|mysql://||g")\n\
