@@ -1,21 +1,15 @@
+
 FROM amazoncorretto:17 AS backend-build
 
 WORKDIR /app
 COPY backend /app/
-RUN curl -L https://services.gradle.org/distributions/gradle-7.6-bin.zip -o gradle.zip \
-    && unzip gradle.zip \
-    && rm gradle.zip
-ENV PATH=$PATH:/app/gradle-7.6/bin
-RUN if [ -f "./gradlew" ]; then \
-        chmod +x ./gradlew && ./gradlew build --no-daemon; \
-    else \
-        gradle build --no-daemon; \
-    fi
+RUN chmod +x ./gradlew && ./gradlew build --no-daemon
 
 FROM node:18 AS frontend-build
 
 WORKDIR /app
 COPY frontend /app/
+
 RUN npm install
 RUN npm run build
 
