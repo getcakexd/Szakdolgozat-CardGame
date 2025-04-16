@@ -31,7 +31,6 @@
     "USERNAME": "Username",
     "EMAIL": "Email",
     "PASSWORD": "Password",
-    "PASSWORD_HINT": "Password must be at least 6 characters long",
     "CREATE_BUTTON": "Create Account",
     "HAVE_ACCOUNT": "Already have an account? Login",
     "OR": "OR",

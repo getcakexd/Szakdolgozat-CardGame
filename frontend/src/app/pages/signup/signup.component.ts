@@ -15,6 +15,7 @@ import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacri
 import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PasswordValidatorService } from '../../services/password-validator/password-validator.service';
 
 @Component({
   selector: "app-signup",
@@ -38,11 +39,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrls: ["./signup.component.css"],
 })
 export class SignupComponent implements OnInit, OnDestroy {
-  signupForm = new FormGroup({
-    username: new FormControl("", [Validators.required]),
-    email: new FormControl("", [Validators.required, Validators.email]),
-    password: new FormControl("", [Validators.required, Validators.minLength(6)]),
-  })
+  signupForm: FormGroup = new FormGroup({})
 
   isLoading = false
   message: string | null = null
@@ -50,6 +47,13 @@ export class SignupComponent implements OnInit, OnDestroy {
   hidePassword = true
   socialUser!: SocialUser
   private authStateSubscription: Subscription | null = null
+  passwordStrengthInfo = {
+    minLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumeric: false,
+    hasSpecialChar: false
+  }
 
   constructor(
     private userService: UserService,
@@ -57,8 +61,19 @@ export class SignupComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private socialAuthService: SocialAuthService,
-    private translate: TranslateService
-  ) {}
+    private translate: TranslateService,
+    private passwordValidator: PasswordValidatorService
+  ) {
+    this.signupForm = new FormGroup({
+      username: new FormControl("", [Validators.required]),
+      email: new FormControl("", [Validators.required, Validators.email]),
+      password: new FormControl("", [
+        Validators.required,
+        Validators.minLength(8),
+        this.passwordValidator.createPasswordStrengthValidator()
+      ]),
+    })
+  }
 
   ngOnInit(): void {
     if (!this.authService.isLoggedIn()) {
@@ -67,6 +82,11 @@ export class SignupComponent implements OnInit, OnDestroy {
           this.handleGoogleSignup(user)
         }
       })
+
+      // Monitor password changes to update strength indicators
+      this.signupForm.get('password')?.valueChanges.subscribe(value => {
+        this.updatePasswordStrengthInfo(value);
+      });
     } else {
       this.router.navigate(["/home"])
     }
@@ -76,6 +96,31 @@ export class SignupComponent implements OnInit, OnDestroy {
     if (this.authStateSubscription) {
       this.authStateSubscription.unsubscribe()
     }
+  }
+
+  private updatePasswordStrengthInfo(password: string): void {
+    if (!password) {
+      this.resetPasswordStrengthInfo();
+      return;
+    }
+
+    this.passwordStrengthInfo = {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumeric: /[0-9]/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    };
+  }
+
+  private resetPasswordStrengthInfo(): void {
+    this.passwordStrengthInfo = {
+      minLength: false,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumeric: false,
+      hasSpecialChar: false
+    };
   }
 
   private handleGoogleSignup(user: SocialUser): void {
@@ -155,18 +200,28 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   getErrorMessage(field: string): string {
     const control = this.signupForm.get(field)
-    if (control?.hasError("required")) {
+    if (!control) return '';
+
+    if (control.hasError("required")) {
       if (field === 'username') return this.translate.instant('ERRORS.USERNAME_REQUIRED')
       if (field === 'email') return this.translate.instant('ERRORS.EMAIL_REQUIRED')
       if (field === 'password') return this.translate.instant('ERRORS.PASSWORD_REQUIRED')
       return this.translate.instant('ERRORS.REQUIRED_FIELD')
     }
-    if (field === "email" && control?.hasError("email")) {
+
+    if (field === "email" && control.hasError("email")) {
       return this.translate.instant('ERRORS.EMAIL_INVALID')
     }
-    if (field === "password" && control?.hasError("minlength")) {
-      return this.translate.instant('ERRORS.PASSWORD_MIN_LENGTH')
+
+    if (field === "password") {
+      if (control.hasError("minlength")) {
+        return this.translate.instant('ERRORS.PASSWORD_MIN_LENGTH')
+      }
+      if (control.hasError("passwordStrength")) {
+        return this.passwordValidator.getPasswordErrorMessage(control.errors);
+      }
     }
+
     return ""
   }
 
@@ -175,5 +230,6 @@ export class SignupComponent implements OnInit, OnDestroy {
     Object.keys(this.signupForm.controls).forEach((key) => {
       this.signupForm.get(key)?.setErrors(null)
     })
+    this.resetPasswordStrengthInfo();
   }
 }

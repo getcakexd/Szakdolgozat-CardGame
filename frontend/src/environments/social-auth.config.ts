@@ -1,6 +1,6 @@
 import { type SocialAuthServiceConfig, GoogleLoginProvider } from "@abacritt/angularx-social-login"
 //FOR LOCAL DEV
-//import {GOOGLE_CLIENT_ID_LOCAL} from './secrets';
+import {GOOGLE_CLIENT_ID} from './secrets';
 
 declare global {
   interface Window {
@@ -12,7 +12,7 @@ declare global {
 
 // For production
 // Remove for DEV
-const GOOGLE_CLIENT_ID = window.env?.GOOGLE_CLIENT_ID ;
+//const GOOGLE_CLIENT_ID = window.env?.GOOGLE_CLIENT_ID ;
 
 
 export const socialAuthServiceConfig: SocialAuthServiceConfig = {

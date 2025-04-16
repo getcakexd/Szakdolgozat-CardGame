@@ -31,7 +31,6 @@
     "USERNAME": "Felhasználónév",
     "EMAIL": "E-mail",
     "PASSWORD": "Jelszó",
-    "PASSWORD_HINT": "A jelszónak legalább 6 karakter hosszúnak kell lennie",
     "CREATE_BUTTON": "Fiók létrehozása",
     "HAVE_ACCOUNT": "Már van fiókja? Jelentkezzen be",
     "OR": "VAGY",
