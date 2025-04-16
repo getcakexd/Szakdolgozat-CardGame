@@ -1,4 +1,3 @@
-
 FROM amazoncorretto:17 AS backend-build
 
 WORKDIR /app
@@ -11,6 +10,7 @@ WORKDIR /app
 COPY frontend /app/
 
 RUN npm install
+
 RUN npm run build
 
 FROM nginx:1.26
@@ -26,7 +26,29 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN echo '#!/bin/bash\n\
-java -jar /app/backend.jar &\n\
+cat > /usr/share/nginx/html/env-config.js << EOF\n\
+window.env = {\n\
+  GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"\n\
+};\n\
+EOF\n' > /generate-env-config.sh && \
+    chmod +x /generate-env-config.sh
+
+
+RUN echo '#!/bin/bash\n\
+# Generate runtime environment config\n\
+/generate-env-config.sh\n\
+# Start Spring Boot application\n\
+java -Dspring.profiles.active=prod \
+-Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
+-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME} \
+-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD} \
+-Dspring.security.user.name=${SPRING_SECURITY_USER_NAME} \
+-Dspring.security.user.password=${SPRING_SECURITY_USER_PASSWORD} \
+-Dgoogle.client.id=${GOOGLE_CLIENT_ID} \
+-Dgoogle.oauth.password.prefix=${GOOGLE_OAUTH_PASSWORD_PREFIX} \
+-Dgoogle.oauth.password.suffix=${GOOGLE_OAUTH_PASSWORD_SUFFIX} \
+-jar /app/backend.jar &\n\
+# Start Nginx\n\
 nginx -g "daemon off;"\n' > /start.sh && \
     chmod +x /start.sh
 
