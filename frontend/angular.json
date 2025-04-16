@@ -31,7 +31,9 @@
               "src/styles.scss"
 
             ],
-            "scripts": []
+            "scripts": [
+              "src/runtime-config.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -93,7 +95,9 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/runtime-config.js"
+            ]
           }
         }
       }
