@@ -124,7 +124,7 @@ public class UserController {
         
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        user.setRole("ROLE_USER");
+        setRoleForUSer(user);
         user.setLocked(false);
         user.setFailedLoginAttempts(0);
         User savedUser = userRepository.save(user);
@@ -165,7 +165,8 @@ public class UserController {
                     String randomPassword = GOOGLE_AUTH_PREFIX + GOOGLE_AUTH_SUFFIX;
                     newUser.setPassword(passwordEncoder.encode(randomPassword));
 
-                    newUser.setRole("ROLE_USER");
+
+                    setRoleForUSer(newUser);
                     newUser.setLocked(false);
                     newUser.setFailedLoginAttempts(0);
 
@@ -431,5 +432,22 @@ public class UserController {
         
         auditLogController.logAction("USER_HISTORY_RECORDED", user.getId(),
                 "User history recorded: " + (previousUsername != null ? "Username changed" : "Email changed"));
+    }
+
+    private void setRoleForUSer(User user) {
+        if (userRepository.findAll().isEmpty()){
+            user.setRole("ROLE_ROOT");
+
+            auditLogController.logAction("USER_ROLE_SET", user.getId(),
+                    "User role set to " + "ROLE_ROOT" + ": " + user.getUsername());
+        } else {
+            user.setRole("ROLE_USER");
+
+            auditLogController.logAction("USER_ROLE_SET", user.getId(),
+                    "User role set to " + "ROLE_USER" + ": " + user.getUsername());
+        }
+
+
+
     }
 }
