@@ -2,7 +2,6 @@ services:
   db:
     container_name: cardgame-mariadb
     environment:
-      #TODO: Change password and keep it secret
       MARIADB_ROOT_PASSWORD: example
       MARIADB_DATABASE: cardgame
     image: mariadb:11.6.2
@@ -19,7 +18,6 @@ services:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/cardgame
-      #TODO: Change password and keep it secret
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: example
     image: amazoncorretto:17

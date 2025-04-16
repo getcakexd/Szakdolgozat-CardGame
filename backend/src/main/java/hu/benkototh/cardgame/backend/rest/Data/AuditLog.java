@@ -14,11 +14,7 @@ public class AuditLog {
     @Column(nullable = false)
     private String action;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(nullable = false)
@@ -41,14 +37,6 @@ public class AuditLog {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Long getUserId() {

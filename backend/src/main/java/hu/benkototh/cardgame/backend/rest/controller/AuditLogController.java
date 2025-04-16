@@ -26,7 +26,7 @@ public class AuditLogController {
     public AuditLog logAction(String action, User user, String details) {
         AuditLog log = new AuditLog();
         log.setAction(action);
-        log.setUser(user);
+        log.setUserId(user.getId());
         log.setDetails(details);
         log.setTimestamp(new Date());
         return auditLogRepository.save(log);
@@ -35,7 +35,7 @@ public class AuditLogController {
     public AuditLog logAction(String action, Long userId, String details) {
         AuditLog log = new AuditLog();
         log.setAction(action);
-        log.setUser(userController.getUser(userId));
+        log.setUserId(userId);
         log.setDetails(details);
         log.setTimestamp(new Date());
         return auditLogRepository.save(log);
