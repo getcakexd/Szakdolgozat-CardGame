@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @EnableWebSecurity
 public class SecurityConfig {
     final private String frontendLocalhost = "http://localhost:4200";
-    final private String frontendHost = "https://example.com";
+    final private String frontendHost = "https://cardhub-20f674fb9639.herokuapp.com";
 
 
     @Bean

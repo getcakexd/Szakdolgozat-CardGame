@@ -15,7 +15,6 @@ FROM nginx:1.26
 
 RUN mkdir -p /app
 COPY --from=frontend-build /app/dist/frontend/browser /usr/share/nginx/html
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=backend-build /app/build/libs/backend-0.0.1-SNAPSHOT.jar /app/backend.jar
 
 RUN apt-get update && \
@@ -24,7 +23,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN echo 'server {\n\
-    listen 8080;\n\
+    listen PORT;\n\
     server_name localhost;\n\
     \n\
     location / {\n\
@@ -43,7 +42,7 @@ RUN echo 'server {\n\
     location = /50x.html {\n\
         root /usr/share/nginx/html;\n\
     }\n\
-}\n' > /etc/nginx/conf.d/default.conf
+}\n' > /etc/nginx/conf.d/default.conf.template
 
 RUN echo '#!/bin/bash\n\
 cat > /usr/share/nginx/html/env-config.js << EOF\n\
@@ -52,17 +51,23 @@ window.env = {\n\
 };\n\
 EOF\n\
 \n\
-JAWSDB_URL=$(echo $JAWSDB_MARIA_URL | sed "s/mysql:\/\///")\n\
-DB_USERNAME=$(echo $JAWSDB_URL | cut -d: -f1)\n\
-DB_PASSWORD=$(echo $JAWSDB_URL | cut -d: -f2 | cut -d@ -f1)\n\
-DB_HOST=$(echo $JAWSDB_URL | cut -d@ -f2 | cut -d/ -f1)\n\
-DB_NAME=$(echo $JAWSDB_URL | cut -d/ -f2)\n\
+if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
+  DB_URL=$(echo $JAWSDB_MARIA_URL | sed "s|mysql://||g")\n\
+  DB_USERNAME=$(echo $DB_URL | cut -d: -f1)\n\
+  DB_PASSWORD=$(echo $DB_URL | cut -d: -f2 | cut -d@ -f1)\n\
+  DB_HOST_PORT=$(echo $DB_URL | cut -d@ -f2 | cut -d/ -f1)\n\
+  DB_NAME=$(echo $DB_URL | cut -d/ -f2)\n\
+  \n\
+  export SPRING_DATASOURCE_URL="jdbc:mariadb://$DB_HOST_PORT/$DB_NAME"\n\
+  export SPRING_DATASOURCE_USERNAME=$DB_USERNAME\n\
+  export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD\n\
+fi\n\
 \n\
 java -Dserver.port=8081 \
 -Dspring.profiles.active=prod \
--Dspring.datasource.url=jdbc:mariadb://${DB_HOST}/${DB_NAME} \
--Dspring.datasource.username=${DB_USERNAME} \
--Dspring.datasource.password=${DB_PASSWORD} \
+-Dspring.datasource.url=${SPRING_DATASOURCE_URL} \
+-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME} \
+-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD} \
 -Dspring.jpa.hibernate.ddl-auto=update \
 -Dspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect \
 -Dspring.security.user.name=${SPRING_SECURITY_USER_NAME:-admin} \
@@ -72,16 +77,15 @@ java -Dserver.port=8081 \
 -Dgoogle.oauth.password.suffix=${GOOGLE_OAUTH_PASSWORD_SUFFIX:-default_suffix} \
 -jar /app/backend.jar &\n\
 \n\
+sed -i "s/PORT/$PORT/g" /etc/nginx/conf.d/default.conf.template\n\
+cp /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf\n\
+\n\
+echo "Nginx configuration:"\n\
+cat /etc/nginx/conf.d/default.conf\n\
+echo "PORT: $PORT"\n\
+\n\
 nginx -g "daemon off;"\n' > /start.sh && chmod +x /start.sh
-
-RUN echo '#!/bin/bash\n\
-PORT=${PORT:-8080}\n\
-if [ "$PORT" != "8080" ]; then\n\
-  apt-get update && apt-get install -y socat\n\
-  socat TCP-LISTEN:$PORT,fork TCP:localhost:8080 &\n\
-fi\n\
-/start.sh\n' > /wrapper.sh && chmod +x /wrapper.sh
 
 EXPOSE $PORT
 
-CMD /wrapper.sh
+CMD /start.sh
