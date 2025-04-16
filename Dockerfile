@@ -18,8 +18,8 @@ FROM nginx:1.26
 COPY --from=frontend-build /app/dist/frontend/browser /usr/share/nginx/html
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=backend-build /app/build/libs/*.jar /app/
-RUN mv /app/*.jar /app/backend.jar
+COPY --from=backend-build /app/build/libs/backend-0.0.1-SNAPSHOT.jar /app/backend.jar
+
 
 RUN apt-get update && \
     apt-get install -y openjdk-17-jre-headless && \
