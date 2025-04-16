@@ -1,5 +1,6 @@
 import { type SocialAuthServiceConfig, GoogleLoginProvider } from "@abacritt/angularx-social-login"
-import {GOOGLE_CLIENT_ID} from './secrets';
+
+const GOOGLE_CLIENT_ID = process.env['GOOGLE_CLIENT_ID'] || '';
 
 export const socialAuthServiceConfig: SocialAuthServiceConfig = {
   autoLogin: false,
