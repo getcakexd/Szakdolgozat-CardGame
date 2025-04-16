@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import { FormsModule } from '@angular/forms';
+import {AbstractControl, FormsModule} from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -19,6 +19,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {ThemeService} from '../../services/theme/theme.service';
+import {PasswordValidatorService} from '../../services/password-validator/password-validator.service';
 
 interface ThemePalette {
   name: string;
@@ -91,7 +92,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private passwordValidator: PasswordValidatorService
   ) {
     this.userId = this.authService.getCurrentUserId() || 0
     if (!this.authService.isLoggedIn()) {
@@ -206,6 +208,10 @@ export class ProfileComponent implements OnInit {
           },
         })
       } else {
+        if (!this.validatePassword(this.newPassword)) {
+          this.isLoading = false;
+          return;
+        }
         this.userService.updatePassword(this.userId, this.currentPassword, this.newPassword).subscribe({
           next: (response) => {
             this.cancelEdit()
@@ -285,6 +291,24 @@ export class ProfileComponent implements OnInit {
         this.toggleDeleteForm()
       }
     })
+  }
+
+  validatePassword(password: string): boolean {
+    const errors = this.passwordValidator.createPasswordStrengthValidator()(
+      { value: password } as AbstractControl
+    );
+
+    if (errors) {
+      this.message = this.passwordValidator.getPasswordErrorMessage(errors);
+      this.snackBar.open(
+        this.message,
+        this.translate.instant('CLOSE'),
+        { duration: 5000, panelClass: ["error-snackbar"] }
+      );
+      return false;
+    }
+
+    return true;
   }
 
   changePalette(palette: string): void {

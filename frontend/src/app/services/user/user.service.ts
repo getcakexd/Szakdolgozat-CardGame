@@ -31,6 +31,14 @@ export class UserService {
   }
 
   createUser(user: User): Observable<any> {
+    const passwordValidation = this.validatePasswordComplexity(user.password);
+
+    if (!passwordValidation.valid) {
+      return new Observable(observer => {
+        observer.error({ error: { message: passwordValidation.message } });
+      });
+    }
+
     return this.http.post(`${this.apiUrl}/create`, user);
   }
 
@@ -55,6 +63,14 @@ export class UserService {
   }
 
   updatePassword(userId: number, currentPassword: string, newPassword: string): Observable<any> {
+    const passwordValidation = this.validatePasswordComplexity(newPassword);
+
+    if (!passwordValidation.valid) {
+      return new Observable(observer => {
+        observer.error({ error: { message: passwordValidation.message } });
+      });
+    }
+
     return this.http.put(`${this.apiUrl}/update/password`, null, {
       params: {
         userId,
@@ -84,13 +100,51 @@ export class UserService {
   }
 
   setPassword(userId: number, newPassword: string): Observable<any> {
+    const passwordValidation = this.validatePasswordComplexity(newPassword);
+
+    if (!passwordValidation.valid) {
+      return new Observable(observer => {
+        observer.error({ error: { message: passwordValidation.message } });
+      });
+    }
+
     return this.http.put(`${this.apiUrl}/set-password`, null, {
       params: {
         userId,
         newPassword,
       },
       responseType: "text",
-    })
+    });
+  }
+
+  private validatePasswordComplexity(password: string): { valid: boolean; message?: string } {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumeric = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (password.length < minLength) {
+      return { valid: false, message: 'Password must be at least 8 characters long' };
+    }
+
+    if (!hasUpperCase) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+
+    if (!hasLowerCase) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+
+    if (!hasNumeric) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+
+    if (!hasSpecialChar) {
+      return { valid: false, message: 'Password must contain at least one special character' };
+    }
+
+    return { valid: true };
   }
 
   adminCreateUser(user: User): Observable<any> {

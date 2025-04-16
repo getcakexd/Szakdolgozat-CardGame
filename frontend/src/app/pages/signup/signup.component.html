@@ -40,11 +40,34 @@
                   [attr.aria-pressed]="hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          <mat-hint>{{ 'SIGNUP.PASSWORD_HINT' | translate }}</mat-hint>
           <mat-error *ngIf="signupForm.get('password')?.invalid">
             {{ getErrorMessage('password') }}
           </mat-error>
         </mat-form-field>
+
+        <div class="password-strength-container" *ngIf="signupForm.get('password')?.value">
+          <div class="strength-title">Password requirements:</div>
+          <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.minLength}">
+            <mat-icon>{{ passwordStrengthInfo.minLength ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>At least 8 characters</span>
+          </div>
+          <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasUpperCase}">
+            <mat-icon>{{ passwordStrengthInfo.hasUpperCase ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>At least one uppercase letter</span>
+          </div>
+          <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasLowerCase}">
+            <mat-icon>{{ passwordStrengthInfo.hasLowerCase ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>At least one lowercase letter</span>
+          </div>
+          <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasNumeric}">
+            <mat-icon>{{ passwordStrengthInfo.hasNumeric ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>At least one number</span>
+          </div>
+          <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasSpecialChar}">
+            <mat-icon>{{ passwordStrengthInfo.hasSpecialChar ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>At least one special character</span>
+          </div>
+        </div>
 
         <div class="signup-actions">
           <button mat-raised-button color="primary"
