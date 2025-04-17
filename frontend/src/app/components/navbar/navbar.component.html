@@ -2,37 +2,61 @@
   <div class="navbar-container">
     <div class="navbar-left">
 
+      <button class="navbar-button" mat-button routerLink="/home">
+        <mat-icon>home</mat-icon>
+        <span>{{ 'NAVBAR.HOME' | translate }}</span>
+      </button>
+
       <ng-container *ngIf="isLoggedIn">
-        <button class="navbar-button" mat-button routerLink="/home">
-          <mat-icon>home</mat-icon>
-          <span>{{ 'NAVBAR.HOME' | translate }}</span>
-        </button>
-        <button class="navbar-button" mat-button routerLink="/social">
+        <button class="navbar-button" mat-button [matMenuTriggerFor]="socialMenu">
           <mat-icon>people</mat-icon>
           <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
-        <button class="navbar-button" mat-button routerLink="/clubs">
-          <mat-icon>groups</mat-icon>
-          <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
-        </button>
-        <button class="navbar-button" mat-button routerLink="/lobby">
+        <mat-menu #socialMenu="matMenu">
+          <button mat-menu-item routerLink="/friends">
+            <mat-icon>person</mat-icon>
+            <span>{{ 'NAVBAR.FRIENDS' | translate }}</span>
+          </button>
+          <button mat-menu-item routerLink="/clubs">
+            <mat-icon>groups</mat-icon>
+            <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
+          </button>
+        </mat-menu>
+
+        <button class="navbar-button" mat-button [matMenuTriggerFor]="playMenu">
           <mat-icon>casino</mat-icon>
-          <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+          <span>{{ 'NAVBAR.PLAY' | translate }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
+        <mat-menu #playMenu="matMenu">
+          <button mat-menu-item routerLink="/lobby">
+            <mat-icon>casino</mat-icon>
+            <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+          </button>
+        </mat-menu>
 
-        <button *ngIf="isAdmin || isRoot" class="navbar-button" mat-button routerLink="/admin">
-          <mat-icon>admin_panel_settings</mat-icon>
-          <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
-        </button>
-
-        <button *ngIf="isAdmin || isAgent || isRoot" class="navbar-button" mat-button routerLink="/agent">
-          <mat-icon>support_agent</mat-icon>
-          <span>{{ 'NAVBAR.AGENT' | translate }}</span>
-        </button>
-        <button *ngIf="isRoot" class="navbar-button" mat-button routerLink="/audit-logs">
-          <mat-icon>history</mat-icon>
-          <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
-        </button>
+        <ng-container *ngIf="isAdmin || isAgent || isRoot">
+          <button class="navbar-button" mat-button [matMenuTriggerFor]="adminMenu">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>{{ 'NAVBAR.ADMIN_AREA' | translate }}</span>
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #adminMenu="matMenu">
+            <button *ngIf="isAdmin || isRoot" mat-menu-item routerLink="/admin">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
+            </button>
+            <button *ngIf="isAdmin || isAgent || isRoot" mat-menu-item routerLink="/agent">
+              <mat-icon>support_agent</mat-icon>
+              <span>{{ 'NAVBAR.AGENT' | translate }}</span>
+            </button>
+            <button *ngIf="isRoot" mat-menu-item routerLink="/audit-logs">
+              <mat-icon>history</mat-icon>
+              <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
+            </button>
+          </mat-menu>
+        </ng-container>
       </ng-container>
 
     </div>
@@ -41,6 +65,11 @@
       <app-theme-toggle></app-theme-toggle>
 
       <app-language-selector></app-language-selector>
+
+      <button class="navbar-button" mat-button routerLink="/support">
+        <mat-icon>support</mat-icon>
+        <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+      </button>
 
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/profile">

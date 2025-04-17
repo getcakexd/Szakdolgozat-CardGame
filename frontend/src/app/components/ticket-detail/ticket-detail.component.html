@@ -1,0 +1,146 @@
+<div class="ticket-detail-container">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && ticket" class="ticket-content" @fadeIn>
+    <mat-card appearance="outlined" class="ticket-header-card">
+      <mat-card-header>
+        <mat-card-title>{{ ticket.subject }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip [ngClass]="getStatusClass(ticket.status)" highlighted>
+            {{ 'TICKET.STATUS_' + ticket.status.toUpperCase() | translate }}
+          </mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <span matListItemTitle>{{ 'TICKET.REFERENCE' | translate }}</span>
+            <span matListItemLine class="reference-code">{{ ticket.reference }}</span>
+          </mat-list-item>
+
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <span matListItemTitle>{{ 'TICKET.CREATED' | translate }}</span>
+            <span matListItemLine>{{ ticket.createdAt | date:'medium' }}</span>
+          </mat-list-item>
+
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <span matListItemTitle>{{ 'TICKET.CATEGORY' | translate }}</span>
+            <span matListItemLine>{{ 'TICKET.CATEGORY_' + ticket.category.toUpperCase() | translate }}</span>
+          </mat-list-item>
+
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <span matListItemTitle>{{ 'TICKET.EMAIL' | translate }}</span>
+            <span matListItemLine>{{ ticket.email }}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+
+      <mat-card-actions align="end" *ngIf="isAgent">
+        <button mat-raised-button color="primary" *ngIf="ticket.status === 'new'"
+                (click)="updateStatus('in-progress')">
+          <mat-icon>play_arrow</mat-icon>
+          {{ 'TICKET.START_WORKING' | translate }}
+        </button>
+        <button mat-raised-button color="accent" *ngIf="ticket.status === 'in-progress'"
+                (click)="updateStatus('resolved')">
+          <mat-icon>check_circle</mat-icon>
+          {{ 'TICKET.MARK_RESOLVED' | translate }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="messages-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'TICKET.MESSAGES' | translate }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="messages-container">
+          <mat-card *ngFor="let message of messages; let i = index"
+                    appearance="outlined"
+                    class="message-box"
+                    [ngClass]="{'agent-message': message.senderType === 'agent'}"
+                    @slideIn [style.animation-delay.ms]="i * 100">
+            <mat-card-header>
+              <mat-card-title-group>
+                <mat-card-title>{{ message.senderName }}</mat-card-title>
+                <mat-card-subtitle>
+                  <span class="message-time">{{ message.createdAt | date:'medium' }}</span>
+                </mat-card-subtitle>
+                <mat-chip *ngIf="message.senderType === 'agent'" color="primary" selected>
+                  {{ 'TICKET.SUPPORT_AGENT' | translate }}
+                </mat-chip>
+                <mat-chip *ngIf="message.senderType !== 'agent'" color="accent" selected>
+                  {{ 'TICKET.CUSTOMER' | translate }}
+                </mat-chip>
+              </mat-card-title-group>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="message-content">{{ message.message }}</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card *ngIf="messages.length === 0" class="no-messages-card">
+            <mat-card-content>
+              <mat-icon>chat</mat-icon>
+              <p>{{ 'TICKET.NO_MESSAGES' | translate }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <mat-card *ngIf="canReplyToTicket()" appearance="outlined" class="reply-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'TICKET.REPLY' | translate }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+              <mat-form-field appearance="outline" class="message-field">
+                <mat-label>{{ 'TICKET.YOUR_MESSAGE' | translate }}</mat-label>
+                <textarea matInput formControlName="message" rows="4" required></textarea>
+                <mat-error *ngIf="messageForm.get('message')?.hasError('required')">
+                  {{ 'TICKET.MESSAGE_REQUIRED' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="messageForm.invalid || isSending" (click)="sendMessage()">
+              <mat-spinner diameter="20" *ngIf="isSending"></mat-spinner>
+              <span *ngIf="!isSending">
+                <mat-icon>send</mat-icon>
+                {{ 'TICKET.SEND' | translate }}
+              </span>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card *ngIf="ticket.status === 'resolved'" class="status-message-card resolved-card">
+          <mat-card-content>
+            <mat-icon>check_circle</mat-icon>
+            <p>{{ 'TICKET.TICKET_RESOLVED' | translate }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="ticket.status === 'new' && !isAgent" class="status-message-card waiting-card">
+          <mat-card-content>
+            <mat-icon>hourglass_empty</mat-icon>
+            <p>{{ 'TICKET.WAITING_FOR_AGENT' | translate }}</p>
+            <p class="secondary-text">{{ 'TICKET.AGENT_WILL_RESPOND' | translate }}</p>
+          </mat-card-content>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

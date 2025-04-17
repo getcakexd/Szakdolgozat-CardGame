@@ -83,7 +83,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         }
       })
 
-      // Monitor password changes to update strength indicators
       this.signupForm.get('password')?.valueChanges.subscribe(value => {
         this.updatePasswordStrengthInfo(value);
       });

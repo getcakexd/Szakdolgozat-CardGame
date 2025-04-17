@@ -4,7 +4,7 @@
       <mat-card-title>{{ 'AGENT.TITLE' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-tab-group>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab [label]="'AGENT.USER_MANAGEMENT' | translate">
           <div class="tab-content">
             <table mat-table [dataSource]="users" class="mat-elevation-z8 full-width-table">
@@ -52,63 +52,77 @@
           </div>
         </mat-tab>
 
-        <mat-tab [label]="'AGENT.CONTACT_REQUESTS' | translate">
+        <mat-tab [label]="'TICKET.SUPPORT_TICKETS' | translate">
           <div class="tab-content">
-            <table mat-table [dataSource]="contactRequests" class="mat-elevation-z8 full-width-table">
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.ID' | translate }}</th>
-                <td mat-cell *matCellDef="let request">{{request.id}}</td>
+            <div class="filter-buttons">
+              <button mat-button [class.active]="activeFilter === 'all'" (click)="applyFilter('all')">
+                {{ 'TICKET.ALL_TICKETS' | translate }}
+              </button>
+              <button mat-button [class.active]="activeFilter === 'new'" (click)="applyFilter('new')">
+                {{ 'TICKET.NEW_TICKETS' | translate }}
+              </button>
+              <button mat-button [class.active]="activeFilter === 'in-progress'" (click)="applyFilter('in-progress')">
+                {{ 'TICKET.IN_PROGRESS_TICKETS' | translate }}
+              </button>
+              <button mat-button [class.active]="activeFilter === 'resolved'" (click)="applyFilter('resolved')">
+                {{ 'TICKET.RESOLVED_TICKETS' | translate }}
+              </button>
+            </div>
+
+            <table mat-table [dataSource]="getFilteredTickets()" class="mat-elevation-z8 full-width-table">
+              <ng-container matColumnDef="reference">
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.REFERENCE' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">{{ticket.reference}}</td>
               </ng-container>
 
               <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.NAME' | translate }}</th>
-                <td mat-cell *matCellDef="let request">{{request.name}}</td>
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.NAME' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">{{ticket.name}}</td>
               </ng-container>
 
               <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.EMAIL' | translate }}</th>
-                <td mat-cell *matCellDef="let request">{{request.email}}</td>
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.EMAIL' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">{{ticket.email}}</td>
               </ng-container>
 
               <ng-container matColumnDef="subject">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.SUBJECT' | translate }}</th>
-                <td mat-cell *matCellDef="let request">{{request.subject}}</td>
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.SUBJECT' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">{{ticket.subject}}</td>
               </ng-container>
 
               <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.STATUS' | translate }}</th>
-                <td mat-cell *matCellDef="let request">
-                  <span class="status-badge" [ngClass]="request.status">{{request.status}}</span>
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.STATUS' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">
+                  <span class="status-badge" [ngClass]="getStatusClass(ticket.status)">
+                    {{ 'TICKET.STATUS_' + ticket.status.toUpperCase() | translate }}
+                  </span>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="createdAt">
-                <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.CREATED' | translate }}</th>
-                <td mat-cell *matCellDef="let request">{{request.createdAt | date:'short'}}</td>
+                <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.CREATED' | translate }}</th>
+                <td mat-cell *matCellDef="let ticket">{{ticket.createdAt | date:'short'}}</td>
               </ng-container>
 
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>{{ 'AGENT.ACTIONS' | translate }}</th>
-                <td mat-cell *matCellDef="let request">
-                  <button mat-icon-button color="primary" (click)="viewContactDetails(request)" aria-label="View contact details">
+                <td mat-cell *matCellDef="let ticket">
+                  <button mat-icon-button color="primary" (click)="viewTicket(ticket.id!)" aria-label="View ticket details">
                     <mat-icon>visibility</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" *ngIf="request.status === 'new'"
-                          (click)="updateContactStatus(request, 'in-progress')" aria-label="Start working on request">
+                  <button mat-icon-button color="primary" *ngIf="ticket.status === 'new'"
+                          (click)="updateTicketStatus(ticket, 'in-progress')" aria-label="Start working on ticket">
                     <mat-icon>play_arrow</mat-icon>
                   </button>
-                  <button mat-icon-button color="accent" *ngIf="request.status === 'in-progress'"
-                          (click)="updateContactStatus(request, 'resolved')" aria-label="Mark as resolved">
+                  <button mat-icon-button color="accent" *ngIf="ticket.status === 'in-progress'"
+                          (click)="updateTicketStatus(ticket, 'resolved')" aria-label="Mark as resolved">
                     <mat-icon>check_circle</mat-icon>
-                  </button>
-                  <button mat-icon-button color="primary" (click)="sendEmail(request)" aria-label="Send email">
-                    <mat-icon>email</mat-icon>
                   </button>
                 </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="contactDisplayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: contactDisplayedColumns;"></tr>
+              <tr mat-header-row *matHeaderRowDef="ticketDisplayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: ticketDisplayedColumns;"></tr>
             </table>
           </div>
         </mat-tab>
