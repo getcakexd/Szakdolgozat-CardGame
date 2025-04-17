@@ -62,7 +62,6 @@ export class AuthService {
     localStorage.removeItem("currentUser")
     this.currentUserSubject.next(null)
     this.socialAuthService.signOut().catch(() => {
-      console.log("Not logged in with social provider")
     })
     this.router.navigate(["/home"]).then(() => {
       window.location.reload()

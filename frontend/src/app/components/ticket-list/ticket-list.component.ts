@@ -76,7 +76,6 @@ export class TicketListComponent implements OnInit {
       this.ticketService.getUserTickets(userId).subscribe(
         (tickets) => {
           this.userTickets = tickets;
-          console.log(this.userTickets);
           this.isLoading = false;
         },
         (error) => {

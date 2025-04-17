@@ -80,7 +80,6 @@ export class CreateTicketComponent implements OnInit {
 
       const reference = this.ticketService.generateTicketReference();
       const userId = this.authService.getCurrentUserId() || null;
-      console.log(userId)
 
       const ticket: Ticket = {
         userId: userId || undefined,
@@ -92,8 +91,6 @@ export class CreateTicketComponent implements OnInit {
         category: this.ticketForm.value.category,
         reference: reference
       };
-
-      console.log(ticket);
 
       this.ticketService.createTicket(ticket).subscribe(
         (response) => {

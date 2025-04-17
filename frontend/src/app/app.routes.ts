@@ -4,7 +4,6 @@ import { SignupComponent } from './pages/signup/signup.component';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import {ProfileComponent} from './pages/profile/profile.component';
-import {SocialComponent} from './pages/social/social.component';
 import {ClubPageComponent} from './pages/club-page/club-page.component';
 import {ClubComponent} from './components/club/club.component';
 import {AdminDashboardComponent} from './components/admin-dashboard/admin-dashboard.component';
@@ -25,7 +24,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  //{ path: 'social', component: SocialComponent, canActivate: [AuthGuard] },
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
   { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
   { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
