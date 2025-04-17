@@ -2,12 +2,12 @@
   <div class="navbar-container">
     <div class="navbar-left">
 
-      <ng-container *ngIf="isLoggedIn">
-        <button class="navbar-button" mat-button routerLink="/home">
-          <mat-icon>home</mat-icon>
-          <span>{{ 'NAVBAR.HOME' | translate }}</span>
-        </button>
+      <button class="navbar-button" mat-button routerLink="/home">
+        <mat-icon>home</mat-icon>
+        <span>{{ 'NAVBAR.HOME' | translate }}</span>
+      </button>
 
+      <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button [matMenuTriggerFor]="socialMenu">
           <mat-icon>people</mat-icon>
           <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
@@ -57,13 +57,6 @@
             </button>
           </mat-menu>
         </ng-container>
-      </ng-container>
-
-      <ng-container *ngIf="!isLoggedIn">
-        <button class="navbar-button" mat-button routerLink="/support">
-          <mat-icon>support</mat-icon>
-          <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
-        </button>
       </ng-container>
 
     </div>
