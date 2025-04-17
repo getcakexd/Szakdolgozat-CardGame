@@ -1,0 +1,36 @@
+.support-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  .support-title {
+    font-size: 1.75rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: var(--mat-sys-primary);
+    text-align: center;
+  }
+
+  .tab-content {
+    padding: 1.5rem 0;
+  }
+
+  ::ng-deep {
+    .mat-mdc-tab-header {
+      margin-bottom: 1rem;
+    }
+
+    app-create-ticket, app-ticket-list {
+      .create-ticket-container, .ticket-list-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+
+        mat-card {
+          box-shadow: none;
+          padding: 0;
+        }
+      }
+    }
+  }
+}

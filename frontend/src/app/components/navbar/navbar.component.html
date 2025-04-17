@@ -20,6 +20,11 @@
           <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
         </button>
 
+        <button class="navbar-button" mat-button routerLink="/support">
+          <mat-icon>support</mat-icon>
+          <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+        </button>
+
         <button *ngIf="isAdmin || isRoot" class="navbar-button" mat-button routerLink="/admin">
           <mat-icon>admin_panel_settings</mat-icon>
           <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
@@ -32,6 +37,13 @@
         <button *ngIf="isRoot" class="navbar-button" mat-button routerLink="/audit-logs">
           <mat-icon>history</mat-icon>
           <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoggedIn">
+        <button class="navbar-button" mat-button routerLink="/support">
+          <mat-icon>support</mat-icon>
+          <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
         </button>
       </ng-container>
 

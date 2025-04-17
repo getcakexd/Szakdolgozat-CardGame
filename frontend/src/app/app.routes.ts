@@ -16,6 +16,8 @@ import {AuditLogsComponent} from './components/audit-logs/audit-logs.component';
 import {RootGuard} from './guards/root.guard';
 import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
 import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
+import {SupportComponent} from './pages/support/support.component';
+import {TicketDetailComponent} from './components/ticket-detail/ticket-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,6 +28,8 @@ export const routes: Routes = [
   { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
   { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
   { path: 'lobby', component: LobbyHomeComponent, canActivate: [AuthGuard] },
+  { path: 'support', component: SupportComponent},
+  { path: 'ticket/:id', component: TicketDetailComponent},
   { path: 'lobby/:id', component: LobbyDetailComponent, canActivate: [AuthGuard] },
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },

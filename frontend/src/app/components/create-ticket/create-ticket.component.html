@@ -1,0 +1,89 @@
+<div class="create-ticket-container">
+  <mat-card>
+    <mat-card-content>
+      <h2 class="form-title">{{ 'TICKET.CREATE_TITLE' | translate }}</h2>
+
+      <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" class="ticket-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'TICKET.NAME' | translate }}</mat-label>
+            <input matInput formControlName="name" [readonly]="isLoggedIn">
+            <mat-error *ngIf="ticketForm.get('name')?.hasError('required')">
+              {{ 'TICKET.NAME_REQUIRED' | translate }}
+            </mat-error>
+            <mat-error *ngIf="ticketForm.get('name')?.hasError('minlength')">
+              {{ 'TICKET.NAME_MIN_LENGTH' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'TICKET.EMAIL' | translate }}</mat-label>
+            <input matInput formControlName="email" type="email" [readonly]="isLoggedIn">
+            <mat-error *ngIf="ticketForm.get('email')?.hasError('required')">
+              {{ 'TICKET.EMAIL_REQUIRED' | translate }}
+            </mat-error>
+            <mat-error *ngIf="ticketForm.get('email')?.hasError('email')">
+              {{ 'TICKET.EMAIL_INVALID' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'TICKET.CATEGORY' | translate }}</mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="account">{{ 'TICKET.CATEGORY_ACCOUNT' | translate }}</mat-option>
+              <mat-option value="technical">{{ 'TICKET.CATEGORY_TECHNICAL' | translate }}</mat-option>
+              <mat-option value="billing">{{ 'TICKET.CATEGORY_BILLING' | translate }}</mat-option>
+              <mat-option value="feedback">{{ 'TICKET.CATEGORY_FEEDBACK' | translate }}</mat-option>
+              <mat-option value="other">{{ 'TICKET.CATEGORY_OTHER' | translate }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="ticketForm.get('category')?.hasError('required')">
+              {{ 'TICKET.CATEGORY_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'TICKET.SUBJECT' | translate }}</mat-label>
+            <input matInput formControlName="subject">
+            <mat-error *ngIf="ticketForm.get('subject')?.hasError('required')">
+              {{ 'TICKET.SUBJECT_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'TICKET.MESSAGE' | translate }}</mat-label>
+            <textarea matInput formControlName="message" rows="6"></textarea>
+            <mat-hint>{{ 'TICKET.MESSAGE_HINT' | translate }}</mat-hint>
+            <mat-error *ngIf="ticketForm.get('message')?.hasError('required')">
+              {{ 'TICKET.MESSAGE_REQUIRED' | translate }}
+            </mat-error>
+            <mat-error *ngIf="ticketForm.get('message')?.hasError('minlength')">
+              {{ 'TICKET.MESSAGE_MIN_LENGTH' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="ticketForm.invalid || isSubmitting">
+            <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+            <span *ngIf="!isSubmitting">{{ 'TICKET.SUBMIT' | translate }}</span>
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="ticketReference" class="reference-container">
+        <h3>{{ 'TICKET.REFERENCE_TITLE' | translate }}</h3>
+        <p>{{ 'TICKET.REFERENCE_DESCRIPTION' | translate }}</p>
+        <div class="reference-code">{{ ticketReference }}</div>
+        <p class="reference-note">{{ 'TICKET.REFERENCE_NOTE' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

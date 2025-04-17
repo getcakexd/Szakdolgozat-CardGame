@@ -1,0 +1,108 @@
+<div class="ticket-list-container">
+  <div *ngIf="isLoggedIn && showMyTickets">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && userTickets.length === 0" class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>{{ 'TICKET.NO_TICKETS' | translate }}</p>
+      <button mat-raised-button color="primary" [routerLink]="['/support']">
+        {{ 'TICKET.CREATE_NEW' | translate }}
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="userTickets" class="ticket-table" *ngIf="!isLoading && userTickets.length > 0">
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.REFERENCE' | translate }}</th>
+        <td mat-cell *matCellDef="let ticket">{{ ticket.reference }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.SUBJECT' | translate }}</th>
+        <td mat-cell *matCellDef="let ticket">{{ ticket.subject }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.STATUS' | translate }}</th>
+        <td mat-cell *matCellDef="let ticket">
+          <span class="status-badge" [ngClass]="getStatusClass(ticket.status)">
+            {{ 'TICKET.STATUS_' + ticket.status.toUpperCase() | translate }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.CREATED' | translate }}</th>
+        <td mat-cell *matCellDef="let ticket">{{ ticket.createdAt | date:'medium' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TICKET.ACTIONS' | translate }}</th>
+        <td mat-cell *matCellDef="let ticket">
+          <button mat-icon-button color="primary" (click)="viewTicket(ticket.id!)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="ticket-row"></tr>
+    </table>
+  </div>
+
+  <div *ngIf="!showMyTickets || !isLoggedIn">
+    <div class="reference-search">
+      <form [formGroup]="referenceForm" (ngSubmit)="searchByReference()">
+        <mat-form-field appearance="outline" class="reference-field">
+          <mat-label>{{ 'TICKET.ENTER_REFERENCE' | translate }}</mat-label>
+          <input matInput formControlName="reference" placeholder="ABCD1234" maxlength="8">
+          <mat-error *ngIf="referenceForm.get('reference')?.hasError('required')">
+            {{ 'TICKET.REFERENCE_REQUIRED' | translate }}
+          </mat-error>
+          <mat-error *ngIf="referenceForm.get('reference')?.hasError('minlength') || referenceForm.get('reference')?.hasError('maxlength')">
+            {{ 'TICKET.REFERENCE_LENGTH' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="referenceForm.invalid || isSearching">
+          <mat-spinner diameter="20" *ngIf="isSearching"></mat-spinner>
+          <span *ngIf="!isSearching">{{ 'TICKET.SEARCH' | translate }}</span>
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="searchedTicket" class="search-result">
+      <div class="ticket-card">
+        <div class="ticket-header">
+          <div class="ticket-reference">{{ searchedTicket.reference }}</div>
+          <div class="ticket-status">
+            <span class="status-badge" [ngClass]="getStatusClass(searchedTicket.status)">
+              {{ 'TICKET.STATUS_' + searchedTicket.status.toUpperCase() | translate }}
+            </span>
+          </div>
+        </div>
+
+        <div class="ticket-body">
+          <h3>{{ searchedTicket.subject }}</h3>
+          <div class="ticket-meta">
+            <div class="meta-item">
+              <mat-icon>event</mat-icon>
+              <span>{{ searchedTicket.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon>category</mat-icon>
+              <span>{{ 'TICKET.CATEGORY_' + searchedTicket.category.toUpperCase() | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-actions">
+          <button mat-raised-button color="primary" (click)="viewTicket(searchedTicket.id!)">
+            {{ 'TICKET.VIEW_DETAILS' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

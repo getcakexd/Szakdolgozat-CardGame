@@ -1,15 +1,14 @@
 import { Component, OnInit } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { Router } from "@angular/router"
 import { User } from "../../models/user.model"
 import { ModifyUserDialogComponent } from "../modify-user-dialog/modify-user-dialog.component"
 import { UserHistoryDialogComponent } from "../user-history-dialog/user-history-dialog.component"
-import { ContactRequest } from "../../models/contact-request.model"
+import { Ticket } from "../../models/ticket.model"
 import { UserHistory } from "../../models/user-history.model"
 import { UserService } from "../../services/user/user.service"
-import { ContactService } from "../../services/contact/contact.service"
 import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component"
-import { ContactDetailsDialogComponent } from "../contact-details-dialog/contact-details-dialog.component"
 import {
   MatCell,
   MatCellDef,
@@ -23,11 +22,12 @@ import {
   MatTable,
 } from "@angular/material/table"
 import { MatIcon } from "@angular/material/icon"
-import { MatIconButton } from "@angular/material/button"
+import {MatButton, MatIconButton} from "@angular/material/button"
 import { DatePipe, NgClass, NgIf } from "@angular/common"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {TicketService} from '../../services/ticket/ticket.service';
 
 @Component({
   selector: "app-agent-dashboard",
@@ -55,29 +55,31 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MatCardTitle,
     MatCardHeader,
     MatCard,
-    TranslateModule
+    TranslateModule,
+    MatButton
   ],
   standalone: true,
 })
 export class AgentDashboardComponent implements OnInit {
   users: User[] = []
-  contactRequests: ContactRequest[] = []
+  tickets: Ticket[] = []
   userDisplayedColumns: string[] = ["id", "username", "email", "locked", "actions"]
-  contactDisplayedColumns: string[] = ["id", "name", "email", "subject", "status", "createdAt", "actions"]
-  selectedUser: User | null = null
+  ticketDisplayedColumns: string[] = ["reference", "name", "email", "subject", "status", "createdAt", "actions"]
   userHistory: UserHistory[] = []
+  activeFilter: 'all' | 'new' | 'in-progress' | 'resolved' = 'all'
 
   constructor(
     private userService: UserService,
-    private contactService: ContactService,
+    private ticketService: TicketService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private router: Router,
     private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.loadUsers()
-    this.loadContactRequests()
+    this.loadTickets()
   }
 
   loadUsers(): void {
@@ -87,11 +89,23 @@ export class AgentDashboardComponent implements OnInit {
     )
   }
 
-  loadContactRequests(): void {
-    this.contactService.getAllContactRequests().subscribe(
-      (requests) => (this.contactRequests = requests),
-      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_REQUESTS')),
+  loadTickets(): void {
+    this.ticketService.getAllTickets().subscribe(
+      (tickets) => (this.tickets = tickets),
+      (error) => this.showError(this.translate.instant('TICKET.ERROR_LOADING')),
     )
+  }
+
+  applyFilter(filter: 'all' | 'new' | 'in-progress' | 'resolved'): void {
+    this.activeFilter = filter;
+  }
+
+  getFilteredTickets(): Ticket[] {
+    if (this.activeFilter === 'all') {
+      return this.tickets;
+    } else {
+      return this.tickets.filter(ticket => ticket.status === this.activeFilter);
+    }
   }
 
   unlockUser(user: User): void {
@@ -148,30 +162,32 @@ export class AgentDashboardComponent implements OnInit {
     )
   }
 
-  updateContactStatus(request: ContactRequest, status: "in-progress" | "resolved"): void {
+  updateTicketStatus(ticket: Ticket, status: 'in-progress' | 'resolved'): void {
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}")
-    this.contactService.updateContactRequestStatus(request.id!, status, currentUser.id).subscribe(
-      () => {
-        this.showSuccess(this.translate.instant('AGENT.REQUEST_MARKED', { status: status }))
-        this.loadContactRequests()
+    this.ticketService.updateTicketStatus(ticket.id!.toString(), status, currentUser.id).subscribe(
+      (updatedTicket) => {
+        const index = this.tickets.findIndex(t => t.id === updatedTicket.id);
+        if (index !== -1) {
+          this.tickets[index] = updatedTicket;
+        }
+        this.showSuccess(this.translate.instant('TICKET.STATUS_UPDATED'));
+        window.location.reload();
       },
-      (error) => this.showError(this.translate.instant('AGENT.FAILED_UPDATE_STATUS')),
+      (error) => this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS')),
     )
   }
 
-  viewContactDetails(request: ContactRequest): void {
-    this.dialog.open(ContactDetailsDialogComponent, {
-      width: "600px",
-      data: { request },
-    })
+  viewTicket(ticketId: string): void {
+    this.router.navigate(['/ticket', ticketId]);
   }
 
-  sendEmail(request: ContactRequest): void {
-    this.snackBar.open(
-      this.translate.instant('AGENT.EMAIL_FUTURE'),
-      this.translate.instant('COMMON.CLOSE'),
-      { duration: 3000 }
-    )
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'new': return 'status-new';
+      case 'in-progress': return 'status-progress';
+      case 'resolved': return 'status-resolved';
+      default: return '';
+    }
   }
 
   private showSuccess(message: string): void {

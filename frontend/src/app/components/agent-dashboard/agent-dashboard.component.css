@@ -1,184 +1,61 @@
 .agent-dashboard-container {
-  padding: 20px 0;
-}
-
-.page-header {
-  margin-bottom: 24px;
-
-  h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--primary-color);
-  }
-
-  p {
-    color: var(--text-secondary);
-    font-size: 16px;
-    margin: 0;
-  }
-}
-
-.dashboard-card {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow-medium);
-  background-color: var(--card-background);
-  transition: all var(--transition-normal) ease;
-}
-
-.tab-content {
-  padding: 24px 16px;
-}
-
-.table-container {
-  overflow-x: auto;
-  border-radius: 4px;
-}
-
-.full-width-table {
-  width: 100%;
-}
-
-:host ::ng-deep .mat-table,
-:host ::ng-deep .mat-mdc-table {
-  background-color: var(--card-background) !important;
-  color: var(--text-primary) !important;
-}
-
-:host ::ng-deep .mat-header-row,
-:host ::ng-deep .mat-mdc-header-row {
-  background-color: var(--primary-dark) !important;
-}
-
-:host ::ng-deep .mat-header-cell,
-:host ::ng-deep .mat-mdc-header-cell {
-  color: white !important;
-  font-weight: 500;
-  border-bottom-color: var(--border-color) !important;
-}
-
-:host ::ng-deep .mat-row,
-:host ::ng-deep .mat-mdc-row {
-  background-color: var(--card-background) !important;
-  border-bottom-color: var(--border-color) !important;
-  transition: background-color var(--transition-fast) ease;
-}
-
-:host ::ng-deep .mat-row:hover,
-:host ::ng-deep .mat-mdc-row:hover {
-  background-color: var(--hover-overlay) !important;
-}
-
-:host ::ng-deep .mat-cell,
-:host ::ng-deep .mat-mdc-cell {
-  color: var(--text-primary) !important;
-  border-bottom-color: var(--border-color) !important;
-}
-
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  display: inline-block;
-}
-
-.status-badge.active {
-  background-color: var(--success-color);
-  color: white;
-}
-
-.status-badge.locked {
-  background-color: var(--error-color);
-  color: white;
-}
-
-.status-badge.new {
-  background-color: var(--info-color);
-  color: white;
-}
-
-.status-badge.in-progress {
-  background-color: var(--warning-color);
-  color: white;
-}
-
-.status-badge.resolved {
-  background-color: var(--success-color);
-  color: white;
-}
-
-:host ::ng-deep .mat-icon-button {
-  transition: background-color var(--transition-fast) ease;
-}
-
-:host ::ng-deep .mat-icon-button:hover {
-  background-color: var(--hover-overlay);
-}
-
-:host ::ng-deep .mat-icon-button .mat-icon {
-  color: var(--text-primary);
-}
-
-:host ::ng-deep .mat-icon-button.mat-primary .mat-icon {
-  color: var(--primary-color);
-}
-
-:host ::ng-deep .mat-icon-button.mat-accent .mat-icon {
-  color: var(--accent-color);
-}
-
-:host ::ng-deep .mat-icon-button.mat-warn .mat-icon {
-  color: var(--error-color);
-}
-
-:host ::ng-deep mat-card {
-  background-color: var(--card-background) !important;
-  color: var(--text-primary) !important;
-}
-
-:host ::ng-deep mat-card-header {
-  background-color: var(--primary-color) !important;
-  color: white !important;
-  padding: 16px !important;
-}
-
-:host ::ng-deep mat-card-title {
-  color: white !important;
-  margin: 0 !important;
-}
-
-:host ::ng-deep .mat-tab-label,
-:host ::ng-deep .mat-mdc-tab-label {
-  color: var(--text-primary) !important;
-  opacity: 0.7;
-}
-
-:host ::ng-deep .mat-tab-label-active,
-:host ::ng-deep .mat-mdc-tab-label-active {
-  color: var(--primary-color) !important;
-  opacity: 1;
-}
-
-:host ::ng-deep .mat-tab-header,
-:host ::ng-deep .mat-mdc-tab-header {
-  border-bottom-color: var(--border-color) !important;
-}
-
-:host ::ng-deep .mat-tab-group,
-:host ::ng-deep .mat-mdc-tab-group {
-  background-color: var(--card-background) !important;
-}
-
-@media (max-width: 768px) {
-  .page-header h1 {
-    font-size: 24px;
+  .full-width-table {
+    width: 100%;
+    margin-top: 1rem;
   }
 
   .tab-content {
-    padding: 16px 8px;
+    padding: 1rem 0;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+
+    &.locked {
+      background-color: var(--mat-red);
+      color: white;
+    }
+
+    &.active {
+      background-color: var(--mat-green);
+      color: white;
+    }
+
+    &.status-new {
+      background-color: var(--mat-sys-tertiary-container);
+      color: var(--mat-sys-on-tertiary-container);
+    }
+
+    &.status-progress {
+      background-color: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+    }
+
+    &.status-resolved {
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+  }
+
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    button {
+      border-radius: 1.5rem;
+      padding: 0 1.5rem;
+
+      &.active {
+        background-color: var(--mat-sys-primary-container);
+        color: var(--mat-sys-on-primary-container);
+      }
+    }
   }
 }
-

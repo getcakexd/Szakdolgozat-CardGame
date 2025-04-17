@@ -1,8 +1,7 @@
-import {Component, LOCALE_ID, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {AuthService} from './services/auth/auth.service';
-import {ContactFormComponent} from './components/contact-form/contact-form.component';
 import {AsyncPipe, NgClass} from '@angular/common';
 import {Observable} from 'rxjs';
 import {ThemeService} from './services/theme/theme.service';
@@ -11,7 +10,7 @@ import {ThemeService} from './services/theme/theme.service';
   selector: 'app-root',
   imports: [
     NavbarComponent,
-    RouterOutlet, RouterModule, ContactFormComponent, NgClass, AsyncPipe,
+    RouterOutlet, RouterModule, NgClass, AsyncPipe,
   ],
   templateUrl: './app.component.html',
   standalone: true,
