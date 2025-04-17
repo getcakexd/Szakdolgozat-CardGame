@@ -4,7 +4,7 @@
       <mat-card-title>{{ 'AGENT.TITLE' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-tab-group>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab [label]="'AGENT.USER_MANAGEMENT' | translate">
           <div class="tab-content">
             <table mat-table [dataSource]="users" class="mat-elevation-z8 full-width-table">

@@ -67,6 +67,7 @@ export class AgentDashboardComponent implements OnInit {
   ticketDisplayedColumns: string[] = ["reference", "name", "email", "subject", "status", "createdAt", "actions"]
   userHistory: UserHistory[] = []
   activeFilter: 'all' | 'new' | 'in-progress' | 'resolved' = 'all'
+  selectedTabIndex = 0;
 
   constructor(
     private userService: UserService,
@@ -171,7 +172,8 @@ export class AgentDashboardComponent implements OnInit {
           this.tickets[index] = updatedTicket;
         }
         this.showSuccess(this.translate.instant('TICKET.STATUS_UPDATED'));
-        window.location.reload();
+        this.loadTickets();
+        this.selectedTabIndex = 1;
       },
       (error) => this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS')),
     )
