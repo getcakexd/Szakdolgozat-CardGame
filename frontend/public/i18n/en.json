@@ -2,6 +2,7 @@
   "NAVBAR": {
     "HOME": "Home",
     "SOCIAL": "Social",
+    "FRIENDS": "Friends",
     "CLUBS": "Clubs",
     "ADMIN": "Admin",
     "AGENT": "Agent",
@@ -10,8 +11,10 @@
     "LOGIN": "Login",
     "SIGNUP": "Sign Up",
     "AUDIT_LOGS": "Audit Logs",
+    "PLAY": "Play",
     "LOBBY": "Lobby",
-    "SUPPORT": "Support"
+    "SUPPORT": "Support",
+    "ADMIN_AREA": "Administration"
   },
   "HOME": {
     "WELCOME": "Welcome to CardHUB",
@@ -79,7 +82,7 @@
     }
   },
   "SOCIAL": {
-    "TITLE": "Social Hub",
+    "TITLE": "Friend Hub",
     "SUBTITLE": "Connect with friends and manage your social network",
     "FRIENDS": "Friends",
     "MY_FRIENDS": "My Friends",

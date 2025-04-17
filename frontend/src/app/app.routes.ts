@@ -18,13 +18,15 @@ import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component'
 import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
 import {SupportComponent} from './pages/support/support.component';
 import {TicketDetailComponent} from './components/ticket-detail/ticket-detail.component';
+import {FriendsComponent} from './pages/friends/friends.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'social', component: SocialComponent, canActivate: [AuthGuard] },
+  //{ path: 'social', component: SocialComponent, canActivate: [AuthGuard] },
+  { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
   { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
   { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
   { path: 'lobby', component: LobbyHomeComponent, canActivate: [AuthGuard] },

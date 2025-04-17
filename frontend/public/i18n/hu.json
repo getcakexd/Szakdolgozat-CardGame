@@ -2,6 +2,7 @@
   "NAVBAR": {
     "HOME": "Kezdőlap",
     "SOCIAL": "Közösség",
+    "FRIENDS": "Barátok",
     "CLUBS": "Klubok",
     "ADMIN": "Admin",
     "AGENT": "Ügynök",
@@ -10,8 +11,10 @@
     "LOGIN": "Bejelentkezés",
     "SIGNUP": "Regisztráció",
     "AUDIT_LOGS": "Audit Naplók",
+    "PLAY": "Játék",
     "LOBBY": "Előszoba",
-    "SUPPORT": "Támogatás"
+    "SUPPORT": "Támogatás",
+    "ADMIN_AREA": "Adminisztráció"
   },
   "HOME": {
     "WELCOME": "Üdvözöljük a CardHUB-on",
@@ -49,7 +52,7 @@
     "CURRENT_PASSWORD": "Jelenlegi jelszó",
     "NEW_PASSWORD": "Új jelszó",
     "SAVE": "Mentés",
-    "CANCEL": "  "Jelenlegi jelszó",
+    "CANCEL": "Jelenlegi jelszó",
     "NEW_PASSWORD": "Új jelszó",
     "SAVE": "Mentés",
     "CANCEL": "Mégse",
@@ -82,7 +85,7 @@
     }
   },
   "SOCIAL": {
-    "TITLE": "Közösségi központ",
+    "TITLE": "Barát központ",
     "SUBTITLE": "Kapcsolódjon barátaival és kezelje közösségi hálózatát",
     "FRIENDS": "Barátok",
     "MY_FRIENDS": "Barátaim",
