@@ -8,6 +8,9 @@ FROM node:18 AS frontend-build
 
 WORKDIR /app
 COPY frontend /app/
+
+RUN sed -i 's/${GOOGLE_CLIENT_ID}/GOOGLE_CLIENT_ID_PLACEHOLDER/g' src/runtime-config.prod.js
+
 RUN npm install
 RUN npm run build
 
@@ -48,28 +51,8 @@ RUN echo '#!/bin/bash\n\
 echo "=== START.SH EXECUTION STARTED ==="\n\
 echo "GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}"\n\
 \n\
-echo "window.GOOGLE_CLIENT_ID = \"${GOOGLE_CLIENT_ID}\";" > /usr/share/nginx/html/runtime-config.js\n\
-echo "Created runtime-config.js:"\n\
-cat /usr/share/nginx/html/runtime-config.js\n\
-\n\
-echo "Injecting script tag into index.html"\n\
-sed -i "s/<head>/<head>\\n<script src=\\"runtime-config.js\\"><\\/script>/" /usr/share/nginx/html/index.html\n\
-echo "Modified index.html head:"\n\
-grep -A 5 "<head>" /usr/share/nginx/html/index.html\n\
-\n\
-if [ -n "$JAWSDB_MARIA_URL" ]; then\n\
-  echo "Processing JAWSDB_MARIA_URL"\n\
-  DB_URL=$(echo $JAWSDB_MARIA_URL | sed "s|mysql://||g")\n\
-  DB_USERNAME=$(echo $DB_URL | cut -d: -f1)\n\
-  DB_PASSWORD=$(echo $DB_URL | cut -d: -f2 | cut -d@ -f1)\n\
-  DB_HOST_PORT=$(echo $DB_URL | cut -d@ -f2 | cut -d/ -f1)\n\
-  DB_NAME=$(echo $DB_URL | cut -d/ -f2)\n\
-  \n\
-  export SPRING_DATASOURCE_URL="jdbc:mariadb://$DB_HOST_PORT/$DB_NAME"\n\
-  export SPRING_DATASOURCE_USERNAME=$DB_USERNAME\n\
-  export SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD\n\
-  echo "Database configuration set up"\n\
-fi\n\
+find /usr/share/nginx/html -name "*.js" -type f -exec sed -i "s/GOOGLE_CLIENT_ID_PLACEHOLDER/${GOOGLE_CLIENT_ID}/g" {} \;\n\
+echo "Injected GOOGLE_CLIENT_ID into JavaScript files"\n\
 \n\
 echo "Starting Java backend"\n\
 java -Dserver.port=8081 \
