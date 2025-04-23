@@ -3,9 +3,14 @@
     <mat-card-title>
       <div class="chat-header">
         <h2>{{ clubName }} {{ 'CLUB_CHAT.CHAT' | translate }}</h2>
-        <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CLUB_CHAT.REFRESH' | translate }}">
-          <mat-icon>refresh</mat-icon>
-        </button>
+        <div class="chat-actions">
+          <span class="connection-status" [ngClass]="{'connected': clubChatService.isConnected() | async}">
+            <mat-icon>{{ (clubChatService.isConnected() | async) ? 'wifi' : 'wifi_off' }}</mat-icon>
+          </span>
+          <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CLUB_CHAT.REFRESH' | translate }}">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
       </div>
     </mat-card-title>
   </mat-card-header>
@@ -73,7 +78,9 @@
                (keypress)="onKeyPress($event)">
       </mat-form-field>
 
-      <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()" matTooltip="{{ 'CLUB_CHAT.SEND_MESSAGE' | translate }}">
+      <button mat-fab color="primary" (click)="sendMessage()"
+              [disabled]="!newMessage.trim() || !(clubChatService.isConnected() | async)"
+              matTooltip="{{ 'CLUB_CHAT.SEND_MESSAGE' | translate }}">
         <mat-icon>send</mat-icon>
       </button>
     </div>

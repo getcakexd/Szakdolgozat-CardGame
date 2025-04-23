@@ -18,7 +18,7 @@ import java.util.Map;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
+        registry.addEndpoint("/api/ws")
                 .setAllowedOriginPatterns("*")
                 .setHandshakeHandler(new DefaultHandshakeHandler() {
                     @Override
@@ -37,5 +37,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/topic");
         registry.setApplicationDestinationPrefixes("/app");
+        registry.setUserDestinationPrefix("/user");
     }
 }
