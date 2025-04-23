@@ -4,17 +4,17 @@
     "SOCIAL": "Social",
     "FRIENDS": "Friends",
     "CLUBS": "Clubs",
+    "PLAY": "Play",
+    "LOBBY": "Lobby",
+    "ADMIN_AREA": "Administration",
     "ADMIN": "Admin",
     "AGENT": "Agent",
+    "AUDIT_LOGS": "Audit Logs",
+    "SUPPORT": "Support",
     "PROFILE": "Profile",
     "LOGOUT": "Logout",
     "LOGIN": "Login",
-    "SIGNUP": "Sign Up",
-    "AUDIT_LOGS": "Audit Logs",
-    "PLAY": "Play",
-    "LOBBY": "Lobby",
-    "SUPPORT": "Support",
-    "ADMIN_AREA": "Administration"
+    "SIGNUP": "Sign Up"
   },
   "HOME": {
     "WELCOME": "Welcome to CardHUB",
