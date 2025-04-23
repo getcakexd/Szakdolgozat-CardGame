@@ -394,7 +394,8 @@
     "GOOGLE_LOGIN_ERROR": "Error during Google login",
     "GOOGLE_SIGNUP_ERROR": "Error during Google signup",
     "USER_CREATE_ERROR": "Error creating user. Please try again.",
-    "PASSWORD_REQUIRED_DELETE": "Password is required to delete account"
+    "PASSWORD_REQUIRED_DELETE": "Password is required to delete account",
+    "LOGIN_REQUIRED": "You need to be logged in to access this page"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Username updated successfully!",
@@ -406,16 +407,24 @@
     "THEME_UPDATED": "Theme updated successfully!"
   },
   "LOBBY": {
-    "TITLE": "Game Lobby",
-    "SUBTITLE": "Create a new lobby or join an existing one to play with friends",
+    "TITLE": "Game Lobbies",
+    "SUBTITLE": "Create or join a game lobby to play with friends",
     "CREATE_LOBBY": "Create Lobby",
     "JOIN_LOBBY": "Join Lobby",
     "ACTIVE_LOBBIES": "Active Lobbies",
     "CODE": "Code",
     "PLAYERS": "Players",
     "LEADER": "Leader",
-    "POINTS": "Points",
+    "POINTS": "Play with points",
     "JOIN": "Join",
+    "ENTER": "Enter",
+    "ALREADY_IN_LOBBY": "You are already in a lobby",
+    "GO_TO_LOBBY": "Go to Lobby",
+    "FAILED_CHECK_LOBBIES": "Failed to check your lobbies",
+    "FAILED_JOIN": "Failed to join lobby",
+    "YOUR_LOBBY": "Your Current Lobby",
+    "JOIN_BY_CODE": "Join by Code",
+    "LOADING_LOBBY": "Loading your lobby...",
     "INVALID_ID": "Invalid lobby ID",
     "FAILED_LOAD": "Failed to load lobby",
     "FAILED_LOAD_GAMES": "Failed to load games",
@@ -445,9 +454,6 @@
     "SAVE_SETTINGS": "Save Settings",
     "START_GAME": "Start Game",
     "LOADING": "Loading lobby...",
-    "ALREADY_IN_LOBBY": "You are already in a lobby",
-    "GO_TO_LOBBY": "Go to Lobby",
-    "FAILED_CHECK_LOBBIES": "Failed to check existing lobbies",
     "LOBBY_CODE": "Lobby",
     "STATUS": {
       "WAITING": "Waiting",
@@ -480,7 +486,10 @@
   "COMMON": {
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "LOADING": "Loading...",
+    "YES": "Yes",
+    "NO": "No"
   },
   "AUDIT_LOGS": {
     "TITLE": "Audit Logs",

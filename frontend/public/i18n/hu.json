@@ -12,7 +12,7 @@
     "SIGNUP": "Regisztráció",
     "AUDIT_LOGS": "Audit Naplók",
     "PLAY": "Játék",
-    "LOBBY": "Előszoba",
+    "LOBBY": "Lobbi",
     "SUPPORT": "Támogatás",
     "ADMIN_AREA": "Adminisztráció"
   },
@@ -399,7 +399,8 @@
     "GOOGLE_LOGIN_ERROR": "Hiba a Google bejelentkezés során",
     "GOOGLE_SIGNUP_ERROR": "Hiba a Google regisztráció során",
     "USER_CREATE_ERROR": "Hiba a felhasználó létrehozásakor. Kérjük, próbálja újra.",
-    "PASSWORD_REQUIRED_DELETE": "A fiók törléséhez jelszó megadása szükséges"
+    "PASSWORD_REQUIRED_DELETE": "A fiók törléséhez jelszó megadása szükséges",
+    "LOGIN_REQUIRED": "Be kell jelentkezned az oldal eléréséhez"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Felhasználónév sikeresen frissítve!",
@@ -411,16 +412,24 @@
     "THEME_UPDATED": "Téma sikeresen frissítve!"
   },
   "LOBBY": {
-    "TITLE": "Játék előszoba",
-    "SUBTITLE": "Hozzon létre új előszobaot vagy csatlakozzon egy meglévőhöz, hogy barátaival játszhasson",
-    "CREATE_LOBBY": "előszoba létrehozása",
-    "JOIN_LOBBY": "Csatlakozás előszobahoz",
-    "ACTIVE_LOBBIES": "Aktív előszobaok",
+    "TITLE": "Játék Lobbik",
+    "SUBTITLE": "Hozz létre vagy csatlakozz egy játék lobbihoz, hogy barátaiddal játszhass",
+    "CREATE_LOBBY": "Lobbi létrehozása",
+    "JOIN_LOBBY": "Csatlakozás lobbihoz",
+    "ACTIVE_LOBBIES": "Aktív lobbik",
     "CODE": "Kód",
     "PLAYERS": "Játékosok",
     "LEADER": "Vezető",
-    "POINTS": "Pontok",
+    "POINTS": "Pontokkal játszik",
     "JOIN": "Csatlakozás",
+    "ENTER": "Belépés",
+    "ALREADY_IN_LOBBY": "Már egy lobbiban vagy",
+    "GO_TO_LOBBY": "Ugrás a lobbiba",
+    "FAILED_CHECK_LOBBIES": "Nem sikerült ellenőrizni a lobbijaidat",
+    "FAILED_JOIN": "Nem sikerült csatlakozni a lobbihoz",
+    "YOUR_LOBBY": "Jelenlegi lobbid",
+    "JOIN_BY_CODE": "Csatlakozás kóddal",
+    "LOADING_LOBBY": "Lobbid betöltése...",
     "INVALID_ID": "Érvénytelen előszoba azonosító",
     "FAILED_LOAD": "Nem sikerült betölteni az előszobaot",
     "FAILED_LOAD_GAMES": "Nem sikerült betölteni a játékokat",
@@ -450,9 +459,6 @@
     "SAVE_SETTINGS": "Beállítások mentése",
     "START_GAME": "Játék indítása",
     "LOADING": "előszoba betöltése...",
-    "ALREADY_IN_LOBBY": "Ön már egy előszobaban van",
-    "GO_TO_LOBBY": "Ugrás az előszobaba",
-    "FAILED_CHECK_LOBBIES": "Nem sikerült ellenőrizni a meglévő előszobaokat",
     "LOBBY_CODE": "előszoba",
     "STATUS": {
       "WAITING": "Várakozás",
@@ -485,7 +491,10 @@
   "COMMON": {
     "CLOSE": "Bezárás",
     "CONFIRM": "Megerősítés",
-    "CANCEL": "Mégse"
+    "CANCEL": "Mégse",
+    "LOADING": "Betöltés...",
+    "YES": "Igen",
+    "NO": "Nem"
   },
   "AUDIT_LOGS": {
     "TITLE": "Audit Naplók",
