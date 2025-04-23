@@ -1,81 +1,110 @@
 <div class="friend-requests-container">
-  <mat-card>
+  <mat-card class="friend-request-card">
     <mat-card-header>
       <mat-card-title>{{ 'SOCIAL.ADD_FRIEND' | translate }}</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
-      <form (submit)="sendRequest(); $event.preventDefault();" class="simple-form">
-        <div class="form-group">
-          <label for="username">{{ 'SOCIAL.USERNAME' | translate }}:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            [(ngModel)]="username"
-            placeholder="{{ 'SOCIAL.ENTER_USERNAME' | translate }}"
-            class="basic-input"
-          />
-        </div>
+      <form (ngSubmit)="sendRequest()" class="friend-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'SOCIAL.USERNAME' | translate }}</mat-label>
+          <input matInput [(ngModel)]="username" name="username" required
+                 placeholder="{{ 'SOCIAL.ENTER_USERNAME' | translate }}">
+          <mat-hint>{{ 'SOCIAL.USERNAME_HINT' | translate }}</mat-hint>
+        </mat-form-field>
 
-        <div class="form-actions">
-          <button type="submit" class="basic-button">{{ 'SOCIAL.SEND_FRIEND_REQUEST' | translate }}</button>
-        </div>
-
-        <div *ngIf="errorMessage" class="error-text">
+        <div *ngIf="errorMessage" class="error-message">
           {{ errorMessage }}
         </div>
       </form>
     </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="clearUsername()" [disabled]="!username">
+        {{ 'SOCIAL.CLEAR' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="sendRequest()" [disabled]="!username || isSubmitting">
+        {{ isSubmitting ? ('SOCIAL.SENDING' | translate) : ('SOCIAL.SEND_FRIEND_REQUEST' | translate) }}
+      </button>
+    </mat-card-actions>
   </mat-card>
 
-  <mat-card *ngIf="incomingRequests.length > 0">
+  <mat-card class="friend-request-card" *ngIf="incomingRequests.length > 0 || isLoading">
     <mat-card-header>
-      <mat-card-title>{{ 'SOCIAL.INCOMING_REQUESTS' | translate }} ({{ incomingRequests.length }})</mat-card-title>
+      <mat-card-title>
+        {{ 'SOCIAL.INCOMING_REQUESTS' | translate }}
+        <span *ngIf="incomingRequests.length > 0" class="request-count">({{ incomingRequests.length }})</span>
+      </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
-      <div *ngIf="isLoading" class="loading-text">{{ 'SOCIAL.LOADING' | translate }}</div>
-
-      <div *ngIf="!isLoading" class="request-list">
-        <div *ngFor="let request of incomingRequests" class="request-item">
-          <div class="request-info">
-            <span>{{ request.sender.username }}</span>
-          </div>
-
-          <div class="request-buttons">
-            <button class="accept-button" (click)="acceptRequest(request.id)">{{ 'SOCIAL.ACCEPT' | translate }}</button>
-            <button class="decline-button" (click)="declineRequest(request.id)">{{ 'SOCIAL.DECLINE' | translate }}</button>
-          </div>
-        </div>
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
       </div>
+
+      <mat-list *ngIf="!isLoading && incomingRequests.length > 0" class="request-list">
+        <mat-list-item *ngFor="let request of incomingRequests" class="request-item">
+          <div class="request-content">
+            <div class="request-info">
+              <mat-icon class="user-icon">person</mat-icon>
+              <span class="username">{{ request.sender.username }}</span>
+            </div>
+
+            <div class="request-actions">
+              <button mat-stroked-button color="warn" (click)="declineRequest(request.id)">
+                {{ 'SOCIAL.DECLINE' | translate }}
+              </button>
+              <button mat-raised-button color="primary" (click)="acceptRequest(request.id)">
+                {{ 'SOCIAL.ACCEPT' | translate }}
+              </button>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
     </mat-card-content>
   </mat-card>
 
-  <mat-card *ngIf="sentRequests.length > 0">
+  <mat-card class="friend-request-card" *ngIf="sentRequests.length > 0 || isLoading">
     <mat-card-header>
-      <mat-card-title>{{ 'SOCIAL.SENT_REQUESTS' | translate }} ({{ sentRequests.length }})</mat-card-title>
+      <mat-card-title>
+        {{ 'SOCIAL.SENT_REQUESTS' | translate }}
+        <span *ngIf="sentRequests.length > 0" class="request-count">({{ sentRequests.length }})</span>
+      </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
-      <div *ngIf="isLoading" class="loading-text">{{ 'SOCIAL.LOADING' | translate }}</div>
-
-      <div *ngIf="!isLoading" class="request-list">
-        <div *ngFor="let request of sentRequests" class="request-item">
-          <div class="request-info">
-            <span>{{ request.receiver.username }}</span>
-            <span class="status-badge">{{ request.status }}</span>
-          </div>
-
-          <div class="request-buttons" *ngIf="request.status === 'pending'">
-            <button class="cancel-button" (click)="cancelRequest(request.id)">{{ 'SOCIAL.CANCEL' | translate }}</button>
-          </div>
-        </div>
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
       </div>
+
+      <mat-list *ngIf="!isLoading && sentRequests.length > 0" class="request-list">
+        <mat-list-item *ngFor="let request of sentRequests" class="request-item">
+          <div class="request-content">
+            <div class="request-info">
+              <mat-icon class="user-icon">person</mat-icon>
+              <span class="username">{{ request.receiver.username }}</span>
+              <mat-chip class="status-chip" [color]="request.status === 'pending' ? 'accent' : 'primary'" selected>
+                {{ request.status }}
+              </mat-chip>
+            </div>
+
+            <div class="request-actions" *ngIf="request.status === 'pending'">
+              <button mat-stroked-button color="warn" (click)="cancelRequest(request.id)">
+                {{ 'SOCIAL.CANCEL' | translate }}
+              </button>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
     </mat-card-content>
   </mat-card>
 
-  <div *ngIf="!isLoading && incomingRequests.length === 0 && sentRequests.length === 0" class="empty-message">
-    <p>{{ 'SOCIAL.NO_FRIEND_REQUESTS' | translate }}</p>
-  </div>
+  <mat-card class="friend-request-card" *ngIf="!isLoading && incomingRequests.length === 0 && sentRequests.length === 0">
+    <mat-card-content class="empty-state">
+      <mat-icon class="empty-icon">people_outline</mat-icon>
+      <p>{{ 'SOCIAL.NO_FRIEND_REQUESTS' | translate }}</p>
+    </mat-card-content>
+  </mat-card>
 </div>

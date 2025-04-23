@@ -4,11 +4,41 @@
   padding: 24px;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 16px;
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.club-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.club-header-card {
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+}
+
 .club-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
+}
+
+.back-button {
+  color: var(--text-secondary);
 }
 
 .club-title {
@@ -18,8 +48,11 @@
   flex: 1;
 }
 
-.club-title h1 {
+.club-name {
   margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .club-title-edit {
@@ -32,15 +65,21 @@
   align-items: center;
 }
 
+.section-divider {
+  margin: 16px 0;
+}
+
 .club-description {
   display: flex;
   align-items: flex-start;
   margin: 16px 0;
 }
 
-.club-description p {
+.description-text {
   flex: 1;
-  margin-right: 16px;
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .club-description-edit {
@@ -53,15 +92,54 @@
   margin: 16px 0;
 }
 
-.club-tabs {
-  margin-top: 24px;
+.club-tabs-card {
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
 }
 
-.tab-icon {
-  margin-right: 8px;
+.tab-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.member-item, .invite-item {
+.tab-count {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.tab-badge {
+  background-color: var(--error-color);
+  color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+.member-list-item {
+  height: auto !important;
+  margin-bottom: 8px;
+}
+
+.member-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -72,11 +150,16 @@
 .member-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+.member-icon {
+  color: var(--text-secondary);
 }
 
 .member-name {
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .member-actions {
@@ -84,30 +167,70 @@
   gap: 8px;
 }
 
+.invite-card,
+.invite-list-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-small);
+  background-color: var(--card-background);
+}
+
 .invite-form {
   display: flex;
+  flex-direction: column;
   gap: 16px;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  margin-top: 16px;
 }
 
-.invite-input {
-  flex: 1;
+.invite-list-item {
+  height: auto !important;
+  margin-bottom: 8px;
 }
 
-.empty-list {
+.invite-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.invite-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.invite-icon {
+  color: var(--text-secondary);
+}
+
+.invite-username {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.invite-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
   text-align: center;
-  padding: 16px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
 }
 
-.invite-badge {
-  background-color: #f44336;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
-  margin-left: 8px;
+.empty-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
 }
 
 .chat-toggle {
@@ -116,111 +239,28 @@
   margin: 16px 0;
 }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-}
-
 .full-width {
   width: 100%;
 }
 
-::ng-deep mat-list-item {
-  height: auto !important;
-  min-height: 48px;
-}
-
-::ng-deep .mat-mdc-list-item-line {
-  margin: 16px 0 !important;
-}
-
-::ng-deep .mat-mdc-chip-listbox {
-  margin: 0 !important;
-}
-
-::ng-deep .mat-mdc-chip {
-  margin: 0 4px !important;
-}
-
-mat-card {
-  margin-bottom: 16px;
-}
-
-mat-card-content {
-  padding: 16px 0;
-}
-
-.simple-form {
-  margin-bottom: 24px;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.basic-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-.basic-input:focus {
-  outline: none;
-  border-color: #673ab7;
-  box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
-}
-
-.form-actions {
-  margin-top: 16px;
-}
-
-.basic-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background-color: #673ab7;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-family: inherit;
-}
-
-.basic-button:hover {
-  background-color: #5e35b1;
-}
-
 .message-text {
-  margin-top: 12px;
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
   font-size: 14px;
+  background-color: rgba(76, 175, 80, 0.1);
   color: #4caf50;
 }
 
 .error-text {
-  color: #f44336;
   background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
 }
 
 @media (max-width: 768px) {
+  .club-container {
+    padding: 16px;
+  }
+
   .club-header {
     flex-direction: column;
     align-items: flex-start;
@@ -228,6 +268,9 @@ mat-card-content {
 
   .club-title {
     margin-bottom: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .club-actions {
@@ -236,13 +279,41 @@ mat-card-content {
 
   .admin-actions {
     flex-direction: column;
-  }
-
-  .invite-form {
-    flex-direction: column;
-  }
-
-  .invite-input {
     width: 100%;
   }
+
+  .admin-actions button {
+    width: 100%;
+  }
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 !important;
+}
+
+::ng-deep .mat-mdc-card-header {
+  padding: 16px 16px 0 16px !important;
+}
+
+::ng-deep .mat-mdc-card-content {
+  padding: 16px !important;
+}
+
+::ng-deep .mat-mdc-card-actions {
+  padding: 8px 16px 16px 16px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+::ng-deep .mat-mdc-list-item {
+  height: auto !important;
+}
+
+::ng-deep .mat-mdc-list-item-line {
+  margin: 8px 0 !important;
+}
+
+::ng-deep .mat-mdc-chip {
+  font-size: 12px !important;
+  height: 24px !important;
 }

@@ -2,140 +2,103 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.simple-form {
-  padding: 10px 0;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: var(--text-primary);
-}
-
-.basic-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 16px;
-  box-sizing: border-box;
+.friend-request-card {
   background-color: var(--card-background);
   color: var(--text-primary);
+  box-shadow: var(--shadow-medium);
 }
 
-.basic-input:focus {
-  border-color: var(--primary-color);
-  outline: none;
+.friend-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
 }
 
-.form-actions {
-  margin-top: 15px;
+.full-width {
+  width: 100%;
 }
 
-.basic-button {
-  padding: 10px 15px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color var(--transition-fast) ease;
-}
-
-.basic-button:hover {
-  background-color: var(--primary-dark);
-}
-
-.error-text {
+.error-message {
   color: var(--error-color);
-  margin-top: 10px;
+  margin: 8px 0;
+}
+
+.request-count {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 .request-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 0;
 }
 
 .request-item {
+  height: auto !important;
+  margin-bottom: 8px;
+}
+
+.request-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  padding: 8px 0;
 }
 
 .request-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.status-badge {
-  background-color: var(--hover-overlay);
-  padding: 3px 8px;
-  border-radius: 10px;
+.user-icon {
+  color: var(--text-secondary);
+}
+
+.username {
+  font-weight: 500;
+}
+
+.status-chip {
   font-size: 12px;
-  color: var(--text-primary);
+  height: 24px;
 }
 
-.request-buttons {
+.request-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-.accept-button {
-  padding: 5px 10px;
-  background-color: var(--success-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color var(--transition-fast) ease;
-}
-
-.accept-button:hover {
-  background-color: var(--success-color);
-  filter: brightness(0.9);
-}
-
-.decline-button,
-.cancel-button {
-  padding: 5px 10px;
-  background-color: var(--error-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color var(--transition-fast) ease;
-}
-
-.decline-button:hover,
-.cancel-button:hover {
-  background-color: var(--error-color);
-  filter: brightness(0.9);
-}
-
-.loading-text {
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
   text-align: center;
-  padding: 20px;
   color: var(--text-secondary);
 }
 
-.empty-message {
-  text-align: center;
-  padding: 30px;
-  background-color: var(--background-color);
-  border-radius: 4px;
-  color: var(--text-secondary);
+.empty-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
 }
 
+mat-card-actions {
+  padding: 16px;
+}

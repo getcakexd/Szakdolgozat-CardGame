@@ -11,18 +11,20 @@ import {
   MatTableDataSource
 } from "@angular/material/table"
 import {TranslatePipe, TranslateService} from "@ngx-translate/core"
-import { debounceTime } from "rxjs/operators"
 import { AuditLog, AuditLogFilter } from "../../models/audit-log.model"
 import { AuditLogService } from "../../services/audit-log/audit-log.service"
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatOption} from '@angular/material/core';
+import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from '@angular/material/expansion';
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {MatTooltip} from '@angular/material/tooltip';
+import {MatHint} from '@angular/material/form-field';
 
 @Component({
   selector: "app-audit-logs",
@@ -62,8 +64,13 @@ import {MatButton} from '@angular/material/button';
     MatCardHeader,
     MatCard,
     MatButton,
-    MatSort
+    MatSort,
+    MatIcon,
+    NgClass,
+    MatTooltip,
+    MatHint
   ],
+  providers: [provideNativeDateAdapter()],
   standalone: true
 })
 export class AuditLogsComponent implements OnInit {
@@ -84,17 +91,13 @@ export class AuditLogsComponent implements OnInit {
     this.filterForm = this.fb.group({
       userId: [""],
       action: [""],
-      startDate: [""],
-      endDate: [""],
+      startDate: [null],
+      endDate: [null],
     })
   }
 
   ngOnInit(): void {
     this.loadAuditLogs()
-
-    this.filterForm.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this.applyFilters()
-    })
   }
 
   ngAfterViewInit() {
@@ -170,6 +173,24 @@ export class AuditLogsComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage()
     }
+  }
+
+  getActionClass(action: string): string {
+    action = action.toLowerCase()
+    if (action.includes("login")) return "action-login"
+    if (action.includes("logout")) return "action-logout"
+    if (action.includes("create")) return "action-create"
+    if (action.includes("update") || action.includes("edit")) return "action-update"
+    if (action.includes("delete") || action.includes("remove")) return "action-delete"
+    return "action-other"
+  }
+
+  getShortActionName(action: string): string {
+    // If action is longer than 15 characters, truncate it
+    if (action.length > 15) {
+      return action.substring(0, 12) + "..."
+    }
+    return action
   }
 
   private extractUniqueActions(): void {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClubService } from '../../services/club/club.service';
 import { MatInputModule } from '@angular/material/input';

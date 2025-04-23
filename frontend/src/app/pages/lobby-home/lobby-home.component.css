@@ -24,6 +24,23 @@
   padding: 24px 0;
 }
 
+.user-lobbies-section {
+  margin-bottom: 32px;
+}
+
+.user-lobbies-section h3,
+.join-by-code-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.join-by-code-section.with-margin {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
 .active-lobbies-section {
   margin-top: 40px;
 }
@@ -49,10 +66,18 @@
   box-shadow: var(--shadow-large);
 }
 
+.user-lobby-card {
+  cursor: pointer;
+  border: 2px solid var(--primary-color);
+}
+
 .loading-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   margin: 40px 0;
+  gap: 16px;
 }
 
 @media (max-width: 768px) {

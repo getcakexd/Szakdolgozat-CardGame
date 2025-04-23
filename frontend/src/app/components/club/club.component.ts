@@ -52,19 +52,19 @@ import {NgForOf, NgIf} from '@angular/common';
   styleUrls: ['./club.component.css']
 })
 export class ClubComponent implements OnInit {
-  protected club: any = {};
-  protected members: ClubMember[] = [];
-  protected pendingInvites: any[] = [];
-  protected inviteHistory: any[] = [];
-  protected userId: number = 0;
-  inviteMessage: string = '';
-  userRole: string = '';
-  editingName = false;
-  editingDescription = false;
-  inviteUsername: string = '';
-  showChat: boolean = false;
-  isLoading: boolean = true;
-  inviteError: boolean = false;
+  protected club: any = {}
+  protected members: ClubMember[] = []
+  protected pendingInvites: any[] = []
+  protected inviteHistory: any[] = []
+  protected userId = 0
+  inviteMessage = ""
+  userRole = ""
+  editingName = false
+  editingDescription = false
+  inviteUsername = ""
+  showChat = false
+  isLoading = true
+  inviteError = false
 
   constructor(
     private route: ActivatedRoute,
@@ -75,358 +75,320 @@ export class ClubComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
-    this.userId = this.authService.getCurrentUserId() || 0;
+    this.userId = this.authService.getCurrentUserId() || 0
     if (this.userId === 0) {
-      this.router.navigate(['/login']).then(() => {
-        window.location.reload();
-      });
+      this.router.navigate(["/login"]).then(() => {
+        window.location.reload()
+      })
     }
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const clubId = +params['id'];
-      this.loadClubData(clubId);
-    });
+    this.route.params.subscribe((params) => {
+      const clubId = +params["id"]
+      this.loadClubData(clubId)
+    })
   }
 
   loadClubData(clubId: number) {
-    this.isLoading = true;
+    this.isLoading = true
     this.clubService.getClubById(clubId).subscribe({
       next: (clubData) => {
-        this.club = clubData;
-        this.loadMembers(clubId);
-        this.getRole(clubId, this.userId);
-        this.loadPendingInvites(clubId);
-        this.loadInviteHistory(clubId);
-        this.isLoading = false;
+        this.club = clubData
+        this.loadMembers(clubId)
+        this.getRole(clubId, this.userId)
+        this.loadPendingInvites(clubId)
+        this.loadInviteHistory(clubId)
+        this.isLoading = false
       },
       error: (error) => {
-        this.isLoading = false;
+        this.isLoading = false
         if (error.status === 404) {
-          this.snackBar.open(
-            this.translate.instant('CLUB.CLUB_NOT_FOUND'),
-            this.translate.instant('COMMON.CLOSE'),
-            { duration: 3000 }
-          );
-          this.router.navigate(['/clubs']);
+          this.showErrorSnackbar("CLUB.CLUB_NOT_FOUND")
+          this.router.navigate(["/clubs"])
         } else {
-          this.snackBar.open(
-            this.translate.instant('CLUB.ERROR_LOADING'),
-            this.translate.instant('COMMON.CLOSE'),
-            { duration: 3000 }
-          );
-          console.error('Error loading club:', error);
+          this.showErrorSnackbar("CLUB.ERROR_LOADING")
+          console.error("Error loading club:", error)
         }
-      }
-    });
+      },
+    })
   }
 
   loadMembers(clubId: number) {
-    this.clubMemberService.getMembers(clubId).subscribe(
-      (members: ClubMember[]) => {
-        this.members = members;
-      }
-    );
+    this.clubMemberService.getMembers(clubId).subscribe((members: ClubMember[]) => {
+      this.members = members
+    })
   }
 
   getRole(clubId: number, userId: number) {
-    return this.clubMemberService.getUserRole(clubId, userId).subscribe(
-      (role) => {
-        this.userRole = role.role;
-      }
-    );
+    return this.clubMemberService.getUserRole(clubId, userId).subscribe((role) => {
+      this.userRole = role.role
+    })
   }
 
   kickMember(member: ClubMember) {
-    if (this.userRole === 'admin' || (this.userRole === 'moderator' && member.role === 'member')) {
+    if (this.userRole === "admin" || (this.userRole === "moderator" && member.role === "member")) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
-          title: this.translate.instant('COMMON.CONFIRM'),
-          message: this.translate.instant('CLUB.CONFIRM_KICK', { username: member.username })
-        }
-      });
+          title: this.translate.instant("COMMON.CONFIRM"),
+          message: this.translate.instant("CLUB.CONFIRM_KICK", { username: member.username }),
+        },
+      })
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           this.clubMemberService.kickMember(this.club.id, member.user.id).subscribe({
             next: () => {
-              this.snackBar.open(
-                this.translate.instant('CLUB.MEMBER_REMOVED', { username: member.username }),
-                this.translate.instant('COMMON.CLOSE'),
-                { duration: 3000 }
-              );
-              this.loadMembers(this.club.id);
+              this.showSuccessSnackbar("CLUB.MEMBER_REMOVED", { username: member.username })
+              this.loadMembers(this.club.id)
             },
             error: (error) => {
-              this.snackBar.open(
-                this.translate.instant('CLUB.FAILED_REMOVE'),
-                this.translate.instant('COMMON.CLOSE'),
-                { duration: 3000 }
-              );
-            }
-          });
+              this.showErrorSnackbar("CLUB.FAILED_REMOVE")
+            },
+          })
         }
-      });
+      })
     }
   }
 
   toggleModerator(member: ClubMember) {
-    if (this.userRole === 'admin') {
-      const newRole = member.role === 'moderator' ? 'member' : 'moderator';
-      const action = member.role === 'moderator' ? 'demote' : 'promote';
+    if (this.userRole === "admin") {
+      const newRole = member.role === "moderator" ? "member" : "moderator"
+      const action = member.role === "moderator" ? "demote" : "promote"
 
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
-          title: this.translate.instant('COMMON.CONFIRM'),
-          message: this.translate.instant('CLUB.CONFIRM_ROLE', {
+          title: this.translate.instant("COMMON.CONFIRM"),
+          message: this.translate.instant("CLUB.CONFIRM_ROLE", {
             action: action,
             username: member.username,
-            role: newRole
-          })
-        }
-      });
+            role: newRole,
+          }),
+        },
+      })
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           this.clubMemberService.updateMemberRole(this.club.id, member.user.id, newRole).subscribe({
             next: () => {
-              this.snackBar.open(
-                this.translate.instant('CLUB.ROLE_UPDATED', { username: member.username, role: newRole }),
-                this.translate.instant('COMMON.CLOSE'),
-                { duration: 3000 }
-              );
-              this.loadMembers(this.club.id);
+              this.showSuccessSnackbar("CLUB.ROLE_UPDATED", { username: member.username, role: newRole })
+              this.loadMembers(this.club.id)
             },
             error: (error) => {
-              this.snackBar.open(
-                this.translate.instant('CLUB.FAILED_ROLE_UPDATE', { action: action }),
-                this.translate.instant('COMMON.CLOSE'),
-                { duration: 3000 }
-              );
-            }
-          });
+              this.showErrorSnackbar("CLUB.FAILED_ROLE_UPDATE", { action: action })
+            },
+          })
         }
-      });
+      })
     }
   }
 
   canToggleRole(member: ClubMember): boolean {
-    return member.role === 'moderator' || member.role === 'member';
+    return member.role === "moderator" || member.role === "member"
   }
 
   canKickMember(member: ClubMember): boolean {
-    return (this.userRole === 'admin') ||
-      (this.userRole === 'moderator' && member.role === 'member');
+    return this.userRole === "admin" || (this.userRole === "moderator" && member.role === "member")
   }
 
   toggleEditName() {
     if (this.editingName) {
-      this.saveClubChanges();
+      this.saveClubChanges()
     }
-    this.editingName = !this.editingName;
+    this.editingName = !this.editingName
   }
 
   toggleEditDescription() {
     if (this.editingDescription) {
-      this.saveClubChanges();
+      this.saveClubChanges()
     }
-    this.editingDescription = !this.editingDescription;
+    this.editingDescription = !this.editingDescription
   }
 
   saveClubChanges() {
     this.clubService.updateClub(this.club.id, this.club.name, this.club.description, this.club.public).subscribe({
       next: () => {
-        this.snackBar.open(
-          this.translate.instant('CLUB.CLUB_UPDATED'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
+        this.showSuccessSnackbar("CLUB.CLUB_UPDATED")
       },
       error: (error) => {
-        this.snackBar.open(
-          this.translate.instant('CLUB.FAILED_UPDATE'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-      }
-    });
+        this.showErrorSnackbar("CLUB.FAILED_UPDATE")
+      },
+    })
   }
 
   toggleVisibility() {
-    const newVisibility = !this.club.public;
-    const visibilityText = newVisibility ? 'public' : 'private';
+    const newVisibility = !this.club.public
+    const visibilityKey = newVisibility ? 'CLUB.VISIBILITY_PUBLIC' : 'CLUB.VISIBILITY_PRIVATE';
+    const visibilityText = this.translate.instant(visibilityKey);
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('CLUB.CONFIRM_VISIBILITY', { visibility: visibilityText })
-      }
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("CLUB.CONFIRM_VISIBILITY", { visibility: visibilityText }),
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.club.public = newVisibility;
-        this.saveClubChanges();
+        this.club.public = newVisibility
+        this.saveClubChanges()
       }
-    });
+    })
   }
 
   deleteClub() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this.translate.instant('CLUB.DELETE_CLUB'),
-        message: this.translate.instant('CLUB.CONFIRM_DELETE')
-      }
-    });
+        title: this.translate.instant("CLUB.DELETE_CLUB"),
+        message: this.translate.instant("CLUB.CONFIRM_DELETE"),
+      },
+    })
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.clubService.deleteClub(this.club.id).subscribe({
           next: () => {
-            this.snackBar.open(
-              this.translate.instant('CLUB.CLUB_DELETED'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-            this.router.navigate(['/clubs']);
+            this.showSuccessSnackbar("CLUB.CLUB_DELETED")
+            this.router.navigate(["/clubs"])
           },
           error: (error) => {
-            this.snackBar.open(
-              this.translate.instant('CLUB.FAILED_DELETE'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-          }
-        });
+            this.showErrorSnackbar("CLUB.FAILED_DELETE")
+          },
+        })
       }
-    });
+    })
   }
 
   inviteUser(username: string): void {
-    if (!username || username.trim() === '') {
-      this.inviteMessage = this.translate.instant('CLUB.ENTER_USERNAME_ERROR');
-      this.inviteError = true;
-      return;
+    if (!username || username.trim() === "") {
+      this.inviteMessage = this.translate.instant("CLUB.ENTER_USERNAME_ERROR")
+      this.inviteError = true
+      return
     }
 
-    this.inviteMessage = '';
-    this.inviteError = false;
+    this.inviteMessage = ""
+    this.inviteError = false
 
     this.clubInviteService.inviteUser(this.club.id, username).subscribe({
       next: (response) => {
-        this.inviteUsername = '';
-        this.inviteMessage = this.translate.instant('CLUB.INVITE_SENT');
-        this.inviteError = false;
-        this.loadPendingInvites(this.club.id);
+        this.inviteUsername = ""
+        this.inviteMessage = this.translate.instant("CLUB.INVITE_SENT")
+        this.inviteError = false
+        this.loadPendingInvites(this.club.id)
       },
       error: (error) => {
-        this.inviteMessage = error.error?.message || this.translate.instant('CLUB.FAILED_INVITE');
-        this.inviteError = true;
-      }
-    });
+        this.inviteMessage = error.error?.message || this.translate.instant("CLUB.FAILED_INVITE")
+        this.inviteError = true
+      },
+    })
   }
 
   loadPendingInvites(clubId: number) {
     this.clubInviteService.getPendingInvites(clubId).subscribe((invites) => {
-      this.pendingInvites = invites;
-    });
+      this.pendingInvites = invites
+    })
   }
 
   loadInviteHistory(clubId: number) {
     this.clubInviteService.getInviteHistory(clubId).subscribe((history) => {
-      this.inviteHistory = history;
-    });
+      this.inviteHistory = history
+    })
   }
 
   cancelInvite(inviteId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('CLUB.CONFIRM_CANCEL_INVITE')
-      }
-    });
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("CLUB.CONFIRM_CANCEL_INVITE"),
+      },
+    })
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.clubInviteService.cancelInvite(inviteId).subscribe({
           next: () => {
-            this.snackBar.open(
-              this.translate.instant('CLUB.INVITE_CANCELLED'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-            this.loadPendingInvites(this.club.id);
+            this.showSuccessSnackbar("CLUB.INVITE_CANCELLED")
+            this.loadPendingInvites(this.club.id)
           },
           error: (error) => {
-            this.snackBar.open(
-              this.translate.instant('CLUB.FAILED_CANCEL'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-          }
-        });
+            this.showErrorSnackbar("CLUB.FAILED_CANCEL")
+          },
+        })
       }
-    });
+    })
   }
 
   leaveClub() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this.translate.instant('CLUB.LEAVE_CLUB'),
-        message: this.translate.instant('CLUB.CONFIRM_LEAVE')
-      }
-    });
+        title: this.translate.instant("CLUB.LEAVE_CLUB"),
+        message: this.translate.instant("CLUB.CONFIRM_LEAVE"),
+      },
+    })
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.clubMemberService.leaveClub(this.club.id, this.userId).subscribe({
           next: () => {
-            this.snackBar.open(
-              this.translate.instant('CLUB.LEFT_CLUB'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-            this.router.navigate(['/clubs']);
+            this.showSuccessSnackbar("CLUB.LEFT_CLUB")
+            this.router.navigate(["/clubs"])
           },
           error: (error) => {
-            this.snackBar.open(
-              error.error?.message || this.translate.instant('CLUB.FAILED_LEAVE'),
-              this.translate.instant('COMMON.CLOSE'),
-              { duration: 3000 }
-            );
-          }
-        });
+            this.showErrorSnackbar(error.error?.message || "CLUB.FAILED_LEAVE")
+          },
+        })
       }
-    });
+    })
   }
 
   goBack() {
-    this.router.navigate(['/clubs']);
+    this.router.navigate(["/clubs"])
   }
 
   toggleChat() {
-    this.showChat = !this.showChat;
+    this.showChat = !this.showChat
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'accepted': return 'primary';
-      case 'pending': return 'accent';
-      case 'declined': return 'warn';
-      case 'cancelled': return 'warn';
-      default: return '';
+      case "accepted":
+        return "primary"
+      case "pending":
+        return "accent"
+      case "declined":
+        return "warn"
+      case "cancelled":
+        return "warn"
+      default:
+        return ""
     }
   }
 
   getRoleColor(role: string): string {
     switch (role) {
-      case 'admin': return 'primary';
-      case 'moderator': return 'accent';
-      case 'member': return 'default';
-      default: return '';
+      case "admin":
+        return "primary"
+      case "moderator":
+        return "accent"
+      case "member":
+        return "default"
+      default:
+        return ""
     }
+  }
+
+  private showSuccessSnackbar(messageKey: string, params: any = {}) {
+    this.snackBar.open(this.translate.instant(messageKey, params), this.translate.instant("COMMON.CLOSE"), {
+      duration: 3000,
+    })
+  }
+
+  private showErrorSnackbar(messageKey: string, params: any = {}) {
+    this.snackBar.open(this.translate.instant(messageKey, params), this.translate.instant("COMMON.CLOSE"), {
+      duration: 3000,
+      panelClass: ["error-snackbar"],
+    })
   }
 }
