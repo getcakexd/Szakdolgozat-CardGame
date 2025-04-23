@@ -23,9 +23,12 @@ export class ChatService {
       return this.connected.asObservable()
     }
 
-    const socket = new SockJS(BACKEND_API_URL + "/ws")
+    const socket = new SockJS(BACKEND_API_URL + "/ws", null, {
+      transports: ["xhr-polling", "xhr-streaming"],
+      timeout: 25000,
+    })
 
-    console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")
+    if (IS_DEV) console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")
 
     this.stompClient = Stomp.over(socket)
 

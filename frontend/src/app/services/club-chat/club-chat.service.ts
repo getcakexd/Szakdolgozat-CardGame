@@ -23,7 +23,10 @@ export class ClubChatService {
       return this.connected.asObservable()
     }
 
-    const socket = new SockJS(BACKEND_API_URL + "/ws")
+    const socket = new SockJS(BACKEND_API_URL + "/ws", null, {
+      transports: ["xhr-polling", "xhr-streaming"],
+      timeout: 25000,
+    })
 
     if (IS_DEV) console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")
 
@@ -36,8 +39,6 @@ export class ClubChatService {
     } else {
       this.stompClient.debug = () => {}
     }
-
-
 
     this.stompClient.connect(
       {},
