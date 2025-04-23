@@ -45,7 +45,7 @@
         </mat-list-item>
 
         <div *ngIf="openChats[parseInt(friend.id)]" class="chat-container">
-          <app-chat [receiverId]="friend.id"></app-chat>
+          <app-chat [receiverId]="friend.id" [receiverName]="friend.username"></app-chat>
         </div>
 
         <mat-divider *ngIf="!isLast"></mat-divider>
