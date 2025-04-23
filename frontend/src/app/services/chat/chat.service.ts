@@ -25,7 +25,7 @@ export class ChatService {
 
     const socket = new SockJS(BACKEND_API_URL + "/ws", null, {
       transports: ["xhr-polling", "xhr-streaming"],
-      timeout: 5000,
+      timeout: 1000,
     })
 
     if (IS_DEV) console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")

@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         };
                     }
                 }).withSockJS()
-                .setHeartbeatTime(5000)
+                .setHeartbeatTime(1000)
                 .setDisconnectDelay(30000)
                 .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js");
     }
