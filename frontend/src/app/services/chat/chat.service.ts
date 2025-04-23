@@ -25,10 +25,7 @@ export class ChatService {
 
     const socket = new SockJS(BACKEND_API_URL + "/ws")
 
-    if (IS_DEV) console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")
-
-
-
+    console.log("Connecting to WebSocket at:", BACKEND_API_URL + "/ws")
 
     this.stompClient = Stomp.over(socket)
 
