@@ -120,7 +120,10 @@
     "CANCEL": "Mégse",
     "NO_FRIEND_REQUESTS": "Még nincsenek barátkérelmek. Küldjön kérelmet, hogy kapcsolatba lépjen barátaival.",
     "FAILED_LOAD_SENT_REQUESTS": "Nem sikerült betölteni az elküldött kérelmeket",
-    "FAILED_LOAD_INCOMING_REQUESTS": "Nem sikerült betölteni a bejövő kérelmeket"
+    "FAILED_LOAD_INCOMING_REQUESTS": "Nem sikerült betölteni a bejövő kérelmeket",
+    "CLEAR": "Törlés",
+    "USERNAME_HINT": "Adja meg a hozzáadni kívánt személy felhasználónevét",
+    "SENDING": "Küldés..."
   },
   "CLUBS": {
     "TITLE": "Klubok",

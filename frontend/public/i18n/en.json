@@ -117,7 +117,10 @@
     "CANCEL": "Cancel",
     "NO_FRIEND_REQUESTS": "No friend requests yet. Send a request to connect with friends.",
     "FAILED_LOAD_SENT_REQUESTS": "Failed to load sent requests",
-    "FAILED_LOAD_INCOMING_REQUESTS": "Failed to load incoming requests"
+    "FAILED_LOAD_INCOMING_REQUESTS": "Failed to load incoming requests",
+    "CLEAR": "Clear",
+    "USERNAME_HINT": "Enter the username of the person you want to add",
+    "SENDING": "Sending..."
   },
   "CLUBS": {
     "TITLE": "Clubs",
