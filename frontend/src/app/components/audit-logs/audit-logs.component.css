@@ -1,7 +1,36 @@
 .audit-logs-container {
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.audit-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.audit-header h1 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.audit-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.filters-section {
+  margin-bottom: 24px;
+}
+
+.filters-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .filter-form {
@@ -14,52 +43,192 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+}
 
-  mat-form-field {
-    flex: 1;
-    min-width: 200px;
-  }
+.filter-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.global-search {
+  width: 100%;
 }
 
 .filter-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
   margin-top: 8px;
 }
 
-.global-filter {
-  width: 100%;
-  margin-top: 16px;
-}
-
-.loading-spinner {
+.loading-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  margin: 40px 0;
+  padding: 40px 0;
+  gap: 16px;
 }
 
-.table-container {
-  margin-top: 16px;
-  overflow-x: auto;
+.loading-container p {
+  color: var(--text-secondary);
 }
 
-table {
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.audit-table {
   width: 100%;
 }
 
-.mat-column-details {
+.log-row {
+  transition: background-color 0.2s;
+}
+
+.log-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.action-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.action-login {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.action-logout {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.action-create {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.action-update {
+  background-color: #fff8e1;
+  color: #ffa000;
+}
+
+.action-delete {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.action-other {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+  color: var(--text-secondary);
+}
+
+.user-id {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.details-cell {
   max-width: 300px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+mat-paginator {
+  margin-top: 16px;
+}
+
+/* Fix for long action types in dropdown */
+.truncate-text {
+  display: block;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Increase width of action dropdown panel */
+::ng-deep .action-select-panel {
+  min-width: 300px !important;
+  max-width: 400px !important;
+}
+
+/* Fix for date picker toggle visibility */
+::ng-deep .mat-datepicker-toggle {
+  display: inline-block !important;
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+::ng-deep .mat-datepicker-toggle .mat-icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
+::ng-deep .mat-datepicker-toggle-default-icon {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Fix for date picker calendar */
+::ng-deep .mat-calendar {
+  width: 296px !important;
+}
+
 @media (max-width: 768px) {
   .filter-row {
     flex-direction: column;
+  }
 
-    mat-form-field {
-      width: 100%;
-    }
+  .filter-field {
+    width: 100%;
+  }
+
+  .audit-table {
+    display: block;
+    overflow-x: auto;
   }
 }
