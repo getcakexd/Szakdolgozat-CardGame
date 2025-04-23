@@ -53,7 +53,7 @@ export class ClubChatComponent implements OnInit, OnDestroy {
   newMessage = ""
   senderId = 0
   hasPermission = false
-  isLoading = false
+  isLoading = true
 
   private subscriptions: Subscription[] = []
 
