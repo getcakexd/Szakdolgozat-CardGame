@@ -11,6 +11,8 @@ import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { PasswordResetService } from "../../services/password-reset/password-reset.service"
+import { PasswordValidatorService } from "../../services/password-validator/password-validator.service"
+import { NgClass } from "@angular/common"
 
 @Component({
   selector: "app-reset-password",
@@ -19,6 +21,7 @@ import { PasswordResetService } from "../../services/password-reset/password-res
   imports: [
     FormsModule,
     NgIf,
+    NgClass,
     MatFormFieldModule,
     MatCardModule,
     MatInputModule,
@@ -32,12 +35,9 @@ import { PasswordResetService } from "../../services/password-reset/password-res
   styleUrls: ["./reset-password.component.css"],
 })
 export class ResetPasswordComponent implements OnInit {
-  resetPasswordForm = new FormGroup({
-    password: new FormControl("", [Validators.required, Validators.minLength(8)]),
-    confirmPassword: new FormControl("", [Validators.required]),
-  })
+  resetPasswordForm = {} as FormGroup
 
-  message: string = ""
+  message = ""
   isLoading = false
   isSuccess = false
   isTokenValid = false
@@ -45,13 +45,31 @@ export class ResetPasswordComponent implements OnInit {
   hideConfirmPassword = true
   token: string | null = null
 
+  passwordStrengthInfo = {
+    minLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumeric: false,
+    hasSpecialChar: false,
+  }
+
   constructor(
     private passwordResetService: PasswordResetService,
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
-  ) {}
+    private passwordValidator: PasswordValidatorService,
+  ) {
+    this.resetPasswordForm = new FormGroup({
+      password: new FormControl("", [
+        Validators.required,
+        Validators.minLength(8),
+        this.passwordValidator.createPasswordStrengthValidator(),
+      ]),
+      confirmPassword: new FormControl("", [Validators.required]),
+    })
+  }
 
   ngOnInit(): void {
     this.isLoading = true
@@ -67,12 +85,41 @@ export class ResetPasswordComponent implements OnInit {
       next: () => {
         this.isLoading = false
         this.isTokenValid = true
+
+        this.resetPasswordForm.get("password")?.valueChanges.subscribe((value) => {
+          this.updatePasswordStrengthInfo(value)
+        })
       },
       error: () => {
         this.isLoading = false
         this.message = this.translate.instant("PASSWORD_RESET.INVALID_OR_EXPIRED_TOKEN")
       },
     })
+  }
+
+  private updatePasswordStrengthInfo(password: string): void {
+    if (!password) {
+      this.resetPasswordStrengthInfo()
+      return
+    }
+
+    this.passwordStrengthInfo = {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumeric: /[0-9]/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
+    }
+  }
+
+  private resetPasswordStrengthInfo(): void {
+    this.passwordStrengthInfo = {
+      minLength: false,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumeric: false,
+      hasSpecialChar: false,
+    }
   }
 
   resetPassword(): void {
@@ -117,6 +164,9 @@ export class ResetPasswordComponent implements OnInit {
     }
     if (control?.hasError("minlength")) {
       return this.translate.instant("ERRORS.PASSWORD_TOO_SHORT")
+    }
+    if (field === "password" && control?.hasError("passwordStrength")) {
+      return this.passwordValidator.getPasswordErrorMessage(control.errors)
     }
     if (field === "confirmPassword" && !this.passwordsMatch() && control?.touched) {
       return this.translate.instant("ERRORS.PASSWORDS_DONT_MATCH")

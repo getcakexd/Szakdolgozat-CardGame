@@ -64,6 +64,15 @@
       <div *ngIf="message" class="error-message">
         {{ message }}
       </div>
+
+      <div *ngIf="unverifiedAccount" class="verification-message">
+        <mat-icon>email</mat-icon>
+        <h3>{{ 'EMAIL_VERIFICATION.ACCOUNT_UNVERIFIED' | translate }}</h3>
+        <p>{{ message }}</p>
+        <button mat-button color="primary" (click)="resendVerificationEmail()" [disabled]="isLoading">
+          {{ 'EMAIL_VERIFICATION.RESEND' | translate }}
+        </button>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

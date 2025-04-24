@@ -46,6 +46,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   hidePassword = true
   socialUser!: SocialUser
   private authStateSubscription: Subscription | null = null
+  unverifiedAccount = false;
+  userId: number = 0;
+  isSuccess = false;
 
   constructor(
     private userService: UserService,
@@ -54,7 +57,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private socialAuthService: SocialAuthService,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.userId = authService.currentUser?.id || 0
+  }
 
   ngOnInit(): void {
     if (!this.authService.isLoggedIn()) {
@@ -100,32 +105,65 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login(): void {
     if (this.loginForm.valid) {
-      this.isLoading = true
-      const username = this.loginForm.get("username")?.value!
-      const password = this.loginForm.get("password")?.value!
-
-      this.authService.login(username, password).subscribe({
-        next: () => {
-          this.isLoading = false
-          this.router.navigate(["/home"]).then(() => {
-            window.location.reload()
-          })
-        },
-        error: (error) => {
-          this.isLoading = false
-          this.message = error?.error?.message || this.translate.instant('ERRORS.INVALID_CREDENTIALS')
-          if (this.message != null) {
-            this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
-              duration: 5000,
-              panelClass: ["error-snackbar"],
-            })
+      this.isLoading = true;
+      this.authService.login(
+        this.loginForm.get('username')?.value!,
+        this.loginForm.get('password')?.value!
+      ).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if (response && response.unverified) {
+            this.unverifiedAccount = true;
+            this.userId = response.userId;
+            this.message = response.message;
+            this.isSuccess = false;
+          } else {
+            this.router.navigate(['/home']);
+            window.location.reload();
           }
         },
-      })
+        error: (error) => {
+          this.isLoading = false;
+          if (error?.error?.unverified) {
+            this.unverifiedAccount = true;
+            this.userId = error.error.userId;
+            this.message = error.error.message;
+          } else {
+            this.message = error?.error || this.translate.instant('ERRORS.INVALID_CREDENTIALS');
+          }
+          this.isSuccess = false;
+        }
+      });
     } else {
-      this.message = this.translate.instant('ERRORS.FILL_ALL_FIELDS')
-      this.loginForm.markAllAsTouched()
+      this.loginForm.markAllAsTouched();
+      this.message = this.translate.instant('ERRORS.FILL_ALL_FIELDS');
+      this.isSuccess = false;
     }
+  }
+
+  resendVerificationEmail(): void {
+    if (!this.userId) return;
+
+    this.isLoading = true;
+    this.authService.resendVerificationEmail(this.userId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.snackBar.open(
+          this.translate.instant('EMAIL_VERIFICATION.RESENT'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 5000, panelClass: ['success-snackbar'] }
+        );
+      },
+      error: (error) => {
+        this.isLoading = false;
+        const errorMessage = error?.error?.message || this.translate.instant('EMAIL_VERIFICATION.RESEND_ERROR');
+        this.snackBar.open(
+          errorMessage,
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 5000, panelClass: ['error-snackbar'] }
+        );
+      }
+    });
   }
 
   getErrorMessage(field: string): string {

@@ -3,6 +3,7 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
 import hu.benkototh.cardgame.backend.rest.util.GoogleTokenVerifier;
+import hu.benkototh.cardgame.backend.rest.service.SimpleEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Calendar;
 
 @Controller
 public class UserController {
@@ -26,36 +28,39 @@ public class UserController {
     @Lazy
     @Autowired
     private FriendRequestController friendRequestController;
-    
+
     @Lazy
     @Autowired
     private FriendshipController friendshipController;
-    
+
     @Lazy
     @Autowired
     private ChatController chatController;
-    
+
     @Lazy
     @Autowired
     private ClubMemberController clubMemberController;
-    
+
     @Lazy
     @Autowired
     private ClubChatController clubChatController;
-    
+
     @Lazy
     @Autowired
     private ClubInviteController clubInviteController;
-    
+
     @Lazy
     @Autowired
     private ClubController clubController;
-    
+
     @Autowired
     private AuditLogController auditLogController;
 
     @Autowired
     private GoogleTokenVerifier googleTokenVerifier;
+
+    @Autowired
+    private SimpleEmailService emailService;
 
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -66,6 +71,9 @@ public class UserController {
 
     @Value("${google.oauth.password.suffix}")
     private String GOOGLE_AUTH_SUFFIX;
+
+    @Value("${app.verification.token-expiration:24}")
+    private int verificationTokenExpirationHours;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -92,6 +100,12 @@ public class UserController {
             return null;
         }
 
+        if (!existingUser.isVerified()) {
+            auditLogController.logAction("LOGIN_FAILED", existingUser.getId(),
+                    "Login failed: Email not verified - " + existingUser.getUsername());
+            return null;
+        }
+
         if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             existingUser.setFailedLoginAttempts(0);
             auditLogController.logAction("LOGIN_SUCCESS", existingUser.getId(),
@@ -106,8 +120,8 @@ public class UserController {
                         "Account locked due to too many failed login attempts: " + existingUser.getUsername());
             } else {
                 auditLogController.logAction("LOGIN_FAILED", existingUser.getId(),
-                        "Login failed: Incorrect password - " + existingUser.getUsername() + 
-                        " (Attempt " + existingUser.getFailedLoginAttempts() + " of " + MAX_LOGIN_ATTEMPTS + ")");
+                        "Login failed: Incorrect password - " + existingUser.getUsername() +
+                                " (Attempt " + existingUser.getFailedLoginAttempts() + " of " + MAX_LOGIN_ATTEMPTS + ")");
             }
 
             userRepository.save(existingUser);
@@ -121,17 +135,35 @@ public class UserController {
                     "User creation failed: Username or email already exists - " + user.getUsername());
             return null;
         }
-        
+
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         setRoleForUSer(user);
         user.setLocked(false);
         user.setFailedLoginAttempts(0);
+        user.setVerified(false);
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, verificationTokenExpirationHours);
+        user.setVerificationTokenExpiry(calendar.getTime());
+
         User savedUser = userRepository.save(user);
-        
+
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), token, savedUser.getId());
+            auditLogController.logAction("VERIFICATION_EMAIL_SENT", savedUser.getId(),
+                    "Verification email sent to: " + savedUser.getEmail());
+        } catch (Exception e) {
+            auditLogController.logAction("VERIFICATION_EMAIL_FAILED", savedUser.getId(),
+                    "Failed to send verification email: " + e.getMessage());
+        }
+
         auditLogController.logAction("USER_CREATED", savedUser.getId(),
                 "New user created: " + savedUser.getUsername());
-        
+
         return savedUser;
     }
 
@@ -165,10 +197,10 @@ public class UserController {
                     String randomPassword = GOOGLE_AUTH_PREFIX + GOOGLE_AUTH_SUFFIX;
                     newUser.setPassword(passwordEncoder.encode(randomPassword));
 
-
                     setRoleForUSer(newUser);
                     newUser.setLocked(false);
                     newUser.setFailedLoginAttempts(0);
+                    newUser.setVerified(true);
 
                     User savedUser = userRepository.save(newUser);
 
@@ -185,6 +217,69 @@ public class UserController {
         }
     }
 
+    public boolean verifyEmail(String token) {
+        User user = findByVerificationToken(token);
+
+        if (user == null) {
+            return false;
+        }
+
+        if (user.getVerificationTokenExpiry().before(new Date())) {
+            return false;
+        }
+
+        user.setVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
+
+        auditLogController.logAction("EMAIL_VERIFIED", user.getId(),
+                "Email verified for user: " + user.getUsername());
+
+        return true;
+    }
+
+    public boolean resendVerificationEmail(long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+
+        User user = userOptional.get();
+
+        if (user.isVerified()) {
+            return false;
+        }
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, verificationTokenExpirationHours);
+        user.setVerificationTokenExpiry(calendar.getTime());
+
+        userRepository.save(user);
+
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), token, user.getId());
+            auditLogController.logAction("VERIFICATION_EMAIL_RESENT", user.getId(),
+                    "Verification email resent to: " + user.getEmail());
+            return true;
+        } catch (Exception e) {
+            auditLogController.logAction("VERIFICATION_EMAIL_FAILED", user.getId(),
+                    "Failed to resend verification email: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public User findByVerificationToken(String token) {
+        return userRepository.findAll().stream()
+                .filter(user -> token.equals(user.getVerificationToken()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public User updateUsername(long userId, String newUsername) {
         Optional<User> userOptional = userRepository.findById(userId);
 
@@ -193,17 +288,17 @@ public class UserController {
                     "Username update failed: User not found or username already exists - " + newUsername);
             return null;
         }
-        
+
         User user = userOptional.get();
         String oldUsername = user.getUsername();
         user.setUsername(newUsername);
         User updatedUser = userRepository.save(user);
-        
+
         saveUserHistory(user, oldUsername, null, "self");
-        
+
         auditLogController.logAction("USERNAME_UPDATED", userId,
                 "Username updated from " + oldUsername + " to " + newUsername);
-        
+
         return updatedUser;
     }
 
@@ -215,17 +310,35 @@ public class UserController {
                     "Email update failed: User not found or email already exists - " + newEmail);
             return null;
         }
-        
+
         User user = userOptional.get();
         String oldEmail = user.getEmail();
         user.setEmail(newEmail);
+
+        user.setVerified(false);
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, verificationTokenExpirationHours);
+        user.setVerificationTokenExpiry(calendar.getTime());
+
         User updatedUser = userRepository.save(user);
-        
+
+        try {
+            emailService.sendVerificationEmail(newEmail, token, user.getId());
+            auditLogController.logAction("VERIFICATION_EMAIL_SENT", user.getId(),
+                    "Verification email sent to new email: " + newEmail);
+        } catch (Exception e) {
+            auditLogController.logAction("VERIFICATION_EMAIL_FAILED", user.getId(),
+                    "Failed to send verification email to new email: " + e.getMessage());
+        }
+
         saveUserHistory(user, null, oldEmail, "self");
-        
+
         auditLogController.logAction("EMAIL_UPDATED", userId,
                 "Email updated from " + oldEmail + " to " + newEmail);
-        
+
         return updatedUser;
     }
 
@@ -237,27 +350,27 @@ public class UserController {
                     "Password update failed: User not found");
             return null;
         }
-        
+
         User user = userOptional.get();
-        
+
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             auditLogController.logAction("PASSWORD_UPDATE_FAILED", userId,
                     "Password update failed: New password same as current");
             return null;
         }
-        
+
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             auditLogController.logAction("PASSWORD_UPDATE_FAILED", userId,
                     "Password update failed: Current password incorrect");
             return null;
         }
-        
+
         user.setPassword(passwordEncoder.encode(newPassword));
         User updatedUser = userRepository.save(user);
-        
+
         auditLogController.logAction("PASSWORD_UPDATED", userId,
                 "Password updated successfully");
-        
+
         return updatedUser;
     }
 
@@ -269,9 +382,9 @@ public class UserController {
                     "User deletion failed: User not found");
             return false;
         }
-        
+
         User user = userOptional.get();
-        
+
         if (!passwordEncoder.matches(password, user.getPassword()) && !password.equals(user.getPassword())) {
             auditLogController.logAction("USER_DELETION_FAILED", userId,
                     "User deletion failed: Password incorrect");
@@ -289,15 +402,15 @@ public class UserController {
             }
             clubMemberController.deleteClubMember(clubMember);
         }
-        
+
         clubChatController.deleteMessagesByUser(user);
         clubInviteController.deleteInvitesByUser(user);
 
         userRepository.delete(user);
-        
+
         auditLogController.logAction("USER_DELETED", user.getId(),
                 "User deleted: " + user.getUsername() + " (ID: " + userId + ")");
-        
+
         return true;
     }
 
@@ -343,7 +456,7 @@ public class UserController {
         }
 
         User user = userOptional.get();
-                
+
         return userHistoryRepository.findAll().stream()
                 .filter(h -> h.getUser().getId() == user.getId())
                 .toList();
@@ -353,7 +466,7 @@ public class UserController {
         boolean result = userRepository.findById(user.getId())
                 .map(userAuth -> passwordEncoder.matches(user.getPassword(), userAuth.getPassword()))
                 .orElse(false);
-                
+
         if (result) {
             auditLogController.logAction("USER_AUTHENTICATED", user.getId(),
                     "User authenticated successfully");
@@ -361,7 +474,7 @@ public class UserController {
             auditLogController.logAction("USER_AUTHENTICATION_FAILED", user.getId(),
                     "User authentication failed");
         }
-        
+
         return result;
     }
 
@@ -429,7 +542,7 @@ public class UserController {
         history.setChangedAt(new Date());
         history.setChangedBy(changedBy);
         userHistoryRepository.save(history);
-        
+
         auditLogController.logAction("USER_HISTORY_RECORDED", user.getId(),
                 "User history recorded: " + (previousUsername != null ? "Username changed" : "Email changed"));
     }
@@ -446,8 +559,5 @@ public class UserController {
             auditLogController.logAction("USER_ROLE_SET", user.getId(),
                     "User role set to " + "ROLE_USER" + ": " + user.getUsername());
         }
-
-
-
     }
 }

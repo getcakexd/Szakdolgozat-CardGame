@@ -186,4 +186,10 @@ export class UserService {
   getUserHistory(userId: number): Observable<UserHistory[]> {
     return this.http.get<UserHistory[]>(`${this.apiUrl}/history?userId=${userId}`)
   }
+
+  checkVerificationStatus(userId: number): Observable<{ verified: boolean }> {
+    return this.http.get<{ verified: boolean }>(`${this.apiUrl}/verification-status`, {
+      params: { userId: userId.toString() }
+    });
+  }
 }

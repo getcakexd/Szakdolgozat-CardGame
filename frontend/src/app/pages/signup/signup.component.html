@@ -82,6 +82,15 @@
         </div>
       </form>
 
+      <div *ngIf="verificationSent" class="verification-message">
+        <mat-icon>email</mat-icon>
+        <h3>{{ 'EMAIL_VERIFICATION.CHECK_EMAIL' | translate }}</h3>
+        <p>{{ 'EMAIL_VERIFICATION.INSTRUCTIONS' | translate }}</p>
+        <button mat-button color="primary" (click)="resendVerificationEmail()" [disabled]="isLoading">
+          {{ 'EMAIL_VERIFICATION.RESEND' | translate }}
+        </button>
+      </div>
+
       <div *ngIf="!authService.isLoggedIn()" class="social-login-divider">
         <span>{{ 'SIGNUP.OR' | translate }}</span>
       </div>

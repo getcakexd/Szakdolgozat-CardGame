@@ -7,6 +7,7 @@ import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,15 +42,23 @@ public class UserRestService {
 
         if (loggedInUser == null) {
             User existingUser = userController.findByUsername(user.getUsername());
-            
+
             if (existingUser == null) {
                 return ResponseEntity.status(401).body("Invalid username or password");
             }
-            
+
             if (existingUser.isLocked()) {
                 return ResponseEntity.status(401).body("Account is locked. Please contact support.");
             }
-            
+
+            if (!existingUser.isVerified()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Email not verified. Please check your email for verification link.");
+                response.put("userId", existingUser.getId());
+                response.put("unverified", true);
+                return ResponseEntity.status(401).body(response);
+            }
+
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
@@ -57,10 +66,10 @@ public class UserRestService {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> create(@RequestBody User user) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> create(@RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
         User createdUser = userController.createUser(user);
-        
+
         if (createdUser == null) {
             if (userController.userExistsByUsername(user.getUsername())) {
                 response.put("message", "Username already in use.");
@@ -71,8 +80,9 @@ public class UserRestService {
             }
             return ResponseEntity.status(400).body(response);
         }
-        
-        response.put("message", "User created.");
+
+        response.put("message", "User created. Please check your email to verify your account.");
+        response.put("userId", createdUser.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -93,7 +103,7 @@ public class UserRestService {
     public ResponseEntity<Map<String, String>> updateUsername(@RequestParam long userId, @RequestParam String newUsername) {
         Map<String, String> response = new HashMap<>();
         User updatedUser = userController.updateUsername(userId, newUsername);
-        
+
         if (updatedUser == null) {
             if (userController.getUser(userId) == null) {
                 response.put("message", "User not found.");
@@ -103,7 +113,7 @@ public class UserRestService {
                 return ResponseEntity.status(400).body(response);
             }
         }
-        
+
         response.put("message", "Username updated.");
         return ResponseEntity.ok(response);
     }
@@ -112,7 +122,7 @@ public class UserRestService {
     public ResponseEntity<Map<String, String>> updateEmail(@RequestParam long userId, @RequestParam String newEmail) {
         Map<String, String> response = new HashMap<>();
         User updatedUser = userController.updateEmail(userId, newEmail);
-        
+
         if (updatedUser == null) {
             if (userController.getUser(userId) == null) {
                 response.put("message", "User not found.");
@@ -122,8 +132,8 @@ public class UserRestService {
                 return ResponseEntity.status(400).body(response);
             }
         }
-        
-        response.put("message", "Email updated.");
+
+        response.put("message", "Email updated. Please check your new email address for verification.");
         return ResponseEntity.ok(response);
     }
 
@@ -131,10 +141,10 @@ public class UserRestService {
     public ResponseEntity<Map<String, String>> updatePassword(@RequestParam long userId, @RequestParam String currentPassword, @RequestParam String newPassword) {
         Map<String, String> response = new HashMap<>();
         User updatedUser = userController.updatePassword(userId, currentPassword, newPassword);
-        
+
         if (updatedUser == null) {
             User user = userController.getUser(userId);
-            
+
             if (user == null) {
                 response.put("message", "User not found.");
                 return ResponseEntity.status(404).body(response);
@@ -146,7 +156,7 @@ public class UserRestService {
                 return ResponseEntity.status(400).body(response);
             }
         }
-        
+
         response.put("message", "Password updated.");
         return ResponseEntity.ok(response);
     }
@@ -155,10 +165,10 @@ public class UserRestService {
     public ResponseEntity<Map<String, String>> deleteUser(@RequestParam long userId, @RequestParam String password) {
         Map<String, String> response = new HashMap<>();
         boolean deleted = userController.deleteUser(userId, password);
-        
+
         if (!deleted) {
             User user = userController.getUser(userId);
-            
+
             if (user == null) {
                 response.put("message", "User not found.");
                 return ResponseEntity.status(404).body(response);
@@ -167,7 +177,7 @@ public class UserRestService {
                 return ResponseEntity.status(400).body(response);
             }
         }
-        
+
         response.put("message", "User deleted.");
         return ResponseEntity.ok(response);
     }
@@ -204,11 +214,49 @@ public class UserRestService {
     @GetMapping("/history")
     public ResponseEntity<List<UserHistory>> getUserHistory(@RequestParam long userId) {
         List<UserHistory> history = userController.getUserHistory(userId);
-        
+
         if (history == null) {
             return ResponseEntity.status(404).body(null);
         }
-        
+
         return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<Map<String, String>> verifyEmail(@RequestParam String token) {
+        Map<String, String> response = new HashMap<>();
+        boolean verified = userController.verifyEmail(token);
+
+        if (verified) {
+            response.put("message", "Email verified successfully. You can now login.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Invalid or expired verification token.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<Map<String, String>> resendVerificationEmail(@RequestParam long userId) {
+        Map<String, String> response = new HashMap<>();
+        boolean sent = userController.resendVerificationEmail(userId);
+
+        if (sent) {
+            response.put("message", "Verification email has been resent.");
+            return ResponseEntity.ok(response);
+        } else {
+            User user = userController.getUser(userId);
+
+            if (user == null) {
+                response.put("message", "User not found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            } else if (user.isVerified()) {
+                response.put("message", "Email is already verified.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            } else {
+                response.put("message", "Failed to resend verification email.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
     }
 }

@@ -73,6 +73,37 @@
   font-weight: 500;
 }
 
+.password-strength-container {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.strength-title {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.strength-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  color: #f44336;
+}
+
+.strength-item.met {
+  color: #4caf50;
+}
+
+.strength-item mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 8px;
+}
+
 .error-message {
   background-color: rgba(var(--mat-sys-error-rgb), 0.1);
   color: var(--mat-sys-error);

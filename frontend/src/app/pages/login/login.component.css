@@ -84,7 +84,6 @@ mat-card-title h2 {
   }
 }
 
-
 .social-login-divider {
   display: flex;
   align-items: center;
@@ -109,4 +108,32 @@ mat-card-title h2 {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+}
+
+.verification-message {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: rgba(var(--warning-color-rgb), 0.1);
+  color: var(--warning-color);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.verification-message mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+}
+
+.verification-message h3 {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.verification-message p {
+  margin-bottom: 16px;
 }

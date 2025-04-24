@@ -26,11 +26,13 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, { username, password }).pipe(
-      tap((user) => {
-        localStorage.setItem("currentUser", JSON.stringify(user))
-        this.currentUserSubject.next(user)
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { username, password }).pipe(
+      tap((response) => {
+        if (response && !response.unverified) {
+          localStorage.setItem("currentUser", JSON.stringify(response))
+          this.currentUserSubject.next(response)
+        }
       }),
     )
   }
@@ -90,5 +92,17 @@ export class AuthService {
 
   isRoot(): boolean {
     return this.currentUser?.role === "ROLE_ROOT"
+  }
+
+  resendVerificationEmail(userId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/resend-verification`, null, {
+      params: { userId: userId.toString() }
+    });
+  }
+
+  verifyEmail(token: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/verify-email`, {
+      params: { token }
+    });
   }
 }

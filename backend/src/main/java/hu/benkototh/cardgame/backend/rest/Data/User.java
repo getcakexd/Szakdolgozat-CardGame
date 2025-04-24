@@ -2,6 +2,8 @@ package hu.benkototh.cardgame.backend.rest.Data;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -14,6 +16,9 @@ public class User {
     private String role;
     private boolean locked;
     private int failedLoginAttempts;
+    private boolean verified = false;
+    private String verificationToken;
+    private Date verificationTokenExpiry;
 
     public User() {
     }
@@ -72,5 +77,29 @@ public class User {
 
     public void setFailedLoginAttempts(int failedLoginAttempts) {
         this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public Date getVerificationTokenExpiry() {
+        return verificationTokenExpiry;
+    }
+
+    public void setVerificationTokenExpiry(Date verificationTokenExpiry) {
+        this.verificationTokenExpiry = verificationTokenExpiry;
     }
 }

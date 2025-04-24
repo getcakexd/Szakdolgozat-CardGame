@@ -20,12 +20,14 @@ import {TicketDetailComponent} from './components/ticket-detail/ticket-detail.co
 import {FriendsComponent} from './pages/friends/friends.component';
 import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
 import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
+import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'verify-email', component: VerifyEmailComponent},
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
