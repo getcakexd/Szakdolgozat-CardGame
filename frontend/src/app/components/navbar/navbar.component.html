@@ -30,6 +30,10 @@
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #playMenu="matMenu">
+          <button mat-menu-item routerLink="/games">
+            <mat-icon>videogame_asset</mat-icon>
+            <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+          </button>
           <button mat-menu-item routerLink="/lobby">
             <mat-icon>casino</mat-icon>
             <span>{{ 'NAVBAR.LOBBY' | translate }}</span>

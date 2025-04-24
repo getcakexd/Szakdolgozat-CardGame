@@ -13,6 +13,7 @@
     "FRIENDS": "Barátok",
     "CLUBS": "Klubok",
     "PLAY": "Játék",
+    "GAMES": "Játékok",
     "LOBBY": "Lobbi",
     "ADMIN_AREA": "Adminisztráció",
     "ADMIN": "Admin",
@@ -454,6 +455,13 @@
     "PROFILE_DELETED": "Profil sikeresen törölve!",
     "ACCOUNT_CREATED": "Fiók sikeresen létrehozva! Most már bejelentkezhet.",
     "THEME_UPDATED": "Téma sikeresen frissítve!"
+  },
+  "GAMES": {
+    "TITLE": "Elérhető Játékok",
+    "DESCRIPTION": "Böngéssz a kártyajátékaink között és hozz létre egy lobbyt, hogy játszhass a barátaiddal",
+    "FAILED_LOAD": "Nem sikerült betölteni a játékokat",
+    "NO_GAMES": "Jelenleg nincsenek elérhető játékok",
+    "CREATE_LOBBY": "Lobby Létrehozása"
   },
   "LOBBY": {
     "TITLE": "Játék Lobbik",

@@ -13,6 +13,7 @@
     "FRIENDS": "Friends",
     "CLUBS": "Clubs",
     "PLAY": "Play",
+    "GAMES": "Games",
     "LOBBY": "Lobby",
     "ADMIN_AREA": "Administration",
     "ADMIN": "Admin",
@@ -449,6 +450,13 @@
     "PROFILE_DELETED": "Profile deleted successfully!",
     "ACCOUNT_CREATED": "Account created successfully! You can now login.",
     "THEME_UPDATED": "Theme updated successfully!"
+  },
+  "GAMES": {
+    "TITLE": "Available Games",
+    "DESCRIPTION": "Browse our collection of card games and create a lobby to play with friends",
+    "FAILED_LOAD": "Failed to load games",
+    "NO_GAMES": "No games available at the moment",
+    "CREATE_LOBBY": "Create Lobby"
   },
   "LOBBY": {
     "TITLE": "Game Lobbies",
