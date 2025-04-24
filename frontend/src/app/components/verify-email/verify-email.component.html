@@ -1,0 +1,30 @@
+<div class="verify-email-container">
+  <mat-card class="verify-email-card">
+    <mat-card-content>
+      <div class="verify-email-content">
+        <h2>{{ 'EMAIL_VERIFICATION.TITLE' | translate }}</h2>
+
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>{{ 'EMAIL_VERIFICATION.PROCESSING' | translate }}</p>
+        </div>
+
+        <div *ngIf="!isLoading && isVerified" class="success-container">
+          <div class="success-icon">✓</div>
+          <p>{{ 'EMAIL_VERIFICATION.SUCCESS_MESSAGE' | translate }}</p>
+          <button mat-raised-button color="primary" routerLink="/login">
+            {{ 'EMAIL_VERIFICATION.GO_TO_LOGIN' | translate }}
+          </button>
+        </div>
+
+        <div *ngIf="!isLoading && !isVerified" class="error-container">
+          <div class="error-icon">✗</div>
+          <p>{{ errorMessage }}</p>
+          <button mat-raised-button color="primary" routerLink="/login">
+            {{ 'EMAIL_VERIFICATION.GO_TO_LOGIN' | translate }}
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

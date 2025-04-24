@@ -517,6 +517,23 @@
     "SUCCESS": "Your password has been reset successfully.",
     "ERROR": "Failed to reset password."
   },
+  "EMAIL_VERIFICATION": {
+    "TITLE": "Email Verification",
+    "PROCESSING": "Verifying your email...",
+    "SUCCESS": "Email verified successfully",
+    "SUCCESS_MESSAGE": "Your email has been verified successfully. You can now log in to your account.",
+    "ERROR":  "Your email has been verified successfully. You can now log in to your account.",
+    "ERROR": "Failed to verify email",
+    "MISSING_TOKEN": "Verification token is missing",
+    "GO_TO_LOGIN": "Go to Login",
+    "CHECK_EMAIL": "Check Your Email",
+    "INSTRUCTIONS": "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.",
+    "RESEND": "Resend Verification Email",
+    "SENT": "Verification email sent",
+    "RESENT": "Verification email has been resent",
+    "RESEND_ERROR": "Failed to resend verification email",
+    "ACCOUNT_UNVERIFIED": "Email Not Verified"
+  },
   "AUDIT_LOGS": {
     "TITLE": "Audit Logs",
     "SUBTITLE": "View and search system activity records",

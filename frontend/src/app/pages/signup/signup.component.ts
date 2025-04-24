@@ -55,6 +55,9 @@ export class SignupComponent implements OnInit, OnDestroy {
     hasSpecialChar: false
   }
 
+  verificationSent = false;
+  userId: number | null = null;
+
   constructor(
     private userService: UserService,
     protected authService: AuthService,
@@ -159,23 +162,20 @@ export class SignupComponent implements OnInit, OnDestroy {
 
       this.userService.createUser(newUser).subscribe({
         next: (response) => {
-          this.message = response.message
           this.isSuccess = true
           this.isLoading = false
+          this.verificationSent = true;
+          this.userId = response.userId;
           this.resetForm()
 
           this.snackBar.open(
-            this.translate.instant('SUCCESS.ACCOUNT_CREATED'),
-            this.translate.instant('CLOSE'),
+            this.translate.instant('EMAIL_VERIFICATION.SENT'),
+            this.translate.instant('COMMON.CLOSE'),
             {
               duration: 5000,
               panelClass: ["success-snackbar"],
             }
           )
-
-          setTimeout(() => {
-            this.router.navigate(["/login"])
-          }, 1500)
         },
         error: (error) => {
           this.message = error?.error?.message || this.translate.instant('ERRORS.USER_CREATE_ERROR')
@@ -183,7 +183,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           this.isLoading = false
 
           if (this.message != null) {
-            this.snackBar.open(this.message, this.translate.instant('CLOSE'), {
+            this.snackBar.open(this.message, this.translate.instant('COMMON.CLOSE'), {
               duration: 5000,
               panelClass: ["error-snackbar"],
             })
@@ -195,6 +195,31 @@ export class SignupComponent implements OnInit, OnDestroy {
       this.message = this.translate.instant('ERRORS.FILL_ALL_FIELDS')
       this.isSuccess = false
     }
+  }
+
+  resendVerificationEmail(): void {
+    if (!this.userId) return;
+
+    this.isLoading = true;
+    this.authService.resendVerificationEmail(this.userId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.snackBar.open(
+          this.translate.instant('EMAIL_VERIFICATION.RESENT'),
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 5000, panelClass: ['success-snackbar'] }
+        );
+      },
+      error: (error) => {
+        this.isLoading = false;
+        const errorMessage = error?.error?.message || this.translate.instant('EMAIL_VERIFICATION.RESEND_ERROR');
+        this.snackBar.open(
+          errorMessage,
+          this.translate.instant('COMMON.CLOSE'),
+          { duration: 5000, panelClass: ['error-snackbar'] }
+        );
+      }
+    });
   }
 
   getErrorMessage(field: string): string {

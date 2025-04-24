@@ -522,6 +522,22 @@
     "SUCCESS": "Jelszava sikeresen visszaállítva.",
     "ERROR": "Nem sikerült visszaállítani a jelszót."
   },
+  "EMAIL_VERIFICATION": {
+    "TITLE": "E-mail megerősítés",
+    "PROCESSING": "E-mail cím ellenőrzése...",
+    "SUCCESS": "E-mail sikeresen megerősítve",
+    "SUCCESS_MESSAGE": "Az e-mail címét sikeresen megerősítettük. Most már bejelentkezhet fiókjába.",
+    "ERROR": "Nem sikerült megerősíteni az e-mail címet",
+    "MISSING_TOKEN": "Hiányzik a megerősítő token",
+    "GO_TO_LOGIN": "Ugrás a bejelentkezéshez",
+    "CHECK_EMAIL": "Ellenőrizze e-mail fiókját",
+    "INSTRUCTIONS": "Megerősítő linket küldtünk az e-mail címére. Kérjük, ellenőrizze a beérkező üzeneteit és kattintson a linkre a fiók megerősítéséhez.",
+    "RESEND": "Megerősítő e-mail újraküldése",
+    "SENT": "Megerősítő e-mail elküldve",
+    "RESENT": "A megerősítő e-mailt újraküldtük",
+    "RESEND_ERROR": "Nem sikerült újraküldeni a megerősítő e-mailt",
+    "ACCOUNT_UNVERIFIED": "E-mail cím nincs megerősítve"
+  },
   "AUDIT_LOGS": {
     "TITLE": "Audit Naplók",
     "SUBTITLE": "Rendszeraktivitási bejegyzések megtekintése és keresése",
