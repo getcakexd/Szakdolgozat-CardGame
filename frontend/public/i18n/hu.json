@@ -1,4 +1,12 @@
 {
+  "COMMON": {
+    "CLOSE": "Bezárás",
+    "CONFIRM": "Megerősítés",
+    "CANCEL": "Mégse",
+    "LOADING": "Betöltés...",
+    "YES": "Igen",
+    "NO": "Nem"
+  },
   "NAVBAR": {
     "HOME": "Kezdőlap",
     "SOCIAL": "Közösség",
@@ -28,7 +36,8 @@
     "NEED_ACCOUNT": "Nincs még fiókja? Regisztráljon",
     "OR": "VAGY",
     "ENTER_USERNAME": "Adja meg felhasználónevét",
-    "ENTER_PASSWORD": "Adja meg jelszavát"
+    "ENTER_PASSWORD": "Adja meg jelszavát",
+    "FORGOT_PASSWORD": "Elfelejtette jelszavát?"
   },
   "SIGNUP": {
     "TITLE": "Fiók létrehozása",
@@ -400,7 +409,10 @@
     "GOOGLE_SIGNUP_ERROR": "Hiba a Google regisztráció során",
     "USER_CREATE_ERROR": "Hiba a felhasználó létrehozásakor. Kérjük, próbálja újra.",
     "PASSWORD_REQUIRED_DELETE": "A fiók törléséhez jelszó megadása szükséges",
-    "LOGIN_REQUIRED": "Be kell jelentkezned az oldal eléréséhez"
+    "LOGIN_REQUIRED": "Be kell jelentkezned az oldal eléréséhez",
+    "PASSWORDS_DONT_MATCH": "A jelszavak nem egyeznek",
+    "PASSWORD_TOO_SHORT": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
+    "EMAIL_NOT_FOUND": "Nem található fiók ezzel az e-mail címmel"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Felhasználónév sikeresen frissítve!",
@@ -488,13 +500,27 @@
       "INVALID_CODE": "Érvénytelen előszoba kód"
     }
   },
-  "COMMON": {
-    "CLOSE": "Bezárás",
-    "CONFIRM": "Megerősítés",
-    "CANCEL": "Mégse",
-    "LOADING": "Betöltés...",
-    "YES": "Igen",
-    "NO": "Nem"
+  "PASSWORD_RESET": {
+    "TITLE": "Elfelejtett jelszó",
+    "INSTRUCTIONS": "Adja meg e-mail címét, és küldünk egy linket a jelszó visszaállításához.",
+    "EMAIL": "E-mail",
+    "ENTER_EMAIL": "Adja meg e-mail címét",
+    "SUBMIT_BUTTON": "Visszaállító link küldése",
+    "BACK_TO_LOGIN": "Vissza a bejelentkezéshez",
+    "EMAIL_SENT": "A jelszó-visszaállító link elküldve az e-mail címére.",
+    "INVALID_TOKEN": "Érvénytelen jelszó-visszaállító link.",
+    "INVALID_OR_EXPIRED_TOKEN": "Ez a jelszó-visszaállító link érvénytelen vagy lejárt.",
+    "RESET_TITLE": "Jelszó visszaállítása",
+    "NEW_PASSWORD_INSTRUCTIONS": "Adjon meg egy új jelszót a fiókjához.",
+    "NEW_PASSWORD": "Új jelszó",
+    "CONFIRM_PASSWORD": "Jelszó megerősítése",
+    "ENTER_NEW_PASSWORD": "Adja meg az új jelszót",
+    "ENTER_CONFIRM_PASSWORD": "Erősítse meg az új jelszót",
+    "RESET_BUTTON": "Jelszó visszaállítása",
+    "GO_TO_LOGIN": "Ugrás a bejelentkezéshez",
+    "TRY_AGAIN": "Próbálja újra",
+    "SUCCESS": "Jelszava sikeresen visszaállítva.",
+    "ERROR": "Nem sikerült visszaállítani a jelszót."
   },
   "AUDIT_LOGS": {
     "TITLE": "Audit Naplók",

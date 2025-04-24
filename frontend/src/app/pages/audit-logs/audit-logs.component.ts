@@ -179,7 +179,6 @@ export class AuditLogsComponent implements OnInit {
   }
 
   getShortActionName(action: string): string {
-    // If action is longer than 15 characters, truncate it
     if (action.length > 15) {
       return action.substring(0, 12) + "..."
     }

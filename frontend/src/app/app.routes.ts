@@ -18,10 +18,14 @@ import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
 import {SupportComponent} from './pages/support/support.component';
 import {TicketDetailComponent} from './components/ticket-detail/ticket-detail.component';
 import {FriendsComponent} from './pages/friends/friends.component';
+import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
+import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },

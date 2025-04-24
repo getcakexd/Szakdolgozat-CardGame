@@ -6,7 +6,6 @@
 
   <mat-card>
     <mat-card-content>
-      <!-- Filters Section -->
       <div class="filters-section">
         <h2>
           <mat-icon>filter_list</mat-icon>
@@ -72,19 +71,16 @@
         </form>
       </div>
 
-      <!-- Loading Indicator -->
       <div *ngIf="loading" class="loading-container">
         <mat-spinner diameter="40"></mat-spinner>
         <p>{{ 'AUDIT_LOGS.LOADING' | translate }}</p>
       </div>
 
-      <!-- Empty State -->
       <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
         <mat-icon>history</mat-icon>
         <p>{{ 'AUDIT_LOGS.NO_LOGS_FOUND' | translate }}</p>
       </div>
 
-      <!-- Audit Logs Table -->
       <table mat-table [dataSource]="dataSource" matSort class="audit-table" *ngIf="!loading && dataSource.data.length > 0">
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ID' | translate }}</th>
@@ -125,7 +121,6 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="log-row"></tr>
       </table>
 
-      <!-- Pagination -->
       <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons *ngIf="!loading && dataSource.data.length > 0"></mat-paginator>
     </mat-card-content>
   </mat-card>

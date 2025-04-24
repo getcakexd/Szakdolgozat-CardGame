@@ -1,4 +1,12 @@
 {
+  "COMMON": {
+    "CLOSE": "Close",
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel",
+    "LOADING": "Loading...",
+    "YES": "Yes",
+    "NO": "No"
+  },
   "NAVBAR": {
     "HOME": "Home",
     "SOCIAL": "Social",
@@ -28,7 +36,8 @@
     "NEED_ACCOUNT": "Don't have an account? Sign up",
     "OR": "OR",
     "ENTER_USERNAME": "Enter your username",
-    "ENTER_PASSWORD": "Enter your password"
+    "ENTER_PASSWORD": "Enter your password",
+    "FORGOT_PASSWORD": "Forgot Password?"
   },
   "SIGNUP": {
     "TITLE": "Create Account",
@@ -395,7 +404,10 @@
     "GOOGLE_SIGNUP_ERROR": "Error during Google signup",
     "USER_CREATE_ERROR": "Error creating user. Please try again.",
     "PASSWORD_REQUIRED_DELETE": "Password is required to delete account",
-    "LOGIN_REQUIRED": "You need to be logged in to access this page"
+    "LOGIN_REQUIRED": "You need to be logged in to access this page",
+    "PASSWORDS_DONT_MATCH": "Passwords don't match",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
+    "EMAIL_NOT_FOUND": "No account found with this email address"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Username updated successfully!",
@@ -483,13 +495,27 @@
       "INVALID_CODE": "Invalid lobby code"
     }
   },
-  "COMMON": {
-    "CLOSE": "Close",
-    "CONFIRM": "Confirm",
-    "CANCEL": "Cancel",
-    "LOADING": "Loading...",
-    "YES": "Yes",
-    "NO": "No"
+  "PASSWORD_RESET": {
+    "TITLE": "Forgot Password",
+    "INSTRUCTIONS": "Enter your email address below and we'll send you a link to reset your password.",
+    "EMAIL": "Email",
+    "ENTER_EMAIL": "Enter your email address",
+    "SUBMIT_BUTTON": "Send Reset Link",
+    "BACK_TO_LOGIN": "Back to Login",
+    "EMAIL_SENT": "Password reset link has been sent to your email.",
+    "INVALID_TOKEN": "Invalid password reset link.",
+    "INVALID_OR_EXPIRED_TOKEN": "This password reset link is invalid or has expired.",
+    "RESET_TITLE": "Reset Password",
+    "NEW_PASSWORD_INSTRUCTIONS": "Enter a new password for your account.",
+    "NEW_PASSWORD": "New Password",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "ENTER_NEW_PASSWORD": "Enter new password",
+    "ENTER_CONFIRM_PASSWORD": "Confirm new password",
+    "RESET_BUTTON": "Reset Password",
+    "GO_TO_LOGIN": "Go to Login",
+    "TRY_AGAIN": "Try Again",
+    "SUCCESS": "Your password has been reset successfully.",
+    "ERROR": "Failed to reset password."
   },
   "AUDIT_LOGS": {
     "TITLE": "Audit Logs",
