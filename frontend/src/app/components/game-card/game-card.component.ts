@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslateModule } from '@ngx-translate/core';
-import { Game, GameDescription, GameRules } from '../../models/game.model';
+import { Game } from '../../models/game.model';
 import { TranslationService } from '../../services/translation/translation.service';
+import {MatChip, MatChipSet} from '@angular/material/chips';
 
 @Component({
   selector: 'app-game-card',
@@ -20,10 +20,11 @@ import { TranslationService } from '../../services/translation/translation.servi
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatTooltipModule,
     MatSlideToggleModule,
-    TranslateModule
+    TranslateModule,
+    MatChip,
+    MatChipSet
   ]
 })
 export class GameCardComponent {
