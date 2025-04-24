@@ -6,6 +6,7 @@ Thumbs.db
 /backend/src/main/resources/application-local.properties
 /frontend/src/environments/secrets.ts
 /frontend/src/runtime-config.js
+games.txt
 
 
 /frontend/.angular/cache

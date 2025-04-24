@@ -1,0 +1,61 @@
+<mat-card class="game-card">
+  <mat-card-header>
+    <mat-card-title>{{ game.name }}</mat-card-title>
+    <div class="game-status" *ngIf="isAdmin">
+      <mat-slide-toggle
+        [checked]="game.active"
+        (change)="onToggleActive($event)"
+        color="primary"
+        matTooltip="{{ 'ADMIN.TOGGLE_ACTIVE' | translate }}">
+      </mat-slide-toggle>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="game-info">
+      <div class="game-description">
+        <p *ngIf="getDescriptionInCurrentLanguage()">{{ getDescriptionInCurrentLanguage() }}</p>
+        <p *ngIf="!getDescriptionInCurrentLanguage()" class="no-content">{{ 'GAME_CARD.NO_DESCRIPTION' | translate }}</p>
+      </div>
+
+      <div class="game-meta">
+        <div class="players-info">
+          <span class="meta-item">
+            <strong>{{ 'GAME_CARD.MIN_PLAYERS' | translate }}:</strong> {{ game.minPlayers }}
+          </span>
+          <span class="meta-item">
+            <strong>{{ 'GAME_CARD.MAX_PLAYERS' | translate }}:</strong> {{ game.maxPlayers }}
+          </span>
+        </div>
+
+        <div class="language-badges" *ngIf="getAvailableLanguages().length > 0">
+          <mat-chip-set>
+            <mat-chip
+              *ngFor="let lang of getAvailableLanguages()"
+              class="language-chip">
+              {{ lang }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-rules" *ngIf="showRules">
+      <h3>{{ 'ADMIN.RULES' | translate }}</h3>
+      <p *ngIf="getRulesInCurrentLanguage()">{{ getRulesInCurrentLanguage() }}</p>
+      <p *ngIf="!getRulesInCurrentLanguage()" class="no-content">{{ 'GAME_CARD.NO_RULES' | translate }}</p>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button color="primary" *ngIf="showRulesButton" (click)="toggleRules()" type="button">
+      <mat-icon>{{ showRules ? 'visibility_off' : 'visibility' }}</mat-icon>
+      {{ (showRules ? 'GAME_CARD.HIDE_RULES' : 'GAME_CARD.VIEW_RULES') | translate }}
+    </button>
+
+    <button mat-button color="warn" *ngIf="isAdmin" (click)="onDeleteGame()" type="button">
+      <mat-icon>delete</mat-icon>
+      {{ 'ADMIN.DELETE_GAME' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>

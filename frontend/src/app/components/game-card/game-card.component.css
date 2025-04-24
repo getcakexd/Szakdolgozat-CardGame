@@ -1,0 +1,86 @@
+.game-card {
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.game-status {
+  margin-left: auto;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.game-description {
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.game-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.players-info {
+  display: flex;
+  gap: 16px;
+}
+
+.meta-item {
+  font-size: 14px;
+}
+
+.language-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.language-chip {
+  font-size: 10px;
+  text-transform: uppercase;
+  height: 24px;
+  min-height: 24px;
+}
+
+.game-rules {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.no-content {
+  font-style: italic;
+  color: #888;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px 16px;
+}

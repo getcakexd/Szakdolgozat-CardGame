@@ -21,6 +21,7 @@ import {FriendsComponent} from './pages/friends/friends.component';
 import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
 import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
+import {GamesComponent} from './pages/games/games.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
   { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
   { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
+  { path: 'games', component: GamesComponent },
   { path: 'lobby', component: LobbyHomeComponent, canActivate: [AuthGuard] },
   { path: 'support', component: SupportComponent},
   { path: 'ticket/:id', component: TicketDetailComponent},

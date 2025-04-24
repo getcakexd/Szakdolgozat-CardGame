@@ -13,6 +13,7 @@
     "FRIENDS": "Friends",
     "CLUBS": "Clubs",
     "PLAY": "Play",
+    "GAMES": "Games",
     "LOBBY": "Lobby",
     "ADMIN_AREA": "Administration",
     "ADMIN": "Admin",
@@ -274,6 +275,16 @@
     "FAILED_SEND": "Failed to send message",
     "FAILED_UNSEND": "Failed to unsend message"
   },
+  "GAME_CARD": {
+    "VIEW_RULES": "View Rules",
+    "HIDE_RULES": "Hide Rules",
+    "NO_DESCRIPTION": "No description available in this language",
+    "NO_RULES": "No rules available in this language",
+    "MIN_PLAYERS": "Min Players",
+    "MAX_PLAYERS": "Max Players",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive"
+  },
   "ADMIN": {
     "TITLE": "Admin Dashboard",
     "USER_MANAGEMENT": "User Management",
@@ -315,7 +326,14 @@
     "FAILED_DELETE_GAME": "Failed to delete game",
     "FAILED_PROMOTE_USER": "Failed to promote user",
     "FAILED_DEMOTE_USER": "Failed to demote user",
-    "DELETE_GAME": "Delete Game"
+    "DELETE_GAME": "Delete Game",
+    "RULES": "Rules",
+    "TOGGLE_ACTIVE": "Toggle active status",
+    "GAME_UPDATED": "Game updated successfully",
+    "FAILED_UPDATE_GAME": "Failed to update game",
+    "NO_DESCRIPTION": "No description available",
+    "NO_RULES": "No rules available",
+    "AVAILABLE_LANGUAGES": "Available languages"
   },
   "AGENT": {
     "TITLE": "Agent Dashboard",
@@ -366,7 +384,21 @@
     "NAME_MIN_LENGTH": "Game name must be at least 3 characters long",
     "DESCRIPTION_REQUIRED": "Description is required",
     "MIN_PLAYERS": "Minimum Players",
-    "MAX_PLAYERS": "Maximum Players"
+    "MAX_PLAYERS": "Maximum Players",
+    "RULES": "Rules",
+    "RULES_REQUIRED": "Rules are required",
+    "MIN_PLAYERS_REQUIRED": "Minimum players is required",
+    "MAX_PLAYERS_REQUIRED": "Maximum players is required",
+    "MIN_PLAYERS_MIN": "Minimum players must be at least 1",
+    "MIN_PLAYERS_MAX": "Minimum players cannot exceed 10",
+    "MAX_PLAYERS_MIN": "Maximum players must be at least 1",
+    "MAX_PLAYERS_MAX": "Maximum players cannot exceed 10",
+    "LANGUAGE": "Language",
+    "CONTENT": "Content",
+    "CONTENT_REQUIRED": "Content is required",
+    "DESCRIPTIONS": "Descriptions",
+    "ADD_DESCRIPTION": "Add Description",
+    "ADD_RULES": "Add Rules"
   },
   "ADD_USER": {
     "TITLE": "Add New User",
@@ -418,6 +450,13 @@
     "PROFILE_DELETED": "Profile deleted successfully!",
     "ACCOUNT_CREATED": "Account created successfully! You can now login.",
     "THEME_UPDATED": "Theme updated successfully!"
+  },
+  "GAMES": {
+    "TITLE": "Available Games",
+    "DESCRIPTION": "Browse our collection of card games and create a lobby to play with friends",
+    "FAILED_LOAD": "Failed to load games",
+    "NO_GAMES": "No games available at the moment",
+    "CREATE_LOBBY": "Create Lobby"
   },
   "LOBBY": {
     "TITLE": "Game Lobbies",

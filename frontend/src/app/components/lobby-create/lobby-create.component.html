@@ -25,13 +25,13 @@
       </div>
     </div>
 
-    <div class="game-info" *ngIf="getSelectedGame()">
-      <mat-card>
-        <mat-card-content>
-          <p><strong>{{ 'LOBBY.DESCRIPTION' | translate }}:</strong> {{ getSelectedGame()?.description }}</p>
-          <p><strong>{{ 'LOBBY.PLAYERS_NEEDED' | translate }}:</strong> {{ getSelectedGame()?.minPlayers }}</p>
-        </mat-card-content>
-      </mat-card>
+    <div class="game-info" *ngIf="selectedGame">
+      <app-game-card
+        [game]="selectedGame"
+        [showRulesButton]="true"
+        [showActiveToggle]="false"
+        [isAdmin]="false">
+      </app-game-card>
     </div>
 
     <div class="form-actions">

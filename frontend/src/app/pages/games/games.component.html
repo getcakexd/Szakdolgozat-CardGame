@@ -1,0 +1,33 @@
+<div class="games-container">
+  <div class="games-header">
+    <h1>{{ 'GAMES.TITLE' | translate }}</h1>
+    <p class="games-description">{{ 'GAMES.DESCRIPTION' | translate }}</p>
+  </div>
+
+  <div class="games-list" *ngIf="!isLoading && games.length > 0">
+    <ng-container *ngFor="let game of games; let last = last">
+      <div class="game-card-container">
+        <app-game-card
+          [game]="game"
+          [showRulesButton]="true"
+          [showActiveToggle]="false"
+          [isAdmin]="false">
+        </app-game-card>
+      </div>
+      <mat-divider *ngIf="!last" class="game-divider"></mat-divider>
+    </ng-container>
+  </div>
+
+  <div class="no-games" *ngIf="!isLoading && games.length === 0">
+    <mat-card>
+      <mat-card-content>
+        <p>{{ 'GAMES.NO_GAMES' | translate }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>{{ 'COMMON.LOADING' | translate }}</p>
+  </div>
+</div>

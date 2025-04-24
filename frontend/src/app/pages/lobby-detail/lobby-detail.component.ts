@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { Lobby, LOBBY_STATUS } from '../../models/lobby.model';
 import { Game } from '../../models/game.model';
 import { User } from '../../models/user.model';
@@ -31,6 +31,8 @@ import {MatList, MatListItem} from '@angular/material/list';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatOption} from '@angular/material/core';
 import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
+import {TranslationService} from '../../services/translation/translation.service';
+import {GameCardComponent} from '../../components/game-card/game-card.component';
 
 @Component({
   selector: 'app-lobby-detail',
@@ -62,7 +64,9 @@ import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
     MatCardAvatar,
     MatCardHeader,
     MatCard,
-    NgClass
+    NgClass,
+    GameCardComponent,
+    GameCardComponent
   ],
   styleUrls: ['./lobby-detail.component.css']
 })
@@ -75,6 +79,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
   settingsForm: FormGroup;
   refreshSubscription: Subscription | null = null;
   lobbyStatus = LOBBY_STATUS;
+  selectedGame: Game | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,7 +89,8 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     this.settingsForm = this.fb.group({
       gameId: ['', Validators.required],
@@ -107,6 +113,10 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     this.loadLobby();
     this.loadGames();
     this.startRefreshInterval();
+
+    this.settingsForm.get('gameId')?.valueChanges.subscribe(gameId => {
+      this.selectedGame = this.games.find(game => game.id === gameId) || null;
+    });
   }
 
   ngOnDestroy(): void {
@@ -168,6 +178,8 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
         gameId: this.lobby.game.id,
         playWithPoints: this.lobby.playWithPoints
       });
+
+      this.selectedGame = this.lobby.game;
 
       if (!this.isLeader) {
         this.settingsForm.disable();
