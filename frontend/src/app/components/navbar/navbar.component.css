@@ -1,11 +1,22 @@
 .navbar {
-  background-color: var(--primary-color);
-  color: white;
-  box-shadow: var(--shadow-medium);
+  background-color: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background-color var(--transition-normal) ease;
+  transition: all 0.3s ease;
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--mat-sys-primary);
 }
 
 .navbar-container {
@@ -26,15 +37,29 @@
 .navbar-button {
   margin: 0 4px;
   border-radius: 4px;
-  transition: background-color var(--transition-fast) ease;
+  transition: background-color 0.2s ease;
+  color: var(--mat-sys-on-surface);
+}
 
-  mat-icon {
-    margin-right: 6px;
-  }
+.navbar-button mat-icon {
+  margin-right: 6px;
+  color: var(--mat-sys-primary);
+}
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+.navbar-button:hover {
+  background-color: var(--mat-sys-surface-variant);
+}
+
+::ng-deep .mat-mdc-menu-panel {
+  background-color: var(--mat-sys-surface) !important;
+}
+
+::ng-deep .mat-mdc-menu-item {
+  color: var(--mat-sys-on-surface) !important;
+}
+
+::ng-deep .mat-mdc-menu-item .mat-icon {
+  color: var(--mat-sys-primary) !important;
 }
 
 @media (max-width: 768px) {
