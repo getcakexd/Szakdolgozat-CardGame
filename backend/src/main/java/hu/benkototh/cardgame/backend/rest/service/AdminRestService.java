@@ -2,6 +2,7 @@ package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.controller.AdminController;
 import hu.benkototh.cardgame.backend.rest.Data.Game;
+import hu.benkototh.cardgame.backend.rest.Data.GameCreationDTO;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class AdminRestService {
         Map<String, String> response = new HashMap<>();
 
         User createdUser = adminController.createUser(user);
-        
+
         if (createdUser == null) {
             if (adminController.userExistsByUsername(user.getUsername())) {
                 response.put("message", "Username already in use.");
@@ -47,9 +48,9 @@ public class AdminRestService {
     @DeleteMapping("/users/delete")
     public ResponseEntity<Map<String, String>> deleteUser(@RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        
+
         boolean deleted = adminController.deleteUser(userId);
-        
+
         if (deleted) {
             response.put("message", "User deleted successfully.");
             return ResponseEntity.ok(response);
@@ -62,9 +63,9 @@ public class AdminRestService {
     @PutMapping("/users/promote-to-agent")
     public ResponseEntity<Map<String, String>> promoteToAgent(@RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        
+
         User user = adminController.promoteToAgent(userId);
-        
+
         if (user == null) {
             response.put("message", "User not found or only regular users can be promoted to agents.");
             return ResponseEntity.status(404).body(response);
@@ -77,9 +78,9 @@ public class AdminRestService {
     @PutMapping("/users/demote-from-agent")
     public ResponseEntity<Map<String, String>> demoteFromAgent(@RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        
+
         User user = adminController.demoteFromAgent(userId);
-        
+
         if (user == null) {
             response.put("message", "User not found or only agents can be demoted to users.");
             return ResponseEntity.status(404).body(response);
@@ -92,9 +93,9 @@ public class AdminRestService {
     @PutMapping("/users/promote-to-admin")
     public ResponseEntity<Map<String, String>> promoteToAdmin(@RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        
+
         User user = adminController.promoteToAdmin(userId);
-        
+
         if (user == null) {
             response.put("message", "User not found or user already has admin or higher privileges.");
             return ResponseEntity.status(404).body(response);
@@ -107,9 +108,9 @@ public class AdminRestService {
     @PutMapping("/users/demote-from-admin")
     public ResponseEntity<Map<String, String>> demoteFromAdmin(@RequestParam long userId) {
         Map<String, String> response = new HashMap<>();
-        
+
         User user = adminController.demoteFromAdmin(userId);
-        
+
         if (user == null) {
             response.put("message", "User not found or only admins can be demoted.");
             return ResponseEntity.status(404).body(response);
@@ -125,26 +126,42 @@ public class AdminRestService {
     }
 
     @PostMapping("/games/create")
-    public ResponseEntity<Map<String, String>> createGame(@RequestBody Game game) {
+    public ResponseEntity<Map<String, String>> createGame(@RequestBody GameCreationDTO gameDTO) {
         Map<String, String> response = new HashMap<>();
-        
-        Game createdGame = adminController.createGame(game);
-        
+
+        Game createdGame = adminController.createGame(gameDTO);
+
         if (createdGame == null) {
             response.put("message", "Game with this name already exists.");
             return ResponseEntity.status(400).body(response);
         }
-        
+
         response.put("message", "Game created successfully.");
+        response.put("id", String.valueOf(createdGame.getId()));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/games/update/{id}")
+    public ResponseEntity<Map<String, String>> updateGame(@PathVariable long id, @RequestBody GameCreationDTO gameDTO) {
+        Map<String, String> response = new HashMap<>();
+
+        Game updatedGame = adminController.updateGame(gameDTO, id);
+
+        if (updatedGame == null) {
+            response.put("message", "Game not found or name already exists.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        response.put("message", "Game updated successfully.");
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/games/delete")
     public ResponseEntity<Map<String, String>> deleteGame(@RequestParam long gameId) {
         Map<String, String> response = new HashMap<>();
-        
+
         boolean deleted = adminController.deleteGame(gameId);
-        
+
         if (deleted) {
             response.put("message", "Game deleted successfully.");
             return ResponseEntity.ok(response);

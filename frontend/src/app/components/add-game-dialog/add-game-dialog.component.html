@@ -8,12 +8,6 @@
       <mat-error *ngIf="gameForm.get('name')?.hasError('minlength')">{{ 'ADD_GAME.NAME_MIN_LENGTH' | translate }}</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>{{ 'ADD_GAME.DESCRIPTION' | translate }}</mat-label>
-      <textarea matInput formControlName="description" rows="4" required></textarea>
-      <mat-error *ngIf="gameForm.get('description')?.hasError('required')">{{ 'ADD_GAME.DESCRIPTION_REQUIRED' | translate }}</mat-error>
-    </mat-form-field>
-
     <div class="form-row">
       <mat-form-field appearance="fill" class="half-width">
         <mat-label>{{ 'ADD_GAME.MIN_PLAYERS' | translate }}</mat-label>
@@ -32,7 +26,83 @@
       </mat-form-field>
     </div>
 
-    <mat-slide-toggle formControlName="active" color="primary">{{ 'ADD_GAME.ACTIVE' | translate }}</mat-slide-toggle>
+    <mat-slide-toggle formControlName="active" color="primary" class="active-toggle">
+      {{ 'ADD_GAME.ACTIVE' | translate }}
+    </mat-slide-toggle>
+
+    <h3 class="section-title">{{ 'ADD_GAME.DESCRIPTIONS' | translate }}</h3>
+    <div formArrayName="descriptions" class="localized-content-section">
+      <div *ngFor="let description of descriptions.controls; let i = index" [formGroupName]="i" class="localized-content-item">
+        <div class="localized-content-header">
+          <h4>{{ 'ADD_GAME.DESCRIPTION' | translate }} - {{ getLanguageNameByCode(description.get('language')?.value) }}</h4>
+          <button type="button" mat-icon-button color="warn" (click)="removeDescription(i)" [disabled]="descriptions.length <= 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="localized-content-form">
+          <mat-form-field appearance="fill" class="language-select">
+            <mat-label>{{ 'ADD_GAME.LANGUAGE' | translate }}</mat-label>
+            <mat-select formControlName="language" required>
+              <mat-option *ngFor="let lang of getAvailableLanguagesForDescription(i)" [value]="lang.code">
+                {{ lang.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'ADD_GAME.CONTENT' | translate }}</mat-label>
+            <textarea matInput formControlName="content" rows="4" required></textarea>
+            <mat-error *ngIf="description.get('content')?.hasError('required')">
+              {{ 'ADD_GAME.CONTENT_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-divider *ngIf="i < descriptions.length - 1"></mat-divider>
+      </div>
+
+      <button type="button" mat-button color="primary" (click)="addDescription()" class="add-content-button">
+        <mat-icon>add</mat-icon> {{ 'ADD_GAME.ADD_DESCRIPTION' | translate }}
+      </button>
+    </div>
+
+    <h3 class="section-title">{{ 'ADD_GAME.RULES' | translate }}</h3>
+    <div formArrayName="rules" class="localized-content-section">
+      <div *ngFor="let rule of rules.controls; let i = index" [formGroupName]="i" class="localized-content-item">
+        <div class="localized-content-header">
+          <h4>{{ 'ADD_GAME.RULES' | translate }} - {{ getLanguageNameByCode(rule.get('language')?.value) }}</h4>
+          <button type="button" mat-icon-button color="warn" (click)="removeRules(i)" [disabled]="rules.length <= 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="localized-content-form">
+          <mat-form-field appearance="fill" class="language-select">
+            <mat-label>{{ 'ADD_GAME.LANGUAGE' | translate }}</mat-label>
+            <mat-select formControlName="language" required>
+              <mat-option *ngFor="let lang of getAvailableLanguagesForRules(i)" [value]="lang.code">
+                {{ lang.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'ADD_GAME.CONTENT' | translate }}</mat-label>
+            <textarea matInput formControlName="content" rows="4" required></textarea>
+            <mat-error *ngIf="rule.get('content')?.hasError('required')">
+              {{ 'ADD_GAME.CONTENT_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-divider *ngIf="i < rules.length - 1"></mat-divider>
+      </div>
+
+      <button type="button" mat-button color="primary" (click)="addRules()" class="add-content-button">
+        <mat-icon>add</mat-icon> {{ 'ADD_GAME.ADD_RULES' | translate }}
+      </button>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">

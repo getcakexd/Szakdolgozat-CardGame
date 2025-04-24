@@ -21,13 +21,14 @@ import {
 import { MatIcon } from "@angular/material/icon"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatButton, MatIconButton } from "@angular/material/button"
-import { NgIf, NgClass } from "@angular/common"
+import { NgIf, NgClass, NgFor } from "@angular/common"
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
 import { AddGameDialogComponent } from "../add-game-dialog/add-game-dialog.component"
 import { AddUserDialogComponent } from "../add-user-dialog/add-user-dialog.component"
 import { AuthService } from '../../services/auth/auth.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { GameCardComponent } from "../game-card/game-card.component";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -50,13 +51,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MatRow,
     NgIf,
     NgClass,
+    NgFor,
     MatTabGroup,
     MatCardContent,
     MatCardTitle,
     MatCardHeader,
     MatCard,
     MatTooltip,
-    TranslateModule
+    TranslateModule,
+    GameCardComponent
   ],
   standalone: true,
 })
@@ -64,7 +67,6 @@ export class AdminDashboardComponent implements OnInit {
   users: User[] = []
   games: Game[] = []
   userDisplayedColumns: string[] = ["id", "username", "email", "role", "actions"]
-  gameDisplayedColumns: string[] = ["id", "name", "description", "minPlayers", "maxPlayers", "active", "actions"]
 
   isRoot = false
   isAdmin = false
@@ -119,7 +121,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddGameDialog(): void {
     const dialogRef = this.dialog.open(AddGameDialogComponent, {
-      width: "500px",
+      width: "700px",
     })
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -177,6 +179,28 @@ export class AdminDashboardComponent implements OnInit {
         )
       }
     })
+  }
+
+  toggleGameActive(event: {game: Game, active: boolean}): void {
+    const game = {...event.game, active: event.active};
+
+    const updateData = {
+      id: game.id,
+      name: game.name,
+      active: game.active,
+      minPlayers: game.minPlayers,
+      maxPlayers: game.maxPlayers,
+      descriptions: game.descriptions,
+      rules: game.rules
+    };
+
+    this.gameService.updateGame(game.id, updateData).subscribe(
+      () => {
+        this.showSuccess(this.translate.instant('ADMIN.GAME_UPDATED'));
+        this.loadGames();
+      },
+      (error) => this.showError(this.translate.instant('ADMIN.FAILED_UPDATE_GAME'))
+    );
   }
 
   promoteToAgent(user: User): void {

@@ -11,7 +11,7 @@ export class TranslationService {
 
   availableLanguages = [
     { code: 'en', name: 'English' },
-    { code: 'hu', name: 'Magyar' }
+    { code: 'hu', name: 'Magyar' },
   ];
 
   constructor(public translate: TranslateService) {
@@ -40,5 +40,10 @@ export class TranslationService {
 
   getCurrentLang(): string {
     return this.currentLangSubject.value;
+  }
+
+  getLanguageName(code: string): string {
+    const language = this.availableLanguages.find(lang => lang.code === code);
+    return language ? language.name : code;
   }
 }

@@ -1,6 +1,9 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "games")
@@ -9,10 +12,17 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String description;
     private boolean active;
     private int minPlayers;
     private int maxPlayers;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GameDescription> descriptions = new HashSet<>();
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GameRules> rules = new HashSet<>();
 
     public Game() {
     }
@@ -31,14 +41,6 @@ public class Game {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public boolean isActive() {
@@ -63,5 +65,41 @@ public class Game {
 
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
+    }
+
+    public Set<GameDescription> getDescriptions() {
+        return descriptions;
+    }
+
+    public void setDescriptions(Set<GameDescription> descriptions) {
+        this.descriptions = descriptions;
+    }
+
+    public Set<GameRules> getRules() {
+        return rules;
+    }
+
+    public void setRules(Set<GameRules> rules) {
+        this.rules = rules;
+    }
+
+    public void addDescription(GameDescription description) {
+        descriptions.add(description);
+        description.setGame(this);
+    }
+
+    public void removeDescription(GameDescription description) {
+        descriptions.remove(description);
+        description.setGame(null);
+    }
+
+    public void addRules(GameRules rules) {
+        this.rules.add(rules);
+        rules.setGame(this);
+    }
+
+    public void removeRules(GameRules rules) {
+        this.rules.remove(rules);
+        rules.setGame(null);
     }
 }

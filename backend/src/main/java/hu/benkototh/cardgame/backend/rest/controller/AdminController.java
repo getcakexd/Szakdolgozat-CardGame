@@ -1,10 +1,8 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.Game;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
-import hu.benkototh.cardgame.backend.rest.controller.AuditLogController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -175,11 +173,31 @@ public class AdminController {
         return gameRepository.findAll();
     }
 
-    public Game createGame(Game game) {
-        if (gameExistsByName(game.getName())) {
+    public Game createGame(GameCreationDTO gameDTO) {
+        if (gameExistsByName(gameDTO.getName())) {
             auditLogController.logAction("ADMIN_GAME_CREATION_FAILED", 0L,
-                    "Admin game creation failed: Game name already exists - " + game.getName());
+                    "Admin game creation failed: Game name already exists - " + gameDTO.getName());
             return null;
+        }
+
+        Game game = new Game();
+        game.setName(gameDTO.getName());
+        game.setActive(gameDTO.isActive());
+        game.setMinPlayers(gameDTO.getMinPlayers());
+        game.setMaxPlayers(gameDTO.getMaxPlayers());
+
+        if (gameDTO.getDescriptions() != null) {
+            for (GameCreationDTO.LocalizedContent descContent : gameDTO.getDescriptions()) {
+                GameDescription description = new GameDescription(descContent.getLanguage(), descContent.getContent());
+                game.addDescription(description);
+            }
+        }
+
+        if (gameDTO.getRules() != null) {
+            for (GameCreationDTO.LocalizedContent ruleContent : gameDTO.getRules()) {
+                GameRules rules = new GameRules(ruleContent.getLanguage(), ruleContent.getContent());
+                game.addRules(rules);
+            }
         }
 
         Game createdGame = gameRepository.save(game);
@@ -206,6 +224,53 @@ public class AdminController {
                 "Admin deleted game: " + game.getName() + " (ID: " + gameId + ")");
 
         return true;
+    }
+
+    public Game updateGame(GameCreationDTO gameDTO, long gameId) {
+        Optional<Game> gameOptional = gameRepository.findById(gameId);
+
+        if (gameOptional.isEmpty()) {
+            auditLogController.logAction("ADMIN_GAME_UPDATE_FAILED", 0L,
+                    "Admin game update failed: Game not found - ID: " + gameId);
+            return null;
+        }
+
+        Game game = gameOptional.get();
+
+        if (!game.getName().equals(gameDTO.getName()) && gameExistsByName(gameDTO.getName())) {
+            auditLogController.logAction("ADMIN_GAME_UPDATE_FAILED", 0L,
+                    "Admin game update failed: New game name already exists - " + gameDTO.getName());
+            return null;
+        }
+
+        game.setName(gameDTO.getName());
+        game.setActive(gameDTO.isActive());
+        game.setMinPlayers(gameDTO.getMinPlayers());
+        game.setMaxPlayers(gameDTO.getMaxPlayers());
+
+        game.getDescriptions().clear();
+        game.getRules().clear();
+
+        if (gameDTO.getDescriptions() != null) {
+            for (GameCreationDTO.LocalizedContent descContent : gameDTO.getDescriptions()) {
+                GameDescription description = new GameDescription(descContent.getLanguage(), descContent.getContent());
+                game.addDescription(description);
+            }
+        }
+
+        if (gameDTO.getRules() != null) {
+            for (GameCreationDTO.LocalizedContent ruleContent : gameDTO.getRules()) {
+                GameRules rules = new GameRules(ruleContent.getLanguage(), ruleContent.getContent());
+                game.addRules(rules);
+            }
+        }
+
+        Game updatedGame = gameRepository.save(game);
+
+        auditLogController.logAction("ADMIN_UPDATED_GAME", 0L,
+                "Admin updated game: " + game.getName() + " (ID: " + updatedGame.getId() + ")");
+
+        return updatedGame;
     }
 
     public boolean userExistsByUsername(String username) {
