@@ -10,12 +10,13 @@ import {LobbyService} from '../../services/lobby/lobby.service';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
-import {MatCard, MatCardContent} from '@angular/material/card';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatOption} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
+import {GameCardComponent} from '../game-card/game-card.component';
+import {TranslationService} from '../../services/translation/translation.service';
 
 @Component({
   selector: 'app-lobby-create',
@@ -26,9 +27,7 @@ import {MatSelect} from '@angular/material/select';
     TranslatePipe,
     MatIcon,
     MatButton,
-    MatCardContent,
     NgIf,
-    MatCard,
     ReactiveFormsModule,
     MatSlideToggle,
     MatError,
@@ -36,7 +35,8 @@ import {MatSelect} from '@angular/material/select';
     MatSelect,
     NgForOf,
     MatLabel,
-    MatFormField
+    MatFormField,
+    GameCardComponent
   ],
   styleUrls: ['./lobby-create.component.css']
 })
@@ -46,6 +46,7 @@ export class LobbyCreateComponent implements OnInit {
   currentUser: User | null = null;
   isLoading = false;
   isSubmitting = false;
+  selectedGame: Game | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +54,8 @@ export class LobbyCreateComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     this.createForm = this.fb.group({
       gameId: ['', Validators.required],
@@ -74,6 +76,11 @@ export class LobbyCreateComponent implements OnInit {
     }
 
     this.loadGames();
+
+    // Listen for changes to the game selection
+    this.createForm.get('gameId')?.valueChanges.subscribe(gameId => {
+      this.selectedGame = this.games.find(game => game.id === gameId) || null;
+    });
   }
 
   loadGames(): void {
@@ -123,8 +130,8 @@ export class LobbyCreateComponent implements OnInit {
     });
   }
 
-  getSelectedGame(): Game | undefined {
+  getSelectedGame(): Game | null {
     const gameId = this.createForm.get('gameId')?.value;
-    return this.games.find(game => game.id === gameId);
+    return this.games.find(game => game.id === gameId) || null;
   }
 }

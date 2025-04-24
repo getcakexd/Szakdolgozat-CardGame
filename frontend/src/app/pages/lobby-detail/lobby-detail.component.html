@@ -43,10 +43,18 @@
               </mat-slide-toggle>
             </div>
 
-            <div class="game-info" *ngIf="getGameById(settingsForm.get('gameId')?.value)">
-              <p><strong>{{ 'LOBBY.DESCRIPTION' | translate }}:</strong> {{ getGameById(settingsForm.get('gameId')?.value)?.description }}</p>
-              <p><strong>{{ 'LOBBY.PLAYERS_NEEDED' | translate }}:</strong> {{ lobby.minPlayers }}</p>
-              <p><strong>{{ 'LOBBY.CURRENT_PLAYERS' | translate }}:</strong> {{ lobby.players.length }}</p>
+            <div class="game-info" *ngIf="selectedGame">
+              <app-game-card
+                [game]="selectedGame"
+                [showRulesButton]="true"
+                [showActiveToggle]="false"
+                [isAdmin]="false">
+              </app-game-card>
+
+              <div class="player-count-info">
+                <p><strong>{{ 'LOBBY.CURRENT_PLAYERS' | translate }}:</strong> {{ lobby.players.length }}</p>
+                <p><strong>{{ 'LOBBY.PLAYERS_NEEDED' | translate }}:</strong> {{ lobby.minPlayers }}</p>
+              </div>
             </div>
 
             <div class="settings-actions" *ngIf="isLeader && lobby.status === lobbyStatus.WAITING">

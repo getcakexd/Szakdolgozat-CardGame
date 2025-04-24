@@ -1,4 +1,8 @@
-
+.lobby-detail-container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
 .player-item {
   display: flex;
@@ -81,6 +85,13 @@
   margin-bottom: 16px;
 }
 
+.player-count-info {
+  margin-top: 16px;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
 .settings-actions {
   margin-top: 16px;
 }
@@ -91,4 +102,9 @@
   align-items: center;
   justify-content: center;
   padding: 32px;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 16px;
 }
