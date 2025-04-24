@@ -7,7 +7,7 @@ import {
   MatCellDef, MatColumnDef,
   MatHeaderCell,
   MatHeaderCellDef, MatHeaderRow,
-  MatHeaderRowDef, MatNoDataRow, MatRow, MatRowDef, MatTable,
+  MatHeaderRowDef, MatRow, MatRowDef, MatTable,
   MatTableDataSource
 } from "@angular/material/table"
 import {TranslatePipe, TranslateService} from "@ngx-translate/core"
@@ -19,8 +19,7 @@ import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
-import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from '@angular/material/expansion';
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {MatCard, MatCardContent} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
@@ -40,7 +39,6 @@ import {MatHint} from '@angular/material/form-field';
     MatHeaderRow,
     MatRowDef,
     MatRow,
-    MatNoDataRow,
     MatColumnDef,
     MatPaginator,
     MatTable,
@@ -56,12 +54,7 @@ import {MatHint} from '@angular/material/form-field';
     NgForOf,
     MatOption,
     MatSelect,
-    MatExpansionPanelTitle,
-    MatExpansionPanelHeader,
-    MatExpansionPanel,
     MatCardContent,
-    MatCardTitle,
-    MatCardHeader,
     MatCard,
     MatButton,
     MatSort,

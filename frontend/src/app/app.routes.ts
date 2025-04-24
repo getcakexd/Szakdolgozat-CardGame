@@ -11,7 +11,7 @@ import {AgentDashboardComponent} from './components/agent-dashboard/agent-dashbo
 import {AuthGuard} from './guards/auth.guard';
 import {AgentGuard} from './guards/agent.guard';
 import {AdminGuard} from './guards/admin.guard';
-import {AuditLogsComponent} from './components/audit-logs/audit-logs.component';
+import {AuditLogsComponent} from './pages/audit-logs/audit-logs.component';
 import {RootGuard} from './guards/root.guard';
 import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
 import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
