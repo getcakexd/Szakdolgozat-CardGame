@@ -67,6 +67,8 @@ java -Dserver.port=8081 \
 -Dgoogle.client.id=${GOOGLE_CLIENT_ID} \
 -Dgoogle.oauth.password.prefix=${GOOGLE_OAUTH_PASSWORD_PREFIX:-google_auth_} \
 -Dgoogle.oauth.password.suffix=${GOOGLE_OAUTH_PASSWORD_SUFFIX:-default_suffix} \
+-Dspring.mail.username=${SPRING_MAIL_USERNAME} \
+-Dspring.mail.password=${SPRING_MAIL_PASSWORD} \
 -jar /app/backend.jar &\n\
 \n\
 echo "Configuring Nginx"\n\

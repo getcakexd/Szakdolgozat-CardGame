@@ -181,7 +181,6 @@ mat-paginator {
   margin-top: 16px;
 }
 
-/* Fix for long action types in dropdown */
 .truncate-text {
   display: block;
   max-width: 250px;
@@ -190,13 +189,11 @@ mat-paginator {
   text-overflow: ellipsis;
 }
 
-/* Increase width of action dropdown panel */
 ::ng-deep .action-select-panel {
   min-width: 300px !important;
   max-width: 400px !important;
 }
 
-/* Fix for date picker toggle visibility */
 ::ng-deep .mat-datepicker-toggle {
   display: inline-block !important;
   color: rgba(0, 0, 0, 0.54) !important;
@@ -213,7 +210,6 @@ mat-paginator {
   height: 24px !important;
 }
 
-/* Fix for date picker calendar */
 ::ng-deep .mat-calendar {
   width: 296px !important;
 }

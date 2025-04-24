@@ -11,17 +11,21 @@ import {AgentDashboardComponent} from './components/agent-dashboard/agent-dashbo
 import {AuthGuard} from './guards/auth.guard';
 import {AgentGuard} from './guards/agent.guard';
 import {AdminGuard} from './guards/admin.guard';
-import {AuditLogsComponent} from './components/audit-logs/audit-logs.component';
+import {AuditLogsComponent} from './pages/audit-logs/audit-logs.component';
 import {RootGuard} from './guards/root.guard';
 import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
 import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
 import {SupportComponent} from './pages/support/support.component';
 import {TicketDetailComponent} from './components/ticket-detail/ticket-detail.component';
 import {FriendsComponent} from './pages/friends/friends.component';
+import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
+import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
