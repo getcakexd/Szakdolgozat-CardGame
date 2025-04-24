@@ -90,31 +90,61 @@
           </div>
 
           <div class="edit-form" *ngIf="editField === 'password'">
-            <form (ngSubmit)="updateUser()">
+            <form [formGroup]="passwordForm" (ngSubmit)="updateUser()">
               <mat-form-field appearance="outline" class="form-field" *ngIf="!isGoogleAuthUser">
                 <mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label>
-                <input matInput [(ngModel)]="currentPassword" name="currentPassword"
+                <input matInput formControlName="currentPassword"
                        [type]="hideCurrentPassword ? 'password' : 'text'" required />
                 <mat-icon matPrefix>lock</mat-icon>
                 <button mat-icon-button matSuffix type="button"
                         (click)="hideCurrentPassword = !hideCurrentPassword">
                   <mat-icon>{{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                  {{ getPasswordErrorMessage('currentPassword') }}
+                </mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="form-field">
                 <mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label>
-                <input matInput [(ngModel)]="newPassword" name="newPassword"
+                <input matInput formControlName="newPassword"
                        [type]="hideNewPassword ? 'password' : 'text'" required />
                 <mat-icon matPrefix>lock_open</mat-icon>
                 <button mat-icon-button matSuffix type="button"
                         (click)="hideNewPassword = !hideNewPassword">
                   <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                  {{ getPasswordErrorMessage('newPassword') }}
+                </mat-error>
               </mat-form-field>
 
+              <div class="password-strength-container" *ngIf="passwordForm.get('newPassword')?.value">
+                <div class="strength-title">{{ 'PASSWORD_RESET.PASSWORD_REQUIREMENTS' | translate }}:</div>
+                <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.minLength}">
+                  <mat-icon>{{ passwordStrengthInfo.minLength ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ 'PASSWORD_RESET.MIN_LENGTH' | translate }}</span>
+                </div>
+                <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasUpperCase}">
+                  <mat-icon>{{ passwordStrengthInfo.hasUpperCase ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ 'PASSWORD_RESET.UPPERCASE' | translate }}</span>
+                </div>
+                <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasLowerCase}">
+                  <mat-icon>{{ passwordStrengthInfo.hasLowerCase ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ 'PASSWORD_RESET.LOWERCASE' | translate }}</span>
+                </div>
+                <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasNumeric}">
+                  <mat-icon>{{ passwordStrengthInfo.hasNumeric ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ 'PASSWORD_RESET.NUMBER' | translate }}</span>
+                </div>
+                <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasSpecialChar}">
+                  <mat-icon>{{ passwordStrengthInfo.hasSpecialChar ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ 'PASSWORD_RESET.SPECIAL_CHAR' | translate }}</span>
+                </div>
+              </div>
+
               <div class="form-actions">
-                <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+                <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || passwordForm.invalid">
                   {{ isGoogleAuthUser ? ('PROFILE.SET_PASSWORD' | translate) : ('PROFILE.UPDATE_PASSWORD' | translate) }}
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isLoading">
