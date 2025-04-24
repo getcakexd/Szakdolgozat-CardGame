@@ -7,6 +7,11 @@
         <span>{{ 'NAVBAR.HOME' | translate }}</span>
       </button>
 
+      <button class="navbar-button" *ngIf="!isLoggedIn" mat-button routerLink="/games">
+        <mat-icon>videogame_asset</mat-icon>
+        <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+      </button>
+
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button [matMenuTriggerFor]="socialMenu">
           <mat-icon>people</mat-icon>

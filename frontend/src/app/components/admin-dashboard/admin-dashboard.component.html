@@ -81,15 +81,19 @@
               </button>
             </div>
 
-            <div class="games-grid">
-              <app-game-card
-                *ngFor="let game of games"
-                [game]="game"
-                [isAdmin]="true"
-                [showActiveToggle]="true"
-                (toggleActive)="toggleGameActive($event)"
-                (deleteGame)="deleteGame($event)">
-              </app-game-card>
+            <div class="games-list">
+              <ng-container *ngFor="let game of games; let last = last">
+                <div class="game-card-container">
+                  <app-game-card
+                    [game]="game"
+                    [isAdmin]="true"
+                    [showActiveToggle]="true"
+                    (toggleActive)="toggleGameActive($event)"
+                    (deleteGame)="deleteGame($event)">
+                  </app-game-card>
+                </div>
+                <mat-divider *ngIf="!last" class="game-divider"></mat-divider>
+              </ng-container>
             </div>
           </div>
         </mat-tab>

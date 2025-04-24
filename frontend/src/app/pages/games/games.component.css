@@ -19,15 +19,28 @@
   }
 }
 
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.game-card-wrapper {
+.games-list {
   display: flex;
   flex-direction: column;
+  gap: 0;
+}
+
+.game-card-container {
+  padding: 16px 0;
+}
+
+.game-divider {
+  margin: 0;
+}
+
+:host-context(.dark-theme) {
+  .games-description {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .game-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .no-games {
@@ -53,17 +66,7 @@
   }
 }
 
-:host-context(.dark-theme) {
-  .games-description {
-    color: rgba(255, 255, 255, 0.7);
-  }
-}
-
 @media (max-width: 768px) {
-  .games-grid {
-    grid-template-columns: 1fr;
-  }
-
   .games-header {
     h1 {
       font-size: 1.5rem;

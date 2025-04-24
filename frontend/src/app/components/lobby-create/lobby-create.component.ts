@@ -77,7 +77,6 @@ export class LobbyCreateComponent implements OnInit {
 
     this.loadGames();
 
-    // Listen for changes to the game selection
     this.createForm.get('gameId')?.valueChanges.subscribe(gameId => {
       this.selectedGame = this.games.find(game => game.id === gameId) || null;
     });

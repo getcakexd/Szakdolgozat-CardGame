@@ -9,6 +9,7 @@ import { GameCardComponent } from '../../components/game-card/game-card.componen
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: 'app-games',
@@ -22,7 +23,8 @@ import { MatButtonModule } from '@angular/material/button';
     GameCardComponent,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDivider
   ]
 })
 export class GamesComponent implements OnInit {

@@ -29,6 +29,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GameCardComponent } from "../game-card/game-card.component";
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: "app-admin-dashboard",
@@ -59,7 +60,8 @@ import { GameCardComponent } from "../game-card/game-card.component";
     MatCard,
     MatTooltip,
     TranslateModule,
-    GameCardComponent
+    GameCardComponent,
+    MatDivider
   ],
   standalone: true,
 })

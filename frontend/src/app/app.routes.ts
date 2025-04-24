@@ -34,7 +34,7 @@ export const routes: Routes = [
   { path: 'friends', component:FriendsComponent, canActivate: [AuthGuard] },
   { path: 'clubs', component: ClubPageComponent, canActivate: [AuthGuard] },
   { path: 'club/:id', component: ClubComponent, canActivate: [AuthGuard] },
-  { path: 'games', component: GamesComponent, canActivate: [AuthGuard] },
+  { path: 'games', component: GamesComponent },
   { path: 'lobby', component: LobbyHomeComponent, canActivate: [AuthGuard] },
   { path: 'support', component: SupportComponent},
   { path: 'ticket/:id', component: TicketDetailComponent},
