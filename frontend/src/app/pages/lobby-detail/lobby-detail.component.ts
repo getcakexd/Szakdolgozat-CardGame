@@ -99,77 +99,84 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUser;
+    this.currentUser = this.authService.currentUser
     if (!this.currentUser) {
-      this.snackBar.open(
-        this.translate.instant('ERRORS.LOGIN_REQUIRED'),
-        this.translate.instant('COMMON.CLOSE'),
-        { duration: 3000 }
-      );
-      this.router.navigate(['/login']);
-      return;
+      this.snackBar.open(this.translate.instant("ERRORS.LOGIN_REQUIRED"), this.translate.instant("COMMON.CLOSE"), {
+        duration: 3000,
+      })
+      this.router.navigate(["/login"])
+      return
     }
 
-    this.loadLobby();
-    this.loadGames();
-    this.startRefreshInterval();
+    this.loadGames().then(() => {
+      this.loadLobby()
+      this.startRefreshInterval()
+    })
 
-    this.settingsForm.get('gameId')?.valueChanges.subscribe(gameId => {
-      this.selectedGame = this.games.find(game => game.id === gameId) || null;
-    });
+    this.settingsForm.get("gameId")?.valueChanges.subscribe((gameId) => {
+      this.selectedGame = this.games.find((game) => game.id === gameId) || null
+    })
   }
 
   ngOnDestroy(): void {
-    if (this.refreshSubscription) {
-      this.refreshSubscription.unsubscribe();
-    }
+    this.stopRefreshInterval()
   }
 
   loadLobby(): void {
-    const lobbyId = Number(this.route.snapshot.paramMap.get('id'));
+    const lobbyId = Number(this.route.snapshot.paramMap.get("id"))
     if (!lobbyId) {
-      this.snackBar.open(
-        this.translate.instant('LOBBY.INVALID_ID'),
-        this.translate.instant('COMMON.CLOSE'),
-        { duration: 3000 }
-      );
-      this.router.navigate(['/home']);
-      return;
+      this.snackBar.open(this.translate.instant("LOBBY.INVALID_ID"), this.translate.instant("COMMON.CLOSE"), {
+        duration: 3000,
+      })
+      this.router.navigate(["/home"])
+      return
     }
 
-    this.isLoading = true;
+    this.isLoading = true
     this.lobbyService.getLobby(lobbyId).subscribe({
       next: (lobby) => {
-        this.lobby = lobby;
-        this.isLeader = this.currentUser?.id === lobby.leader.id;
-        this.updateSettingsForm();
-        this.isLoading = false;
+        this.lobby = lobby
+        this.isLeader = this.currentUser?.id === lobby.leader.id
+
+        if (this.games.length === 0) {
+          this.loadGames().then(() => {
+            this.updateSettingsForm()
+            this.isLoading = false
+          })
+        } else {
+          this.updateSettingsForm()
+          this.isLoading = false
+        }
       },
       error: (error) => {
-        this.isLoading = false;
+        this.isLoading = false
         this.snackBar.open(
-          error.error.message || this.translate.instant('LOBBY.FAILED_LOAD'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-        this.router.navigate(['/home']);
-      }
-    });
+          error.error.message || this.translate.instant("LOBBY.FAILED_LOAD"),
+          this.translate.instant("COMMON.CLOSE"),
+          { duration: 3000 },
+        )
+        this.router.navigate(["/home"])
+      },
+    })
   }
 
-  loadGames(): void {
-    this.lobbyService.getAllGames().subscribe({
-      next: (games) => {
-        this.games = games.filter(game => game.active);
-      },
-      error: (error) => {
-        this.snackBar.open(
-          this.translate.instant('LOBBY.FAILED_LOAD_GAMES'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-      }
-    });
+  loadGames(): Promise<void> {
+    return new Promise((resolve) => {
+      this.lobbyService.getAllGames().subscribe({
+        next: (games) => {
+          this.games = games.filter((game) => game.active)
+          resolve()
+        },
+        error: (error) => {
+          this.snackBar.open(
+            this.translate.instant("LOBBY.FAILED_LOAD_GAMES"),
+            this.translate.instant("COMMON.CLOSE"),
+            { duration: 3000 },
+          )
+          resolve()
+        },
+      })
+    })
   }
 
   updateSettingsForm(): void {
@@ -369,5 +376,12 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
 
   getGameById(id: number): Game | undefined {
     return this.games.find((game: Game) => game.id === id);
+  }
+
+  private stopRefreshInterval() {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+      this.refreshSubscription = null;
+    }
   }
 }

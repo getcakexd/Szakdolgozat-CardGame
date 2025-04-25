@@ -1,13 +1,10 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.Data.AuditLog;
-import hu.benkototh.cardgame.backend.rest.Data.LogRequest;
-import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.controller.AuditLogController;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,105 +24,81 @@ public class AuditLogRestService {
     private UserController userController;
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllLogs() {
+    public ResponseEntity<List<AuditLog>> getAllLogs() {
+        return ResponseEntity.ok(auditLogController.getAllLogs());
+    }
 
-        try {
-            List<AuditLog> logs = auditLogController.getAllLogs();
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return createErrorResponse("Error retrieving audit logs", e);
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getLogById(@PathVariable Long id) {
+        AuditLog log = auditLogController.getLogById(id);
+
+        if (log == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Audit log not found");
+            return ResponseEntity.status(404).body(response);
         }
+
+        return ResponseEntity.ok(log);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getLogsByUser(@PathVariable Long userId) {
-
-        try {
-            List<AuditLog> logs = auditLogController.getLogsByUser(userId);
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return createErrorResponse("Error retrieving audit logs for user: " + userId, e);
-        }
+    public ResponseEntity<List<AuditLog>> getLogsByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(auditLogController.getLogsByUser(userId));
     }
 
     @GetMapping("/action/{action}")
-    public ResponseEntity<?> getLogsByAction(@PathVariable String action) {
-
-        try {
-            List<AuditLog> logs = auditLogController.getLogsByAction(action);
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return createErrorResponse("Error retrieving audit logs for action: " + action, e);
-        }
+    public ResponseEntity<List<AuditLog>> getLogsByAction(@PathVariable String action) {
+        return ResponseEntity.ok(auditLogController.getLogsByAction(action));
     }
 
     @GetMapping("/date-range")
-    public ResponseEntity<?> getLogsByDateRange(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") Date endDate) {
-
-        try {
-            List<AuditLog> logs = auditLogController.getLogsByDateRange(startDate, endDate);
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return createErrorResponse("Error retrieving audit logs for date range", e);
-        }
+    public ResponseEntity<List<AuditLog>> getLogsByDateRange(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+        return ResponseEntity.ok(auditLogController.getLogsByDateRange(startDate, endDate));
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<?> getFilteredLogs(
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) String action,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") Date startDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") Date endDate) {
+    @GetMapping("/actions")
+    public ResponseEntity<List<String>> getAllActions() {
+        return ResponseEntity.ok(auditLogController.getAllActions());
+    }
 
-        try {
-            List<AuditLog> logs;
+    @RestController
+    @RequestMapping("/api/admin/audit-logs")
+    public static class AdminAuditLogRestService {
+
+        @Autowired
+        private AuditLogController auditLogController;
+
+        @GetMapping("/all")
+        public ResponseEntity<List<AuditLog>> getAllLogs() {
+            return ResponseEntity.ok(auditLogController.getAllLogs());
+        }
+
+        @GetMapping("/filter")
+        public ResponseEntity<List<AuditLog>> getFilteredLogs(
+                @RequestParam(required = false) Long userId,
+                @RequestParam(required = false) String action,
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
 
             if (userId != null && action != null && startDate != null && endDate != null) {
-                logs = auditLogController.getFilteredLogs(userId, action, startDate, endDate);
+                return ResponseEntity.ok(auditLogController.getFilteredLogs(userId, action, startDate, endDate));
             } else if (userId != null && action != null) {
-                logs = auditLogController.getFilteredLogs(userId, action);
+                return ResponseEntity.ok(auditLogController.getFilteredLogs(userId, action));
             } else if (userId != null && startDate != null && endDate != null) {
-                logs = auditLogController.getFilteredLogsByUserAndDateRange(userId, startDate, endDate);
+                return ResponseEntity.ok(auditLogController.getFilteredLogsByUserAndDateRange(userId, startDate, endDate));
             } else if (action != null && startDate != null && endDate != null) {
-                logs = auditLogController.getFilteredLogsByActionAndDateRange(action, startDate, endDate);
+                return ResponseEntity.ok(auditLogController.getFilteredLogsByActionAndDateRange(action, startDate, endDate));
             } else if (userId != null) {
-                logs = auditLogController.getLogsByUser(userId);
+                return ResponseEntity.ok(auditLogController.getLogsByUser(userId));
             } else if (action != null) {
-                logs = auditLogController.getLogsByAction(action);
+                return ResponseEntity.ok(auditLogController.getLogsByAction(action));
             } else if (startDate != null && endDate != null) {
-                logs = auditLogController.getLogsByDateRange(startDate, endDate);
+                return ResponseEntity.ok(auditLogController.getLogsByDateRange(startDate, endDate));
             } else {
-                logs = auditLogController.getAllLogs();
+                return ResponseEntity.ok(auditLogController.getAllLogs());
             }
-
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return createErrorResponse("Error retrieving filtered audit logs", e);
         }
-    }
-
-    @PostMapping
-    public ResponseEntity<?> createLog(@RequestBody LogRequest logRequest) {
-
-        try {
-            User user = userController.getUser(logRequest.getUserId());
-            if (user == null) {
-                return ResponseEntity.badRequest().body("User not found with ID: " + logRequest.getUserId());
-            }
-
-            AuditLog log = auditLogController.logAction(logRequest.getAction(), user, logRequest.getDetails());
-            return ResponseEntity.status(HttpStatus.CREATED).body(log);
-        } catch (Exception e) {
-            return createErrorResponse("Error creating audit log", e);
-        }
-    }
-
-    private ResponseEntity<?> createErrorResponse(String message, Exception e) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", message);
-        response.put("details", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

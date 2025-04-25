@@ -598,6 +598,11 @@
     "EXPORT_CSV": "Export to CSV",
     "EXPORT_EXCEL": "Export to Excel",
     "COLUMN_VISIBILITY": "Column Visibility",
+    "SHOWING": "Showing",
+    "OF": "of",
+    "ENTRIES": "entries",
+    "ERROR_LOADING": "Error loading audit logs",
+    "ERROR_FILTERING": "Error applying filters",
 
     "ACTION_TYPES": {
       "LOGIN": "Login",

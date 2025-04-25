@@ -602,6 +602,11 @@
     "EXPORT_CSV": "Exportálás CSV-be",
     "EXPORT_EXCEL": "Exportálás Excelbe",
     "COLUMN_VISIBILITY": "Oszlopok láthatósága",
+    "SHOWING": "Megjelenítve",
+    "OF": "ebből: ",
+    "ENTRIES": "bejegyzés",
+    "ERROR_LOADING": "Hiba az audit naplók betöltésekor",
+    "ERROR_FILTERING": "Hiba a szűrők alkalmazásakor",
 
     "ACTION_TYPES": {
       "LOGIN": "Bejelentkezés",
