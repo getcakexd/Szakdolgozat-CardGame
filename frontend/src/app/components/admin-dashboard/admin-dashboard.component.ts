@@ -79,27 +79,27 @@ export class AdminDashboardComponent implements OnInit {
     private gameService: GameService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
     this.loadUsers()
     this.loadGames()
-    this.isRoot = this.authService.isRoot();
-    this.isAdmin = this.authService.isAdmin();
+    this.isRoot = this.authService.isRoot()
+    this.isAdmin = this.authService.isAdmin()
   }
 
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users) => (this.users = users),
-      (error) => this.showError(this.translate.instant('ADMIN.FAILED_LOAD_USERS')),
+      (error) => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_USERS")),
     )
   }
 
   loadGames(): void {
     this.gameService.getAllGames().subscribe(
       (games) => (this.games = games),
-      (error) => this.showError(this.translate.instant('ADMIN.FAILED_LOAD_GAMES')),
+      (error) => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_GAMES")),
     )
   }
 
@@ -112,10 +112,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.adminCreateUser(result).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.USER_CREATED'))
+            this.showSuccess(this.translate.instant("ADMIN.USER_CREATED"))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_CREATE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_USER")),
         )
       }
     })
@@ -123,17 +123,20 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddGameDialog(): void {
     const dialogRef = this.dialog.open(AddGameDialogComponent, {
-      width: "700px",
+      width: "90%",
+      maxWidth: "1200px",
+      panelClass: "wide-dialog",
+      autoFocus: false,
     })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.gameService.createGame(result).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.GAME_CREATED'))
+            this.showSuccess(this.translate.instant("ADMIN.GAME_CREATED"))
             this.loadGames()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_CREATE_GAME')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_GAME")),
         )
       }
     })
@@ -143,8 +146,8 @@ export class AdminDashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_DELETE_USER', { username: user.username })
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_DELETE_USER", { username: user.username }),
       },
     })
 
@@ -152,10 +155,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.adminDeleteUser(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.USER_DELETED'))
+            this.showSuccess(this.translate.instant("ADMIN.USER_DELETED"))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_DELETE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_USER")),
         )
       }
     })
@@ -165,8 +168,8 @@ export class AdminDashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_DELETE_GAME', { name: game.name })
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_DELETE_GAME", { name: game.name }),
       },
     })
 
@@ -174,17 +177,17 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.gameService.deleteGame(game.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.GAME_DELETED'))
+            this.showSuccess(this.translate.instant("ADMIN.GAME_DELETED"))
             this.loadGames()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_DELETE_GAME')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_GAME")),
         )
       }
     })
   }
 
-  toggleGameActive(event: {game: Game, active: boolean}): void {
-    const game = {...event.game, active: event.active};
+  toggleGameActive(event: { game: Game; active: boolean }): void {
+    const game = { ...event.game, active: event.active }
 
     const updateData = {
       id: game.id,
@@ -193,24 +196,24 @@ export class AdminDashboardComponent implements OnInit {
       minPlayers: game.minPlayers,
       maxPlayers: game.maxPlayers,
       descriptions: game.descriptions,
-      rules: game.rules
-    };
+      rules: game.rules,
+    }
 
     this.gameService.updateGame(game.id, updateData).subscribe(
       () => {
-        this.showSuccess(this.translate.instant('ADMIN.GAME_UPDATED'));
-        this.loadGames();
+        this.showSuccess(this.translate.instant("ADMIN.GAME_UPDATED"))
+        this.loadGames()
       },
-      (error) => this.showError(this.translate.instant('ADMIN.FAILED_UPDATE_GAME'))
-    );
+      (error) => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
+    )
   }
 
   promoteToAgent(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_PROMOTION_AGENT', { username: user.username }),
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_PROMOTION_AGENT", { username: user.username }),
       },
     })
 
@@ -218,10 +221,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.promoteToAgent(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.PROMOTED_AGENT', { username: user.username }))
+            this.showSuccess(this.translate.instant("ADMIN.PROMOTED_AGENT", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_PROMOTE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
         )
       }
     })
@@ -231,8 +234,8 @@ export class AdminDashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_DEMOTION_AGENT', { username: user.username }),
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_DEMOTION_AGENT", { username: user.username }),
       },
     })
 
@@ -240,10 +243,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.demoteFromAgent(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.DEMOTED_AGENT', { username: user.username }))
+            this.showSuccess(this.translate.instant("ADMIN.DEMOTED_AGENT", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_DEMOTE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
         )
       }
     })
@@ -253,8 +256,8 @@ export class AdminDashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_PROMOTION_ADMIN', { username: user.username }),
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_PROMOTION_ADMIN", { username: user.username }),
       },
     })
 
@@ -262,10 +265,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.promoteToAdmin(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.PROMOTED_ADMIN', { username: user.username }))
+            this.showSuccess(this.translate.instant("ADMIN.PROMOTED_ADMIN", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_PROMOTE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
         )
       }
     })
@@ -275,8 +278,8 @@ export class AdminDashboardComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('ADMIN.CONFIRM_DEMOTION_ADMIN', { username: user.username }),
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("ADMIN.CONFIRM_DEMOTION_ADMIN", { username: user.username }),
       },
     })
 
@@ -284,10 +287,10 @@ export class AdminDashboardComponent implements OnInit {
       if (result) {
         this.userService.demoteFromAdmin(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('ADMIN.DEMOTED_ADMIN', { username: user.username }))
+            this.showSuccess(this.translate.instant("ADMIN.DEMOTED_ADMIN", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('ADMIN.FAILED_DEMOTE_USER')),
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
         )
       }
     })
@@ -319,10 +322,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private showSuccess(message: string): void {
-    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 3000 })
+    this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), { duration: 3000 })
   }
 
   private showError(message: string): void {
-    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 5000, panelClass: "error-snackbar" })
+    this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), {
+      duration: 5000,
+      panelClass: "error-snackbar",
+    })
   }
 }

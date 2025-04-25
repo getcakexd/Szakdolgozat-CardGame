@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Game } from '../../models/game.model';
 import { TranslationService } from '../../services/translation/translation.service';
 import { MatChip, MatChipSet } from '@angular/material/chips';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import {MarkdownComponent} from 'ngx-markdown';
 
 @Component({

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core"
+import {Component, ViewEncapsulation} from "@angular/core"
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from "@angular/forms"
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog"
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -38,6 +38,7 @@ import { MarkdownModule } from 'ngx-markdown';
     TranslateModule,
     MarkdownModule
   ],
+  encapsulation: ViewEncapsulation.None,
   standalone: true
 })
 export class AddGameDialogComponent {

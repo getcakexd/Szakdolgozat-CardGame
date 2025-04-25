@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>{{ 'ADD_GAME.TITLE' | translate }}</h2>
-<form [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="gameForm" (ngSubmit)="onSubmit()" class="dialog-content">
   <mat-dialog-content>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>{{ 'ADD_GAME.GAME_NAME' | translate }}</mat-label>
