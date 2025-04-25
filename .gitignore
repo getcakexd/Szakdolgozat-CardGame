@@ -35,13 +35,15 @@ HELP.md
 bin/
 
 # Angular
+frontend/.angular/
 /dist
 /tmp
 /out-tsc
 /bazel-out
-frontend/.angular/cache
+/frontend/dist
 frontend/node_modules
 frontend/dist
+frontend/.angular/chache
 npm-debug.log
 yarn-error.log
 
