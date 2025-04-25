@@ -75,7 +75,7 @@ export class AddGameDialogComponent {
     return this.fb.group({
       language: ['en', Validators.required],
       content: ['', Validators.required],
-      isMarkdown: [true]
+      markdown: [true]
     });
   }
 

@@ -51,7 +51,7 @@
           </mat-form-field>
 
           <div class="markdown-toggle">
-            <mat-checkbox formControlName="isMarkdown" color="primary">
+            <mat-checkbox formControlName="markdown" color="primary">
               {{ 'ADD_GAME.USE_MARKDOWN' | translate }}
             </mat-checkbox>
             <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
@@ -67,7 +67,7 @@
             </mat-error>
           </mat-form-field>
 
-          <div *ngIf="description.get('isMarkdown')?.value && description.get('content')?.value" class="markdown-preview">
+          <div *ngIf="description.get('markdown')?.value && description.get('content')?.value" class="markdown-preview">
             <h5>{{ 'ADD_GAME.PREVIEW' | translate }}</h5>
             <div class="preview-container">
               <markdown [data]="previewMarkdown(description.get('content')?.value)"></markdown>
@@ -104,7 +104,7 @@
           </mat-form-field>
 
           <div class="markdown-toggle">
-            <mat-checkbox formControlName="isMarkdown" color="primary">
+            <mat-checkbox formControlName="markdown" color="primary">
               {{ 'ADD_GAME.USE_MARKDOWN' | translate }}
             </mat-checkbox>
             <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
@@ -120,7 +120,7 @@
             </mat-error>
           </mat-form-field>
 
-          <div *ngIf="rule.get('isMarkdown')?.value && rule.get('content')?.value" class="markdown-preview">
+          <div *ngIf="rule.get('markdown')?.value && rule.get('content')?.value" class="markdown-preview">
             <h5>{{ 'ADD_GAME.PREVIEW' | translate }}</h5>
             <div class="preview-container">
               <markdown [data]="previewMarkdown(rule.get('content')?.value)"></markdown>
