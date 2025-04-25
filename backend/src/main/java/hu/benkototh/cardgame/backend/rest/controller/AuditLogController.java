@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +40,11 @@ public class AuditLogController {
         log.setDetails(details);
         log.setTimestamp(new Date());
         return auditLogRepository.save(log);
+    }
+
+    public AuditLog getLogById(Long id) {
+        Optional<AuditLog> logOptional = auditLogRepository.findById(id);
+        return logOptional.orElse(null);
     }
 
     public List<AuditLog> getLogsByUser(Long userId) {
@@ -99,5 +105,12 @@ public class AuditLogController {
                 .collect(Collectors.toCollection(ArrayList::new));
         Collections.reverse(filteredLogs);
         return filteredLogs;
+    }
+
+    public List<String> getAllActions() {
+        return auditLogRepository.findAll().stream()
+                .map(AuditLog::getAction)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }

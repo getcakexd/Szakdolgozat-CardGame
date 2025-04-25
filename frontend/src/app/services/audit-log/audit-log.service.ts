@@ -9,11 +9,16 @@ import { BACKEND_API_URL } from "../../../environments/api-config"
 })
 export class AuditLogService {
   private apiUrl = BACKEND_API_URL + "/audit-logs"
+  private adminApiUrl = BACKEND_API_URL + "/admin/audit-logs"
 
   constructor(private http: HttpClient) {}
 
   getAllLogs(): Observable<AuditLog[]> {
-    return this.http.get<AuditLog[]>(this.apiUrl + "/all")
+    return this.http.get<AuditLog[]>(`${this.apiUrl}/all`)
+  }
+
+  getLogById(id: string): Observable<AuditLog> {
+    return this.http.get<AuditLog>(`${this.apiUrl}/get/${id}`)
   }
 
   getLogsByUser(userId: number): Observable<AuditLog[]> {
@@ -49,6 +54,10 @@ export class AuditLogService {
       params = params.set("endDate", filter.endDate.toISOString())
     }
 
-    return this.http.get<AuditLog[]>(`${this.apiUrl}/filter`, { params })
+    return this.http.get<AuditLog[]>(`${this.adminApiUrl}/filter`, { params })
+  }
+
+  getAllActions(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/actions`)
   }
 }

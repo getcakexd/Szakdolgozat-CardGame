@@ -25,7 +25,7 @@
               <mat-select formControlName="action" panelClass="action-select-panel">
                 <mat-option value="">{{ 'AUDIT_LOGS.ALL_ACTIONS' | translate }}</mat-option>
                 <mat-option *ngFor="let action of actions" [value]="action" [matTooltip]="action">
-                  <span class="truncate-text">{{ action }}</span>
+                  {{ action }}
                 </mat-option>
               </mat-select>
               <mat-icon matSuffix>category</mat-icon>
@@ -53,19 +53,22 @@
           <div class="filter-row">
             <mat-form-field appearance="outline" class="filter-field global-search">
               <mat-label>{{ 'AUDIT_LOGS.SEARCH' | translate }}</mat-label>
-              <input matInput (keyup)="applyTableFilter($event)" placeholder="{{ 'AUDIT_LOGS.SEARCH_PLACEHOLDER' | translate }}">
+              <input matInput (keyup)="applyTableFilter($event)" formControlName="searchTerm" placeholder="{{ 'AUDIT_LOGS.SEARCH_PLACEHOLDER' | translate }}">
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
           </div>
 
           <div class="filter-actions">
-            <button mat-stroked-button (click)="resetFilters()">
+            <button mat-stroked-button (click)="resetFilters()" [disabled]="loading">
               <mat-icon>refresh</mat-icon>
               {{ 'AUDIT_LOGS.RESET_FILTERS' | translate }}
             </button>
-            <button mat-raised-button color="primary" (click)="applyFilters()">
-              <mat-icon>filter_alt</mat-icon>
-              {{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}
+            <button mat-raised-button color="primary" (click)="applyFilters()" [disabled]="loading || isFiltering">
+              <mat-spinner diameter="20" *ngIf="isFiltering"></mat-spinner>
+              <span *ngIf="!isFiltering">
+                <mat-icon>filter_alt</mat-icon>
+                {{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}
+              </span>
             </button>
           </div>
         </form>
@@ -76,52 +79,65 @@
         <p>{{ 'AUDIT_LOGS.LOADING' | translate }}</p>
       </div>
 
-      <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
+      <div *ngIf="!loading && noResults" class="empty-state">
         <mat-icon>history</mat-icon>
         <p>{{ 'AUDIT_LOGS.NO_LOGS_FOUND' | translate }}</p>
       </div>
 
-      <table mat-table [dataSource]="dataSource" matSort class="audit-table" *ngIf="!loading && dataSource.data.length > 0">
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ID' | translate }}</th>
-          <td mat-cell *matCellDef="let log">{{ log.id }}</td>
-        </ng-container>
+      <div class="table-container" *ngIf="!loading && !noResults">
+        <table mat-table [dataSource]="displayedLogs" matSort class="audit-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ID' | translate }}</th>
+            <td mat-cell *matCellDef="let log">{{ log.id }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ACTION' | translate }}</th>
-          <td mat-cell *matCellDef="let log">
-            <span class="action-badge" [ngClass]="getActionClass(log.action)" [matTooltip]="log.action">
-              {{ getShortActionName(log.action) }}
-            </span>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ACTION' | translate }}</th>
+            <td mat-cell *matCellDef="let log" class="mat-column-action">
+              <span class="action-badge" [ngClass]="getActionClass(log.action)" [matTooltip]="log.action">
+                {{ getShortActionName(log.action) }}
+              </span>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.USER' | translate }}</th>
-          <td mat-cell *matCellDef="let log">
-            <div class="user-info">
-              <mat-icon class="user-icon">person</mat-icon>
-              <span>{{ log.user?.username || 'Unknown' }}</span>
-              <span class="user-id">(ID: {{ log.userId }})</span>
-            </div>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.USER' | translate }}</th>
+            <td mat-cell *matCellDef="let log">
+              <div class="user-info">
+                <mat-icon class="user-icon">person</mat-icon>
+                <span class="user-id">ID: {{ log.userId || 'N/A' }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="timestamp">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}</th>
-          <td mat-cell *matCellDef="let log">{{ formatDate(log.timestamp) }}</td>
-        </ng-container>
+          <ng-container matColumnDef="timestamp">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}</th>
+            <td mat-cell *matCellDef="let log">{{ formatDate(log.timestamp) }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="details">
-          <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.DETAILS' | translate }}</th>
-          <td mat-cell *matCellDef="let log" class="details-cell" [matTooltip]="log.details">{{ log.details }}</td>
-        </ng-container>
+          <ng-container matColumnDef="details">
+            <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.DETAILS' | translate }}</th>
+            <td mat-cell *matCellDef="let log" class="details-cell" [matTooltip]="log.details">{{ log.details }}</td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="log-row"></tr>
-      </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="log-row"></tr>
+        </table>
 
-      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons *ngIf="!loading && dataSource.data.length > 0"></mat-paginator>
+        <div class="pagination-info">
+          {{ 'AUDIT_LOGS.SHOWING' | translate }} {{ pageIndex * pageSize + 1 }} - {{ Math.min((pageIndex + 1) * pageSize, totalItems) }} {{ 'AUDIT_LOGS.OF' | translate }} {{ totalItems }} {{ 'AUDIT_LOGS.ENTRIES' | translate }}
+        </div>
+
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          [pageIndex]="pageIndex"
+          (page)="handlePageEvent($event)"
+          showFirstLastButtons
+          aria-label="Select page of audit logs">
+        </mat-paginator>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

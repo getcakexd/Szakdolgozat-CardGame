@@ -43,11 +43,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  margin-bottom: 8px;
 }
 
 .filter-field {
   flex: 1;
-  min-width: 200px;
+  min-width: 300px;
+  width: 100%;
 }
 
 .global-search {
@@ -97,8 +99,23 @@
   color: var(--text-secondary);
 }
 
+.table-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: auto;
+}
+
+.pagination-info {
+  margin: 16px 0 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
 .audit-table {
   width: 100%;
+  min-width: 800px;
 }
 
 .log-row {
@@ -116,7 +133,7 @@
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  max-width: 150px;
+  max-width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -178,20 +195,24 @@
 }
 
 mat-paginator {
-  margin-top: 16px;
-}
-
-.truncate-text {
-  display: block;
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 8px;
 }
 
 ::ng-deep .action-select-panel {
-  min-width: 300px !important;
-  max-width: 400px !important;
+  transform: scale(0.8) !important;
+  transform-origin: top left !important;
+}
+
+::ng-deep .mat-mdc-option {
+  min-height: 32px !important;
+}
+
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  font-size: 10px !important;
+}
+
+.mat-column-action {
+  min-width: 220px;
 }
 
 ::ng-deep .mat-datepicker-toggle {
@@ -221,10 +242,5 @@ mat-paginator {
 
   .filter-field {
     width: 100%;
-  }
-
-  .audit-table {
-    display: block;
-    overflow-x: auto;
   }
 }
