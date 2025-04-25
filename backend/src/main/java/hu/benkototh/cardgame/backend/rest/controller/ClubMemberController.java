@@ -145,13 +145,6 @@ public class ClubMemberController {
         
         return true;
     }
-    
-    public void deleteClubMember(ClubMember clubMember) {
-        clubMemberRepository.delete(clubMember);
-        
-        auditLogController.logAction("CLUB_MEMBER_DELETED", clubMember.getUser().getId(),
-                "Club membership deleted for club: " + clubMember.getClub().getId());
-    }
 
     public boolean leaveClub(long clubId, long userId) {
         Optional<ClubMember> clubMemberOpt = clubMemberRepository.findAll().stream()
@@ -195,15 +188,5 @@ public class ClubMemberController {
                 .map(ClubMember::getClub)
                 .toList();
     }
-    
-    public void deleteClubMembersByClub(Club club) {
-        List<ClubMember> clubMembers = clubMemberRepository.findAll().stream()
-                .filter(clubMember -> clubMember.getClub().equals(club))
-                .toList();
-        
-        clubMemberRepository.deleteAll(clubMembers);
-        
-        auditLogController.logAction("CLUB_MEMBERS_DELETED", 0L,
-                "All members deleted for club: " + club.getId());
-    }
+
 }

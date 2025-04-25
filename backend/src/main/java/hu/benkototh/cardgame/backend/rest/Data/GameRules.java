@@ -17,8 +17,10 @@ public class GameRules {
     private String content;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "game_id",
+            foreignKey = @ForeignKey(name = "fk_gamerules_game",
+                    foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE"))
     private Game game;
 
     public GameRules() {

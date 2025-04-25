@@ -95,18 +95,4 @@ public class ChatController {
                 message.getSender().getId() == friendId && message.getReceiver().getId() == userId
         ).toList();
     }
-    
-    public void deleteMessagesByUser(User user) {
-        List<Message> messages = messageRepository.findAll().stream()
-                .filter(message ->
-                        message.getSender().getId() == user.getId() ||
-                        message.getReceiver().getId() == user.getId()
-                )
-                .toList();
-        
-        messageRepository.deleteAll(messages);
-        
-        auditLogController.logAction("MESSAGES_DELETED", user.getId(),
-                "All messages deleted for user");
-    }
 }

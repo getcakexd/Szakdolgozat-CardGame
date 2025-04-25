@@ -84,15 +84,4 @@ public class ClubChatController {
         
         return updatedMessage;
     }
-    
-    public void deleteMessagesByUser(User user) {
-        List<ClubMessage> messages = clubMessageRepository.findAll().stream()
-                .filter(clubMessage -> clubMessage.getSender().getId() == user.getId())
-                .toList();
-        
-        clubMessageRepository.deleteAll(messages);
-        
-        auditLogController.logAction("CLUB_MESSAGES_DELETED", user.getId(),
-                "All club messages deleted for user");
-    }
 }

@@ -10,12 +10,16 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "sender_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_message_sender",
+                    foreignKeyDefinition = "FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User sender;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "receiver_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_message_receiver",
+                    foreignKeyDefinition = "FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User receiver;
 
     @Column(nullable = false)

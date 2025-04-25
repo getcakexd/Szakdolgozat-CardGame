@@ -141,18 +141,5 @@ public class FriendRequestController {
                 .sorted(Comparator.comparing(FriendRequest::getId).reversed())
                 .toList();
     }
-    
-    public void deleteFriendRequestsByUser(User user) {
-        List<FriendRequest> requests = friendRequestRepository.findAll().stream()
-                .filter(request ->
-                        request.getReceiver().getId() == user.getId() ||
-                        request.getSender().getId() == user.getId()
-                )
-                .toList();
-        
-        friendRequestRepository.deleteAll(requests);
-        
-        auditLogController.logAction("FRIEND_REQUESTS_DELETED", user,
-                "All friend requests deleted for user");
-    }
+
 }
