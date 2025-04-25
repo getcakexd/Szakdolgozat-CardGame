@@ -11,21 +11,19 @@ public class TicketMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "ticket_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_ticketmessage_ticket",
+                    foreignKeyDefinition = "FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE"))
     @JsonIgnore
     private Ticket ticket;
 
-    @Column(name = "ticket_id", insertable = false, updatable = false)
-    private Long ticketId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "fk_ticketmessage_user",
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"))
     @JsonIgnore
     private User user;
-
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
 
     private String senderName;
     private String senderEmail;
@@ -65,28 +63,12 @@ public class TicketMessage {
         this.ticket = ticket;
     }
 
-    public Long getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(Long ticketId) {
-        this.ticketId = ticketId;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Long getUserId() {
-        return userId != null ? userId : (user != null ? user.getId() : null);
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getSenderName() {
@@ -135,5 +117,17 @@ public class TicketMessage {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setTicketId(Long ticketId) {
+        if (this.ticket != null) {
+            this.ticket.setId(ticketId);
+        }
+    }
+
+    public void setUserId(Long userId) {
+        if (this.user != null) {
+            this.user.setId(userId);
+        }
     }
 }

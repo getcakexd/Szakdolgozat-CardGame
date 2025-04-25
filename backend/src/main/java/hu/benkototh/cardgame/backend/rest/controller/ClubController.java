@@ -127,9 +127,6 @@ public class ClubController {
             return false;
         }
 
-        clubInviteController.deleteInvitesByClub(club.get());
-        clubMemberController.deleteClubMembersByClub(club.get());
-
         clubRepository.deleteById(clubId);
         
         auditLogController.logAction("CLUB_DELETED", 0L,

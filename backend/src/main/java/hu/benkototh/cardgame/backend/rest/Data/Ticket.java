@@ -32,23 +32,21 @@ public class Ticket {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "fk_ticket_user",
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"))
     @JsonIgnore
     private User user;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
-
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "assigned_to",
+            foreignKey = @ForeignKey(name = "fk_ticket_assigned_to",
+                    foreignKeyDefinition = "FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL"))
     @JsonIgnore
     private User assignedTo;
 
-    @Column(name = "assigned_to", insertable = false, updatable = false)
-    private Long assignedToId;
-
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<TicketMessage> messages;
 
@@ -162,14 +160,6 @@ public class Ticket {
         this.user = user;
     }
 
-    public Long getUserId() {
-        return userId != null ? userId : (user != null ? user.getId() : null);
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public User getAssignedTo() {
         return assignedTo;
     }
@@ -178,19 +168,27 @@ public class Ticket {
         this.assignedTo = assignedTo;
     }
 
-    public Long getAssignedToId() {
-        return assignedToId != null ? assignedToId : (assignedTo != null ? assignedTo.getId() : null);
-    }
-
-    public void setAssignedToId(Long assignedToId) {
-        this.assignedToId = assignedToId;
-    }
-
     public List<TicketMessage> getMessages() {
         return messages;
     }
 
     public void setMessages(List<TicketMessage> messages) {
         this.messages = messages;
+    }
+
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
+
+    public void setUserId(Long userId) {
+        if (user != null) {
+            user.setId(userId);
+        }
+    }
+
+    public void setAssignedToId(Long agentId) {
+        if (assignedTo != null) {
+            assignedTo.setId(agentId);
+        }
     }
 }

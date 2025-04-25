@@ -15,25 +15,31 @@ public class Lobby {
     @Column(unique = true)
     private String code;
 
-    @ManyToOne
-    @JoinColumn(name = "leader_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "leader_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_lobby_leader",
+                    foreignKeyDefinition = "FOREIGN KEY (leader_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User leader;
 
-    @ManyToOne
-    @JoinColumn(name = "game_id", nullable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "game_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_lobby_game",
+                    foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE"))
     private Game game;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "lobby_players",
+            joinColumns = @JoinColumn(name = "lobby_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id",
+                    foreignKey = @ForeignKey(name = "fk_lobbyplayers_user",
+                            foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
+    )
+    private Set<User> players = new HashSet<>();
 
     private boolean playWithPoints;
 
     private int minPlayers;
-
-    @ManyToMany
-    @JoinTable(
-            name = "lobby_players",
-            joinColumns = @JoinColumn(name = "lobby_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> players = new HashSet<>();
 
     private String status = "WAITING";
 

@@ -162,26 +162,4 @@ public class ClubInviteController {
         
         return true;
     }
-    
-    public void deleteInvitesByUser(User user) {
-        List<ClubInvite> invites = clubInviteRepository.findAll().stream()
-                .filter(clubInvite -> clubInvite.getUser().getId() == user.getId())
-                .toList();
-        
-        clubInviteRepository.deleteAll(invites);
-        
-        auditLogController.logAction("CLUB_INVITES_DELETED_BY_USER", user.getId(),
-                "All club invites deleted for user");
-    }
-
-    public void deleteInvitesByClub(Club club) {
-        List<ClubInvite> invites = clubInviteRepository.findAll().stream()
-                .filter(clubInvite -> clubInvite.getClub().getId() == club.getId())
-                .toList();
-
-        clubInviteRepository.deleteAll(invites);
-        
-        auditLogController.logAction("CLUB_INVITES_DELETED_BY_CLUB", 0L,
-                "All club invites deleted for club: " + club.getId());
-    }
 }

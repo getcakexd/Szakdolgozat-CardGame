@@ -213,4 +213,5 @@ public class LobbyController {
                 .filter(lobby -> lobby.getPlayers().contains(user))
                 .toList();
     }
+
 }

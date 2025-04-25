@@ -255,4 +255,5 @@ public class TicketController {
                 .filter(ticket -> ticket.getCreatedAt().after(startDate) && ticket.getCreatedAt().before(endDate))
                 .collect(Collectors.toList());
     }
+
 }

@@ -25,34 +25,6 @@ public class UserController {
     @Autowired
     private IUserHistoryRepository userHistoryRepository;
 
-    @Lazy
-    @Autowired
-    private FriendRequestController friendRequestController;
-
-    @Lazy
-    @Autowired
-    private FriendshipController friendshipController;
-
-    @Lazy
-    @Autowired
-    private ChatController chatController;
-
-    @Lazy
-    @Autowired
-    private ClubMemberController clubMemberController;
-
-    @Lazy
-    @Autowired
-    private ClubChatController clubChatController;
-
-    @Lazy
-    @Autowired
-    private ClubInviteController clubInviteController;
-
-    @Lazy
-    @Autowired
-    private ClubController clubController;
-
     @Autowired
     private AuditLogController auditLogController;
 
@@ -74,6 +46,10 @@ public class UserController {
 
     @Value("${app.verification.token-expiration:24}")
     private int verificationTokenExpirationHours;
+    @Autowired
+    private LobbyController lobbyController;
+    @Autowired
+    private TicketController ticketController;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -390,21 +366,6 @@ public class UserController {
                     "User deletion failed: Password incorrect");
             return false;
         }
-
-        friendRequestController.deleteFriendRequestsByUser(user);
-        friendshipController.deleteFriendshipsByUser(user);
-        chatController.deleteMessagesByUser(user);
-
-        ClubMember clubMember = clubMemberController.getClubMemberByUser(user);
-        if (clubMember != null) {
-            if (clubMember.getRole().equals("admin")) {
-                clubController.deleteClub(clubMember.getClub().getId());
-            }
-            clubMemberController.deleteClubMember(clubMember);
-        }
-
-        clubChatController.deleteMessagesByUser(user);
-        clubInviteController.deleteInvitesByUser(user);
 
         userRepository.delete(user);
 

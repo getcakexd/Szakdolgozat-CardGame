@@ -78,17 +78,5 @@ public class FriendshipController {
                         (friendship.getUser1().equals(user2) && friendship.getUser2().equals(user1))
                 );
     }
-    
-    public void deleteFriendshipsByUser(User user) {
-        List<Friendship> friendships = friendshipRepository.findAll().stream()
-                .filter(friendship ->
-                        friendship.getUser1().equals(user) ||
-                        friendship.getUser2().equals(user)
-                )
-                .toList();
-        
-        friendshipRepository.deleteAll(friendships);
-        
-        auditLogController.logAction("FRIENDSHIPS_DELETED", user, "All friendships deleted for user");
-    }
+
 }
