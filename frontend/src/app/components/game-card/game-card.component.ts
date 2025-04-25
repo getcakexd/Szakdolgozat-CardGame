@@ -8,7 +8,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslateModule } from '@ngx-translate/core';
 import { Game } from '../../models/game.model';
 import { TranslationService } from '../../services/translation/translation.service';
-import {MatChip, MatChipSet} from '@angular/material/chips';
+import { MatChip, MatChipSet } from '@angular/material/chips';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {MarkdownComponent} from 'ngx-markdown';
 
 @Component({
   selector: 'app-game-card',
@@ -24,7 +26,8 @@ import {MatChip, MatChipSet} from '@angular/material/chips';
     MatSlideToggleModule,
     TranslateModule,
     MatChip,
-    MatChipSet
+    MatChipSet,
+    MarkdownComponent,
   ]
 })
 export class GameCardComponent {
@@ -39,7 +42,10 @@ export class GameCardComponent {
   showRules: boolean = false;
   currentLanguage: string;
 
-  constructor(private translationService: TranslationService) {
+  constructor(
+    private translationService: TranslationService,
+    private sanitizer: DomSanitizer
+  ) {
     this.currentLanguage = this.translationService.getCurrentLang();
     this.translationService.currentLang$.subscribe(lang => {
       this.currentLanguage = lang;
@@ -62,6 +68,24 @@ export class GameCardComponent {
 
     const rules = this.game.rules.find(rule => rule.language === this.currentLanguage);
     return rules ? rules.content : this.game.rules[0].content;
+  }
+
+  isDescriptionMarkdown(): boolean {
+    if (!this.game.descriptions || this.game.descriptions.length === 0) {
+      return false;
+    }
+
+    const description = this.game.descriptions.find(desc => desc.language === this.currentLanguage);
+    return description ? !!description.markdown : !!this.game.descriptions[0].markdown;
+  }
+
+  isRulesMarkdown(): boolean {
+    if (!this.game.rules || this.game.rules.length === 0) {
+      return false;
+    }
+
+    const rules = this.game.rules.find(rule => rule.language === this.currentLanguage);
+    return rules ? !!rules.markdown : !!this.game.rules[0].markdown;
   }
 
   toggleRules(): void {

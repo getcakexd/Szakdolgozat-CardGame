@@ -16,6 +16,9 @@ public class GameRules {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean isMarkdown;
+
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "game_id",
@@ -24,11 +27,19 @@ public class GameRules {
     private Game game;
 
     public GameRules() {
+        this.isMarkdown = false;
     }
 
     public GameRules(String language, String content) {
         this.language = language;
         this.content = content;
+        this.isMarkdown = false;
+    }
+
+    public GameRules(String language, String content, boolean isMarkdown) {
+        this.language = language;
+        this.content = content;
+        this.isMarkdown = isMarkdown;
     }
 
     public long getId() {
@@ -53,6 +64,14 @@ public class GameRules {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isMarkdown() {
+        return isMarkdown;
+    }
+
+    public void setMarkdown(boolean markdown) {
+        isMarkdown = markdown;
     }
 
     public Game getGame() {

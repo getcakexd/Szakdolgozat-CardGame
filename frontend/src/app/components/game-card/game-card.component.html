@@ -14,7 +14,8 @@
   <mat-card-content>
     <div class="game-info">
       <div class="game-description">
-        <p *ngIf="getDescriptionInCurrentLanguage()">{{ getDescriptionInCurrentLanguage() }}</p>
+        <markdown *ngIf="getDescriptionInCurrentLanguage() && isDescriptionMarkdown()" [data]="getDescriptionInCurrentLanguage()"></markdown>
+        <p *ngIf="getDescriptionInCurrentLanguage() && !isDescriptionMarkdown()">{{ getDescriptionInCurrentLanguage() }}</p>
         <p *ngIf="!getDescriptionInCurrentLanguage()" class="no-content">{{ 'GAME_CARD.NO_DESCRIPTION' | translate }}</p>
       </div>
 
@@ -42,7 +43,8 @@
 
     <div class="game-rules" *ngIf="showRules">
       <h3>{{ 'ADMIN.RULES' | translate }}</h3>
-      <p *ngIf="getRulesInCurrentLanguage()">{{ getRulesInCurrentLanguage() }}</p>
+      <markdown *ngIf="getRulesInCurrentLanguage() && isRulesMarkdown()" [data]="getRulesInCurrentLanguage()"></markdown>
+      <p *ngIf="getRulesInCurrentLanguage() && !isRulesMarkdown()">{{ getRulesInCurrentLanguage() }}</p>
       <p *ngIf="!getRulesInCurrentLanguage()" class="no-content">{{ 'GAME_CARD.NO_RULES' | translate }}</p>
     </div>
   </mat-card-content>

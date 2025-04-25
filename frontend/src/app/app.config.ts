@@ -9,6 +9,7 @@ import {socialAuthServiceConfig} from '../environments/social-auth.config';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {MarkdownModule, MARKED_OPTIONS} from 'ngx-markdown';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/i18n/', '.json');
@@ -33,6 +34,16 @@ export const AppConfig: ApplicationConfig = {
           useFactory: HttpLoaderFactory,
           deps: [HttpClient]
         }
+      }),
+      MarkdownModule.forRoot({
+        markedOptions: {
+          provide: MARKED_OPTIONS,
+          useValue: {
+            gfm: true,
+            breaks: true,
+            pedantic: false,
+          },
+        },
       })
     )
   ]

@@ -102,7 +102,10 @@ public class GameController {
             game.getDescriptions().stream()
                     .filter(desc -> desc.getLanguage().equals(description.getLanguage()))
                     .findFirst()
-                    .ifPresent(desc -> desc.setContent(description.getContent()));
+                    .ifPresent(desc -> {
+                        desc.setContent(description.getContent());
+                        desc.setMarkdown(description.isMarkdown());
+                    });
         } else {
             game.addDescription(description);
         }
@@ -133,7 +136,10 @@ public class GameController {
             game.getRules().stream()
                     .filter(r -> r.getLanguage().equals(rules.getLanguage()))
                     .findFirst()
-                    .ifPresent(r -> r.setContent(rules.getContent()));
+                    .ifPresent(r -> {
+                        r.setContent(rules.getContent());
+                        r.setMarkdown(rules.isMarkdown());
+                    });
         } else {
             game.addRules(rules);
         }
