@@ -403,7 +403,9 @@
     "CONTENT_REQUIRED": "A tartalom megadása kötelező",
     "DESCRIPTIONS": "Leírások",
     "ADD_DESCRIPTION": "Leírás hozzáadása",
-    "ADD_RULES": "Szabályok hozzáadása"
+    "ADD_RULES": "Szabályok hozzáadása",
+    "USE_MARKDOWN": "Markdown formázás használata",
+    "PREVIEW": "Előnézet"
   },
   "ADD_USER": {
     "TITLE": "Új felhasználó hozzáadása",

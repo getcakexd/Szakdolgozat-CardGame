@@ -398,7 +398,9 @@
     "CONTENT_REQUIRED": "Content is required",
     "DESCRIPTIONS": "Descriptions",
     "ADD_DESCRIPTION": "Add Description",
-    "ADD_RULES": "Add Rules"
+    "ADD_RULES": "Add Rules",
+    "USE_MARKDOWN": "Use Markdown formatting",
+    "PREVIEW": "Preview"
   },
   "ADD_USER": {
     "TITLE": "Add New User",

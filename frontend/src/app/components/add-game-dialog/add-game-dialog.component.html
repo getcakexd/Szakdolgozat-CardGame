@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>{{ 'ADD_GAME.TITLE' | translate }}</h2>
-<form [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="gameForm" (ngSubmit)="onSubmit()" class="dialog-content">
   <mat-dialog-content>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>{{ 'ADD_GAME.GAME_NAME' | translate }}</mat-label>
@@ -50,6 +50,15 @@
             </mat-select>
           </mat-form-field>
 
+          <div class="markdown-toggle">
+            <mat-checkbox formControlName="isMarkdown" color="primary">
+              {{ 'ADD_GAME.USE_MARKDOWN' | translate }}
+            </mat-checkbox>
+            <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
+              <mat-icon>help_outline</mat-icon>
+            </a>
+          </div>
+
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>{{ 'ADD_GAME.CONTENT' | translate }}</mat-label>
             <textarea matInput formControlName="content" rows="4" required></textarea>
@@ -57,6 +66,13 @@
               {{ 'ADD_GAME.CONTENT_REQUIRED' | translate }}
             </mat-error>
           </mat-form-field>
+
+          <div *ngIf="description.get('isMarkdown')?.value && description.get('content')?.value" class="markdown-preview">
+            <h5>{{ 'ADD_GAME.PREVIEW' | translate }}</h5>
+            <div class="preview-container">
+              <markdown [data]="previewMarkdown(description.get('content')?.value)"></markdown>
+            </div>
+          </div>
         </div>
 
         <mat-divider *ngIf="i < descriptions.length - 1"></mat-divider>
@@ -87,6 +103,15 @@
             </mat-select>
           </mat-form-field>
 
+          <div class="markdown-toggle">
+            <mat-checkbox formControlName="isMarkdown" color="primary">
+              {{ 'ADD_GAME.USE_MARKDOWN' | translate }}
+            </mat-checkbox>
+            <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
+              <mat-icon>help_outline</mat-icon>
+            </a>
+          </div>
+
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>{{ 'ADD_GAME.CONTENT' | translate }}</mat-label>
             <textarea matInput formControlName="content" rows="4" required></textarea>
@@ -94,6 +119,13 @@
               {{ 'ADD_GAME.CONTENT_REQUIRED' | translate }}
             </mat-error>
           </mat-form-field>
+
+          <div *ngIf="rule.get('isMarkdown')?.value && rule.get('content')?.value" class="markdown-preview">
+            <h5>{{ 'ADD_GAME.PREVIEW' | translate }}</h5>
+            <div class="preview-container">
+              <markdown [data]="previewMarkdown(rule.get('content')?.value)"></markdown>
+            </div>
+          </div>
         </div>
 
         <mat-divider *ngIf="i < rules.length - 1"></mat-divider>

@@ -27,6 +27,54 @@ mat-card-header {
 .game-description {
   flex: 1;
   margin-bottom: 16px;
+
+  ::ng-deep {
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+
+    ul, ol {
+      padding-left: 1.5em;
+    }
+
+    code {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    pre {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.5em;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    blockquote {
+      border-left: 4px solid rgba(0, 0, 0, 0.1);
+      padding-left: 1em;
+      margin-left: 0;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0.5em;
+      text-align: left;
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
 }
 
 .game-meta {
@@ -71,6 +119,54 @@ mat-card-header {
     margin-bottom: 8px;
     font-size: 16px;
     font-weight: 500;
+  }
+
+  ::ng-deep {
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+
+    ul, ol {
+      padding-left: 1.5em;
+    }
+
+    code {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+
+    pre {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.5em;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    blockquote {
+      border-left: 4px solid rgba(0, 0, 0, 0.1);
+      padding-left: 1em;
+      margin-left: 0;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0.5em;
+      text-align: left;
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
   }
 }
 

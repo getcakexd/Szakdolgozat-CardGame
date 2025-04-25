@@ -188,14 +188,22 @@ public class AdminController {
 
         if (gameDTO.getDescriptions() != null) {
             for (GameCreationDTO.LocalizedContent descContent : gameDTO.getDescriptions()) {
-                GameDescription description = new GameDescription(descContent.getLanguage(), descContent.getContent());
+                GameDescription description = new GameDescription(
+                        descContent.getLanguage(),
+                        descContent.getContent(),
+                        descContent.isMarkdown()
+                );
                 game.addDescription(description);
             }
         }
 
         if (gameDTO.getRules() != null) {
             for (GameCreationDTO.LocalizedContent ruleContent : gameDTO.getRules()) {
-                GameRules rules = new GameRules(ruleContent.getLanguage(), ruleContent.getContent());
+                GameRules rules = new GameRules(
+                        ruleContent.getLanguage(),
+                        ruleContent.getContent(),
+                        ruleContent.isMarkdown()
+                );
                 game.addRules(rules);
             }
         }
@@ -253,14 +261,22 @@ public class AdminController {
 
         if (gameDTO.getDescriptions() != null) {
             for (GameCreationDTO.LocalizedContent descContent : gameDTO.getDescriptions()) {
-                GameDescription description = new GameDescription(descContent.getLanguage(), descContent.getContent());
+                GameDescription description = new GameDescription(
+                        descContent.getLanguage(),
+                        descContent.getContent(),
+                        descContent.isMarkdown()
+                );
                 game.addDescription(description);
             }
         }
 
         if (gameDTO.getRules() != null) {
             for (GameCreationDTO.LocalizedContent ruleContent : gameDTO.getRules()) {
-                GameRules rules = new GameRules(ruleContent.getLanguage(), ruleContent.getContent());
+                GameRules rules = new GameRules(
+                        ruleContent.getLanguage(),
+                        ruleContent.getContent(),
+                        ruleContent.isMarkdown()
+                );
                 game.addRules(rules);
             }
         }

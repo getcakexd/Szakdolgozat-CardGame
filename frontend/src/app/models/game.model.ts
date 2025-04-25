@@ -12,12 +12,14 @@ export interface GameDescription {
   id?: number;
   language: string;
   content: string;
+  markdown?: boolean;
 }
 
 export interface GameRules {
   id?: number;
   language: string;
   content: string;
+  markdown?: boolean;
 }
 
 export interface GameCreationDTO {
@@ -32,4 +34,5 @@ export interface GameCreationDTO {
 export interface LocalizedContent {
   language: string;
   content: string;
+  markdown?: boolean;
 }

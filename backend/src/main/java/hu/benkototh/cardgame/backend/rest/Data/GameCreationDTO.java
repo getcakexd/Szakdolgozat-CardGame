@@ -13,6 +13,7 @@ public class GameCreationDTO {
     public static class LocalizedContent {
         private String language;
         private String content;
+        private boolean isMarkdown;
 
         public String getLanguage() {
             return language;
@@ -28,6 +29,14 @@ public class GameCreationDTO {
 
         public void setContent(String content) {
             this.content = content;
+        }
+
+        public boolean isMarkdown() {
+            return isMarkdown;
+        }
+
+        public void setMarkdown(boolean markdown) {
+            isMarkdown = markdown;
         }
     }
 

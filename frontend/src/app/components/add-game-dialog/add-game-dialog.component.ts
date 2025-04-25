@@ -1,4 +1,4 @@
-import { Component } from "@angular/core"
+import {Component, ViewEncapsulation} from "@angular/core"
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from "@angular/forms"
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog"
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -9,6 +9,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelect, MatOption } from '@angular/material/select';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MarkdownModule } from 'ngx-markdown';
 
 @Component({
   selector: "app-add-game-dialog",
@@ -32,8 +34,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MatDivider,
     MatDialogContent,
     MatDialogTitle,
-    TranslateModule
+    MatCheckbox,
+    TranslateModule,
+    MarkdownModule
   ],
+  encapsulation: ViewEncapsulation.None,
   standalone: true
 })
 export class AddGameDialogComponent {
@@ -69,7 +74,8 @@ export class AddGameDialogComponent {
   createLocalizedContentGroup(): FormGroup {
     return this.fb.group({
       language: ['en', Validators.required],
-      content: ['', Validators.required]
+      content: ['', Validators.required],
+      isMarkdown: [true]
     });
   }
 
@@ -122,5 +128,9 @@ export class AddGameDialogComponent {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  previewMarkdown(content: string): string {
+    return content || '';
   }
 }
