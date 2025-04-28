@@ -1,16 +1,37 @@
 package hu.benkototh.cardgame.backend.game.model;
 
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+@Embeddable
 public class Card {
+    @Enumerated(EnumType.STRING)
     private Suit suit;
+
+    @Enumerated(EnumType.STRING)
     private Rank rank;
+
     private int value;
-    private boolean isSeven;
+
+    public Card() {
+    }
 
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
-        this.value = rank.getValue();
-        this.isSeven = rank == Rank.SEVEN;
+        this.value = calculateValue();
+    }
+
+    private int calculateValue() {
+        switch (rank) {
+            case ACE:
+                return 11;
+            case TEN:
+                return 10;
+            default:
+                return 0;
+        }
     }
 
     public Suit getSuit() {
@@ -35,13 +56,5 @@ public class Card {
 
     public void setValue(int value) {
         this.value = value;
-    }
-
-    public boolean isSeven() {
-        return isSeven;
-    }
-
-    public void setSeven(boolean seven) {
-        isSeven = seven;
     }
 }

@@ -12,7 +12,7 @@ export class WebSocketService {
   private subscriptions: { [destination: string]: (message: any) => void } = {}
   private connected = new BehaviorSubject<boolean>(false)
   connected$ = this.connected.asObservable()
-  private apiUrl = BACKEND_API_URL + "/ws" // Make sure this matches your backend endpoint
+  private apiUrl = BACKEND_API_URL + "/ws"
   private connectionAttempts = 0
   private maxConnectionAttempts = 5
 
@@ -40,7 +40,6 @@ export class WebSocketService {
         this.connected.next(true)
         this.connectionAttempts = 0
 
-        // Resubscribe to all previous subscriptions
         Object.entries(this.subscriptions).forEach(([destination, callback]) => {
           this.subscribeInternal(destination, callback)
         })
@@ -108,8 +107,6 @@ export class WebSocketService {
   unsubscribe(destination: string): void {
     console.log(`Unsubscribing from ${destination}`)
     delete this.subscriptions[destination]
-    // Note: We don't actually unsubscribe from STOMP as it's not necessary
-    // The subscription will be automatically cleaned up when the connection is closed
   }
 
   send(destination: string, body: any): void {

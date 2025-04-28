@@ -16,4 +16,6 @@ export interface Lobby {
   minPlayers: number;
   players: User[];
   status: string;
+  createdAt: Date
+  cardGameId?: string
 }

@@ -197,26 +197,32 @@ public class LobbyController {
                 );
 
                 if (cardGame != null) {
+                    lobby.setCardGameId(cardGame.getId());
+
                     for (User user : lobby.getPlayers()) {
                         if (user.getId() == lobby.getLeader().getId()) {
                             continue;
                         }
-
 
                         Player player = new Player();
                         player.setId(String.valueOf(user.getId()));
                         player.setUsername(user.getUsername());
                         player.setHand(new ArrayList<>());
                         player.setWonCards(new ArrayList<>());
+                        player.setGame(cardGame);
 
                         cardGame.addPlayer(player);
                     }
 
                     cardGameController.save(cardGame);
 
+                    cardGameController.debugRepositoryState();
+
                     cardGame.startGame();
 
                     cardGameController.save(cardGame);
+
+                    cardGameController.debugRepositoryState();
 
                     lobby.setStatus(STATUS_IN_GAME);
                     return lobbyRepository.save(lobby);
@@ -230,8 +236,6 @@ public class LobbyController {
         }
         return null;
     }
-
-
 
     public Lobby getLobbyById(long lobbyId) {
         return lobbyRepository.findById(lobbyId).orElse(null);

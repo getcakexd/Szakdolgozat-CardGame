@@ -4,12 +4,13 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {Lobby} from '../../models/lobby.model';
 import {Game} from '../../models/game.model';
+import {BACKEND_API_URL} from '../../../environments/api-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LobbyService {
-  private apiUrl = '/api/lobbies';
+  private apiUrl = BACKEND_API_URL + '/lobbies';
   private currentLobbySubject = new BehaviorSubject<Lobby | null>(null);
   currentLobby$ = this.currentLobbySubject.asObservable();
 

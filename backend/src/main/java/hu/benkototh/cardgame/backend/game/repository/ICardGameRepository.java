@@ -2,45 +2,22 @@ package hu.benkototh.cardgame.backend.game.repository;
 
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.GameStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Repository
-public class ICardGameRepository {
+public interface ICardGameRepository extends JpaRepository<CardGame, String> {
 
-    private final Map<String, CardGame> games = new ConcurrentHashMap<>();
+    List<CardGame> findByStatus(GameStatus status);
 
-    public CardGame save(CardGame game) {
-        games.put(game.getId(), game);
-        return game;
-    }
+    List<CardGame> findByGameDefinitionId(long gameDefinitionId);
 
-    public Optional<CardGame> findById(String id) {
-        return Optional.ofNullable(games.get(id));
-    }
+    @Query("SELECT g FROM CardGame g JOIN g.players p WHERE p.id = :playerId")
+    List<CardGame> findByPlayerId(String playerId);
 
-    public List<CardGame> findAll() {
-        return List.copyOf(games.values());
-    }
-
-    public void deleteById(String id) {
-        games.remove(id);
-    }
-
-    public List<CardGame> findByStatus(GameStatus status) {
-        return games.values().stream()
-                .filter(game -> game.getStatus() == status)
-                .collect(Collectors.toList());
-    }
-
-    public List<CardGame> findByGameDefinitionId(long gameDefinitionId) {
-        return games.values().stream()
-                .filter(game -> game.getGameDefinitionId() == gameDefinitionId)
-                .collect(Collectors.toList());
-    }
+    @Query("SELECT g FROM CardGame g WHERE g.status = :status AND g.gameDefinitionId = :gameDefinitionId")
+    List<CardGame> findByStatusAndGameDefinitionId(GameStatus status, long gameDefinitionId);
 }

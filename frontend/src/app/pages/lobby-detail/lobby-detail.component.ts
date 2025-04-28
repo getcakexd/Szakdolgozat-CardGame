@@ -66,7 +66,6 @@ import {GameCardComponent} from '../../components/game-card/game-card.component'
     MatCard,
     NgClass,
     GameCardComponent,
-    GameCardComponent
   ],
   styleUrls: ['./lobby-detail.component.css']
 })
@@ -90,7 +89,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
   ) {
     this.settingsForm = this.fb.group({
       gameId: ['', Validators.required],
@@ -119,7 +118,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
 
     this.lobbyService.currentLobby$.subscribe((lobby) => {
       if (lobby && lobby.status === LOBBY_STATUS.IN_GAME) {
-        this.router.navigate(["/game", lobby.id])
+        this.getCardGameId(lobby.id)
       }
     })
   }
@@ -264,9 +263,9 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
           duration: 3000,
         })
 
-        if (lobby.status === LOBBY_STATUS.IN_GAME) {
+        if (lobby.status === LOBBY_STATUS.IN_GAME && lobby.cardGameId) {
           setTimeout(() => {
-            this.router.navigate(["/game", lobby.id])
+            this.router.navigate(["/game", lobby.cardGameId])
           }, 1000)
         }
       },
@@ -275,7 +274,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
         this.snackBar.open(
           error.error.message || this.translate.instant("LOBBY.FAILED_START_GAME"),
           this.translate.instant("COMMON.CLOSE"),
-          { duration: 3000 },
+          {duration: 3000},
         )
       },
     })
@@ -393,5 +392,25 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       this.refreshSubscription.unsubscribe();
       this.refreshSubscription = null;
     }
+  }
+
+  private getCardGameId(lobbyId: number): void {
+    this.lobbyService.getLobby(lobbyId).subscribe({
+      next: (response) => {
+        if (response && response.cardGameId) {
+          this.router.navigate(["/game", response.cardGameId])
+        } else {
+          this.snackBar.open(this.translate.instant("LOBBY.GAME_ID_NOT_FOUND"), this.translate.instant("COMMON.CLOSE"), {
+            duration: 3000,
+          })
+        }
+      },
+      error: (error) => {
+        console.error("Error getting card game ID:", error)
+        this.snackBar.open(this.translate.instant("LOBBY.FAILED_GET_GAME_ID"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+      },
+    })
   }
 }
