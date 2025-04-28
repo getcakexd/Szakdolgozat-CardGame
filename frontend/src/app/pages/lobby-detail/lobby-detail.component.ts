@@ -116,6 +116,12 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     this.settingsForm.get("gameId")?.valueChanges.subscribe((gameId) => {
       this.selectedGame = this.games.find((game) => game.id === gameId) || null
     })
+
+    this.lobbyService.currentLobby$.subscribe((lobby) => {
+      if (lobby && lobby.status === LOBBY_STATUS.IN_GAME) {
+        this.router.navigate(["/game", lobby.id])
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -249,26 +255,30 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading = true
     this.lobbyService.startGame(this.lobby.id, this.currentUser!.id).subscribe({
       next: (lobby) => {
-        this.lobby = lobby;
-        this.isLoading = false;
-        this.snackBar.open(
-          this.translate.instant('LOBBY.GAME_STARTED'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
+        this.lobby = lobby
+        this.isLoading = false
+        this.snackBar.open(this.translate.instant("LOBBY.GAME_STARTED"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+
+        if (lobby.status === LOBBY_STATUS.IN_GAME) {
+          setTimeout(() => {
+            this.router.navigate(["/game", lobby.id])
+          }, 1000)
+        }
       },
       error: (error) => {
-        this.isLoading = false;
+        this.isLoading = false
         this.snackBar.open(
-          error.error.message || this.translate.instant('LOBBY.FAILED_START_GAME'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-      }
-    });
+          error.error.message || this.translate.instant("LOBBY.FAILED_START_GAME"),
+          this.translate.instant("COMMON.CLOSE"),
+          { duration: 3000 },
+        )
+      },
+    })
   }
 
   onKickPlayer(player: User): void {

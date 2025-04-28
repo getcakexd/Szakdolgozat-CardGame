@@ -1,4 +1,4 @@
-package hu.benkototh.cardgame.backend.game.model.games;
+package hu.benkototh.cardgame.backend.game.model.game;
 
 import hu.benkototh.cardgame.backend.game.model.*;
 
@@ -12,6 +12,10 @@ public class ZsirGame extends CardGame {
     private static final String DECK = "deck";
     private static final String LAST_PLAYER_TO_TAKE = "lastPlayerToTake";
     private static final String CURRENT_LEAD_CARD = "currentLeadCard";
+
+    public ZsirGame() {
+        super();
+    }
 
     @Override
     public void initializeGame() {
@@ -38,8 +42,8 @@ public class ZsirGame extends CardGame {
         setGameState(DECK, deck);
 
         setGameState(CURRENT_TRICK, new ArrayList<Card>());
-        setGameState(CURRENT_LEAD_CARD, null);
-        setGameState(LAST_PLAYER_TO_TAKE, null);
+        setGameState(CURRENT_LEAD_CARD, "none");
+        setGameState(LAST_PLAYER_TO_TAKE, "none");
     }
 
     @Override
@@ -118,6 +122,10 @@ public class ZsirGame extends CardGame {
 
     @Override
     public boolean isGameOver() {
+        Object deckObj = getGameState(DECK);
+        if (deckObj == null) {
+            return false;
+        }
         Deck deck = (Deck) getGameState(DECK);
 
         if (!deck.isEmpty()) {

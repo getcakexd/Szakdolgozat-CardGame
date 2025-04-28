@@ -2,7 +2,7 @@ package hu.benkototh.cardgame.backend.game.service;
 
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.exception.GameException;
-import hu.benkototh.cardgame.backend.game.model.games.ZsirGame;
+import hu.benkototh.cardgame.backend.game.model.game.ZsirGame;
 
 public class GameFactory {
 

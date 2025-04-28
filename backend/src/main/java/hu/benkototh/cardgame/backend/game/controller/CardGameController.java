@@ -67,6 +67,7 @@ public class CardGameController {
         return cardGame;
     }
 
+
     public CardGame joinGame(String gameId, String userId) {
         Optional<CardGame> optionalCardGame = cardGameRepository.findById(gameId);
         if (optionalCardGame.isEmpty()) {
@@ -143,6 +144,7 @@ public class CardGameController {
             throw new GameException("User is not in the game");
         }
 
+        cardGame.initializeGame();
         cardGame.startGame();
 
         cardGameRepository.save(cardGame);
@@ -229,5 +231,9 @@ public class CardGameController {
 
     public Game getGameDefinition(long gameDefinitionId) {
         return gameRepository.findById(gameDefinitionId).orElse(null);
+    }
+
+    public void save(CardGame cardGame) {
+        cardGameRepository.save(cardGame);
     }
 }

@@ -55,6 +55,11 @@ public abstract class CardGame {
         if (players.size() >= getMinPlayers() && status == GameStatus.WAITING) {
             status = GameStatus.ACTIVE;
             startedAt = new Date();
+
+            if (gameState == null) {
+                gameState = new ConcurrentHashMap<>();
+            }
+
             initializeGame();
         } else {
             throw new GameException("Cannot start the game");
