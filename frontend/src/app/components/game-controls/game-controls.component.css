@@ -1,0 +1,19 @@
+.game-controls-container {
+  padding: 8px;
+}
+
+.partner-communication {
+  margin-top: 16px;
+}
+
+.partner-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.game-info {
+  margin-top: 16px;
+  text-align: center;
+}

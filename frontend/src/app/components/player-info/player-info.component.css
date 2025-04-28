@@ -1,0 +1,65 @@
+.player-info-container {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.player-info-container.current-player {
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.player-info-container.current-turn {
+  box-shadow: 0 0 0 2px var(--mat-sys-primary);
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.player-avatar {
+  margin-right: 8px;
+}
+
+.player-name {
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.turn-indicator {
+  color: var(--mat-sys-primary);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.player-stats {
+  font-size: 12px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.stat-value {
+  font-weight: 500;
+}
