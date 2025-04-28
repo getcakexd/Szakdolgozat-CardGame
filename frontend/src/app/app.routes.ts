@@ -22,6 +22,7 @@ import {ResetPasswordComponent} from './components/reset-password/reset-password
 import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
 import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
 import {GamesComponent} from './pages/games/games.component';
+import {GameComponent} from './pages/game/game.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -39,6 +40,7 @@ export const routes: Routes = [
   { path: 'support', component: SupportComponent},
   { path: 'ticket/:id', component: TicketDetailComponent},
   { path: 'lobby/:id', component: LobbyDetailComponent, canActivate: [AuthGuard] },
+  { path: "game/:id", component: GameComponent, canActivate: [AuthGuard] },
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
   { path: "audit-logs", component: AuditLogsComponent, canActivate: [AuthGuard, RootGuard] },

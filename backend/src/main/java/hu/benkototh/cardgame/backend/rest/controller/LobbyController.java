@@ -1,5 +1,8 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
+import hu.benkototh.cardgame.backend.game.controller.CardGameController;
+import hu.benkototh.cardgame.backend.game.model.CardGame;
+import hu.benkototh.cardgame.backend.game.model.Player;
 import hu.benkototh.cardgame.backend.rest.Data.Game;
 import hu.benkototh.cardgame.backend.rest.Data.Lobby;
 import hu.benkototh.cardgame.backend.rest.Data.User;
@@ -7,10 +10,13 @@ import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import hu.benkototh.cardgame.backend.rest.repository.ILobbyRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LobbyController {
@@ -18,11 +24,16 @@ public class LobbyController {
     @Autowired
     private ILobbyRepository lobbyRepository;
 
+    @Lazy
     @Autowired
     private IUserRepository userRepository;
 
     @Autowired
     private IGameRepository gameRepository;
+
+    @Lazy
+    @Autowired
+    private CardGameController cardGameController;
 
     public static final String STATUS_WAITING = "WAITING";
     public static final String STATUS_IN_GAME = "IN_GAME";
@@ -172,8 +183,56 @@ public class LobbyController {
                 return null;
             }
 
-            lobby.setStatus(STATUS_IN_GAME);
-            return lobbyRepository.save(lobby);
+            try {
+                String gameName = "Game from Lobby " + lobbyId;
+                String creatorId = String.valueOf(lobby.getLeader().getId());
+                long gameDefinitionId = lobby.getGame().getId();
+                boolean trackStatistics = lobby.isPlayWithPoints();
+
+                CardGame cardGame = cardGameController.createCardGame(
+                        gameDefinitionId,
+                        creatorId,
+                        gameName,
+                        trackStatistics
+                );
+
+                if (cardGame != null) {
+                    lobby.setCardGameId(cardGame.getId());
+
+                    for (User user : lobby.getPlayers()) {
+                        if (user.getId() == lobby.getLeader().getId()) {
+                            continue;
+                        }
+
+                        Player player = new Player();
+                        player.setId(String.valueOf(user.getId()));
+                        player.setUsername(user.getUsername());
+                        player.setHand(new ArrayList<>());
+                        player.setWonCards(new ArrayList<>());
+                        player.setGame(cardGame);
+
+                        cardGame.addPlayer(player);
+                    }
+
+                    cardGameController.save(cardGame);
+
+                    cardGameController.debugRepositoryState();
+
+                    cardGame.startGame();
+
+                    cardGameController.save(cardGame);
+
+                    cardGameController.debugRepositoryState();
+
+                    lobby.setStatus(STATUS_IN_GAME);
+                    return lobbyRepository.save(lobby);
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
         return null;
     }
@@ -181,8 +240,6 @@ public class LobbyController {
     public Lobby getLobbyById(long lobbyId) {
         return lobbyRepository.findById(lobbyId).orElse(null);
     }
-
-
 
     private Optional<Lobby> findByCode(String code) {
         return lobbyRepository.findAll()
@@ -213,5 +270,4 @@ public class LobbyController {
                 .filter(lobby -> lobby.getPlayers().contains(user))
                 .toList();
     }
-
 }

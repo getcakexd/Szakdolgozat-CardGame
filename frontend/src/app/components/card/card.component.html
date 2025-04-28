@@ -1,0 +1,21 @@
+<div class="card" [class.selectable]="selectable">
+  <div class="card-inner" [ngClass]="getSuitColor()">
+    <div class="card-corner top-left">
+      <div class="card-rank">{{ getCardRankDisplay() }}</div>
+      <div class="card-suit">
+        <mat-icon>{{ getSuitIcon() }}</mat-icon>
+      </div>
+    </div>
+
+    <div class="card-center">
+      <mat-icon class="card-suit-large">{{ getSuitIcon() }}</mat-icon>
+    </div>
+
+    <div class="card-corner bottom-right">
+      <div class="card-rank">{{ getCardRankDisplay() }}</div>
+      <div class="card-suit">
+        <mat-icon>{{ getSuitIcon() }}</mat-icon>
+      </div>
+    </div>
+  </div>
+</div>

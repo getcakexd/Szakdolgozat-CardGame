@@ -1,0 +1,26 @@
+<div class="player-info-container" [class.current-player]="isCurrentPlayer" [class.current-turn]="isCurrentTurn">
+  <div class="player-header">
+    <div class="player-avatar">
+      <mat-icon>person</mat-icon>
+    </div>
+    <div class="player-name">{{ player.username }}</div>
+    <div class="player-status" *ngIf="isCurrentTurn">
+      <mat-icon class="turn-indicator">play_arrow</mat-icon>
+    </div>
+  </div>
+
+  <div class="player-stats">
+    <div class="stat-item">
+      <span class="stat-label">{{ 'GAME.CARDS_IN_HAND' | translate }}:</span>
+      <span class="stat-value">{{ player.hand.length }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">{{ 'GAME.CARDS_WON' | translate }}:</span>
+      <span class="stat-value">{{ player.wonCards.length }}</span>
+    </div>
+    <div class="stat-item" *ngIf="player.score !== undefined">
+      <span class="stat-label">{{ 'GAME.SCORE' | translate }}:</span>
+      <span class="stat-value">{{ player.score }}</span>
+    </div>
+  </div>
+</div>
