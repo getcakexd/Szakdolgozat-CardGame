@@ -17,6 +17,8 @@ public class GameStatistics {
     private String gameType;
     private int score;
     private boolean won;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date playedAt;
 
     public Long getId() {

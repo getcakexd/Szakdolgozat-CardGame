@@ -1,17 +1,17 @@
-package hu.benkototh.cardgame.backend.game.service;
+package hu.benkototh.cardgame.backend.game.controller;
 
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.Player;
 import hu.benkototh.cardgame.backend.game.model.GameStatistics;
 import hu.benkototh.cardgame.backend.game.repository.IGameStatisticsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 import java.util.Map;
 
-@Service
-public class StatisticsService {
+@Controller
+public class StatisticsController {
 
     @Autowired
     private IGameStatisticsRepository statisticsRepository;
