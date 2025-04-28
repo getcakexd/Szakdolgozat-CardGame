@@ -1,0 +1,120 @@
+<div class="game-container">
+  <mat-card *ngIf="game" class="game-card">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mat-icon>casino</mat-icon>
+      </div>
+      <mat-card-title>{{ game.name }}</mat-card-title>
+      <mat-card-subtitle>
+        <span class="status-badge" [ngClass]="{
+          'waiting': game.status === gameStatus.WAITING,
+          'active': game.status === gameStatus.ACTIVE,
+          'finished': game.status === gameStatus.FINISHED
+        }">
+          {{ 'GAME.STATUS.' + game.status | translate }}
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="game-content">
+        <div class="game-table">
+          <div class="current-trick" *ngIf="game.gameState && game.gameState['currentTrick']">
+            <div *ngFor="let card of game.gameState['currentTrick']" class="trick-card">
+              <app-card [card]="card"></app-card>
+            </div>
+          </div>
+
+          <div class="lead-card" *ngIf="game.gameState && game.gameState['currentLeadCard']">
+            <div class="lead-card-label">{{ 'GAME.LEAD_CARD' | translate }}</div>
+            <app-card [card]="game.gameState['currentLeadCard']"></app-card>
+          </div>
+
+          <div class="deck-info" *ngIf="game.gameState && game.gameState['deck']">
+            <div class="deck-count">
+              {{ 'GAME.CARDS_LEFT' | translate }}: {{ game.gameState['deck'].cardsLeft }}
+            </div>
+          </div>
+        </div>
+
+        <div class="players-container">
+          <div *ngFor="let player of game.players" class="player-info"
+               [class.current-player]="player.id === currentPlayer?.id"
+               [class.active-turn]="player.id === game.currentPlayer?.id">
+            <app-player-info
+              [player]="player"
+              [isCurrentPlayer]="player.id === currentPlayer?.id"
+              [isCurrentTurn]="player.id === game.currentPlayer?.id">
+            </app-player-info>
+          </div>
+        </div>
+
+        <div class="player-hand" *ngIf="currentPlayer">
+          <h3>{{ 'GAME.YOUR_HAND' | translate }}</h3>
+          <div class="cards-container">
+            <div *ngFor="let card of currentPlayer.hand" class="card-wrapper"
+                 [class.selected]="selectedCard === card"
+                 (click)="onCardSelect(card)">
+              <app-card [card]="card" [selectable]="isCurrentPlayerTurn()"></app-card>
+            </div>
+          </div>
+
+          <div class="hand-actions" *ngIf="isCurrentPlayerTurn()">
+            <button mat-raised-button color="primary"
+                    [disabled]="!selectedCard"
+                    (click)="onCardPlay()">
+              {{ 'GAME.PLAY_CARD' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <app-game-controls
+            [gameStatus]="game.status"
+            [isCurrentPlayerTurn]="isCurrentPlayerTurn()"
+            (partnerMessage)="onSendPartnerMessage($event)">
+          </app-game-controls>
+
+          <div class="partner-messages" *ngIf="partnerMessages.length > 0">
+            <h4>{{ 'GAME.PARTNER_MESSAGES' | translate }}</h4>
+            <div class="message-list">
+              <div *ngFor="let message of partnerMessages" class="message-item">
+                {{ message }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-events">
+          <h4>{{ 'GAME.GAME_EVENTS' | translate }}</h4>
+          <div class="events-list">
+            <div *ngFor="let event of gameEvents" class="event-item">
+              <span class="event-type">{{ event.type }}</span>
+              <span class="event-player" *ngIf="event.playerId">
+                {{ getPlayerName(event.playerId) }}
+              </span>
+              <span class="event-time" *ngIf="event.timestamp">
+                {{ event.timestamp | date:'HH:mm:ss' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button color="warn" routerLink="/lobby">
+        <mat-icon>exit_to_app</mat-icon> {{ 'GAME.LEAVE_GAME' | translate }}
+      </button>
+    </mat-card-actions>
+
+    <mat-card-footer *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>
+
+  <div class="loading-container" *ngIf="!game && isLoading">
+    <mat-spinner></mat-spinner>
+    <p>{{ 'GAME.LOADING' | translate }}</p>
+  </div>
+</div>

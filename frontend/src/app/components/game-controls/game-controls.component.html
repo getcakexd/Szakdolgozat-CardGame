@@ -1,0 +1,44 @@
+<div class="game-controls-container">
+  <h3>{{ 'GAME.CONTROLS' | translate }}</h3>
+
+  <div class="partner-communication" *ngIf="gameStatus === 'ACTIVE'">
+    <h4>{{ 'GAME.PARTNER_COMMUNICATION' | translate }}</h4>
+    <div class="partner-buttons">
+      <button mat-stroked-button
+              [disabled]="!isCurrentPlayerTurn"
+              (click)="sendPartnerMessage('CALL_PARTNER')"
+              matTooltip="{{ 'GAME.PARTNER_CALL_TOOLTIP' | translate }}">
+        {{ 'GAME.PARTNER_CALL' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              [disabled]="!isCurrentPlayerTurn"
+              (click)="sendPartnerMessage('PASS')"
+              matTooltip="{{ 'GAME.PARTNER_PASS_TOOLTIP' | translate }}">
+        {{ 'GAME.PARTNER_PASS' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              [disabled]="!isCurrentPlayerTurn"
+              (click)="sendPartnerMessage('TAKE')"
+              matTooltip="{{ 'GAME.PARTNER_TAKE_TOOLTIP' | translate }}">
+        {{ 'GAME.PARTNER_TAKE' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              [disabled]="!isCurrentPlayerTurn"
+              (click)="sendPartnerMessage('LEAVE')"
+              matTooltip="{{ 'GAME.PARTNER_LEAVE_TOOLTIP' | translate }}">
+        {{ 'GAME.PARTNER_LEAVE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="game-info" *ngIf="gameStatus === 'FINISHED'">
+    <h4>{{ 'GAME.GAME_OVER' | translate }}</h4>
+    <p>{{ 'GAME.GAME_OVER_MESSAGE' | translate }}</p>
+    <button mat-raised-button color="primary" routerLink="/lobby">
+      {{ 'GAME.BACK_TO_LOBBY' | translate }}
+    </button>
+  </div>
+</div>

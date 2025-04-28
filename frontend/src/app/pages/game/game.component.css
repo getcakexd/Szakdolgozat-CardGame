@@ -1,0 +1,276 @@
+.game-container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-card {
+  min-height: 600px;
+}
+
+.game-content {
+  display: grid;
+  grid-template-areas:
+    "table table"
+    "players players"
+    "hand controls"
+    "events events";
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.game-table {
+  grid-area: table;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+
+.current-trick {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.trick-card {
+  transition: transform 0.2s ease;
+}
+
+.trick-card:hover {
+  transform: translateY(-8px);
+}
+
+.lead-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.lead-card-label {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 4px;
+}
+
+.deck-info {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.players-container {
+  grid-area: players;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.player-info {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.player-info.current-player {
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.player-info.active-turn {
+  box-shadow: 0 0 0 2px var(--mat-sys-primary);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--mat-sys-primary-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--mat-sys-primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--mat-sys-primary-rgb), 0);
+  }
+}
+
+.player-hand {
+  grid-area: hand;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card-wrapper {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.card-wrapper:hover {
+  transform: translateY(-8px);
+}
+
+.card-wrapper.selected {
+  transform: translateY(-16px);
+}
+
+.card-wrapper.selected::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background-color: var(--mat-sys-primary);
+  border-radius: 50%;
+}
+
+.hand-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.game-controls {
+  grid-area: controls;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.partner-messages {
+  margin-top: 16px;
+}
+
+.message-list {
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.message-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.message-item:last-child {
+  border-bottom: none;
+}
+
+.game-events {
+  grid-area: events;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.events-list {
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-type {
+  font-weight: 500;
+  color: var(--mat-sys-primary);
+}
+
+.event-player {
+  flex-grow: 1;
+  margin: 0 8px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.event-time {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 10px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.waiting {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.active {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-badge.finished {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+@media (max-width: 768px) {
+  .game-content {
+    grid-template-areas:
+      "table"
+      "players"
+      "hand"
+      "controls"
+      "events";
+    grid-template-columns: 1fr;
+  }
+}

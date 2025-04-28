@@ -1,6 +1,8 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -42,6 +44,11 @@ public class Lobby {
     private int minPlayers;
 
     private String status = "WAITING";
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    private String cardGameId;
 
     public Lobby() {
         this.code = generateCode();
@@ -102,6 +109,14 @@ public class Lobby {
 
     public void setPlayers(Set<User> players) {
         this.players = players;
+    }
+
+    public String getCardGameId() {
+        return cardGameId;
+    }
+
+    public void setCardGameId(String cardGameId) {
+        this.cardGameId = cardGameId;
     }
 
     public void addPlayer(User player) {

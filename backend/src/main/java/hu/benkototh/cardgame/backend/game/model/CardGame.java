@@ -2,25 +2,64 @@ package hu.benkototh.cardgame.backend.game.model;
 
 import hu.benkototh.cardgame.backend.game.exception.GameException;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@Entity
+@Table(name = "card_games")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "game_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class CardGame {
+    private static final Logger logger = LoggerFactory.getLogger(CardGame.class);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Id
     private String id;
+
     private long gameDefinitionId;
+
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "game_id")
+    @JsonManagedReference
     private List<Player> players;
+
+    @Enumerated(EnumType.STRING)
     private GameStatus status;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startedAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endedAt;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "current_player_id",
+            foreignKey = @ForeignKey(name = "FK_CURRENT_PLAYER",
+                    foreignKeyDefinition = "FOREIGN KEY (current_player_id) REFERENCES players(id) ON DELETE SET NULL"))
     private Player currentPlayer;
+
     private boolean trackStatistics;
+
+    @Transient
     private Map<String, Object> gameState;
+
+    @Column(columnDefinition = "TEXT")
+    private String serializedGameState;
 
     public CardGame() {
         this.id = UUID.randomUUID().toString();
@@ -29,6 +68,7 @@ public abstract class CardGame {
         this.createdAt = new Date();
         this.gameState = new ConcurrentHashMap<>();
         this.trackStatistics = true;
+        logger.debug("Created new CardGame with ID: {}", this.id);
     }
 
     public abstract void initializeGame();
@@ -42,20 +82,36 @@ public abstract class CardGame {
     public void addPlayer(Player player) {
         if (players.size() < getMaxPlayers() && status == GameStatus.WAITING) {
             players.add(player);
+            logger.debug("Added player {} to game {}", player.getId(), this.id);
         } else {
             throw new GameException("Cannot add player to the game");
         }
     }
 
     public void removePlayer(String playerId) {
-        players.removeIf(player -> player.getId().equals(playerId));
+        if (currentPlayer != null && currentPlayer.getId().equals(playerId)) {
+            currentPlayer = null;
+        }
+
+        boolean removed = players.removeIf(player -> player.getId().equals(playerId));
+        if (removed) {
+            logger.debug("Removed player {} from game {}", playerId, this.id);
+        } else {
+            logger.warn("Player {} not found in game {}", playerId, this.id);
+        }
     }
 
     public void startGame() {
         if (players.size() >= getMinPlayers() && status == GameStatus.WAITING) {
             status = GameStatus.ACTIVE;
             startedAt = new Date();
+
+            if (gameState == null) {
+                gameState = new ConcurrentHashMap<>();
+            }
+
             initializeGame();
+            logger.info("Game {} started with {} players", this.id, players.size());
         } else {
             throw new GameException("Cannot start the game");
         }
@@ -64,6 +120,7 @@ public abstract class CardGame {
     public void endGame() {
         status = GameStatus.FINISHED;
         endedAt = new Date();
+        logger.info("Game {} ended", this.id);
     }
 
     public String getId() {
@@ -127,14 +184,89 @@ public abstract class CardGame {
     }
 
     public Map<String, Object> getGameState() {
+        if (gameState == null) {
+            gameState = new ConcurrentHashMap<>();
+        }
         return gameState;
     }
 
     public void setGameState(String key, Object value) {
-        this.gameState.put(key, value);
+        if (gameState == null) {
+            gameState = new ConcurrentHashMap<>();
+        }
+
+        if (value == null) {
+            this.gameState.remove(key);
+            logger.debug("Removed key {} from game state for game {}", key, this.id);
+        } else {
+            this.gameState.put(key, value);
+            logger.debug("Set game state for game {}: {} = {}", this.id, key, value);
+        }
     }
 
     public Object getGameState(String key) {
-        return this.gameState.get(key);
+        if (gameState == null) {
+            return null;
+        }
+
+        Object value = this.gameState.get(key);
+
+        if (key.equals("deck") && value instanceof Map) {
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> deckMap = (Map<String, Object>) value;
+                return Deck.fromMap(deckMap);
+            } catch (Exception e) {
+                logger.error("Error converting deck map to Deck object: {}", e.getMessage());
+                return null;
+            }
+        }
+
+        return value;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void serializeGameState() {
+        try {
+            if (this.gameState != null && !this.gameState.isEmpty()) {
+                this.serializedGameState = objectMapper.writeValueAsString(this.gameState);
+                logger.debug("Serialized game state for game {}: {}", this.id, this.serializedGameState);
+            } else {
+                this.serializedGameState = "{}";
+                logger.debug("Serialized empty game state for game {}", this.id);
+            }
+        } catch (JsonProcessingException e) {
+            logger.error("Error serializing game state for game {}: {}", this.id, e.getMessage());
+            throw new RuntimeException("Error serializing game state", e);
+        }
+    }
+
+    @PostLoad
+    public void deserializeGameState() {
+        try {
+            if (this.serializedGameState != null && !this.serializedGameState.isEmpty()) {
+                this.gameState = objectMapper.readValue(this.serializedGameState,
+                        Map.class);
+                logger.debug("Deserialized game state for game {}: {}", this.id, this.gameState);
+
+                if (this.gameState.containsKey("deck")) {
+                    Object deckObj = this.gameState.get("deck");
+                    if (deckObj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> deckMap = (Map<String, Object>) deckObj;
+                        Deck deck = Deck.fromMap(deckMap);
+                        this.gameState.put("deck", deck);
+                        logger.debug("Converted deck map to Deck object for game {}", this.id);
+                    }
+                }
+            } else {
+                this.gameState = new ConcurrentHashMap<>();
+                logger.debug("Initialized empty game state for game {}", this.id);
+            }
+        } catch (JsonProcessingException e) {
+            logger.error("Error deserializing game state for game {}: {}", this.id, e.getMessage());
+            throw new RuntimeException("Error deserializing game state", e);
+        }
     }
 }
