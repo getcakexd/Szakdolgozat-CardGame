@@ -52,8 +52,12 @@ public class ZsirGame extends CardGame {
         logger.debug("Current player set to: {}", getPlayers().get(0).getId());
 
         setGameState(DECK, deck);
-        setGameState(CURRENT_TRICK, new ArrayList<Object>());
-        setGameState(TRICK_CARDS, new HashMap<String, Object>());
+
+        List<Card> emptyTrick = new ArrayList<>();
+        setGameState(CURRENT_TRICK, emptyTrick);
+
+        Map<String, Card> emptyTrickCards = new HashMap<>();
+        setGameState(TRICK_CARDS, emptyTrickCards);
 
         getGameState().remove(CURRENT_LEAD_CARD);
         getGameState().remove(LAST_PLAYER_TO_TAKE);
@@ -132,56 +136,69 @@ public class ZsirGame extends CardGame {
         removeCardFromHand(player, card);
         logger.debug("Removed card {} from player {}'s hand", card.getRank(), player.getId());
 
-        @SuppressWarnings("unchecked")
-        List<Object> currentTrick = (List<Object>) getGameState(CURRENT_TRICK);
-        if (currentTrick == null) {
-            currentTrick = new ArrayList<>();
-        }
-        currentTrick.add(card);
-        setGameState(CURRENT_TRICK, currentTrick);
+        List<Card> currentTrick = new ArrayList<>();
+        Object currentTrickObj = getGameState(CURRENT_TRICK);
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> trickCards = (Map<String, Object>) getGameState(TRICK_CARDS);
-        if (trickCards == null) {
-            trickCards = new HashMap<>();
+        if (currentTrickObj instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<?> tempList = (List<?>) currentTrickObj;
+
+            for (Object obj : tempList) {
+                Card convertedCard = convertToCard(obj);
+                if (convertedCard != null) {
+                    currentTrick.add(convertedCard);
+                }
+            }
         }
+
+        currentTrick.add(card);
+
+        Map<String, Card> trickCards = new HashMap<>();
+        Object trickCardsObj = getGameState(TRICK_CARDS);
+
+        if (trickCardsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, ?> tempMap = (Map<String, ?>) trickCardsObj;
+
+            for (Map.Entry<String, ?> entry : tempMap.entrySet()) {
+                Card convertedCard = convertToCard(entry.getValue());
+                if (convertedCard != null) {
+                    trickCards.put(entry.getKey(), convertedCard);
+                }
+            }
+        }
+
         trickCards.put(playerId, card);
+
+        removeGameState(CURRENT_TRICK);
+        removeGameState(TRICK_CARDS);
+
+        setGameState(CURRENT_TRICK, currentTrick);
         setGameState(TRICK_CARDS, trickCards);
 
         logger.debug("Added card to current trick, size now: {}", currentTrick.size());
+        logger.debug("Current trick cards: {}", trickCards);
 
-        if (!getGameState().containsKey(CURRENT_LEAD_CARD) || getGameState(CURRENT_LEAD_CARD) == null) {
+        if (!hasGameState(CURRENT_LEAD_CARD) || getGameState(CURRENT_LEAD_CARD) == null) {
             setGameState(CURRENT_LEAD_CARD, card);
             logger.debug("Set lead card to: {}", card.getRank());
         }
 
         boolean trickComplete = trickCards.size() == getPlayers().size();
-        logger.debug("Trick complete? {}", trickComplete);
+        logger.debug("Trick complete? {} (trickCards.size={}, players.size={})",
+                trickComplete, trickCards.size(), getPlayers().size());
 
         if (trickComplete) {
             Player winner = determineTrickWinner(trickCards);
             logger.debug("Trick winner: {}", winner.getId());
 
-            for (Object cardObj : currentTrick) {
-                Card c = convertToCard(cardObj);
-                if (c != null) {
-                    winner.getWonCards().add(c);
-                }
+            for (Card c : currentTrick) {
+                winner.getWonCards().add(c);
             }
             logger.debug("Player {} won the trick, added {} cards to won pile",
                     winner.getId(), currentTrick.size());
 
-            getGameState().remove(CURRENT_TRICK);
-            getGameState().remove(TRICK_CARDS);
-            getGameState().remove(CURRENT_LEAD_CARD);
-
-            setGameState(CURRENT_TRICK, new ArrayList<Object>());
-            setGameState(TRICK_CARDS, new HashMap<String, Object>());
-            setGameState(LAST_PLAYER_TO_TAKE, winner);
-
-            logger.debug("Trick cleared. Current trick size: {}, Trick cards size: {}",
-                    ((List<?>)getGameState(CURRENT_TRICK)).size(),
-                    ((Map<?,?>)getGameState(TRICK_CARDS)).size());
+            clearTrickState();
 
             checkAndDrawCards();
 
@@ -192,6 +209,17 @@ public class ZsirGame extends CardGame {
             setCurrentPlayer(nextPlayer);
             logger.debug("Current player set to next player: {}", nextPlayer.getId());
         }
+    }
+
+    private void clearTrickState() {
+        removeGameState(CURRENT_TRICK);
+        removeGameState(TRICK_CARDS);
+        removeGameState(CURRENT_LEAD_CARD);
+
+        setGameState(CURRENT_TRICK, new ArrayList<Card>());
+        setGameState(TRICK_CARDS, new HashMap<String, Card>());
+
+        logger.debug("Trick state cleared");
     }
 
     private Card convertToCard(Object cardObj) {
@@ -213,16 +241,14 @@ public class ZsirGame extends CardGame {
         }
     }
 
-    private Player determineTrickWinner(Map<String, Object> trickCards) {
-        Object leadCardObj = getGameState(CURRENT_LEAD_CARD);
-        Card leadCard = convertToCard(leadCardObj);
+    private Player determineTrickWinner(Map<String, Card> trickCards) {
+        Card leadCard = getLeadCard();
 
         if (leadCard == null) {
             logger.error("Lead card is null when determining trick winner!");
-            @SuppressWarnings("unchecked")
-            List<Object> currentTrick = (List<Object>) getGameState(CURRENT_TRICK);
-            if (currentTrick != null && !currentTrick.isEmpty()) {
-                leadCard = convertToCard(currentTrick.get(0));
+            Object currentTrickObj = getGameState(CURRENT_TRICK);
+            if (currentTrickObj instanceof List && !((List<?>) currentTrickObj).isEmpty()) {
+                leadCard = convertToCard(((List<?>) currentTrickObj).get(0));
             }
 
             if (leadCard == null) {
@@ -234,26 +260,19 @@ public class ZsirGame extends CardGame {
         String winnerId = null;
         Card winningCard = null;
 
-        for (Map.Entry<String, Object> entry : trickCards.entrySet()) {
+        for (Map.Entry<String, Card> entry : trickCards.entrySet()) {
             String playerId = entry.getKey();
-            Card card = convertToCard(entry.getValue());
+            Card card = entry.getValue();
 
             if (card == null) {
                 logger.error("Failed to get card for player {}", playerId);
                 continue;
             }
 
-            if (card.getRank() == Rank.SEVEN) {
+            if (card.getRank() == Rank.SEVEN || card.getRank() == leadCard.getRank()) {
                 winnerId = playerId;
                 winningCard = card;
-                break;
-            }
-
-            if (winningCard == null ||
-                    (card.getRank() == leadCard.getRank() &&
-                            card.getRank().ordinal() > winningCard.getRank().ordinal())) {
-                winnerId = playerId;
-                winningCard = card;
+                logger.debug("Current winner: {} with card {}", playerId, card.getRank());
             }
         }
 
@@ -262,6 +281,7 @@ public class ZsirGame extends CardGame {
             return getPlayers().get(0);
         }
 
+        logger.debug("Final trick winner: {} with card {}", winnerId, winningCard.getRank());
         return getPlayerById(winnerId);
     }
 
@@ -318,9 +338,8 @@ public class ZsirGame extends CardGame {
             }
         }
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> trickCards = (Map<String, Object>) getGameState(TRICK_CARDS);
-        if (trickCards != null && !trickCards.isEmpty()) {
+        Object trickCardsObj = getGameState(TRICK_CARDS);
+        if (trickCardsObj instanceof Map && !((Map<?,?>) trickCardsObj).isEmpty()) {
             logger.debug("Game not over: There's an ongoing trick");
             return false;
         }

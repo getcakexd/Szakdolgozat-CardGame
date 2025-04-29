@@ -3,11 +3,8 @@ package hu.benkototh.cardgame.backend.game.model;
 import hu.benkototh.cardgame.backend.game.exception.GameException;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -199,7 +196,13 @@ public abstract class CardGame {
             this.gameState.remove(key);
             logger.debug("Removed key {} from game state for game {}", key, this.id);
         } else {
-            this.gameState.put(key, value);
+            if (value instanceof List) {
+                this.gameState.put(key, new ArrayList<>((List<?>) value));
+            } else if (value instanceof Map) {
+                this.gameState.put(key, new HashMap<>((Map<?, ?>) value));
+            } else {
+                this.gameState.put(key, value);
+            }
             logger.debug("Set game state for game {}: {} = {}", this.id, key, value);
         }
     }
@@ -276,32 +279,7 @@ public abstract class CardGame {
                         Map.class);
                 logger.debug("Deserialized game state for game {}: {}", this.id, this.gameState);
 
-                if (this.gameState.containsKey("deck")) {
-                    Object deckObj = this.gameState.get("deck");
-                    if (deckObj instanceof Map) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> deckMap = (Map<String, Object>) deckObj;
-                        Deck deck = Deck.fromMap(deckMap);
-                        this.gameState.put("deck", deck);
-                        logger.debug("Converted deck map to Deck object for game {}", this.id);
-                    }
-                }
-
-                for (String key : new ArrayList<>(this.gameState.keySet())) {
-                    if ((key.equals("currentLeadCard") || key.contains("card") || key.contains("Card"))
-                            && this.gameState.get(key) instanceof Map) {
-                        Object cardObj = this.gameState.get(key);
-                        if (cardObj instanceof Map) {
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> cardMap = (Map<String, Object>) cardObj;
-                            Card card = Card.fromMap(cardMap);
-                            if (card != null) {
-                                this.gameState.put(key, card);
-                                logger.debug("Converted map to Card object for key: {}", key);
-                            }
-                        }
-                    }
-                }
+                processGameStateObjects();
             } else {
                 this.gameState = new ConcurrentHashMap<>();
                 logger.debug("Initialized empty game state for game {}", this.id);
@@ -309,6 +287,87 @@ public abstract class CardGame {
         } catch (JsonProcessingException e) {
             logger.error("Error deserializing game state for game {}: {}", this.id, e.getMessage());
             throw new RuntimeException("Error deserializing game state", e);
+        }
+    }
+
+    private void processGameStateObjects() {
+        if (this.gameState.containsKey("deck")) {
+            Object deckObj = this.gameState.get("deck");
+            if (deckObj instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> deckMap = (Map<String, Object>) deckObj;
+                Deck deck = Deck.fromMap(deckMap);
+                this.gameState.put("deck", deck);
+                logger.debug("Converted deck map to Deck object for game {}", this.id);
+            }
+        }
+
+        for (String key : new ArrayList<>(this.gameState.keySet())) {
+            if ((key.equals("currentLeadCard") || key.contains("card") || key.contains("Card"))
+                    && this.gameState.get(key) instanceof Map) {
+                Object cardObj = this.gameState.get(key);
+                if (cardObj instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> cardMap = (Map<String, Object>) cardObj;
+                    Card card = Card.fromMap(cardMap);
+                    if (card != null) {
+                        this.gameState.put(key, card);
+                        logger.debug("Converted map to Card object for key: {}", key);
+                    }
+                }
+            }
+        }
+
+        if (this.gameState.containsKey("currentTrick")) {
+            Object currentTrickObj = this.gameState.get("currentTrick");
+            if (currentTrickObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Object> trickList = (List<Object>) currentTrickObj;
+                List<Card> cardList = new ArrayList<>();
+
+                for (Object obj : trickList) {
+                    if (obj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> cardMap = (Map<String, Object>) obj;
+                        Card card = Card.fromMap(cardMap);
+                        if (card != null) {
+                            cardList.add(card);
+                        }
+                    } else if (obj instanceof Card) {
+                        cardList.add((Card) obj);
+                    }
+                }
+
+                this.gameState.put("currentTrick", cardList);
+                logger.debug("Processed currentTrick list, size: {}", cardList.size());
+            }
+        }
+
+        if (this.gameState.containsKey("trickCards")) {
+            Object trickCardsObj = this.gameState.get("trickCards");
+            if (trickCardsObj instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> trickMap = (Map<String, Object>) trickCardsObj;
+                Map<String, Card> cardMap = new HashMap<>();
+
+                for (Map.Entry<String, Object> entry : trickMap.entrySet()) {
+                    Card card = null;
+                    if (entry.getValue() instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> valueMap = (Map<String, Object>) entry.getValue();
+                        card = Card.fromMap(valueMap);
+                    } else if (entry.getValue() instanceof Card) {
+                        card = (Card) entry.getValue();
+                    }
+
+                    if (card != null) {
+                        cardMap.put(entry.getKey(), card);
+                    }
+                }
+
+                this.gameState.put("trickCards", cardMap);
+                logger.debug("Processed trickCards map, size: {}", cardMap.size());
+            }
         }
     }
 }
