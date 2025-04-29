@@ -7,7 +7,7 @@ import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
 import { TranslateService } from "@ngx-translate/core"
 import {
-  type CardGame,
+  CardGame,
   GameStatus,
   Card,
   Player,
@@ -25,9 +25,9 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { TranslateModule } from "@ngx-translate/core"
 import { RouterModule } from "@angular/router"
-import {CardComponent} from '../../components/card/card.component';
-import {PlayerInfoComponent} from '../../components/player-info/player-info.component';
-import {GameControlsComponent} from '../../components/game-controls/game-controls.component';
+import { CardComponent } from "../../components/card/card.component"
+import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
+import { GameControlsComponent } from "../../components/game-controls/game-controls.component"
 
 @Component({
   selector: "app-game",
@@ -252,12 +252,12 @@ export class GameComponent implements OnInit, OnDestroy {
     switch (suit) {
       case CardSuit.HEARTS:
         return "favorite"
-      case CardSuit.DIAMONDS:
-        return "diamond"
-      case CardSuit.CLUBS:
-        return "spa"
-      case CardSuit.SPADES:
-        return "filter_vintage"
+      case CardSuit.BELLS:
+        return "notifications"
+      case CardSuit.LEAVES:
+        return "eco"
+      case CardSuit.ACORNS:
+        return "park"
       default:
         return "help"
     }
@@ -266,11 +266,11 @@ export class GameComponent implements OnInit, OnDestroy {
   getCardSuitColor(suit: CardSuit): string {
     switch (suit) {
       case CardSuit.HEARTS:
-      case CardSuit.DIAMONDS:
+      case CardSuit.BELLS:
         return "red"
-      case CardSuit.CLUBS:
-      case CardSuit.SPADES:
-        return "black"
+      case CardSuit.LEAVES:
+      case CardSuit.ACORNS:
+        return "green"
       default:
         return "black"
     }
@@ -279,17 +279,17 @@ export class GameComponent implements OnInit, OnDestroy {
   getCardRankDisplay(rank: CardRank): string {
     switch (rank) {
       case CardRank.SEVEN:
-        return "7"
+        return "VII"
       case CardRank.EIGHT:
-        return "8"
+        return "VIII"
       case CardRank.NINE:
-        return "9"
+        return "IX"
       case CardRank.TEN:
-        return "10"
+        return "X"
       case CardRank.UNDER:
-        return "J"
+        return "U"
       case CardRank.OVER:
-        return "Q"
+        return "O"
       case CardRank.KING:
         return "K"
       case CardRank.ACE:

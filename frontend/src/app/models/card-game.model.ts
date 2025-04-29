@@ -1,8 +1,8 @@
 export enum CardSuit {
   HEARTS = "HEARTS",
-  DIAMONDS = "BELLS",
-  CLUBS = "CLUBS",
-  SPADES = "SPADES",
+  BELLS = "BELLS",
+  LEAVES = "LEAVES",
+  ACORNS = "ACORNS",
 }
 
 export enum CardRank {
