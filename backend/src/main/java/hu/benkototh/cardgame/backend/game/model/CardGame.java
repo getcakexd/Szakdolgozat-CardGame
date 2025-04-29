@@ -244,6 +244,13 @@ public abstract class CardGame {
         return gameState != null && gameState.containsKey(key);
     }
 
+    public void removeGameState(String key) {
+        if (gameState != null) {
+            gameState.remove(key);
+            logger.debug("Removed key {} from game state for game {}", key, this.id);
+        }
+    }
+
     @PrePersist
     @PreUpdate
     public void serializeGameState() {
