@@ -222,7 +222,26 @@ public abstract class CardGame {
             }
         }
 
+        if (value instanceof Map &&
+                (key.equals("currentLeadCard") || key.contains("card") || key.contains("Card"))) {
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> cardMap = (Map<String, Object>) value;
+                Card card = Card.fromMap(cardMap);
+                if (card != null) {
+                    logger.debug("Converted map to Card object for key: {}", key);
+                    return card;
+                }
+            } catch (Exception e) {
+                logger.error("Error converting map to Card object for key {}: {}", key, e.getMessage());
+            }
+        }
+
         return value;
+    }
+
+    public boolean hasGameState(String key) {
+        return gameState != null && gameState.containsKey(key);
     }
 
     @PrePersist
@@ -258,6 +277,22 @@ public abstract class CardGame {
                         Deck deck = Deck.fromMap(deckMap);
                         this.gameState.put("deck", deck);
                         logger.debug("Converted deck map to Deck object for game {}", this.id);
+                    }
+                }
+
+                for (String key : new ArrayList<>(this.gameState.keySet())) {
+                    if ((key.equals("currentLeadCard") || key.contains("card") || key.contains("Card"))
+                            && this.gameState.get(key) instanceof Map) {
+                        Object cardObj = this.gameState.get(key);
+                        if (cardObj instanceof Map) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> cardMap = (Map<String, Object>) cardObj;
+                            Card card = Card.fromMap(cardMap);
+                            if (card != null) {
+                                this.gameState.put(key, card);
+                                logger.debug("Converted map to Card object for key: {}", key);
+                            }
+                        }
                     }
                 }
             } else {

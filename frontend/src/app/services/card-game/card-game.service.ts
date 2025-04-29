@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
-import {Observable, BehaviorSubject, Subject, catchError} from "rxjs"
-import { map } from "rxjs/operators"
+import { Observable, BehaviorSubject, Subject } from "rxjs"
+import { map, catchError } from "rxjs/operators"
 import { CardGame, GameAction, GameEvent, Card, Player } from "../../models/card-game.model"
 import { WebSocketService } from "../websocket/websocket.service"
 import { AuthService } from "../auth/auth.service"
-import {BACKEND_API_URL} from '../../../environments/api-config';
+import { BACKEND_API_URL } from "../../../environments/api-config"
 
 @Injectable({
   providedIn: "root",
@@ -40,17 +40,12 @@ export class CardGameService {
       console.log("Received game event:", event)
       this.gameEventsSubject.next(event)
 
-      if (
-        event.type === "GAME_ACTION" ||
-        event.type === "GAME_STARTED" ||
-        event.type === "PLAYER_JOINED" ||
-        event.type === "PLAYER_LEFT"
-      ) {
-        this.getGame(gameId).subscribe({
-          next: (game) => console.log("Game updated:", game),
-          error: (err) => console.error("Error updating game:", err),
-        })
-      }
+      this.getGame(gameId).subscribe({
+        next: (game) => {
+          console.log("Game updated after event:", event.type)
+        },
+        error: (err) => console.error("Error updating game after event:", err),
+      })
     })
 
     if (this.webSocketService.isConnected()) {
@@ -110,8 +105,9 @@ export class CardGameService {
       this.webSocketService.send("/app/game.action", {
         gameId,
         userId,
-        action,
+        action
       })
+
     } else {
       console.error("Cannot execute action: WebSocket not connected or no user ID")
     }
@@ -122,7 +118,7 @@ export class CardGameService {
       actionType: "playCard",
       parameters: { card },
     }
-    this.executeAction(gameId, action)
+    this.executeAction(gameId,  action)
   }
 
   sendPartnerMessage(gameId: string, messageType: string, content: string): void {

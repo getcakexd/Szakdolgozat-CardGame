@@ -2,17 +2,17 @@ package hu.benkototh.cardgame.backend.game.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameAction {
+    private static final Logger logger = LoggerFactory.getLogger(GameAction.class);
+
     private String actionType;
     private Map<String, Object> parameters;
 
     public GameAction() {
-        this.parameters = new HashMap<>();
-    }
-
-    public GameAction(String actionType) {
-        this.actionType = actionType;
         this.parameters = new HashMap<>();
     }
 
@@ -36,23 +36,36 @@ public class GameAction {
         this.parameters.put(key, value);
     }
 
-    public Object getParameter(String key) {
-        return this.parameters.get(key);
-    }
-
+    @JsonIgnore
     public Card getCardParameter(String key) {
-        return (Card) this.parameters.get(key);
+        Object value = parameters.get(key);
+
+        if (value instanceof Card) {
+            return (Card) value;
+        }
+
+        if (value instanceof Map) {
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> cardMap = (Map<String, Object>) value;
+                Card card = Card.fromMap(cardMap);
+                if (card != null) {
+                    parameters.put(key, card);
+                    return card;
+                }
+            } catch (Exception e) {
+                logger.error("Error converting card parameter to Card: {}", e.getMessage());
+            }
+        }
+
+        return null;
     }
 
-    public Integer getIntParameter(String key) {
-        return (Integer) this.parameters.get(key);
-    }
-
-    public String getStringParameter(String key) {
-        return (String) this.parameters.get(key);
-    }
-
-    public Boolean getBooleanParameter(String key) {
-        return (Boolean) this.parameters.get(key);
+    @Override
+    public String toString() {
+        return "GameAction{" +
+                "actionType='" + actionType + '\'' +
+                ", parameters=" + parameters +
+                '}';
     }
 }

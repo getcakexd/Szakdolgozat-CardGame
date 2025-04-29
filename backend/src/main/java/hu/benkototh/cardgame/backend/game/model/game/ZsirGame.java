@@ -15,9 +15,13 @@ public class ZsirGame extends CardGame {
     private static final Logger logger = LoggerFactory.getLogger(ZsirGame.class);
     private static final int CARDS_PER_PLAYER = 4;
     private static final String CURRENT_TRICK = "currentTrick";
+    private static final String TRICK_CARDS = "trickCards";
     private static final String DECK = "deck";
     private static final String LAST_PLAYER_TO_TAKE = "lastPlayerToTake";
     private static final String CURRENT_LEAD_CARD = "currentLeadCard";
+    private static final String CURRENT_LEAD_PLAYER = "currentLeadPlayer";
+    private static final String TRICK_WINNER = "trickWinner";
+    private static final String TRICK_SEQUENCE = "trickSequence";
 
     public ZsirGame() {
         super();
@@ -29,8 +33,22 @@ public class ZsirGame extends CardGame {
         Deck deck = new Deck();
 
         if (getPlayers().size() == 3) {
-            deck.initializeHungarianDeckForThreePlayers();
-            logger.debug("Initialized Hungarian deck for three players");
+            deck.initializeHungarianDeck();
+            List<Card> cardsToRemove = new ArrayList<>();
+            int viiiCount = 0;
+
+            for (Card card : deck.getCards()) {
+                if (card.getRank() == Rank.EIGHT && viiiCount < 2) {
+                    cardsToRemove.add(card);
+                    viiiCount++;
+                }
+            }
+
+            for (Card card : cardsToRemove) {
+                deck.getCards().remove(card);
+            }
+
+            logger.debug("Initialized Hungarian deck for three players (removed 2 VIIIs)");
         } else {
             deck.initializeHungarianDeck();
             logger.debug("Initialized Hungarian deck");
@@ -52,10 +70,14 @@ public class ZsirGame extends CardGame {
         logger.debug("Current player set to: {}", getPlayers().get(0).getId());
 
         setGameState(DECK, deck);
-        setGameState(CURRENT_TRICK, new ArrayList<Card>());
+        setGameState(CURRENT_TRICK, new ArrayList<Object>());
+        setGameState(TRICK_CARDS, new HashMap<String, Object>());
+        setGameState(TRICK_SEQUENCE, new ArrayList<String>());
 
-        setGameState(CURRENT_LEAD_CARD, null);
-        setGameState(LAST_PLAYER_TO_TAKE, null);
+        getGameState().remove(CURRENT_LEAD_CARD);
+        getGameState().remove(CURRENT_LEAD_PLAYER);
+        getGameState().remove(TRICK_WINNER);
+        getGameState().remove(LAST_PLAYER_TO_TAKE);
 
         logger.debug("ZsirGame initialization complete");
     }
@@ -85,21 +107,40 @@ public class ZsirGame extends CardGame {
             return false;
         }
 
-        Card leadCard = (Card) getGameState(CURRENT_LEAD_CARD);
-        if (leadCard != null) {
-            if (card.getRank() == Rank.SEVEN) {
-                logger.debug("Valid move: Playing a seven");
-                return true;
-            }
-
-            boolean isValidRank = card.getRank() == leadCard.getRank();
-            logger.debug("Checking if card rank matches lead card: {} == {}: {}",
-                    card.getRank(), leadCard.getRank(), isValidRank);
-            return isValidRank;
+        if (!hasGameState(CURRENT_LEAD_CARD) || getGameState(CURRENT_LEAD_CARD) == null) {
+            logger.debug("Valid move: First card in trick");
+            return true;
         }
 
-        logger.debug("Valid move: First card in trick");
-        return true;
+        Card leadCard = getLeadCard();
+        if (leadCard == null) {
+            logger.debug("Valid move: Lead card could not be determined");
+            return true;
+        }
+
+        if (card.getRank() == Rank.SEVEN) {
+            logger.debug("Valid move: Playing a seven (can match any card)");
+            return true;
+        }
+
+        boolean hasMatchingRank = false;
+        for (Card c : player.getHand()) {
+            if (c.getRank() == leadCard.getRank() || c.getRank() == Rank.SEVEN) {
+                hasMatchingRank = true;
+                break;
+            }
+        }
+
+        if (hasMatchingRank) {
+            boolean isValidRank = card.getRank() == leadCard.getRank();
+            logger.debug("Player has matching rank card. Checking if played card matches lead card rank: {} == {}: {}",
+                    card.getRank(), leadCard.getRank(), isValidRank);
+            return isValidRank;
+        } else {
+
+            logger.debug("Player doesn't have matching rank card. Any card is valid.");
+            return true;
+        }
     }
 
     @Override
@@ -112,51 +153,145 @@ public class ZsirGame extends CardGame {
         logger.debug("Removed card {} from player {}'s hand", card.getRank(), player.getId());
 
         @SuppressWarnings("unchecked")
-        List<Card> currentTrick = (List<Card>) getGameState(CURRENT_TRICK);
+        List<Object> currentTrick = (List<Object>) getGameState(CURRENT_TRICK);
         if (currentTrick == null) {
             currentTrick = new ArrayList<>();
         }
         currentTrick.add(card);
         setGameState(CURRENT_TRICK, currentTrick);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> trickCards = (Map<String, Object>) getGameState(TRICK_CARDS);
+        if (trickCards == null) {
+            trickCards = new HashMap<>();
+        }
+        trickCards.put(playerId, card);
+        setGameState(TRICK_CARDS, trickCards);
+
+        @SuppressWarnings("unchecked")
+        List<String> trickSequence = (List<String>) getGameState(TRICK_SEQUENCE);
+        if (trickSequence == null) {
+            trickSequence = new ArrayList<>();
+        }
+        trickSequence.add(playerId);
+        setGameState(TRICK_SEQUENCE, trickSequence);
+
         logger.debug("Added card to current trick, size now: {}", currentTrick.size());
 
-        Card leadCard = (Card) getGameState(CURRENT_LEAD_CARD);
-        if (leadCard == null) {
+        if (!hasGameState(CURRENT_LEAD_CARD) || getGameState(CURRENT_LEAD_CARD) == null) {
             setGameState(CURRENT_LEAD_CARD, card);
-            leadCard = card;
-            logger.debug("Set lead card to: {}", card.getRank());
+            setGameState(CURRENT_LEAD_PLAYER, playerId);
+            logger.debug("Set lead card to: {} by player {}", card.getRank(), playerId);
         }
 
-        boolean isMatchingCard = card.getRank() == leadCard.getRank() || card.getRank() == Rank.SEVEN;
-        logger.debug("Card matches lead card or is seven: {}", isMatchingCard);
+        Card leadCard = getLeadCard();
+        boolean isMatchingCard = (leadCard != null && card.getRank() == leadCard.getRank()) ||
+                card.getRank() == Rank.SEVEN ||
+                (leadCard != null && leadCard.getRank() == Rank.EIGHT &&
+                        card.getRank() == Rank.KING &&
+                        card.getSuit() == leadCard.getSuit());
 
         if (isMatchingCard) {
-            for (Card c : currentTrick) {
-                player.getWonCards().add(c);
+            setGameState(TRICK_WINNER, playerId);
+            logger.debug("Player {} is now the potential trick winner with card {}", playerId, card.getRank());
+        }
+
+        boolean trickComplete = trickCards.size() == getPlayers().size();
+        logger.debug("Trick complete? {}", trickComplete);
+
+        if (trickComplete) {
+            String winnerId = (String) getGameState(TRICK_WINNER);
+            Player winner = winnerId != null ? getPlayerById(winnerId) : getPlayers().get(0);
+
+            if (winnerId == null) {
+                String leadPlayerId = (String) getGameState(CURRENT_LEAD_PLAYER);
+                winner = leadPlayerId != null ? getPlayerById(leadPlayerId) : getPlayers().get(0);
+                logger.warn("No trick winner determined, defaulting to lead player: {}", winner.getId());
+            }
+
+            logger.debug("Trick winner: {}", winner.getId());
+
+            for (Object cardObj : currentTrick) {
+                Card c = convertToCard(cardObj);
+                if (c != null) {
+                    winner.getWonCards().add(c);
+                }
             }
             logger.debug("Player {} won the trick, added {} cards to won pile",
-                    player.getId(), currentTrick.size());
+                    winner.getId(), currentTrick.size());
 
-            setGameState(CURRENT_TRICK, new ArrayList<Card>());
-            setGameState(CURRENT_LEAD_CARD, null);
-            setGameState(LAST_PLAYER_TO_TAKE, player);
+            setGameState(CURRENT_TRICK, new ArrayList<Object>());
+            setGameState(TRICK_CARDS, new HashMap<String, Object>());
+            setGameState(TRICK_SEQUENCE, new ArrayList<String>());
+            getGameState().remove(CURRENT_LEAD_CARD);
+            getGameState().remove(CURRENT_LEAD_PLAYER);
+            getGameState().remove(TRICK_WINNER);
+            setGameState(LAST_PLAYER_TO_TAKE, winner);
 
-            setCurrentPlayer(player);
-            logger.debug("Current player set to: {}", player.getId());
+            checkAndDrawCards();
+
+            setCurrentPlayer(winner);
+            logger.debug("Current player set to trick winner: {}", winner.getId());
         } else {
             Player nextPlayer = getNextPlayer(player);
             setCurrentPlayer(nextPlayer);
             logger.debug("Current player set to next player: {}", nextPlayer.getId());
         }
+    }
 
-        if (player.getHand().isEmpty()) {
-            Deck deck = (Deck) getGameState(DECK);
-            if (deck != null && !deck.isEmpty()) {
-                List<Card> newCards = deck.drawCards(CARDS_PER_PLAYER);
-                player.setHand(newCards);
-                logger.debug("Player {} drew {} new cards", player.getId(), newCards.size());
+    private Card getLeadCard() {
+        Object leadCardObj = getGameState(CURRENT_LEAD_CARD);
+        return convertToCard(leadCardObj);
+    }
+
+    private Card convertToCard(Object cardObj) {
+        if (cardObj instanceof Card) {
+            return (Card) cardObj;
+        } else if (cardObj instanceof Map) {
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> cardMap = (Map<String, Object>) cardObj;
+                return Card.fromMap(cardMap);
+            } catch (Exception e) {
+                logger.error("Error converting card map to Card: {}", e.getMessage());
+                return null;
+            }
+        } else {
+            logger.error("Cannot convert to Card: {}",
+                    cardObj != null ? cardObj.getClass().getName() : "null");
+            return null;
+        }
+    }
+
+    private void checkAndDrawCards() {
+        logger.debug("Checking if players need to draw cards");
+        Deck deck = (Deck) getGameState(DECK);
+
+        if (deck == null || deck.isEmpty()) {
+            logger.debug("Deck is empty or null, no cards to draw");
+            return;
+        }
+
+        for (Player player : getPlayers()) {
+            int cardsNeeded = CARDS_PER_PLAYER - player.getHand().size();
+
+            if (cardsNeeded > 0) {
+                List<Card> newCards = deck.drawCards(Math.min(cardsNeeded, deck.size()));
+                if (!newCards.isEmpty()) {
+                    player.getHand().addAll(newCards);
+                    logger.debug("Player {} drew {} new cards, now has {} cards",
+                            player.getId(), newCards.size(), player.getHand().size());
+
+                    setGameState(DECK, deck);
+                }
             } else {
-                logger.debug("Player {} has no cards left and deck is empty", player.getId());
+                logger.debug("Player {} already has {} cards, no need to draw",
+                        player.getId(), player.getHand().size());
+            }
+
+            if (deck.isEmpty()) {
+                logger.debug("Deck is now empty, stopping card draw");
+                break;
             }
         }
     }
@@ -181,7 +316,14 @@ public class ZsirGame extends CardGame {
             }
         }
 
-        logger.debug("Game is over: Deck empty and all players have no cards");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> trickCards = (Map<String, Object>) getGameState(TRICK_CARDS);
+        if (trickCards != null && !trickCards.isEmpty()) {
+            logger.debug("Game not over: There's an ongoing trick");
+            return false;
+        }
+
+        logger.debug("Game is over: Deck empty, all players have no cards, and no ongoing trick");
         return true;
     }
 
@@ -192,13 +334,18 @@ public class ZsirGame extends CardGame {
         for (Player player : getPlayers()) {
             int score = 0;
             for (Card card : player.getWonCards()) {
-                if (card.getRank() == Rank.ACE || card.getRank() == Rank.TEN) {
-                    score += card.getValue();
-                }
+                score += card.getValue();
             }
             player.setScore(score);
             scores.put(player.getId(), score);
             logger.debug("Player {} final score: {}", player.getId(), score);
+        }
+
+        if (hasGameState(LAST_PLAYER_TO_TAKE)) {
+            Player lastPlayerToTake = (Player) getGameState(LAST_PLAYER_TO_TAKE);
+            if (lastPlayerToTake != null) {
+                logger.debug("Last player to take a trick: {}", lastPlayerToTake.getId());
+            }
         }
 
         return scores;
