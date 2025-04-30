@@ -13,27 +13,30 @@
         }">
           {{ 'GAME.STATUS.' + game.status | translate }}
         </span>
+        <button mat-icon-button color="primary" (click)="refreshGameState()" matTooltip="Refresh game state">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
       <div class="game-content">
         <div class="game-table">
-          <div class="current-trick" *ngIf="game.gameState && game.gameState['currentTrick']">
-            <div *ngFor="let card of game.gameState['currentTrick']" class="trick-card">
+          <div class="current-trick" *ngIf="getCurrentTrickCards().length > 0">
+            <h4>{{ 'GAME.CURRENT_TRICK' | translate }} ({{ getCurrentTrickCards().length }})</h4>
+            <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
               <app-card [card]="card"></app-card>
             </div>
           </div>
 
-          <div class="lead-card" *ngIf="game.gameState && game.gameState['currentLeadCard']">
-            <div class="lead-card-label">{{ 'GAME.LEAD_CARD' | translate }}</div>
-            <app-card [card]="game.gameState['currentLeadCard']"></app-card>
+          <div *ngIf="getCurrentTrickCards().length === 0" class="empty-trick">
+            <p>{{ 'GAME.NO_CARDS_IN_TRICK' | translate }}</p>
           </div>
 
-          <div class="deck-info" *ngIf="game.gameState && game.gameState['deck']">
-            <div class="deck-count">
-              {{ 'GAME.CARDS_LEFT' | translate }}: {{ game.gameState['deck'].cardsLeft }}
-            </div>
+          <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
+            <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
+            <p>{{ getPlayerName(lastPlayedCard.playerId) }} played:</p>
+            <app-card [card]="lastPlayedCard.card"></app-card>
           </div>
         </div>
 
@@ -64,6 +67,11 @@
                     [disabled]="!selectedCard"
                     (click)="onCardPlay()">
               {{ 'GAME.PLAY_CARD' | translate }}
+            </button>
+
+            <button *ngIf="canHit" mat-raised-button color="accent"
+                    (click)="onPass()">
+              {{ 'GAME.PASS' | translate }}
             </button>
           </div>
         </div>

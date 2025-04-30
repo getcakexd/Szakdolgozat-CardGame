@@ -221,6 +221,8 @@ public class CardGameController {
         cardGame = cardGameRepository.save(cardGame);
         logger.info("Action executed successfully in game {}", gameId);
 
+        cardGame = cardGameRepository.findById(gameId).orElse(cardGame);
+
         GameEvent event = new GameEvent("GAME_ACTION", cardGame.getId(), userId);
         event.addData("action", action);
         event.addData("gameState", cardGame.getGameState());

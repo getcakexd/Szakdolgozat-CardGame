@@ -57,10 +57,20 @@ export class GameComponent implements OnInit, OnDestroy {
   selectedCard: Card | null = null
   gameEvents: GameEvent[] = []
   partnerMessages: string[] = []
+  lastActionTime = 0
+  canHit = false
+  lastPlayedCard: { card: Card; playerId: string } | null = null
+  showLastPlayedCard = false
+
+  private lastTrickSize = 0
 
   private gameId: string | null = null
   private gameSubscription: Subscription | null = null
   private eventsSubscription: Subscription | null = null
+  private canHitSubscription: Subscription | null = null
+  private lastPlayedCardSubscription: Subscription | null = null
+  private refreshInterval: any = null
+  private lastCardTimer: any = null
 
   constructor(
     private route: ActivatedRoute,
@@ -118,6 +128,16 @@ export class GameComponent implements OnInit, OnDestroy {
     } else {
       this.loadGame()
     }
+
+    this.refreshInterval = setInterval(() => {
+      if (this.gameId && this.game?.status === GameStatus.ACTIVE) {
+        const now = Date.now()
+        if (now - this.lastActionTime > 10000) {
+          console.log("Performing periodic refresh")
+          this.cardGameService.forceRefreshGame(this.gameId)
+        }
+      }
+    }, 30000)
   }
 
   ngOnDestroy(): void {
@@ -132,6 +152,22 @@ export class GameComponent implements OnInit, OnDestroy {
     if (this.eventsSubscription) {
       this.eventsSubscription.unsubscribe()
     }
+
+    if (this.canHitSubscription) {
+      this.canHitSubscription.unsubscribe()
+    }
+
+    if (this.lastPlayedCardSubscription) {
+      this.lastPlayedCardSubscription.unsubscribe()
+    }
+
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval)
+    }
+
+    if (this.lastCardTimer) {
+      clearTimeout(this.lastCardTimer)
+    }
   }
 
   loadGame(): void {
@@ -140,22 +176,66 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isLoading = true
 
     this.gameSubscription = this.cardGameService.currentGame$.subscribe((game) => {
+      console.log("Game state updated in component:", game?.gameState)
+
+      const currentTrickSize =
+        game?.gameState && Array.isArray(game.gameState["currentTrick"]) ? game.gameState["currentTrick"].length : 0
+      const trickChanged = this.lastTrickSize !== currentTrickSize
+
       this.game = game
+
       if (game) {
         const userId = this.authService.currentUser?.id.toString()
         this.currentPlayer = game.players.find((p) => p.id === userId) || null
-        console.log("Game updated in component, current player:", this.currentPlayer?.id)
-        console.log("Current trick:", game.gameState["currentTrick"])
-        console.log("Lead card:", game.gameState["currentLeadCard"])
+
+        this.lastTrickSize = currentTrickSize
+
+        if (trickChanged && currentTrickSize === 0 && this.lastTrickSize > 0) {
+          this.showTrickCompletedNotification()
+        }
+
+        this.logGameState()
       }
+
       this.isLoading = false
       this.changeDetectorRef.detectChanges()
+    })
+
+    this.canHitSubscription = this.cardGameService.canHit$.subscribe((canHit) => {
+      this.canHit = canHit
+      this.changeDetectorRef.detectChanges()
+    })
+
+    this.lastPlayedCardSubscription = this.cardGameService.lastPlayedCard$.subscribe((lastPlayed) => {
+      if (
+        lastPlayed &&
+        (!this.lastPlayedCard ||
+          this.lastPlayedCard.card.suit !== lastPlayed.card.suit ||
+          this.lastPlayedCard.card.rank !== lastPlayed.card.rank ||
+          this.lastPlayedCard.playerId !== lastPlayed.playerId)
+      ) {
+        this.lastPlayedCard = lastPlayed
+        this.showLastPlayedCard = true
+
+        if (this.lastCardTimer) {
+          clearTimeout(this.lastCardTimer)
+        }
+
+        this.lastCardTimer = setTimeout(() => {
+          this.showLastPlayedCard = false
+          this.changeDetectorRef.detectChanges()
+        }, 3000)
+
+        this.changeDetectorRef.detectChanges()
+      }
     })
 
     this.eventsSubscription = this.cardGameService.gameEvents$.subscribe((event) => {
       if (!event.timestamp) {
         event.timestamp = new Date()
       }
+
+      this.lastActionTime = Date.now()
 
       this.gameEvents.unshift(event)
 
@@ -184,6 +264,10 @@ export class GameComponent implements OnInit, OnDestroy {
         if (event.data && event.data["gameState"]) {
           console.log("Game state from event:", event.data["gameState"])
         }
+
+        if (this.gameId) {
+          setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 300)
+        }
       }
 
       this.changeDetectorRef.detectChanges()
@@ -204,6 +288,29 @@ export class GameComponent implements OnInit, OnDestroy {
     })
   }
 
+  private showTrickCompletedNotification(): void {
+    if (this.lastPlayedCard) {
+      const winnerName = this.getPlayerName(this.game?.currentPlayer?.id || "")
+      this.snackBar.open(`${winnerName} won the trick!`, this.translate.instant("COMMON.CLOSE"), { duration: 2000 })
+    }
+  }
+
+  private logGameState(): void {
+    if (!this.game || !this.game.gameState) return
+
+    console.log("Current game state:")
+    console.log("- Current player:", this.game.currentPlayer?.id)
+
+    const currentTrick = this.getCurrentTrickCards()
+    console.log("- Current trick:", currentTrick.length > 0 ? currentTrick : "empty")
+
+    console.log("- Can hit:", this.canHit)
+
+    if (this.lastPlayedCard) {
+      console.log("- Last played card:", this.lastPlayedCard.card, "by player:", this.lastPlayedCard.playerId)
+    }
+  }
+
   onCardSelect(card: Card): void {
     if (!this.isCurrentPlayerTurn()) {
       this.snackBar.open(this.translate.instant("GAME.NOT_YOUR_TURN"), this.translate.instant("COMMON.CLOSE"), {
@@ -220,6 +327,16 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.cardGameService.playCard(this.gameId, this.selectedCard)
     this.selectedCard = null
+
+    this.lastActionTime = Date.now()
+  }
+
+  onPass(): void {
+    if (!this.gameId || !this.canHit) return
+
+    this.cardGameService.pass(this.gameId)
+
+    this.lastActionTime = Date.now()
   }
 
   onSendPartnerMessage(messageType: string): void {
@@ -240,6 +357,25 @@ export class GameComponent implements OnInit, OnDestroy {
 
     const player = this.game.players.find((p) => p.id === playerId)
     return player ? player.username : playerId
+  }
+
+  getCurrentTrickCards(): Card[] {
+    if (!this.game || !this.game.gameState) {
+      return []
+    }
+
+    const currentTrick = this.game.gameState["currentTrick"]
+    if (!currentTrick || !Array.isArray(currentTrick)) {
+      return []
+    }
+
+    return currentTrick.filter((card) => card && typeof card === "object" && card.suit && card.rank)
+  }
+
+  refreshGameState(): void {
+    if (this.gameId) {
+      this.cardGameService.forceRefreshGame(this.gameId)
+    }
   }
 
   getCardImagePath(card: Card): string {

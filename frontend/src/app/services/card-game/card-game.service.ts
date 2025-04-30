@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
-import { Observable, BehaviorSubject, Subject } from "rxjs"
+import {Observable, BehaviorSubject, Subject, tap} from "rxjs"
 import { map, catchError } from "rxjs/operators"
 import { CardGame, GameAction, GameEvent, Card, Player } from "../../models/card-game.model"
 import { WebSocketService } from "../websocket/websocket.service"
@@ -17,6 +17,14 @@ export class CardGameService {
 
   private gameEventsSubject = new Subject<GameEvent>()
   gameEvents$ = this.gameEventsSubject.asObservable()
+
+  private canHitSubject = new BehaviorSubject<boolean>(false)
+  canHit$ = this.canHitSubject.asObservable()
+
+  private lastPlayedCardSubject = new BehaviorSubject<{ card: Card; playerId: string } | null>(null)
+  lastPlayedCard$ = this.lastPlayedCardSubject.asObservable()
+
+  private lastStateUpdateTime = 0
 
   constructor(
     private http: HttpClient,
@@ -40,12 +48,16 @@ export class CardGameService {
       console.log("Received game event:", event)
       this.gameEventsSubject.next(event)
 
-      this.getGame(gameId).subscribe({
-        next: (game) => {
-          console.log("Game updated after event:", event.type)
-        },
-        error: (err) => console.error("Error updating game after event:", err),
-      })
+      if (event.type === "GAME_ACTION") {
+        this.forceRefreshGame(gameId)
+      } else {
+        this.getGame(gameId).subscribe({
+          next: (game) => {
+            console.log("Game updated after event:", event.type)
+          },
+          error: (err) => console.error("Error updating game after event:", err),
+        })
+      }
     })
 
     if (this.webSocketService.isConnected()) {
@@ -80,17 +92,70 @@ export class CardGameService {
     }
   }
 
+  forceRefreshGame(gameId: string): void {
+    console.log("Forcing complete game refresh")
+
+    setTimeout(() => {
+      this.http
+        .get<CardGame>(`${this.apiUrl}/${gameId}`)
+        .pipe(
+          map((game) => this.processGameState(game)),
+          tap((game) => {
+            console.log("Forced refresh complete, new game state:", game)
+
+            this.lastStateUpdateTime = Date.now()
+
+            this.currentGameSubject.next(game)
+
+            const canHit = game.gameState && game.gameState["canHit"] === true
+            this.canHitSubject.next(canHit)
+
+            if (game.gameState && game.gameState["lastPlayedCard"] && game.gameState["lastPlayer"]) {
+              this.lastPlayedCardSubject.next({
+                card: game.gameState["lastPlayedCard"],
+                playerId: game.gameState["lastPlayer"],
+              })
+            }
+          }),
+          catchError((error) => {
+            console.error("Error in forced refresh:", error)
+            throw error
+          }),
+        )
+        .subscribe()
+    }, 300)
+  }
+
   getGame(gameId: string): Observable<CardGame> {
     console.log(`Fetching game data from: ${this.apiUrl}/${gameId}`)
     return this.http.get<CardGame>(`${this.apiUrl}/${gameId}`).pipe(
       map((game) => {
         console.log("Received game data:", game)
+
         game.createdAt = new Date(game.createdAt)
         if (game.startedAt) game.startedAt = new Date(game.startedAt)
         if (game.endedAt) game.endedAt = new Date(game.endedAt)
 
-        this.currentGameSubject.next(game)
-        return game
+        const processedGame = this.processGameState(game)
+
+        this.lastStateUpdateTime = Date.now()
+
+        const canHit = processedGame.gameState && processedGame.gameState["canHit"] === true
+        this.canHitSubject.next(canHit)
+
+        if (
+          processedGame.gameState &&
+          processedGame.gameState["lastPlayedCard"] &&
+          processedGame.gameState["lastPlayer"]
+        ) {
+          this.lastPlayedCardSubject.next({
+            card: processedGame.gameState["lastPlayedCard"],
+            playerId: processedGame.gameState["lastPlayer"],
+          })
+        }
+
+        this.currentGameSubject.next(processedGame)
+        return processedGame
       }),
       catchError((error) => {
         console.error("Error fetching game:", error)
@@ -99,15 +164,51 @@ export class CardGameService {
     )
   }
 
+  private processGameState(game: CardGame): CardGame {
+    console.log("Processing game state:", JSON.stringify(game.gameState))
+
+    const processedGame = JSON.parse(JSON.stringify(game))
+
+    if (!processedGame.gameState) {
+      processedGame.gameState = {}
+    }
+
+    if (!processedGame.gameState["currentTrick"]) {
+      processedGame.gameState["currentTrick"] = []
+    }
+
+    if (!Array.isArray(processedGame.gameState["currentTrick"])) {
+      processedGame.gameState["currentTrick"] = []
+    }
+
+    if (processedGame.gameState["currentTrick"].length > 0) {
+      processedGame.gameState["currentTrick"] = processedGame.gameState["currentTrick"].filter(
+        (card : Card) => card && typeof card === "object" && card.suit && card.rank,
+      )
+    }
+
+    console.log("Processed game state:", processedGame.gameState)
+    return processedGame
+  }
+
   executeAction(gameId: string, action: GameAction): void {
     const userId = this.authService.currentUser?.id.toString()
     if (userId && this.webSocketService.isConnected()) {
+      console.log("Executing action:", action)
+
+      const actionTime = Date.now()
+
       this.webSocketService.send("/app/game.action", {
         gameId,
         userId,
-        action
+        action,
       })
 
+      setTimeout(() => {
+        if (actionTime > this.lastStateUpdateTime) {
+          this.forceRefreshGame(gameId)
+        }
+      }, 500)
     } else {
       console.error("Cannot execute action: WebSocket not connected or no user ID")
     }
@@ -118,7 +219,15 @@ export class CardGameService {
       actionType: "playCard",
       parameters: { card },
     }
-    this.executeAction(gameId,  action)
+    this.executeAction(gameId, action)
+  }
+
+  pass(gameId: string): void {
+    const action: GameAction = {
+      actionType: "pass",
+      parameters: {},
+    }
+    this.executeAction(gameId, action)
   }
 
   sendPartnerMessage(gameId: string, messageType: string, content: string): void {
@@ -151,6 +260,10 @@ export class CardGameService {
     if (!game || !userId || !game.currentPlayer) return false
 
     return game.currentPlayer.id === userId
+  }
+
+  canCurrentPlayerHit(): boolean {
+    return this.canHitSubject.value
   }
 
   clearCurrentGame(): void {
