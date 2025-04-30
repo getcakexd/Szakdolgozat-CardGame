@@ -30,6 +30,21 @@ export class CardComponent {
     }
   }
 
+  getSuitImagePath() {
+    switch (this.card.suit) {
+      case CardSuit.HEARTS:
+        return "hearts.png"
+      case CardSuit.BELLS:
+        return "bells.png"
+      case CardSuit.LEAVES:
+        return "leaves.png"
+      case CardSuit.ACORNS:
+        return "acorns.png"
+      default:
+        return "help"
+    }
+  }
+
   getSuitColor(): string {
     switch (this.card.suit) {
       case CardSuit.HEARTS:
@@ -67,4 +82,6 @@ export class CardComponent {
         return "?"
     }
   }
+
+
 }

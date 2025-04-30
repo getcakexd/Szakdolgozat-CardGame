@@ -3,18 +3,18 @@
     <div class="card-corner top-left">
       <div class="card-rank">{{ getCardRankDisplay() }}</div>
       <div class="card-suit">
-        <mat-icon>{{ getSuitIcon() }}</mat-icon>
+        <img [src]="getSuitImagePath()" alt="Card suit" class="suit-image-small">
       </div>
     </div>
 
     <div class="card-center">
-      <mat-icon class="card-suit-large">{{ getSuitIcon() }}</mat-icon>
+      <img [src]="getSuitImagePath()" alt="Card suit" class="suit-image-large">
     </div>
 
     <div class="card-corner bottom-right">
       <div class="card-rank">{{ getCardRankDisplay() }}</div>
       <div class="card-suit">
-        <mat-icon>{{ getSuitIcon() }}</mat-icon>
+        <img [src]="getSuitImagePath()" alt="Card suit" class="suit-image-small">
       </div>
     </div>
   </div>
