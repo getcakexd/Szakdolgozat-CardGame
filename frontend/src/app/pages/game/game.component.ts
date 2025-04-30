@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy } from "@angular/core"
-import {ActivatedRoute, Router, RouterLink} from "@angular/router"
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core"
+import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Subscription } from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
+import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
 import { TranslateService } from "@ngx-translate/core"
 import {
-  type CardGame,
+  CardGame,
   GameStatus,
-  type Card,
-  type Player,
-  type GameEvent,
+  Card,
+  Player,
+  GameEvent,
   PARTNER_MESSAGE_TYPES,
   CardSuit,
   CardRank,
@@ -23,10 +24,11 @@ import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { TranslateModule } from "@ngx-translate/core"
+import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
 import { GameControlsComponent } from "../../components/game-controls/game-controls.component"
-import {WebSocketService} from '../../services/websocket/websocket.service';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-game",
@@ -45,7 +47,7 @@ import {WebSocketService} from '../../services/websocket/websocket.service';
     CardComponent,
     PlayerInfoComponent,
     GameControlsComponent,
-    RouterLink,
+    RouterModule,
   ],
 })
 export class GameComponent implements OnInit, OnDestroy {
@@ -54,12 +56,20 @@ export class GameComponent implements OnInit, OnDestroy {
   isLoading = true
   gameStatus = GameStatus
   selectedCard: Card | null = null
-  gameEvents: GameEvent[] = []
-  partnerMessages: string[] = []
+  lastActionTime = 0
+  canHit = false
+  lastPlayedCard: { card: Card; playerId: string } | null = null
+  showLastPlayedCard = false
+
+  private lastTrickSize = 0
 
   private gameId: string | null = null
   private gameSubscription: Subscription | null = null
   private eventsSubscription: Subscription | null = null
+  private canHitSubscription: Subscription | null = null
+  private lastPlayedCardSubscription: Subscription | null = null
+  private refreshInterval: any = null
+  private lastCardTimer: any = null
 
   constructor(
     private route: ActivatedRoute,
@@ -69,6 +79,7 @@ export class GameComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -90,7 +101,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
     if (!this.webSocketService.isConnected()) {
-      console.log("WebSocket not connected. Attempting to reconnect...")
+      if (IS_DEV) console.log("WebSocket not connected. Attempting to reconnect...")
       this.webSocketService.reconnect()
 
       this.snackBar.open(this.translate.instant("GAME.CONNECTING"), this.translate.instant("COMMON.CLOSE"), {
@@ -116,6 +127,16 @@ export class GameComponent implements OnInit, OnDestroy {
     } else {
       this.loadGame()
     }
+
+    this.refreshInterval = setInterval(() => {
+      if (this.gameId && this.game?.status === GameStatus.ACTIVE) {
+        const now = Date.now()
+        if (now - this.lastActionTime > 10000) {
+          if (IS_DEV) console.log("Performing periodic refresh")
+          this.cardGameService.forceRefreshGame(this.gameId)
+        }
+      }
+    }, 30000)
   }
 
   ngOnDestroy(): void {
@@ -130,6 +151,22 @@ export class GameComponent implements OnInit, OnDestroy {
     if (this.eventsSubscription) {
       this.eventsSubscription.unsubscribe()
     }
+
+    if (this.canHitSubscription) {
+      this.canHitSubscription.unsubscribe()
+    }
+
+    if (this.lastPlayedCardSubscription) {
+      this.lastPlayedCardSubscription.unsubscribe()
+    }
+
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval)
+    }
+
+    if (this.lastCardTimer) {
+      clearTimeout(this.lastCardTimer)
+    }
   }
 
   loadGame(): void {
@@ -138,12 +175,56 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isLoading = true
 
     this.gameSubscription = this.cardGameService.currentGame$.subscribe((game) => {
+      if (IS_DEV) console.log("Game state updated in component:", game?.gameState)
+
+      const currentTrickSize =
+        game?.gameState && Array.isArray(game.gameState["currentTrick"]) ? game.gameState["currentTrick"].length : 0
+      const trickChanged = this.lastTrickSize !== currentTrickSize
+
       this.game = game
+
       if (game) {
         const userId = this.authService.currentUser?.id.toString()
         this.currentPlayer = game.players.find((p) => p.id === userId) || null
+
+        this.lastTrickSize = currentTrickSize
+
+        if (trickChanged && currentTrickSize === 0 && this.lastTrickSize > 0) {
+          this.showTrickCompletedNotification()
+        }
       }
+
       this.isLoading = false
+      this.changeDetectorRef.detectChanges()
+    })
+
+    this.canHitSubscription = this.cardGameService.canHit$.subscribe((canHit) => {
+      this.canHit = canHit
+      this.changeDetectorRef.detectChanges()
+    })
+
+    this.lastPlayedCardSubscription = this.cardGameService.lastPlayedCard$.subscribe((lastPlayed) => {
+      if (
+        lastPlayed &&
+        (!this.lastPlayedCard ||
+          this.lastPlayedCard.card.suit !== lastPlayed.card.suit ||
+          this.lastPlayedCard.card.rank !== lastPlayed.card.rank ||
+          this.lastPlayedCard.playerId !== lastPlayed.playerId)
+      ) {
+        this.lastPlayedCard = lastPlayed
+        this.showLastPlayedCard = true
+
+        if (this.lastCardTimer) {
+          clearTimeout(this.lastCardTimer)
+        }
+
+        this.lastCardTimer = setTimeout(() => {
+          this.showLastPlayedCard = false
+          this.changeDetectorRef.detectChanges()
+        }, 3000)
+
+        this.changeDetectorRef.detectChanges()
+      }
     })
 
     this.eventsSubscription = this.cardGameService.gameEvents$.subscribe((event) => {
@@ -151,29 +232,27 @@ export class GameComponent implements OnInit, OnDestroy {
         event.timestamp = new Date()
       }
 
-      this.gameEvents.unshift(event)
-
-      if (this.gameEvents.length > 10) {
-        this.gameEvents.pop()
-      }
-
-      if (event.type === "PARTNER_MESSAGE" && event.data && event.data["content"]) {
-        this.partnerMessages.unshift(`${event.playerId}: ${event.data["content"]}`)
-
-        if (this.partnerMessages.length > 5) {
-          this.partnerMessages.pop()
-        }
-      }
+      this.lastActionTime = Date.now()
 
       if (event.type === "GAME_STARTED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_STARTED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-      } else if (event.type === "GAME_OVER") {
+      } else if (event.type === "GAME_OVER" || event.type === "GAME_ABANDONED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_OVER"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
+
+        setTimeout(() => {
+          this.router.navigate(["/lobby"])
+        }, 3000)
+      } else if (event.type === "GAME_ACTION") {
+        if (this.gameId) {
+          setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 300)
+        }
       }
+
+      this.changeDetectorRef.detectChanges()
     })
 
     this.cardGameService.connectToGame(this.gameId)
@@ -189,6 +268,13 @@ export class GameComponent implements OnInit, OnDestroy {
         this.router.navigate(["/lobby"])
       },
     })
+  }
+
+  private showTrickCompletedNotification(): void {
+    if (this.lastPlayedCard) {
+      const winnerName = this.getPlayerName(this.game?.currentPlayer?.id || "")
+      this.snackBar.open(`${winnerName} won the trick!`, this.translate.instant("COMMON.CLOSE"), { duration: 2000 })
+    }
   }
 
   onCardSelect(card: Card): void {
@@ -207,15 +293,30 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.cardGameService.playCard(this.gameId, this.selectedCard)
     this.selectedCard = null
+
+    this.lastActionTime = Date.now()
   }
 
-  onSendPartnerMessage(messageType: string): void {
+  onPass(): void {
+    if (!this.gameId || !this.canHit) return
+
+    this.cardGameService.pass(this.gameId)
+
+    this.lastActionTime = Date.now()
+  }
+
+  abandonGame(): void {
     if (!this.gameId) return
 
-    const content = PARTNER_MESSAGE_TYPES[messageType as keyof typeof PARTNER_MESSAGE_TYPES]
-    if (content) {
-      this.cardGameService.sendPartnerMessage(this.gameId, "PARTNER_MESSAGE", content)
-    }
+    this.snackBar.open(this.translate.instant("GAME.ABANDONING"), this.translate.instant("COMMON.CLOSE"), {
+      duration: 2000,
+    })
+
+    this.cardGameService.abandonGame(this.gameId)
+
+    setTimeout(() => {
+      this.router.navigate(["/lobby"])
+    }, 2000)
   }
 
   isCurrentPlayerTurn(): boolean {
@@ -229,6 +330,25 @@ export class GameComponent implements OnInit, OnDestroy {
     return player ? player.username : playerId
   }
 
+  getCurrentTrickCards(): Card[] {
+    if (!this.game || !this.game.gameState) {
+      return []
+    }
+
+    const currentTrick = this.game.gameState["currentTrick"]
+    if (!currentTrick || !Array.isArray(currentTrick)) {
+      return []
+    }
+
+    return currentTrick.filter((card) => card && typeof card === "object" && card.suit && card.rank)
+  }
+
+  refreshGameState(): void {
+    if (this.gameId) {
+      this.cardGameService.forceRefreshGame(this.gameId)
+    }
+  }
+
   getCardImagePath(card: Card): string {
     const suit = card.suit.toLowerCase()
     const rank = card.rank.toLowerCase()
@@ -239,12 +359,12 @@ export class GameComponent implements OnInit, OnDestroy {
     switch (suit) {
       case CardSuit.HEARTS:
         return "favorite"
-      case CardSuit.DIAMONDS:
-        return "diamond"
-      case CardSuit.CLUBS:
-        return "spa"
-      case CardSuit.SPADES:
-        return "filter_vintage"
+      case CardSuit.BELLS:
+        return "notifications"
+      case CardSuit.LEAVES:
+        return "eco"
+      case CardSuit.ACORNS:
+        return "park"
       default:
         return "help"
     }
@@ -253,11 +373,11 @@ export class GameComponent implements OnInit, OnDestroy {
   getCardSuitColor(suit: CardSuit): string {
     switch (suit) {
       case CardSuit.HEARTS:
-      case CardSuit.DIAMONDS:
+      case CardSuit.BELLS:
         return "red"
-      case CardSuit.CLUBS:
-      case CardSuit.SPADES:
-        return "black"
+      case CardSuit.LEAVES:
+      case CardSuit.ACORNS:
+        return "green"
       default:
         return "black"
     }
@@ -266,17 +386,17 @@ export class GameComponent implements OnInit, OnDestroy {
   getCardRankDisplay(rank: CardRank): string {
     switch (rank) {
       case CardRank.SEVEN:
-        return "7"
+        return "VII"
       case CardRank.EIGHT:
-        return "8"
+        return "VIII"
       case CardRank.NINE:
-        return "9"
+        return "IX"
       case CardRank.TEN:
-        return "10"
+        return "X"
       case CardRank.UNDER:
-        return "J"
+        return "U"
       case CardRank.OVER:
-        return "Q"
+        return "O"
       case CardRank.KING:
         return "K"
       case CardRank.ACE:

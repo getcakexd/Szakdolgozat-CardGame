@@ -18,6 +18,9 @@ public class GameStatistics {
     private int score;
     private boolean won;
 
+    private int tricksTaken;
+    private int fatCardsCollected;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date playedAt;
 
@@ -83,5 +86,21 @@ public class GameStatistics {
 
     public void setPlayedAt(Date playedAt) {
         this.playedAt = playedAt;
+    }
+
+    public int getTricksTaken() {
+        return tricksTaken;
+    }
+
+    public void setTricksTaken(int tricksTaken) {
+        this.tricksTaken = tricksTaken;
+    }
+
+    public int getFatCardsCollected() {
+        return fatCardsCollected;
+    }
+
+    public void setFatCardsCollected(int fatCardsCollected) {
+        this.fatCardsCollected = fatCardsCollected;
     }
 }

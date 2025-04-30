@@ -5,6 +5,7 @@ import hu.benkototh.cardgame.backend.game.exception.GameException;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -199,7 +200,13 @@ public abstract class CardGame {
             this.gameState.remove(key);
             logger.debug("Removed key {} from game state for game {}", key, this.id);
         } else {
-            this.gameState.put(key, value);
+            if (value instanceof List) {
+                this.gameState.put(key, new ArrayList<>((List<?>) value));
+            } else if (value instanceof Map) {
+                this.gameState.put(key, new HashMap<>((Map<?, ?>) value));
+            } else {
+                this.gameState.put(key, value);
+            }
             logger.debug("Set game state for game {}: {} = {}", this.id, key, value);
         }
     }
@@ -208,21 +215,18 @@ public abstract class CardGame {
         if (gameState == null) {
             return null;
         }
+        return this.gameState.get(key);
+    }
 
-        Object value = this.gameState.get(key);
+    public boolean hasGameState(String key) {
+        return gameState != null && gameState.containsKey(key);
+    }
 
-        if (key.equals("deck") && value instanceof Map) {
-            try {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> deckMap = (Map<String, Object>) value;
-                return Deck.fromMap(deckMap);
-            } catch (Exception e) {
-                logger.error("Error converting deck map to Deck object: {}", e.getMessage());
-                return null;
-            }
+    public void removeGameState(String key) {
+        if (gameState != null) {
+            gameState.remove(key);
+            logger.debug("Removed key {} from game state for game {}", key, this.id);
         }
-
-        return value;
     }
 
     @PrePersist
@@ -246,20 +250,12 @@ public abstract class CardGame {
     public void deserializeGameState() {
         try {
             if (this.serializedGameState != null && !this.serializedGameState.isEmpty()) {
-                this.gameState = objectMapper.readValue(this.serializedGameState,
-                        Map.class);
+                this.gameState = objectMapper.readValue(this.serializedGameState, Map.class);
                 logger.debug("Deserialized game state for game {}: {}", this.id, this.gameState);
 
-                if (this.gameState.containsKey("deck")) {
-                    Object deckObj = this.gameState.get("deck");
-                    if (deckObj instanceof Map) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> deckMap = (Map<String, Object>) deckObj;
-                        Deck deck = Deck.fromMap(deckMap);
-                        this.gameState.put("deck", deck);
-                        logger.debug("Converted deck map to Deck object for game {}", this.id);
-                    }
-                }
+                processCommonGameStateObjects();
+
+                processGameStateObjects();
             } else {
                 this.gameState = new ConcurrentHashMap<>();
                 logger.debug("Initialized empty game state for game {}", this.id);
@@ -268,5 +264,21 @@ public abstract class CardGame {
             logger.error("Error deserializing game state for game {}: {}", this.id, e.getMessage());
             throw new RuntimeException("Error deserializing game state", e);
         }
+    }
+
+    private void processCommonGameStateObjects() {
+        if (this.gameState.containsKey("deck")) {
+            Object deckObj = this.gameState.get("deck");
+            if (deckObj instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> deckMap = (Map<String, Object>) deckObj;
+                Deck deck = Deck.fromMap(deckMap);
+                this.gameState.put("deck", deck);
+                logger.debug("Converted deck map to Deck object for game {}", this.id);
+            }
+        }
+    }
+
+    protected void processGameStateObjects() {
     }
 }

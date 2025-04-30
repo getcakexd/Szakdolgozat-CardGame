@@ -319,7 +319,14 @@
     "INVALID_ID": "Invalid game ID",
     "FAILED_LOAD": "Failed to load game",
     "CONNECTING": "Connecting to game server...",
-    "CONNECTION_FAILED": "Failed to connect to game server"
+    "CONNECTION_FAILED": "Failed to connect to game server",
+    "ABANDON_GAME": "Abandon Game",
+    "ABANDONING": "Abandoning game...",
+    "GAME_ABANDONED": "Game abandoned",
+    "CURRENT_TRICK": "Current Trick",
+    "NO_CARDS_IN_TRICK": "No cards in trick",
+    "LAST_PLAYED_CARD": "Last Played Card",
+    "PASS": "Pass"
   },
   "ADMIN": {
     "TITLE": "Admin Dashboard",
@@ -343,7 +350,7 @@
     "PROMOTE_TO_AGENT": "Promote to Agent",
     "DEMOTE_FROM_AGENT": "Demote from Agent",
     "PROMOTE_TO_ADMIN": "Promote to Admin",
-    "DEMOTE_FROM_ADMIN" : "Demote from Admin",
+    "DEMOTE_FROM_ADMIN": "Demote from Admin",
     "PROMOTED_AGENT": "{{username}} promoted to Agent",
     "DEMOTED_AGENT": "{{username}} demoted from Agent",
     "PROMOTED_ADMIN": "{{username}} promoted to Admin",
@@ -600,7 +607,6 @@
     "PROCESSING": "Verifying your email...",
     "SUCCESS": "Email verified successfully",
     "SUCCESS_MESSAGE": "Your email has been verified successfully. You can now log in to your account.",
-    "ERROR":  "Your email has been verified successfully. You can now log in to your account.",
     "ERROR": "Failed to verify email",
     "MISSING_TOKEN": "Verification token is missing",
     "GO_TO_LOGIN": "Go to Login",

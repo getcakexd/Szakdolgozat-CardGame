@@ -19,12 +19,27 @@ export class CardComponent {
     switch (this.card.suit) {
       case CardSuit.HEARTS:
         return "favorite"
-      case CardSuit.DIAMONDS:
-        return "diamond"
-      case CardSuit.CLUBS:
-        return "spa"
-      case CardSuit.SPADES:
-        return "filter_vintage"
+      case CardSuit.BELLS:
+        return "notifications"
+      case CardSuit.LEAVES:
+        return "eco"
+      case CardSuit.ACORNS:
+        return "park"
+      default:
+        return "help"
+    }
+  }
+
+  getSuitImagePath() {
+    switch (this.card.suit) {
+      case CardSuit.HEARTS:
+        return "hearts.png"
+      case CardSuit.BELLS:
+        return "bells.png"
+      case CardSuit.LEAVES:
+        return "leaves.png"
+      case CardSuit.ACORNS:
+        return "acorns.png"
       default:
         return "help"
     }
@@ -33,11 +48,13 @@ export class CardComponent {
   getSuitColor(): string {
     switch (this.card.suit) {
       case CardSuit.HEARTS:
-      case CardSuit.DIAMONDS:
         return "red"
-      case CardSuit.CLUBS:
-      case CardSuit.SPADES:
-        return "black"
+      case CardSuit.BELLS:
+        return "yellow"
+      case CardSuit.LEAVES:
+        return "green"
+      case CardSuit.ACORNS:
+        return "brown"
       default:
         return "black"
     }
@@ -46,17 +63,17 @@ export class CardComponent {
   getCardRankDisplay(): string {
     switch (this.card.rank) {
       case CardRank.SEVEN:
-        return "7"
+        return "VII"
       case CardRank.EIGHT:
-        return "8"
+        return "VIII"
       case CardRank.NINE:
-        return "9"
+        return "IX"
       case CardRank.TEN:
-        return "10"
+        return "X"
       case CardRank.UNDER:
-        return "J"
+        return "U"
       case CardRank.OVER:
-        return "Q"
+        return "O"
       case CardRank.KING:
         return "K"
       case CardRank.ACE:
@@ -65,4 +82,6 @@ export class CardComponent {
         return "?"
     }
   }
+
+
 }

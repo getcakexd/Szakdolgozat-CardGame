@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -65,6 +66,17 @@ public class CardGameService {
         game.executeMove(playerId, action);
 
         if (game.isGameOver()) {
+            game.endGame();
+        }
+
+        return cardGameRepository.save(game);
+    }
+
+    @Transactional
+    public CardGame abandonGame(String gameId, String playerId) {
+        CardGame game = findGameById(gameId);
+
+        if (game.getStatus() != GameStatus.FINISHED) {
             game.endGame();
         }
 
