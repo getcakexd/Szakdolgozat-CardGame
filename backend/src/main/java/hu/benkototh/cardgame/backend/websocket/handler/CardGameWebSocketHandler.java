@@ -88,21 +88,19 @@ public class CardGameWebSocketHandler {
         cardGameController.leaveGame(gameId, userId);
     }
 
+    @MessageMapping("/game.abandon")
+    public void abandonGameWebSocket(@Payload Map<String, String> payload) {
+        String gameId = payload.get("gameId");
+        String userId = payload.get("userId");
+
+        cardGameController.abandonGame(gameId, userId);
+    }
+
     @MessageMapping("/game.start")
     public void startGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
         cardGameController.startGame(gameId, userId);
-    }
-
-    @MessageMapping("/game.message")
-    public void sendGameMessage(@Payload Map<String, Object> payload) {
-        String gameId = (String) payload.get("gameId");
-        String userId = (String) payload.get("userId");
-        String messageType = (String) payload.get("messageType");
-        String content = (String) payload.get("content");
-
-        cardGameController.sendGameMessage(gameId, userId, messageType, content);
     }
 }

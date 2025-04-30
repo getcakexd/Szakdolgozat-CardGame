@@ -154,6 +154,34 @@ public class CardGameController {
     }
 
     @Transactional
+    public CardGame abandonGame(String gameId, String userId) {
+        logger.info("User {} abandoning game {}", userId, gameId);
+
+        Optional<CardGame> optionalCardGame = cardGameRepository.findById(gameId);
+        if (optionalCardGame.isEmpty()) {
+            throw new GameException("Game not found");
+        }
+
+        CardGame cardGame = optionalCardGame.get();
+
+        if (cardGame.getStatus() != GameStatus.FINISHED) {
+            cardGame.endGame();
+
+            if (cardGame.isTrackStatistics()) {
+                Map<String, Integer> scores = cardGame.calculateScores();
+                statisticsController.updateStatistics(cardGame, scores);
+            }
+
+            cardGame = cardGameRepository.save(cardGame);
+
+            GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
+            broadcastGameEvent(event);
+        }
+
+        return cardGame;
+    }
+
+    @Transactional
     public CardGame startGame(String gameId, String userId) {
         logger.info("Starting game {} by user {}", gameId, userId);
 
@@ -229,14 +257,6 @@ public class CardGameController {
         broadcastGameEvent(event);
 
         return cardGame;
-    }
-
-    public void sendGameMessage(String gameId, String userId, String messageType, String content) {
-        if (messageType != null && messageType.equals("PARTNER_MESSAGE")) {
-            GameEvent event = new GameEvent("PARTNER_MESSAGE", gameId, userId);
-            event.addData("content", content);
-            broadcastGameEvent(event);
-        }
     }
 
     @Transactional(readOnly = true)

@@ -62,6 +62,13 @@ public class CardGameRestService {
         return ResponseEntity.ok(game);
     }
 
+    @PostMapping("/{gameId}/abandon")
+    public ResponseEntity<CardGame> abandonGame(@PathVariable String gameId, @RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        CardGame game = cardGameController.abandonGame(gameId, userId);
+        return ResponseEntity.ok(game);
+    }
+
     @PostMapping("/{gameId}/start")
     public ResponseEntity<CardGame> startGame(@PathVariable String gameId, @RequestBody Map<String, String> request) {
         String userId = request.get("userId");

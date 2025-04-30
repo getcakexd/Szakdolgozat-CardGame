@@ -55,8 +55,6 @@ export class GameComponent implements OnInit, OnDestroy {
   isLoading = true
   gameStatus = GameStatus
   selectedCard: Card | null = null
-  gameEvents: GameEvent[] = []
-  partnerMessages: string[] = []
   lastActionTime = 0
   canHit = false
   lastPlayedCard: { card: Card; playerId: string } | null = null
@@ -193,8 +191,6 @@ export class GameComponent implements OnInit, OnDestroy {
         if (trickChanged && currentTrickSize === 0 && this.lastTrickSize > 0) {
           this.showTrickCompletedNotification()
         }
-
-        this.logGameState()
       }
 
       this.isLoading = false
@@ -237,34 +233,19 @@ export class GameComponent implements OnInit, OnDestroy {
 
       this.lastActionTime = Date.now()
 
-      this.gameEvents.unshift(event)
-
-      if (this.gameEvents.length > 10) {
-        this.gameEvents.pop()
-      }
-
-      if (event.type === "PARTNER_MESSAGE" && event.data && event.data["content"]) {
-        this.partnerMessages.unshift(`${event.playerId}: ${event.data["content"]}`)
-
-        if (this.partnerMessages.length > 5) {
-          this.partnerMessages.pop()
-        }
-      }
-
       if (event.type === "GAME_STARTED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_STARTED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-      } else if (event.type === "GAME_OVER") {
+      } else if (event.type === "GAME_OVER" || event.type === "GAME_ABANDONED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_OVER"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-      } else if (event.type === "GAME_ACTION") {
-        console.log("Game action event received:", event)
-        if (event.data && event.data["gameState"]) {
-          console.log("Game state from event:", event.data["gameState"])
-        }
 
+        setTimeout(() => {
+          this.router.navigate(["/lobby"])
+        }, 3000)
+      } else if (event.type === "GAME_ACTION") {
         if (this.gameId) {
           setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 300)
         }
@@ -292,22 +273,6 @@ export class GameComponent implements OnInit, OnDestroy {
     if (this.lastPlayedCard) {
       const winnerName = this.getPlayerName(this.game?.currentPlayer?.id || "")
       this.snackBar.open(`${winnerName} won the trick!`, this.translate.instant("COMMON.CLOSE"), { duration: 2000 })
-    }
-  }
-
-  private logGameState(): void {
-    if (!this.game || !this.game.gameState) return
-
-    console.log("Current game state:")
-    console.log("- Current player:", this.game.currentPlayer?.id)
-
-    const currentTrick = this.getCurrentTrickCards()
-    console.log("- Current trick:", currentTrick.length > 0 ? currentTrick : "empty")
-
-    console.log("- Can hit:", this.canHit)
-
-    if (this.lastPlayedCard) {
-      console.log("- Last played card:", this.lastPlayedCard.card, "by player:", this.lastPlayedCard.playerId)
     }
   }
 
@@ -339,13 +304,18 @@ export class GameComponent implements OnInit, OnDestroy {
     this.lastActionTime = Date.now()
   }
 
-  onSendPartnerMessage(messageType: string): void {
+  abandonGame(): void {
     if (!this.gameId) return
 
-    const content = PARTNER_MESSAGE_TYPES[messageType as keyof typeof PARTNER_MESSAGE_TYPES]
-    if (content) {
-      this.cardGameService.sendPartnerMessage(this.gameId, "PARTNER_MESSAGE", content)
-    }
+    this.snackBar.open(this.translate.instant("GAME.ABANDONING"), this.translate.instant("COMMON.CLOSE"), {
+      duration: 2000,
+    })
+
+    this.cardGameService.abandonGame(this.gameId)
+
+    setTimeout(() => {
+      this.router.navigate(["/lobby"])
+    }, 2000)
   }
 
   isCurrentPlayerTurn(): boolean {

@@ -75,44 +75,12 @@
             </button>
           </div>
         </div>
-
-        <div class="game-controls">
-          <app-game-controls
-            [gameStatus]="game.status"
-            [isCurrentPlayerTurn]="isCurrentPlayerTurn()"
-            (partnerMessage)="onSendPartnerMessage($event)">
-          </app-game-controls>
-
-          <div class="partner-messages" *ngIf="partnerMessages.length > 0">
-            <h4>{{ 'GAME.PARTNER_MESSAGES' | translate }}</h4>
-            <div class="message-list">
-              <div *ngFor="let message of partnerMessages" class="message-item">
-                {{ message }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="game-events">
-          <h4>{{ 'GAME.GAME_EVENTS' | translate }}</h4>
-          <div class="events-list">
-            <div *ngFor="let event of gameEvents" class="event-item">
-              <span class="event-type">{{ event.type }}</span>
-              <span class="event-player" *ngIf="event.playerId">
-                {{ getPlayerName(event.playerId) }}
-              </span>
-              <span class="event-time" *ngIf="event.timestamp">
-                {{ event.timestamp | date:'HH:mm:ss' }}
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button color="warn" routerLink="/lobby">
-        <mat-icon>exit_to_app</mat-icon> {{ 'GAME.LEAVE_GAME' | translate }}
+      <button mat-button color="warn" (click)="abandonGame()">
+        <mat-icon>cancel</mat-icon> {{ 'GAME.ABANDON_GAME' | translate }}
       </button>
     </mat-card-actions>
 

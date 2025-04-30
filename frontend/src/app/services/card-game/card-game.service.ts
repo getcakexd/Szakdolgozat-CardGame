@@ -92,6 +92,13 @@ export class CardGameService {
     }
   }
 
+  abandonGame(gameId: string): void {
+    const userId = this.authService.currentUser?.id.toString()
+    if (userId && this.webSocketService.isConnected()) {
+      this.webSocketService.send("/app/game.abandon", { gameId, userId })
+    }
+  }
+
   forceRefreshGame(gameId: string): void {
     console.log("Forcing complete game refresh")
 
@@ -183,7 +190,7 @@ export class CardGameService {
 
     if (processedGame.gameState["currentTrick"].length > 0) {
       processedGame.gameState["currentTrick"] = processedGame.gameState["currentTrick"].filter(
-        (card : Card) => card && typeof card === "object" && card.suit && card.rank,
+        (card: Card) => card && typeof card === "object" && card.suit && card.rank,
       )
     }
 
@@ -228,20 +235,6 @@ export class CardGameService {
       parameters: {},
     }
     this.executeAction(gameId, action)
-  }
-
-  sendPartnerMessage(gameId: string, messageType: string, content: string): void {
-    const userId = this.authService.currentUser?.id.toString()
-    if (userId && this.webSocketService.isConnected()) {
-      this.webSocketService.send("/app/game.message", {
-        gameId,
-        userId,
-        messageType: "PARTNER_MESSAGE",
-        content,
-      })
-    } else {
-      console.error("Cannot send partner message: WebSocket not connected or no user ID")
-    }
   }
 
   getCurrentPlayer(): Player | undefined {
