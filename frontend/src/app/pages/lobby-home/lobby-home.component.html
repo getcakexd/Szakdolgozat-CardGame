@@ -36,6 +36,12 @@
                   <mat-card-actions align="end">
                     <button
                       mat-raised-button
+                      color="warn"
+                      (click)="$event.stopPropagation(); userLobby.status === 'IN_GAME' ? confirmAbandonGame(userLobby) : confirmLeaveLobby(userLobby)">
+                      {{ userLobby.status === 'IN_GAME' ? ('GAME.ABANDON_GAME' | translate) : ('LOBBY.LEAVE_LOBBY' | translate) }}
+                    </button>
+                    <button
+                      mat-raised-button
                       color="primary">
                       {{ 'LOBBY.ENTER' | translate }}
                     </button>

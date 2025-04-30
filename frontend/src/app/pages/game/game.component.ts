@@ -27,7 +27,6 @@ import { TranslateModule } from "@ngx-translate/core"
 import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
-import { GameControlsComponent } from "../../components/game-controls/game-controls.component"
 import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
@@ -46,7 +45,6 @@ import {IS_DEV} from '../../../environments/api-config';
     TranslateModule,
     CardComponent,
     PlayerInfoComponent,
-    GameControlsComponent,
     RouterModule,
   ],
 })
