@@ -33,11 +33,13 @@ export class CardComponent {
   getSuitColor(): string {
     switch (this.card.suit) {
       case CardSuit.HEARTS:
-      case CardSuit.BELLS:
         return "red"
+      case CardSuit.BELLS:
+        return "yellow"
       case CardSuit.LEAVES:
-      case CardSuit.ACORNS:
         return "green"
+      case CardSuit.ACORNS:
+        return "brown"
       default:
         return "black"
     }

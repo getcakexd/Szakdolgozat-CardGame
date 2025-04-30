@@ -28,6 +28,7 @@ import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
 import { GameControlsComponent } from "../../components/game-controls/game-controls.component"
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-game",
@@ -100,7 +101,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }
 
     if (!this.webSocketService.isConnected()) {
-      console.log("WebSocket not connected. Attempting to reconnect...")
+      if (IS_DEV) console.log("WebSocket not connected. Attempting to reconnect...")
       this.webSocketService.reconnect()
 
       this.snackBar.open(this.translate.instant("GAME.CONNECTING"), this.translate.instant("COMMON.CLOSE"), {
@@ -131,7 +132,7 @@ export class GameComponent implements OnInit, OnDestroy {
       if (this.gameId && this.game?.status === GameStatus.ACTIVE) {
         const now = Date.now()
         if (now - this.lastActionTime > 10000) {
-          console.log("Performing periodic refresh")
+          if (IS_DEV) console.log("Performing periodic refresh")
           this.cardGameService.forceRefreshGame(this.gameId)
         }
       }
@@ -174,7 +175,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isLoading = true
 
     this.gameSubscription = this.cardGameService.currentGame$.subscribe((game) => {
-      console.log("Game state updated in component:", game?.gameState)
+      if (IS_DEV) console.log("Game state updated in component:", game?.gameState)
 
       const currentTrickSize =
         game?.gameState && Array.isArray(game.gameState["currentTrick"]) ? game.gameState["currentTrick"].length : 0

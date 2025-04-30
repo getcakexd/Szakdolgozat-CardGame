@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core"
 import { Client, IMessage } from "@stomp/stompjs"
 import SockJS from "sockjs-client"
 import { BehaviorSubject } from "rxjs"
-import {BACKEND_API_URL} from '../../../environments/api-config';
+import {BACKEND_API_URL, IS_DEV} from '../../../environments/api-config';
 
 @Injectable({
   providedIn: "root",
@@ -17,18 +17,18 @@ export class WebSocketService {
   private maxConnectionAttempts = 5
 
   constructor() {
-    console.log("WebSocket service initialized with URL:", this.apiUrl)
+    if (IS_DEV) console.log("WebSocket service initialized with URL:", this.apiUrl)
     this.initializeWebSocketConnection()
   }
 
   private initializeWebSocketConnection(): void {
     try {
-      console.log("Initializing WebSocket connection to:", this.apiUrl)
+      if (IS_DEV) console.log("Initializing WebSocket connection to:", this.apiUrl)
 
       this.client = new Client({
         webSocketFactory: () => new SockJS(this.apiUrl),
         debug: (str) => {
-          console.log("STOMP: " + str)
+          if (IS_DEV) console.log("STOMP: " + str)
         },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
@@ -36,7 +36,7 @@ export class WebSocketService {
       })
 
       this.client.onConnect = (frame) => {
-        console.log("Connected to WebSocket:", frame)
+        if (IS_DEV) console.log("Connected to WebSocket:", frame)
         this.connected.next(true)
         this.connectionAttempts = 0
 
@@ -46,23 +46,23 @@ export class WebSocketService {
       }
 
       this.client.onDisconnect = () => {
-        console.log("Disconnected from WebSocket")
+        if (IS_DEV) console.log("Disconnected from WebSocket")
         this.connected.next(false)
       }
 
       this.client.onStompError = (frame) => {
-        console.error("STOMP error", frame)
+        if (IS_DEV) console.error("STOMP error", frame)
         this.handleConnectionError("STOMP error: " + frame.headers?.["message"])
       }
 
       this.client.onWebSocketError = (event) => {
-        console.error("WebSocket error:", event)
+        if (IS_DEV) console.error("WebSocket error:", event)
         this.handleConnectionError("WebSocket error")
       }
 
       this.client.activate()
     } catch (error) {
-      console.error("Error initializing WebSocket:", error)
+      if (IS_DEV) console.error("Error initializing WebSocket:", error)
       this.handleConnectionError("Error initializing WebSocket")
     }
   }
@@ -72,52 +72,53 @@ export class WebSocketService {
     this.connectionAttempts++
 
     if (this.connectionAttempts < this.maxConnectionAttempts) {
-      console.log(
-        `Connection attempt ${this.connectionAttempts}/${this.maxConnectionAttempts} failed. Retrying in 5 seconds...`,
-      )
+      if (IS_DEV)
+        console.log(
+          `Connection attempt ${this.connectionAttempts}/${this.maxConnectionAttempts} failed. Retrying in 5 seconds...`,
+        )
       setTimeout(() => this.initializeWebSocketConnection(), 5000)
     } else {
-      console.error(`Failed to connect after ${this.maxConnectionAttempts} attempts. Giving up.`)
+      if (IS_DEV) console.error(`Failed to connect after ${this.maxConnectionAttempts} attempts. Giving up.`)
     }
   }
 
   subscribe(destination: string, callback: (message: any) => void): void {
-    console.log(`Subscribing to ${destination}`)
+    if (IS_DEV) console.log(`Subscribing to ${destination}`)
     this.subscriptions[destination] = callback
 
     if (this.isConnected()) {
       this.subscribeInternal(destination, callback)
     } else {
-      console.log(`Not connected yet. Will subscribe to ${destination} when connected.`)
+      if (IS_DEV) console.log(`Not connected yet. Will subscribe to ${destination} when connected.`)
     }
   }
 
   private subscribeInternal(destination: string, callback: (message: any) => void): void {
-    console.log(`Actually subscribing to ${destination}`)
+    if (IS_DEV) console.log(`Actually subscribing to ${destination}`)
     this.client?.subscribe(destination, (message: IMessage) => {
       try {
         const body = JSON.parse(message.body)
         callback(body)
       } catch (error) {
-        console.error(`Error processing message from ${destination}:`, error)
+        if (IS_DEV) console.error(`Error processing message from ${destination}:`, error)
       }
     })
   }
 
   unsubscribe(destination: string): void {
-    console.log(`Unsubscribing from ${destination}`)
+    if (IS_DEV) console.log(`Unsubscribing from ${destination}`)
     delete this.subscriptions[destination]
   }
 
   send(destination: string, body: any): void {
     if (this.isConnected()) {
-      console.log(`Sending message to ${destination}:`, body)
+      if (IS_DEV) console.log(`Sending message to ${destination}:`, body)
       this.client!.publish({
         destination,
         body: JSON.stringify(body),
       })
     } else {
-      console.error(`Cannot send message to ${destination}, not connected to WebSocket`)
+      if (IS_DEV) console.error(`Cannot send message to ${destination}, not connected to WebSocket`)
     }
   }
 
@@ -127,7 +128,7 @@ export class WebSocketService {
 
   disconnect(): void {
     if (this.client) {
-      console.log("Disconnecting WebSocket client")
+      if (IS_DEV) console.log("Disconnecting WebSocket client")
       this.client.deactivate()
       this.client = null
       this.connected.next(false)
@@ -135,7 +136,7 @@ export class WebSocketService {
   }
 
   reconnect(): void {
-    console.log("Manually reconnecting WebSocket")
+    if (IS_DEV) console.log("Manually reconnecting WebSocket")
     this.disconnect()
     this.connectionAttempts = 0
     this.initializeWebSocketConnection()

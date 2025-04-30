@@ -5,7 +5,7 @@ import { map, catchError } from "rxjs/operators"
 import { CardGame, GameAction, GameEvent, Card, Player } from "../../models/card-game.model"
 import { WebSocketService } from "../websocket/websocket.service"
 import { AuthService } from "../auth/auth.service"
-import { BACKEND_API_URL } from "../../../environments/api-config"
+import {BACKEND_API_URL, IS_DEV} from "../../../environments/api-config"
 
 @Injectable({
   providedIn: "root",
@@ -42,10 +42,10 @@ export class CardGameService {
   }
 
   connectToGame(gameId: string): void {
-    console.log(`Connecting to game: ${gameId}`)
+    if (IS_DEV) console.log(`Connecting to game: ${gameId}`)
 
     this.webSocketService.subscribe(`/topic/game/${gameId}`, (event: GameEvent) => {
-      console.log("Received game event:", event)
+      if (IS_DEV) console.log("Received game event:", event)
       this.gameEventsSubject.next(event)
 
       if (event.type === "GAME_ACTION") {
@@ -53,9 +53,11 @@ export class CardGameService {
       } else {
         this.getGame(gameId).subscribe({
           next: (game) => {
-            console.log("Game updated after event:", event.type)
+            if (IS_DEV) console.log("Game updated after event:", event.type)
           },
-          error: (err) => console.error("Error updating game after event:", err),
+          error: (err) => {
+            if (IS_DEV) console.error("Error updating game after event:", err)
+          },
         })
       }
     })
@@ -63,7 +65,7 @@ export class CardGameService {
     if (this.webSocketService.isConnected()) {
       this.joinGame(gameId)
     } else {
-      console.log("WebSocket not connected, waiting for connection...")
+      if (IS_DEV) console.log("WebSocket not connected, waiting for connection...")
       const subscription = this.webSocketService.connected$.subscribe((connected) => {
         if (connected) {
           this.joinGame(gameId)
@@ -76,10 +78,10 @@ export class CardGameService {
   private joinGame(gameId: string): void {
     const userId = this.authService.currentUser?.id.toString()
     if (userId) {
-      console.log(`Joining game ${gameId} as user ${userId}`)
+      if (IS_DEV) console.log(`Joining game ${gameId} as user ${userId}`)
       this.webSocketService.send("/app/game.join", { gameId, userId })
     } else {
-      console.error("Cannot join game: No user ID available")
+      if (IS_DEV) console.error("Cannot join game: No user ID available")
     }
   }
 
@@ -100,7 +102,7 @@ export class CardGameService {
   }
 
   forceRefreshGame(gameId: string): void {
-    console.log("Forcing complete game refresh")
+    if (IS_DEV) console.log("Forcing complete game refresh")
 
     setTimeout(() => {
       this.http
@@ -108,7 +110,7 @@ export class CardGameService {
         .pipe(
           map((game) => this.processGameState(game)),
           tap((game) => {
-            console.log("Forced refresh complete, new game state:", game)
+            if (IS_DEV) console.log("Forced refresh complete, new game state:", game)
 
             this.lastStateUpdateTime = Date.now()
 
@@ -125,7 +127,7 @@ export class CardGameService {
             }
           }),
           catchError((error) => {
-            console.error("Error in forced refresh:", error)
+            if (IS_DEV) console.error("Error in forced refresh:", error)
             throw error
           }),
         )
@@ -134,10 +136,10 @@ export class CardGameService {
   }
 
   getGame(gameId: string): Observable<CardGame> {
-    console.log(`Fetching game data from: ${this.apiUrl}/${gameId}`)
+    if (IS_DEV) console.log(`Fetching game data from: ${this.apiUrl}/${gameId}`)
     return this.http.get<CardGame>(`${this.apiUrl}/${gameId}`).pipe(
       map((game) => {
-        console.log("Received game data:", game)
+        if (IS_DEV) console.log("Received game data:", game)
 
         game.createdAt = new Date(game.createdAt)
         if (game.startedAt) game.startedAt = new Date(game.startedAt)
@@ -165,14 +167,14 @@ export class CardGameService {
         return processedGame
       }),
       catchError((error) => {
-        console.error("Error fetching game:", error)
+        if (IS_DEV) console.error("Error fetching game:", error)
         throw error
       }),
     )
   }
 
   private processGameState(game: CardGame): CardGame {
-    console.log("Processing game state:", JSON.stringify(game.gameState))
+    if (IS_DEV) console.log("Processing game state:", JSON.stringify(game.gameState))
 
     const processedGame = JSON.parse(JSON.stringify(game))
 
@@ -194,14 +196,14 @@ export class CardGameService {
       )
     }
 
-    console.log("Processed game state:", processedGame.gameState)
+    if (IS_DEV) console.log("Processed game state:", processedGame.gameState)
     return processedGame
   }
 
   executeAction(gameId: string, action: GameAction): void {
     const userId = this.authService.currentUser?.id.toString()
     if (userId && this.webSocketService.isConnected()) {
-      console.log("Executing action:", action)
+      if (IS_DEV) console.log("Executing action:", action)
 
       const actionTime = Date.now()
 
@@ -217,7 +219,7 @@ export class CardGameService {
         }
       }, 500)
     } else {
-      console.error("Cannot execute action: WebSocket not connected or no user ID")
+      if (IS_DEV) console.error("Cannot execute action: WebSocket not connected or no user ID")
     }
   }
 
