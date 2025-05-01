@@ -57,6 +57,7 @@ public class CardGameController {
         }
 
         Game gameEntity = gameDefinition.get();
+
         CardGame cardGame = GameFactory.createGame(gameEntity.getFactorySign(), gameEntity.getFactoryId());
         cardGame.setGameDefinitionId(gameDefinitionId);
         cardGame.setName(gameName);
@@ -85,7 +86,6 @@ public class CardGameController {
 
         return cardGame;
     }
-
     @Transactional
     public CardGame joinGame(String gameId, String userId) {
         logger.info("User {} joining game {}", userId, gameId);
@@ -173,11 +173,10 @@ public class CardGameController {
             cardGame.endGame();
 
             if (cardGame.isTrackStatistics()) {
-                Map<String, Integer> scores = cardGame.calculateScores();
-                statisticsController.updateStatistics(cardGame, scores);
+                statisticsController.recordAbandonedGame(cardGame, userId);
             }
 
-            cardGameRepository.save(cardGame);
+            cardGame = cardGameRepository.save(cardGame);
             lobbyController.endGame(cardGame.getId());
 
             GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
