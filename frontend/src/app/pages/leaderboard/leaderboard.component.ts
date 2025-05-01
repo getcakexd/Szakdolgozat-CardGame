@@ -13,9 +13,11 @@ import { FormsModule } from "@angular/forms"
 import {TranslateModule, TranslateService} from "@ngx-translate/core"
 import { StatsService } from "../../services/stats/stats.service"
 import { AuthService } from "../../services/auth/auth.service"
-import { LeaderboardEntry, Game } from "../../models/user-stats.model"
+import { LeaderboardEntry } from "../../models/user-stats.model"
 import { Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import { Game } from '../../models/game.model';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-leaderboard",
@@ -88,6 +90,7 @@ export class LeaderboardComponent implements OnInit {
     this.isLoading = true
     this.statsService.getLeaderboard().subscribe({
       next: (leaderboard) => {
+        if (IS_DEV) console.log("Overall leaderboard:", leaderboard)
         this.overallLeaderboard = leaderboard
         this.isLoading = false
       },
@@ -108,6 +111,7 @@ export class LeaderboardComponent implements OnInit {
     this.isLoading = true
     this.statsService.getLeaderboard(this.selectedGameId).subscribe({
       next: (leaderboard) => {
+        if (IS_DEV) console.log("Game leaderboard:", leaderboard)
         this.gameLeaderboard = leaderboard
         this.isLoading = false
       },
@@ -126,9 +130,8 @@ export class LeaderboardComponent implements OnInit {
     this.loadGameLeaderboard()
   }
 
-  viewProfile(userId: number): void {
-    if (userId === this.userId) {
-      this.router.navigate(["/profile"])
-    }
+  calculateWinRate(won: number, played: number): number {
+    if (played === 0) return 0
+    return (won / played) * 100
   }
 }

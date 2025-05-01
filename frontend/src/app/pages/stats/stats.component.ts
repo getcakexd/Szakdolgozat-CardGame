@@ -15,6 +15,9 @@ import { AuthService } from "../../services/auth/auth.service"
 import { UserStats, UserGameStats, GameStatistics } from "../../models/user-stats.model"
 import { Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import {IS_DEV} from '../../../environments/api-config';
+import {Game} from '../../models/game.model';
+import {GameService} from '../../services/game/game.service';
 
 @Component({
   selector: "app-stats",
@@ -44,12 +47,14 @@ export class StatsComponent implements OnInit {
   userStats: UserStats | null = null
   userGameStats: UserGameStats[] = []
   recentGames: GameStatistics[] = []
+  games: Map<number, Game> = new Map()
 
   gameStatsColumns: string[] = ["gameName", "gamesPlayed", "gamesWon", "winRate", "points", "fatsCollected", "streak"]
   recentGamesColumns: string[] = ["gameType", "result", "score", "fatsCollected", "playedAt"]
 
   constructor(
     private statsService: StatsService,
+    private gameService: GameService,
     private authService: AuthService,
     private translate: TranslateService,
     private router: Router,
@@ -62,7 +67,22 @@ export class StatsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadGames()
     this.loadStats()
+  }
+
+  loadGames(): void {
+    this.gameService.getActiveGames().subscribe({
+      next: (games: Game[]) => {
+        games.forEach((game) => {
+          this.games.set(game.id, game)
+        })
+        if (IS_DEV) console.log("Loaded games:", this.games)
+      },
+      error: (error: any) => {
+        console.error("Error loading games:", error)
+      },
+    })
   }
 
   loadStats(): void {
@@ -70,6 +90,7 @@ export class StatsComponent implements OnInit {
 
     this.statsService.getUserStats(this.userId).subscribe({
       next: (stats) => {
+        if (IS_DEV) console.log("User stats:", stats)
         this.userStats = stats
         this.isLoading = false
       },
@@ -85,6 +106,7 @@ export class StatsComponent implements OnInit {
 
     this.statsService.getUserGameStats(this.userId).subscribe({
       next: (stats) => {
+        if (IS_DEV) console.log("User game stats:", stats)
         this.userGameStats = stats
       },
       error: (error) => {
@@ -95,11 +117,17 @@ export class StatsComponent implements OnInit {
     this.statsService.getRecentGames(this.userId, 10).subscribe({
       next: (games) => {
         this.recentGames = games
+        if (IS_DEV) console.log("Recent games:", games)
       },
       error: (error) => {
         console.error("Error loading recent games:", error)
       },
     })
+  }
+
+  getGameName(gameId: number): string {
+    const game = this.games.get(gameId)
+    return game ? game.name : this.translate.instant("STATS.UNKNOWN_GAME")
   }
 
   calculateWinRate(won: number, played: number): number {

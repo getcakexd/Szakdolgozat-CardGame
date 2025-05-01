@@ -1,3 +1,5 @@
+import {Game} from './game.model';
+
 export interface UserStats {
   id?: number
   userId: number
@@ -5,7 +7,7 @@ export interface UserStats {
   gamesWon: number
   gamesLost: number
   gamesAbandoned: number
-  points: number
+  totalPoints: number
   currentWinStreak: number
   biggestWinStreak: number
   totalFatsCollected: number
@@ -13,19 +15,19 @@ export interface UserStats {
 
 export interface UserGameStats {
   id?: number
-  userId: number
-  gameId: number
-  gameName: string
+  userId?: number
+  gameDefinition: Game
   gamesPlayed: number
   gamesWon: number
   gamesLost: number
   gamesAbandoned: number
-  points: number
-  fatsCollected: number
+  totalPoints: number
+  totalFatsCollected: number
   currentWinStreak: number
   biggestWinStreak: number
   highestScore: number
-  mostFatsInGame: number
+  highestFatsInGame: number
+  lastPlayed?: string
 }
 
 export interface GameStatistics {
@@ -48,16 +50,5 @@ export interface LeaderboardEntry {
   gamesWon: number
   points: number
   winRate: number
-}
-
-export interface Game {
-  id: number
-  name: string
-  active: boolean
-  minPlayers: number
-  maxPlayers: number
-  factorySign: string
-  factoryId: number
-  descriptions?: any[]
-  rules?: any[]
+  gameDefinition?: Game
 }

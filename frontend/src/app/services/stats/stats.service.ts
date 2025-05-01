@@ -30,14 +30,7 @@ export class StatsService {
     }
     return this.http.get<UserGameStats[]>(url).pipe(
       map((stats) => {
-        return stats.map((stat) => {
-          if (!stat.gameName && stat.gameId) {
-            this.getGameName(stat.gameId).subscribe((name) => {
-              stat.gameName = name
-            })
-          }
-          return stat
-        })
+        return stats
       }),
     )
   }

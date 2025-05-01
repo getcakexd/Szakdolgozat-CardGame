@@ -27,7 +27,7 @@
                 <div class="stat-label">{{ 'STATS.WIN_RATE' | translate }}</div>
               </div>
               <div class="stat-item">
-                <div class="stat-value">{{ userStats.points }}</div>
+                <div class="stat-value">{{ userStats.totalPoints }}</div>
                 <div class="stat-label">{{ 'STATS.TOTAL_POINTS' | translate }}</div>
               </div>
             </div>
@@ -91,7 +91,7 @@
             <table mat-table [dataSource]="userGameStats" class="stats-table" *ngIf="userGameStats.length > 0">
               <ng-container matColumnDef="gameName">
                 <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.gameName }}</td>
+                <td mat-cell *matCellDef="let stat">{{ stat.gameDefinition?.name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="gamesPlayed">
@@ -113,12 +113,12 @@
 
               <ng-container matColumnDef="points">
                 <th mat-header-cell *matHeaderCellDef>{{ 'STATS.POINTS' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.points }}</td>
+                <td mat-cell *matCellDef="let stat">{{ stat.totalPoints }}</td>
               </ng-container>
 
               <ng-container matColumnDef="fatsCollected">
                 <th mat-header-cell *matHeaderCellDef>{{ 'STATS.FATS' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.fatsCollected }}</td>
+                <td mat-cell *matCellDef="let stat">{{ stat.totalFatsCollected }}</td>
               </ng-container>
 
               <ng-container matColumnDef="streak">
@@ -142,7 +142,7 @@
             <table mat-table [dataSource]="recentGames" class="stats-table" *ngIf="recentGames.length > 0">
               <ng-container matColumnDef="gameType">
                 <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{ game.gameType }}</td>
+                <td mat-cell *matCellDef="let game">{{ getGameName(game.gameDefinitionId) }}</td>
               </ng-container>
 
               <ng-container matColumnDef="result">
