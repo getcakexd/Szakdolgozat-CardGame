@@ -103,6 +103,13 @@
       </button>
       <button
         mat-raised-button
+        color="accent"
+        *ngIf="lobby.status === lobbyStatus.IN_GAME && lobby.cardGameId"
+        (click)="goToGame()">
+        <mat-icon>sports_esports</mat-icon> {{ 'LOBBY.GO_TO_GAME' | translate }}
+      </button>
+      <button
+        mat-raised-button
         color="primary"
         *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
         [disabled]="!canStartGame() || isLoading"

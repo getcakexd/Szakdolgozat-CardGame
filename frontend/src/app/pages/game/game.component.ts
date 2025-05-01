@@ -138,10 +138,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.gameId) {
-      this.cardGameService.disconnectFromGame(this.gameId)
-    }
-
     if (this.gameSubscription) {
       this.gameSubscription.unsubscribe()
     }

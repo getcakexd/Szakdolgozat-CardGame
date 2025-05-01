@@ -140,6 +140,16 @@ export class LobbyHomeComponent implements OnInit {
     this.router.navigate(["/lobby", lobby.id])
   }
 
+  navigateToGame(lobby: Lobby): void {
+    if (lobby.cardGameId) {
+      this.router.navigate(["/game", lobby.cardGameId])
+    } else {
+      this.snackBar.open(this.translate.instant("GAME.INVALID_ID"), this.translate.instant("COMMON.CLOSE"), {
+        duration: 3000,
+      })
+    }
+  }
+
   joinLobbyByCode(code: string): void {
     if (!this.currentUser) return
 
@@ -171,7 +181,7 @@ export class LobbyHomeComponent implements OnInit {
           ? this.translate.instant("LOBBY.CONFIRM_LEAVE_LEADER")
           : this.translate.instant("LOBBY.CONFIRM_LEAVE"),
         confirmText: this.translate.instant("LOBBY.LEAVE"),
-        cancelText: this.translate.instant("COMMON.CANCEL"),
+        cancelText: this.translate.instant("COMMON.CLOSE"),
       },
     })
 
@@ -212,7 +222,7 @@ export class LobbyHomeComponent implements OnInit {
         title: this.translate.instant("GAME.ABANDON_GAME"),
         message: this.translate.instant("GAME.CONFIRM_ABANDON"),
         confirmText: this.translate.instant("GAME.ABANDON"),
-        cancelText: this.translate.instant("COMMON.CANCEL"),
+        cancelText: this.translate.instant("COMMON.CLOSE"),
         confirmColor: "warn",
       },
     })

@@ -32,6 +32,9 @@
                   <mat-card-content>
                     <p>{{ 'LOBBY.LEADER' | translate }}: {{ userLobby.leader.username }}</p>
                     <p>{{ 'LOBBY.POINTS' | translate }}: {{ userLobby.playWithPoints ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+                    <p *ngIf="userLobby.status === 'IN_GAME'" class="status-tag in-game">
+                      {{ 'LOBBY.STATUS.IN_GAME' | translate }}
+                    </p>
                   </mat-card-content>
                   <mat-card-actions align="end">
                     <button
@@ -44,6 +47,13 @@
                       mat-raised-button
                       color="primary">
                       {{ 'LOBBY.ENTER' | translate }}
+                    </button>
+                    <button
+                      *ngIf="userLobby.status === 'IN_GAME' && userLobby.cardGameId"
+                      mat-raised-button
+                      color="accent"
+                      (click)="$event.stopPropagation(); navigateToGame(userLobby)">
+                      {{ 'LOBBY.GO_TO_GAME' | translate }}
                     </button>
                   </mat-card-actions>
                 </mat-card>

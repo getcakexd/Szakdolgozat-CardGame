@@ -551,6 +551,7 @@
     "SAVE_SETTINGS": "Save Settings",
     "START_GAME": "Start Game",
     "LOADING": "Loading lobby...",
+    "GO_TO_GAME": "Go to Game",
     "LOBBY_CODE": "Lobby",
     "STATUS": {
       "WAITING": "Waiting",
