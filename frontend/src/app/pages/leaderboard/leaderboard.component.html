@@ -1,0 +1,162 @@
+<div class="leaderboard-page-container">
+  <mat-card class="leaderboard-card">
+    <mat-card-header>
+      <div class="leaderboard-header">
+        <mat-card-title>{{ 'LEADERBOARD.TITLE' | translate }}</mat-card-title>
+        <mat-icon class="leaderboard-icon">emoji_events</mat-icon>
+      </div>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <mat-tab-group>
+        <mat-tab [label]="'LEADERBOARD.OVERALL' | translate">
+          <div class="tab-content">
+            <table mat-table [dataSource]="overallLeaderboard" class="leaderboard-table" *ngIf="overallLeaderboard.length > 0">
+              <ng-container matColumnDef="rank">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.RANK' | translate }}</th>
+                <td mat-cell *matCellDef="let entry; let i = index">
+                  <div class="rank-badge" [ngClass]="{
+                    'gold': i === 0,
+                    'silver': i === 1,
+                    'bronze': i === 2,
+                    'current-user': entry.userId === userId
+                  }">
+                    {{ i + 1 }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.PLAYER' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.username }}
+                  <mat-icon *ngIf="entry.userId === userId" class="user-indicator">person</mat-icon>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="gamesPlayed">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.PLAYED' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.gamesPlayed }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="gamesWon">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.WON' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.gamesWon }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="winRate">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.WIN_RATE' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.winRate | number:'1.0-1' }}%
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="points">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.POINTS' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.points }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="leaderboardColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: leaderboardColumns;"
+                  (click)="viewProfile(row.userId)" class="clickable-row"></tr>
+            </table>
+
+            <div class="no-data-message" *ngIf="overallLeaderboard.length === 0 && !isLoading">
+              <mat-icon>info</mat-icon>
+              <p>{{ 'LEADERBOARD.NO_DATA' | translate }}</p>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'LEADERBOARD.BY_GAME' | translate">
+          <div class="tab-content">
+            <div class="game-selector">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'LEADERBOARD.SELECT_GAME' | translate }}</mat-label>
+                <mat-select [(ngModel)]="selectedGameId" (selectionChange)="onGameChange()">
+                  <mat-option *ngFor="let game of games" [value]="game.id">
+                    {{ game.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <table mat-table [dataSource]="gameLeaderboard" class="leaderboard-table" *ngIf="gameLeaderboard.length > 0 && selectedGameId">
+              <ng-container matColumnDef="rank">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.RANK' | translate }}</th>
+                <td mat-cell *matCellDef="let entry; let i = index">
+                  <div class="rank-badge" [ngClass]="{
+                    'gold': i === 0,
+                    'silver': i === 1,
+                    'bronze': i === 2,
+                    'current-user': entry.userId === userId
+                  }">
+                    {{ i + 1 }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.PLAYER' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.username }}
+                  <mat-icon *ngIf="entry.userId === userId" class="user-indicator">person</mat-icon>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="gamesPlayed">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.PLAYED' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.gamesPlayed }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="gamesWon">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.WON' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.gamesWon }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="winRate">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.WIN_RATE' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.winRate | number:'1.0-1' }}%
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="points">
+                <th mat-header-cell *matHeaderCellDef>{{ 'LEADERBOARD.POINTS' | translate }}</th>
+                <td mat-cell *matCellDef="let entry" [ngClass]="{'current-user-row': entry.userId === userId}">
+                  {{ entry.points }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="leaderboardColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: leaderboardColumns;"
+                  (click)="viewProfile(row.userId)" class="clickable-row"></tr>
+            </table>
+
+            <div class="no-data-message" *ngIf="(!gameLeaderboard.length && selectedGameId) && !isLoading">
+              <mat-icon>info</mat-icon>
+              <p>{{ 'LEADERBOARD.NO_GAME_DATA' | translate }}</p>
+            </div>
+
+            <div class="no-data-message" *ngIf="!selectedGameId && !isLoading">
+              <mat-icon>info</mat-icon>
+              <p>{{ 'LEADERBOARD.SELECT_GAME_PROMPT' | translate }}</p>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

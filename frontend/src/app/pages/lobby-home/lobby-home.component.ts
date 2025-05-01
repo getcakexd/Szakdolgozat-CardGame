@@ -17,7 +17,7 @@ import {
   MatCardSubtitle,
   MatCardTitle,
 } from "@angular/material/card"
-import { NgForOf, NgIf } from "@angular/common"
+import { NgIf } from "@angular/common"
 import { LobbyJoinComponent } from "../../components/lobby-join/lobby-join.component"
 import { LobbyCreateComponent } from "../../components/lobby-create/lobby-create.component"
 import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
@@ -37,7 +37,6 @@ import {MatDialog} from '@angular/material/dialog';
     MatCardSubtitle,
     MatCardTitle,
     NgIf,
-    NgForOf,
     MatCardHeader,
     MatCard,
     LobbyJoinComponent,
