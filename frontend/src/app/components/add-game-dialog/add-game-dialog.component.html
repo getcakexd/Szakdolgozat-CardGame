@@ -28,10 +28,10 @@
 
     <div class="form-row">
       <mat-form-field appearance="fill" class="half-width">
-        <mat-label>{{ 'ADD_GAME.FACTORY_SING' | translate }}</mat-label>
+        <mat-label>{{ 'ADD_GAME.FACTORY_SIGN' | translate }}</mat-label>
         <input matInput type formControlName="factorySign" required>
         <mat-error *ngIf="gameForm.get('factorySign')?.hasError('required')">
-          {{ 'ADD_GAME.FACTORY_SING_REQUIRED' | translate }}
+          {{ 'ADD_GAME.FACTORY_SIGN_REQUIRED' | translate }}
         </mat-error>
       </mat-form-field>
 
