@@ -323,6 +323,7 @@
     "ABANDON_GAME": "Abandon Game",
     "ABANDONING": "Abandoning game...",
     "GAME_ABANDONED": "Game abandoned",
+    "GO_TO_LOBBY": "Go to Lobby",
     "CURRENT_TRICK": "Current Trick",
     "NO_CARDS_IN_TRICK": "No cards in trick",
     "LAST_PLAYED_CARD": "Last Played Card",

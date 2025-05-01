@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core"
+import {Component, OnInit, OnDestroy, ChangeDetectorRef, Input} from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Subscription } from "rxjs"
@@ -28,6 +28,8 @@ import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
 import {IS_DEV} from '../../../environments/api-config';
+import {LobbyService} from '../../services/lobby/lobby.service';
+import {Lobby} from '../../models/lobby.model';
 
 @Component({
   selector: "app-game",
@@ -75,6 +77,7 @@ export class GameComponent implements OnInit, OnDestroy {
     private cardGameService: CardGameService,
     private webSocketService: WebSocketService,
     private authService: AuthService,
+    private lobbyService: LobbyService,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -343,60 +346,16 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCardImagePath(card: Card): string {
-    const suit = card.suit.toLowerCase()
-    const rank = card.rank.toLowerCase()
-    return `/assets/cards/${suit}_${rank}.png`
+  goToLobby() {
+    let userId = this.authService.currentUser?.id  || 0;
+    this.lobbyService.getLobbyByPlayer(userId).subscribe((resp) => {
+      if (resp === null) {
+        this.router.navigate(["/lobby"])
+      } else {
+        this.router.navigate(["/lobby/" + resp.id])
+      }
+    })
   }
 
-  getCardSuitIcon(suit: CardSuit): string {
-    switch (suit) {
-      case CardSuit.HEARTS:
-        return "favorite"
-      case CardSuit.BELLS:
-        return "notifications"
-      case CardSuit.LEAVES:
-        return "eco"
-      case CardSuit.ACORNS:
-        return "park"
-      default:
-        return "help"
-    }
-  }
-
-  getCardSuitColor(suit: CardSuit): string {
-    switch (suit) {
-      case CardSuit.HEARTS:
-      case CardSuit.BELLS:
-        return "red"
-      case CardSuit.LEAVES:
-      case CardSuit.ACORNS:
-        return "green"
-      default:
-        return "black"
-    }
-  }
-
-  getCardRankDisplay(rank: CardRank): string {
-    switch (rank) {
-      case CardRank.SEVEN:
-        return "VII"
-      case CardRank.EIGHT:
-        return "VIII"
-      case CardRank.NINE:
-        return "IX"
-      case CardRank.TEN:
-        return "X"
-      case CardRank.UNDER:
-        return "U"
-      case CardRank.OVER:
-        return "O"
-      case CardRank.KING:
-        return "K"
-      case CardRank.ACE:
-        return "A"
-      default:
-        return "?"
-    }
-  }
+  protected readonly GameStatus = GameStatus;
 }

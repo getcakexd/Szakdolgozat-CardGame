@@ -323,6 +323,7 @@
     "ABANDON_GAME": "Játék feladása",
     "ABANDONING": "Játék feladása...",
     "GAME_ABANDONED": "Játék feladva",
+    "GO_TO_LOBBY": "Vissza a lobbihoz",
     "CURRENT_TRICK": "Aktuális ütés",
     "NO_CARDS_IN_TRICK": "Nincs kártya az ütésben",
     "LAST_PLAYED_CARD": "Utoljára kijátszott kártya",

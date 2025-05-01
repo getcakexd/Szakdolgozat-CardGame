@@ -51,8 +51,7 @@ export class LobbyHomeComponent implements OnInit {
   @ViewChild("lobbyTabs") lobbyTabs!: MatTabGroup
 
   currentUser: User | null = null
-  activeLobbies: Lobby[] = []
-  userLobby: Lobby | null = null
+  userLobby: Lobby = {} as Lobby
   isLoading = false
   isLoadingUserLobby = false
   selectedTabIndex = 0
@@ -83,19 +82,18 @@ export class LobbyHomeComponent implements OnInit {
     }
 
     this.loadUserLobby()
-    this.loadActiveLobbies()
   }
 
   loadUserLobby(): void {
     if (!this.currentUser) return
 
     this.isLoadingUserLobby = true
-    this.lobbyService.getLobbiesByPlayer(this.currentUser.id).subscribe({
-      next: (lobbies) => {
+    this.lobbyService.getLobbyByPlayer(this.currentUser.id).subscribe({
+      next: (lobby) => {
         this.isLoadingUserLobby = false
 
-        if (lobbies.length > 0) {
-          this.userLobby = lobbies[0]
+        if (lobby !== null) {
+          this.userLobby = lobby
 
           this.snackBar
             .open(this.translate.instant("LOBBY.ALREADY_IN_LOBBY"), this.translate.instant("LOBBY.GO_TO_LOBBY"), {
@@ -105,8 +103,6 @@ export class LobbyHomeComponent implements OnInit {
             .subscribe(() => {
               this.navigateToLobby(this.userLobby!)
             })
-        } else {
-          this.userLobby = null
         }
       },
       error: (error) => {
@@ -118,12 +114,6 @@ export class LobbyHomeComponent implements OnInit {
         )
       },
     })
-  }
-
-  loadActiveLobbies(): void {
-    this.isLoading = true
-    this.activeLobbies = []
-    this.isLoading = false
   }
 
   onTabChange(event: any): void {
@@ -148,24 +138,6 @@ export class LobbyHomeComponent implements OnInit {
         duration: 3000,
       })
     }
-  }
-
-  joinLobbyByCode(code: string): void {
-    if (!this.currentUser) return
-
-    this.isLoading = true
-    this.lobbyService.joinLobby(code, this.currentUser.id).subscribe({
-      next: (lobby) => {
-        this.isLoading = false
-        this.navigateToLobby(lobby)
-      },
-      error: (error) => {
-        this.isLoading = false
-        this.snackBar.open(this.translate.instant("LOBBY.FAILED_JOIN"), this.translate.instant("COMMON.CLOSE"), {
-          duration: 3000,
-        })
-      },
-    })
   }
 
   confirmLeaveLobby(lobby: Lobby): void {
