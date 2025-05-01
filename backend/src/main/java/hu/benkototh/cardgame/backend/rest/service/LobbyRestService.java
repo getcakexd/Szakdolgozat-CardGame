@@ -132,6 +132,11 @@ public class LobbyRestService {
         return ResponseEntity.ok(lobbyController.getLobbiesByPlayer(userId));
     }
 
+    @GetMapping("/player-lobby")
+    public ResponseEntity<Lobby> getLobbyByPlayer(@RequestParam long userId){
+        return ResponseEntity.ok(lobbyController.getLobbyByPlayer(userId));
+    }
+
     @GetMapping("/games")
     public ResponseEntity<List<Game>> getAllGames() {
         return ResponseEntity.ok(lobbyController.getAllGames());

@@ -79,7 +79,10 @@
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button color="warn" (click)="abandonGame()">
+      <button mat-button color="warn" (click)="goToLobby()">
+        <mat-icon>exit_to_app</mat-icon> {{ 'GAME.GO_TO_LOBBY' | translate }}
+      </button>
+      <button *ngIf="game.status === GameStatus.ACTIVE" mat-button color="warn" (click)="abandonGame()">
         <mat-icon>cancel</mat-icon> {{ 'GAME.ABANDON_GAME' | translate }}
       </button>
     </mat-card-actions>

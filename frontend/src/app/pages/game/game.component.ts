@@ -1,20 +1,15 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core"
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Subscription } from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
 import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
-import { TranslateService } from "@ngx-translate/core"
 import {
   CardGame,
   GameStatus,
   Card,
   Player,
-  GameEvent,
-  PARTNER_MESSAGE_TYPES,
-  CardSuit,
-  CardRank,
 } from "../../models/card-game.model"
 import { CommonModule } from "@angular/common"
 import { MatButtonModule } from "@angular/material/button"
@@ -23,12 +18,12 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatTooltipModule } from "@angular/material/tooltip"
-import { TranslateModule } from "@ngx-translate/core"
+import {TranslateModule, TranslateService} from "@ngx-translate/core"
 import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
-import { GameControlsComponent } from "../../components/game-controls/game-controls.component"
 import {IS_DEV} from '../../../environments/api-config';
+import {LobbyService} from '../../services/lobby/lobby.service';
 
 @Component({
   selector: "app-game",
@@ -46,7 +41,6 @@ import {IS_DEV} from '../../../environments/api-config';
     TranslateModule,
     CardComponent,
     PlayerInfoComponent,
-    GameControlsComponent,
     RouterModule,
   ],
 })
@@ -77,6 +71,7 @@ export class GameComponent implements OnInit, OnDestroy {
     private cardGameService: CardGameService,
     private webSocketService: WebSocketService,
     private authService: AuthService,
+    private lobbyService: LobbyService,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -140,10 +135,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.gameId) {
-      this.cardGameService.disconnectFromGame(this.gameId)
-    }
-
     if (this.gameSubscription) {
       this.gameSubscription.unsubscribe()
     }
@@ -349,60 +340,16 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCardImagePath(card: Card): string {
-    const suit = card.suit.toLowerCase()
-    const rank = card.rank.toLowerCase()
-    return `/assets/cards/${suit}_${rank}.png`
+  goToLobby() {
+    let userId = this.authService.currentUser?.id  || 0;
+    this.lobbyService.getLobbyByPlayer(userId).subscribe((resp) => {
+      if (resp === null) {
+        this.router.navigate(["/lobby"])
+      } else {
+        this.router.navigate(["/lobby/" + resp.id])
+      }
+    })
   }
 
-  getCardSuitIcon(suit: CardSuit): string {
-    switch (suit) {
-      case CardSuit.HEARTS:
-        return "favorite"
-      case CardSuit.BELLS:
-        return "notifications"
-      case CardSuit.LEAVES:
-        return "eco"
-      case CardSuit.ACORNS:
-        return "park"
-      default:
-        return "help"
-    }
-  }
-
-  getCardSuitColor(suit: CardSuit): string {
-    switch (suit) {
-      case CardSuit.HEARTS:
-      case CardSuit.BELLS:
-        return "red"
-      case CardSuit.LEAVES:
-      case CardSuit.ACORNS:
-        return "green"
-      default:
-        return "black"
-    }
-  }
-
-  getCardRankDisplay(rank: CardRank): string {
-    switch (rank) {
-      case CardRank.SEVEN:
-        return "VII"
-      case CardRank.EIGHT:
-        return "VIII"
-      case CardRank.NINE:
-        return "IX"
-      case CardRank.TEN:
-        return "X"
-      case CardRank.UNDER:
-        return "U"
-      case CardRank.OVER:
-        return "O"
-      case CardRank.KING:
-        return "K"
-      case CardRank.ACE:
-        return "A"
-      default:
-        return "?"
-    }
-  }
+  protected readonly GameStatus = GameStatus;
 }

@@ -30,7 +30,7 @@
         </mat-menu>
 
         <button class="navbar-button" mat-button [matMenuTriggerFor]="playMenu">
-          <mat-icon>casino</mat-icon>
+          <mat-icon>games</mat-icon>
           <span>{{ 'NAVBAR.PLAY' | translate }}</span>
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
@@ -42,6 +42,14 @@
           <button mat-menu-item routerLink="/lobby">
             <mat-icon>casino</mat-icon>
             <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+          </button>
+          <button mat-menu-item routerLink="/stats">
+            <mat-icon>ssid_chart</mat-icon>
+            <span>{{ 'NAVBAR.STATS' | translate }}</span>
+          </button>
+          <button mat-menu-item routerLink="/leaderboard">
+            <mat-icon>leaderboard</mat-icon>
+            <span>{{ 'NAVBAR.LEADERBOARD' | translate }}</span>
           </button>
         </mat-menu>
 

@@ -121,20 +121,12 @@ export class LobbyService {
     return this.http.get<Lobby>(`${this.apiUrl}/get-by-code`, { params });
   }
 
-  getLobbiesByPlayer(userId: number): Observable<Lobby[]> {
+  getLobbyByPlayer(userId: number): Observable<Lobby> {
     const params = new HttpParams().set('userId', userId.toString());
-    return this.http.get<Lobby[]>(`${this.apiUrl}/get-by-player`, { params });
+    return this.http.get<Lobby>(`${this.apiUrl}/player-lobby`, { params });
   }
 
   getAllGames(): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.apiUrl}/games`);
-  }
-
-  clearCurrentLobby(): void {
-    this.currentLobbySubject.next(null);
-  }
-
-  getCurrentLobby(): Lobby | null {
-    return this.currentLobbySubject.value;
   }
 }

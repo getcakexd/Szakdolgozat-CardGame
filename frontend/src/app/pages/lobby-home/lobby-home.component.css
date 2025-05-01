@@ -67,7 +67,6 @@
 }
 
 .user-lobby-card {
-  cursor: pointer;
   border: 2px solid var(--primary-color);
 }
 
@@ -80,8 +79,47 @@
   gap: 16px;
 }
 
+.status-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.status-tag.waiting {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.status-tag.in-game {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.status-tag.finished {
+  background-color: #9e9e9e;
+  color: #fff;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .lobbies-grid {
     grid-template-columns: 1fr;
+  }
+
+  mat-card-actions {
+    flex-direction: column;
+  }
+
+  mat-card-actions button {
+    width: 100%;
   }
 }

@@ -94,11 +94,18 @@ export class CardGameService {
     }
   }
 
-  abandonGame(gameId: string): void {
+  abandonGame(gameId: string): Observable<any> {
     const userId = this.authService.currentUser?.id.toString()
+
     if (userId && this.webSocketService.isConnected()) {
       this.webSocketService.send("/app/game.abandon", { gameId, userId })
     }
+
+    return this.http.post<any>(`${this.apiUrl}/${gameId}/abandon`, {}).pipe(
+      tap(() => {
+        this.clearCurrentGame()
+      }),
+    )
   }
 
   forceRefreshGame(gameId: string): void {

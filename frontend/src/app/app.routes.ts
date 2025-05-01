@@ -23,6 +23,8 @@ import {ForgotPasswordComponent} from './components/forgot-password/forgot-passw
 import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
 import {GamesComponent} from './pages/games/games.component';
 import {GameComponent} from './pages/game/game.component';
+import {StatsComponent} from './pages/stats/stats.component';
+import {LeaderboardComponent} from './pages/leaderboard/leaderboard.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -41,6 +43,8 @@ export const routes: Routes = [
   { path: 'ticket/:id', component: TicketDetailComponent},
   { path: 'lobby/:id', component: LobbyDetailComponent, canActivate: [AuthGuard] },
   { path: "game/:id", component: GameComponent, canActivate: [AuthGuard] },
+  { path: "stats", component: StatsComponent, canActivate: [AuthGuard] },
+  { path: "leaderboard", component: LeaderboardComponent },
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
   { path: "audit-logs", component: AuditLogsComponent, canActivate: [AuthGuard, RootGuard] },

@@ -20,6 +20,12 @@ public class ZsirGame extends CardGame {
     private static final String LAST_PLAYED_CARD = "lastPlayedCard";
     private static final String LAST_PLAYER = "lastPlayer";
     private static final int MAX_CARDS_IN_TRICK = 8;
+    private static int factoryId = 0;
+
+    public ZsirGame(int factoryId) {
+        super();
+        ZsirGame.factoryId = factoryId;
+    }
 
     public ZsirGame() {
         super();
@@ -27,10 +33,8 @@ public class ZsirGame extends CardGame {
 
     @Override
     public void initializeGame() {
-        if (getPlayers().size() != 2) {
-            throw new IllegalStateException("This version of ZsirGame requires exactly 2 players");
-        }
-
+        logger.debug("Initializing Zsir game with factoryId: {}", factoryId);
+        //TODO: Separate game logic into different modes via factory id
         Deck deck = new Deck();
         deck.initializeHungarianDeck();
         deck.shuffle();

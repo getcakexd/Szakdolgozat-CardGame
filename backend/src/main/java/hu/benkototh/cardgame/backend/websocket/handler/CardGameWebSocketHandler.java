@@ -5,6 +5,7 @@ import hu.benkototh.cardgame.backend.game.model.Card;
 import hu.benkototh.cardgame.backend.game.model.GameAction;
 import hu.benkototh.cardgame.backend.game.model.Rank;
 import hu.benkototh.cardgame.backend.game.model.Suit;
+import hu.benkototh.cardgame.backend.game.service.GameTimeoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,6 +19,9 @@ public class CardGameWebSocketHandler {
 
     @Autowired
     private CardGameController cardGameController;
+
+    @Autowired
+    private GameTimeoutService gameTimeoutService;
 
     @MessageMapping("/game.action")
     public void executeGameActionWebSocket(@Payload Map<String, Object> payload) {
@@ -78,6 +82,7 @@ public class CardGameWebSocketHandler {
         headerAccessor.getSessionAttributes().put("userId", userId);
 
         cardGameController.joinGame(gameId, userId);
+        gameTimeoutService.recordActivity(gameId, userId);
     }
 
     @MessageMapping("/game.leave")

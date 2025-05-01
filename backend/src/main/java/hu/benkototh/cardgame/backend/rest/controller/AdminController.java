@@ -185,6 +185,8 @@ public class AdminController {
         game.setActive(gameDTO.isActive());
         game.setMinPlayers(gameDTO.getMinPlayers());
         game.setMaxPlayers(gameDTO.getMaxPlayers());
+        game.setFactorySign(gameDTO.getFactorySign());
+        game.setFactoryId(gameDTO.getFactoryId());
 
         if (gameDTO.getDescriptions() != null) {
             for (GameCreationDTO.LocalizedContent descContent : gameDTO.getDescriptions()) {

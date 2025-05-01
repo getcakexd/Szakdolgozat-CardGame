@@ -17,9 +17,12 @@ import {
   MatCardSubtitle,
   MatCardTitle,
 } from "@angular/material/card"
-import { NgForOf, NgIf } from "@angular/common"
+import { NgIf } from "@angular/common"
 import { LobbyJoinComponent } from "../../components/lobby-join/lobby-join.component"
 import { LobbyCreateComponent } from "../../components/lobby-create/lobby-create.component"
+import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
+import {CardGameService} from '../../services/card-game/card-game.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: "app-lobby-home",
@@ -34,7 +37,6 @@ import { LobbyCreateComponent } from "../../components/lobby-create/lobby-create
     MatCardSubtitle,
     MatCardTitle,
     NgIf,
-    NgForOf,
     MatCardHeader,
     MatCard,
     LobbyJoinComponent,
@@ -48,7 +50,6 @@ export class LobbyHomeComponent implements OnInit {
   @ViewChild("lobbyTabs") lobbyTabs!: MatTabGroup
 
   currentUser: User | null = null
-  activeLobbies: Lobby[] = []
   userLobby: Lobby | null = null
   isLoading = false
   isLoadingUserLobby = false
@@ -57,9 +58,11 @@ export class LobbyHomeComponent implements OnInit {
   constructor(
     public lobbyService: LobbyService,
     private authService: AuthService,
+    private cardGameService: CardGameService,
     private router: Router,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -78,19 +81,18 @@ export class LobbyHomeComponent implements OnInit {
     }
 
     this.loadUserLobby()
-    this.loadActiveLobbies()
   }
 
   loadUserLobby(): void {
     if (!this.currentUser) return
 
     this.isLoadingUserLobby = true
-    this.lobbyService.getLobbiesByPlayer(this.currentUser.id).subscribe({
-      next: (lobbies) => {
+    this.lobbyService.getLobbyByPlayer(this.currentUser.id).subscribe({
+      next: (lobby) => {
         this.isLoadingUserLobby = false
 
-        if (lobbies.length > 0) {
-          this.userLobby = lobbies[0]
+        if (lobby !== null) {
+          this.userLobby = lobby
 
           this.snackBar
             .open(this.translate.instant("LOBBY.ALREADY_IN_LOBBY"), this.translate.instant("LOBBY.GO_TO_LOBBY"), {
@@ -100,8 +102,6 @@ export class LobbyHomeComponent implements OnInit {
             .subscribe(() => {
               this.navigateToLobby(this.userLobby!)
             })
-        } else {
-          this.userLobby = null
         }
       },
       error: (error) => {
@@ -113,12 +113,6 @@ export class LobbyHomeComponent implements OnInit {
         )
       },
     })
-  }
-
-  loadActiveLobbies(): void {
-    this.isLoading = true
-    this.activeLobbies = []
-    this.isLoading = false
   }
 
   onTabChange(event: any): void {
@@ -135,18 +129,97 @@ export class LobbyHomeComponent implements OnInit {
     this.router.navigate(["/lobby", lobby.id])
   }
 
-  joinLobbyByCode(code: string): void {
+  navigateToGame(lobby: Lobby): void {
+    if (lobby.cardGameId) {
+      this.router.navigate(["/game", lobby.cardGameId])
+    } else {
+      this.snackBar.open(this.translate.instant("GAME.INVALID_ID"), this.translate.instant("COMMON.CLOSE"), {
+        duration: 3000,
+      })
+    }
+  }
+
+  confirmLeaveLobby(lobby: Lobby): void {
+    if (!this.currentUser) return
+
+    const isLeader = lobby.leader.id === this.currentUser.id
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "350px",
+      data: {
+        title: this.translate.instant("LOBBY.LEAVE_LOBBY"),
+        message: isLeader
+          ? this.translate.instant("LOBBY.CONFIRM_LEAVE_LEADER")
+          : this.translate.instant("LOBBY.CONFIRM_LEAVE"),
+        confirmText: this.translate.instant("LOBBY.LEAVE"),
+        cancelText: this.translate.instant("COMMON.CLOSE"),
+      },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.leaveLobby(lobby)
+      }
+    })
+  }
+
+  leaveLobby(lobby: Lobby): void {
     if (!this.currentUser) return
 
     this.isLoading = true
-    this.lobbyService.joinLobby(code, this.currentUser.id).subscribe({
-      next: (lobby) => {
+    this.lobbyService.leaveLobby(lobby.id, this.currentUser.id).subscribe({
+      next: (response) => {
         this.isLoading = false
-        this.navigateToLobby(lobby)
+        this.snackBar.open(this.translate.instant("LOBBY.LEFT_LOBBY"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+        this.loadUserLobby()
       },
       error: (error) => {
         this.isLoading = false
-        this.snackBar.open(this.translate.instant("LOBBY.FAILED_JOIN"), this.translate.instant("COMMON.CLOSE"), {
+        this.snackBar.open(this.translate.instant("LOBBY.FAILED_LEAVE"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+      },
+    })
+  }
+
+  confirmAbandonGame(lobby: Lobby): void {
+    if (!this.currentUser || !lobby.cardGameId) return
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "350px",
+      data: {
+        title: this.translate.instant("GAME.ABANDON_GAME"),
+        message: this.translate.instant("GAME.CONFIRM_ABANDON"),
+        confirmText: this.translate.instant("GAME.ABANDON"),
+        cancelText: this.translate.instant("COMMON.CLOSE"),
+        confirmColor: "warn",
+      },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.abandonGame(lobby)
+      }
+    })
+  }
+
+  abandonGame(lobby: Lobby): void {
+    if (!this.currentUser || !lobby.cardGameId) return
+
+    this.isLoading = true
+    this.cardGameService.abandonGame(lobby.cardGameId).subscribe({
+      next: () => {
+        this.isLoading = false
+        this.snackBar.open(this.translate.instant("GAME.GAME_ABANDONED"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+        this.loadUserLobby()
+      },
+      error: (error) => {
+        this.isLoading = false
+        this.snackBar.open(this.translate.instant("GAME.FAILED_ABANDON"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
       },
