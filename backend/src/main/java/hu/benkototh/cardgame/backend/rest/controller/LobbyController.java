@@ -270,4 +270,23 @@ public class LobbyController {
                 .filter(lobby -> lobby.getPlayers().contains(user))
                 .toList();
     }
+
+    public void endGame(String id) {
+        lobbyRepository.findAll().stream()
+                .filter(lobby -> lobby.getCardGameId().equals(id))
+                .findFirst()
+                .ifPresent(lobby -> {
+                    lobby.setStatus("WAITING");
+                    lobby.setGame(null);
+                    lobbyRepository.save(lobby);
+                });
+    }
+
+    public Lobby getLobbyByPlayer(long userId) {
+        return lobbyRepository.findAll()
+                .stream()
+                .filter(lobby -> lobby.getPlayers().stream().anyMatch(player -> player.getId() == userId))
+                .findFirst()
+                .orElse(null);
+    }
 }
