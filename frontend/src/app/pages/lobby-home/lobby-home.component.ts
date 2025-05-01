@@ -51,7 +51,7 @@ export class LobbyHomeComponent implements OnInit {
   @ViewChild("lobbyTabs") lobbyTabs!: MatTabGroup
 
   currentUser: User | null = null
-  userLobby: Lobby = {} as Lobby
+  userLobby: Lobby | null = null
   isLoading = false
   isLoadingUserLobby = false
   selectedTabIndex = 0

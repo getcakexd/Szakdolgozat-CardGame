@@ -3,13 +3,15 @@ package hu.benkototh.cardgame.backend.game.controller;
 import hu.benkototh.cardgame.backend.game.exception.GameException;
 import hu.benkototh.cardgame.backend.game.model.*;
 import hu.benkototh.cardgame.backend.game.repository.ICardGameRepository;
-import hu.benkototh.cardgame.backend.game.service.CardGameService;
 import hu.benkototh.cardgame.backend.game.service.GameFactory;
+import hu.benkototh.cardgame.backend.game.service.GameTimeoutService;
 import hu.benkototh.cardgame.backend.rest.Data.Game;
 import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.controller.LobbyController;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,11 @@ public class CardGameController {
     private StatisticsController statisticsController;
 
     @Autowired
-    private CardGameService cardGameService;
+    private LobbyController lobbyController;
+
+    @Lazy
+    @Autowired
+    private GameTimeoutService gameTimeoutService;
 
     @Transactional
     public CardGame createCardGame(long gameDefinitionId, String creatorId, String gameName, boolean trackStatistics) {
@@ -172,7 +178,8 @@ public class CardGameController {
                 statisticsController.updateStatistics(cardGame, scores);
             }
 
-            cardGame = cardGameRepository.save(cardGame);
+            cardGameRepository.save(cardGame);
+            lobbyController.endGame(cardGame.getId());
 
             GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
             broadcastGameEvent(event);
@@ -232,7 +239,7 @@ public class CardGameController {
         if (!cardGame.isValidMove(userId, action)) {
             throw new GameException("Invalid move");
         }
-
+        gameTimeoutService.recordActivity(gameId, userId);
         cardGame.executeMove(userId, action);
 
         if (cardGame.isGameOver()) {
@@ -244,6 +251,8 @@ public class CardGameController {
                 statisticsController.updateStatistics(cardGame, scores);
                 logger.info("Statistics updated for game {}", gameId);
             }
+
+            lobbyController.endGame(cardGame.getId());
         }
 
         cardGame = cardGameRepository.save(cardGame);

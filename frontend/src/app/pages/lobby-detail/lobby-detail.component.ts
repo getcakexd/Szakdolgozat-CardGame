@@ -257,14 +257,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
         })
 
         if (lobby.status === LOBBY_STATUS.IN_GAME && lobby.cardGameId) {
-          this.snackBar
-            .open(this.translate.instant("LOBBY.GAME_READY_TO_JOIN"), this.translate.instant("LOBBY.GO_TO_GAME"), {
-              duration: 5000,
-            })
-            .onAction()
-            .subscribe(() => {
-              this.router.navigate(["/game", lobby.cardGameId])
-            })
+          this.router.navigate(["/game", lobby.cardGameId])
         }
       },
       error: (error) => {

@@ -272,14 +272,13 @@ public class LobbyController {
     }
 
     public void endGame(String id) {
-        lobbyRepository.findAll().stream()
-                .filter(lobby -> lobby.getCardGameId().equals(id))
-                .findFirst()
-                .ifPresent(lobby -> {
-                    lobby.setStatus("WAITING");
-                    lobby.setGame(null);
-                    lobbyRepository.save(lobby);
-                });
+        Lobby lobby = lobbyRepository.findAll().stream()
+                .filter(l -> l.getCardGameId() != null && l.getCardGameId().equals(id))
+                .findFirst().orElse(null);
+
+        lobby.setCardGameId(null);
+        lobby.setStatus(STATUS_WAITING);
+        lobbyRepository.save(lobby);
     }
 
     public Lobby getLobbyByPlayer(long userId) {
