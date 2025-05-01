@@ -15,6 +15,8 @@ public class Game {
     private boolean active;
     private int minPlayers;
     private int maxPlayers;
+    private String factorySign;
+    private int factoryId;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -81,6 +83,22 @@ public class Game {
 
     public void setRules(Set<GameRules> rules) {
         this.rules = rules;
+    }
+
+    public String getFactorySign() {
+        return factorySign;
+    }
+
+    public void setFactorySign(String factorySign) {
+        this.factorySign = factorySign;
+    }
+
+    public int getFactoryId() {
+        return factoryId;
+    }
+
+    public void setFactoryId(int factoryId) {
+        this.factoryId = factoryId;
     }
 
     public void addDescription(GameDescription description) {

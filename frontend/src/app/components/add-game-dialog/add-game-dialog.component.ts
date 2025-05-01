@@ -57,6 +57,8 @@ export class AddGameDialogComponent {
       name: ["", [Validators.required, Validators.minLength(3)]],
       minPlayers: [2, [Validators.required, Validators.min(1), Validators.max(10)]],
       maxPlayers: [4, [Validators.required, Validators.min(1), Validators.max(10)]],
+      factorySign: ["", [Validators.required, Validators.minLength(3)]],
+      factoryId: [0, [Validators.required, Validators.min(1)]],
       active: [true],
       descriptions: this.fb.array([this.createLocalizedContentGroup()]),
       rules: this.fb.array([this.createLocalizedContentGroup()])

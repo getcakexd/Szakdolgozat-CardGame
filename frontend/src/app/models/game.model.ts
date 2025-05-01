@@ -6,6 +6,8 @@ export interface Game {
   maxPlayers: number;
   descriptions: GameDescription[];
   rules: GameRules[];
+  factorySign: string;
+  factoryId: number;
 }
 
 export interface GameDescription {
@@ -29,6 +31,8 @@ export interface GameCreationDTO {
   maxPlayers: number;
   descriptions: LocalizedContent[];
   rules: LocalizedContent[];
+  factorySign: string;
+  factoryId: number;
 }
 
 export interface LocalizedContent {

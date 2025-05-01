@@ -6,17 +6,12 @@ import hu.benkototh.cardgame.backend.game.model.game.ZsirGame;
 
 public class GameFactory {
 
-    public static CardGame createGame(String gameType) {
-        switch (gameType.toLowerCase()) {
-            case "zsir":
-            case "fat":
-            case "zsírozás":
-            case "zsírozas":
-            case "zsirozas":
-            case "zsirozás":
-                return new ZsirGame();
+    public static CardGame createGame(String factorySign, int factoryId) throws GameException {
+        switch (factorySign) {
+            case "ZSIR":
+                return new ZsirGame(factoryId);
             default:
-                throw new GameException("Unknown game type: " + gameType);
+                throw new GameException("Unknown game type: " + factorySign);
         }
     }
 }

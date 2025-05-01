@@ -57,8 +57,7 @@ public class CardGameController {
         }
 
         Game gameEntity = gameDefinition.get();
-
-        CardGame cardGame = GameFactory.createGame(gameEntity.getName());
+        CardGame cardGame = GameFactory.createGame(gameEntity.getFactorySign(), gameEntity.getFactoryId());
         cardGame.setGameDefinitionId(gameDefinitionId);
         cardGame.setName(gameName);
         cardGame.setTrackStatistics(trackStatistics);

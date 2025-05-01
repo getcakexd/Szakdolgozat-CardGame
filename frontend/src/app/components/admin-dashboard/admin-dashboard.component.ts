@@ -197,6 +197,8 @@ export class AdminDashboardComponent implements OnInit {
       maxPlayers: game.maxPlayers,
       descriptions: game.descriptions,
       rules: game.rules,
+      factorySign: game.factorySign,
+      factoryId: game.factoryId,
     }
 
     this.gameService.updateGame(game.id, updateData).subscribe(

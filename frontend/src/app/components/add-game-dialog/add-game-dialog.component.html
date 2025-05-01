@@ -26,6 +26,22 @@
       </mat-form-field>
     </div>
 
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'ADD_GAME.FACTORY_SING' | translate }}</mat-label>
+        <input matInput type formControlName="factorySign" required>
+        <mat-error *ngIf="gameForm.get('factorySign')?.hasError('required')">
+          {{ 'ADD_GAME.FACTORY_SING_REQUIRED' | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'ADD_GAME.FACTORY_ID' | translate }}</mat-label>
+        <input matInput type="number" formControlName="factoryId" required min="1">
+        <mat-error *ngIf="gameForm.get('factoryId')?.hasError('required')"> {{ 'ADD_GAME.FACTORY_ID_REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+
     <mat-slide-toggle formControlName="active" color="primary" class="active-toggle">
       {{ 'ADD_GAME.ACTIVE' | translate }}
     </mat-slide-toggle>

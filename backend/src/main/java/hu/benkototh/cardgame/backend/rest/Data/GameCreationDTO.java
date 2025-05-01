@@ -7,6 +7,8 @@ public class GameCreationDTO {
     private boolean active;
     private int minPlayers;
     private int maxPlayers;
+    private String factorySign;
+    private int factoryId;
     private List<LocalizedContent> descriptions;
     private List<LocalizedContent> rules;
 
@@ -70,6 +72,22 @@ public class GameCreationDTO {
 
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
+    }
+
+    public String getFactorySign() {
+        return factorySign;
+    }
+
+    public void setFactorySign(String factorySign) {
+        this.factorySign = factorySign;
+    }
+
+    public int getFactoryId() {
+        return factoryId;
+    }
+
+    public void setFactoryId(int factoryId) {
+        this.factoryId = factoryId;
     }
 
     public List<LocalizedContent> getDescriptions() {
