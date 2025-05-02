@@ -273,9 +273,12 @@
     "SEND_MESSAGE": "Üzenet küldése",
     "MESSAGE_UNSENT": "(Üzenet visszavonva)",
     "UNSEND_MESSAGE": "Üzenet visszavonása",
+    "REMOVE_MESSAGE": "Üzenet eltávolítása",
+    "MESSAGE_REMOVED": "(Üzenet eltávolítva)",
     "FAILED_LOAD": "Nem sikerült betölteni az üzeneteket",
     "FAILED_SEND": "Nem sikerült elküldeni az üzenetet",
-    "FAILED_UNSEND": "Nem sikerült visszavonni az üzenetet"
+    "FAILED_UNSEND": "Nem sikerült visszavonni az üzenetet",
+    "LOBBY_CHAT": "Beszélgetés"
   },
   "GAME_CARD": {
     "VIEW_RULES": "Szabályok megtekintése",

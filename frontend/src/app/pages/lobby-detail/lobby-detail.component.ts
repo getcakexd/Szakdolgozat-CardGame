@@ -33,6 +33,7 @@ import {MatOption} from '@angular/material/core';
 import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
 import {TranslationService} from '../../services/translation/translation.service';
 import {GameCardComponent} from '../../components/game-card/game-card.component';
+import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
 
 @Component({
   selector: 'app-lobby-detail',
@@ -66,6 +67,7 @@ import {GameCardComponent} from '../../components/game-card/game-card.component'
     MatCard,
     NgClass,
     GameCardComponent,
+    LobbyChatComponent,
   ],
   styleUrls: ['./lobby-detail.component.css']
 })

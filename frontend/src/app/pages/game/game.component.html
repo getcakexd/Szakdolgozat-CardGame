@@ -77,7 +77,6 @@
         </div>
       </div>
     </mat-card-content>
-
     <mat-card-actions align="end">
       <button mat-button color="warn" (click)="goToLobby()">
         <mat-icon>exit_to_app</mat-icon> {{ 'GAME.GO_TO_LOBBY' | translate }}
@@ -91,6 +90,7 @@
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </mat-card-footer>
   </mat-card>
+
 
   <div class="loading-container" *ngIf="!game && isLoading">
     <mat-spinner></mat-spinner>

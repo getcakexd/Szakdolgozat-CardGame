@@ -273,9 +273,12 @@
     "SEND_MESSAGE": "Send Message",
     "MESSAGE_UNSENT": "(Message unsent)",
     "UNSEND_MESSAGE": "Unsend Message",
+    "REMOVE_MESSAGE": "Remove Message",
+    "MESSAGE_REMOVED": "(Message removed)",
     "FAILED_LOAD": "Failed to load messages",
     "FAILED_SEND": "Failed to send message",
-    "FAILED_UNSEND": "Failed to unsend message"
+    "FAILED_UNSEND": "Failed to unsend message",
+    "LOBBY_CHAT": "Chat"
   },
   "GAME_CARD": {
     "VIEW_RULES": "View Rules",
