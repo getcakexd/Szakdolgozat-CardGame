@@ -26,8 +26,8 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { username, password }).pipe(
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((response) => {
         if (response && !response.unverified) {
           localStorage.setItem("currentUser", JSON.stringify(response))

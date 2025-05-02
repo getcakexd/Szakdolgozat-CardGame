@@ -41,10 +41,10 @@ public class UserRestService {
         User loggedInUser = userController.login(user);
 
         if (loggedInUser == null) {
-            User existingUser = userController.findByUsername(user.getUsername());
+            User existingUser = userController.findByEmail(user.getEmail());
 
             if (existingUser == null) {
-                return ResponseEntity.status(401).body("Invalid username or password");
+                return ResponseEntity.status(401).body("Invalid email or password");
             }
 
             if (existingUser.isLocked()) {
