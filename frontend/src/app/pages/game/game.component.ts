@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef} from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import { Subscription } from "rxjs"
+import {Observable, of, Subscription, tap} from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
 import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
@@ -24,6 +24,8 @@ import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
 import {IS_DEV} from '../../../environments/api-config';
 import {LobbyService} from '../../services/lobby/lobby.service';
+import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: "app-game",
@@ -42,6 +44,7 @@ import {LobbyService} from '../../services/lobby/lobby.service';
     CardComponent,
     PlayerInfoComponent,
     RouterModule,
+    LobbyChatComponent,
   ],
 })
 export class GameComponent implements OnInit, OnDestroy {
@@ -57,13 +60,14 @@ export class GameComponent implements OnInit, OnDestroy {
 
   private lastTrickSize = 0
 
-  private gameId: string | null = null
+  protected gameId: string | null = null
   private gameSubscription: Subscription | null = null
   private eventsSubscription: Subscription | null = null
   private canHitSubscription: Subscription | null = null
   private lastPlayedCardSubscription: Subscription | null = null
   private refreshInterval: any = null
   private lastCardTimer: any = null
+
 
   constructor(
     private route: ActivatedRoute,

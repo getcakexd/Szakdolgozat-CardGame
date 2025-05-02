@@ -148,7 +148,6 @@ export class TicketDetailComponent implements OnInit {
       this.isSending = true;
 
       const currentUser = this.authService.currentUser;
-      console.log(this.isAgent)
       const senderType = this.isAgent ? 'agent' : 'user';
       const senderName = currentUser ? currentUser.username : this.ticket.name;
 

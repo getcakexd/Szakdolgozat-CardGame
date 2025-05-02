@@ -7,10 +7,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import hu.benkototh.cardgame.backend.websocket.dto.ClubChatMessageDTO;
-import hu.benkototh.cardgame.backend.websocket.dto.GetClubMessagesDTO;
-import hu.benkototh.cardgame.backend.websocket.dto.RemoveClubMessageDTO;
-import hu.benkototh.cardgame.backend.websocket.dto.UnsendClubMessageDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.club.ClubChatMessageDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.club.GetClubMessagesDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.club.RemoveClubMessageDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.club.UnsendClubMessageDTO;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package hu.benkototh.cardgame.backend.websocket.dto;
+package hu.benkototh.cardgame.backend.websocket.dto.friends;
 
 public class GetMessagesDTO {
     private long userId;

@@ -2,9 +2,9 @@ package hu.benkototh.cardgame.backend.websocket.handler;
 
 import hu.benkototh.cardgame.backend.rest.Data.Message;
 import hu.benkototh.cardgame.backend.rest.controller.ChatController;
-import hu.benkototh.cardgame.backend.websocket.dto.ChatMessageDTO;
-import hu.benkototh.cardgame.backend.websocket.dto.GetMessagesDTO;
-import hu.benkototh.cardgame.backend.websocket.dto.UnsendMessageDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.friends.ChatMessageDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.friends.GetMessagesDTO;
+import hu.benkototh.cardgame.backend.websocket.dto.friends.UnsendMessageDTO;
 import hu.benkototh.cardgame.backend.websocket.dto.UserIdDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;

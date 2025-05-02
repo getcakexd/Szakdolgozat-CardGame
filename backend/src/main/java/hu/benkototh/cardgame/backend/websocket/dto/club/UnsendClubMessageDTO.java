@@ -1,12 +1,12 @@
-package hu.benkototh.cardgame.backend.websocket.dto;
+package hu.benkototh.cardgame.backend.websocket.dto.club;
 
-public class UnsendMessageDTO {
+public class UnsendClubMessageDTO {
     private long messageId;
 
-    public UnsendMessageDTO() {
+    public UnsendClubMessageDTO() {
     }
 
-    public UnsendMessageDTO(long messageId) {
+    public UnsendClubMessageDTO(long messageId) {
         this.messageId = messageId;
     }
 
