@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef} from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import { Subscription } from "rxjs"
+import {Observable, of, Subscription, tap} from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
 import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
@@ -25,6 +25,7 @@ import { PlayerInfoComponent } from "../../components/player-info/player-info.co
 import {IS_DEV} from '../../../environments/api-config';
 import {LobbyService} from '../../services/lobby/lobby.service';
 import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: "app-game",
@@ -67,7 +68,6 @@ export class GameComponent implements OnInit, OnDestroy {
   private refreshInterval: any = null
   private lastCardTimer: any = null
 
-  private lobbyId: number | null = null
 
   constructor(
     private route: ActivatedRoute,
@@ -353,21 +353,6 @@ export class GameComponent implements OnInit, OnDestroy {
         this.router.navigate(["/lobby/" + resp.id])
       }
     })
-  }
-
-  getLobbyIdForGame(): number {
-    if (this.lobbyId) {
-      return this.lobbyId
-    }
-
-    const userId = this.authService.currentUser?.id || 0
-    this.lobbyService.getLobbyByPlayer(userId).subscribe((lobby) => {
-      if (lobby) {
-        this.lobbyId = lobby.id
-      }
-    })
-
-    return this.lobbyId || 0
   }
 
   protected readonly GameStatus = GameStatus;

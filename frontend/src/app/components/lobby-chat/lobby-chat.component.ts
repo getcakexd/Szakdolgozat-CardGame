@@ -48,7 +48,6 @@ import {IS_DEV} from '../../../environments/api-config';
   ],
 })
 export class LobbyChatComponent implements OnInit, OnDestroy {
-  @Input() lobbyId!: number
   @Input() lobbyName?: string
   @ViewChild("messageContainer") private messageContainer!: ElementRef
 
@@ -57,6 +56,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
   senderId = 0
   hasPermission = false
   isLoading = true
+  lobbyId: number = 0
 
   private subscriptions: Subscription[] = []
 
@@ -68,17 +68,22 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.senderId = this.authService.currentUser?.id || 0
-    if (this.lobbyId) {
-      this.lobbyService.getLobby(this.lobbyId).subscribe((lobby) => {
-        this.lobbyName = lobby.code
-        this.hasPermission = lobby.leader.id == this.senderId;
-      })
+    this.senderId = this.authService.currentUser?.id || 0;
+
+    if (this.senderId) {
+      this.lobbyService.getLobbyByPlayer(this.senderId).subscribe((lobby) => {
+        this.lobbyId = lobby.id;
+        this.lobbyName = lobby.code;
+        this.hasPermission = lobby.leader.id === this.senderId;
+
+        this.loadMessages();
+        this.lobbyChatService.connect().subscribe();
+      });
+    } else {
+      console.warn("No valid sender ID found.");
+      this.isLoading = false;
     }
 
-    this.loadMessages()
-
-    this.lobbyChatService.connect().subscribe()
   }
 
   ngOnDestroy(): void {
@@ -87,7 +92,6 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
 
   loadMessages() {
     if (!this.lobbyId) return
-
     this.isLoading = true
 
     const subscription = this.lobbyChatService.getMessages(this.lobbyId).subscribe({
@@ -101,14 +105,13 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
         this.isLoading = false
       },
     })
-
     this.subscriptions.push(subscription)
   }
 
   sendMessage() {
     if (!this.newMessage.trim()) return
 
-    this.lobbyChatService.sendMessage(this.lobbyId, this.senderId, this.newMessage).subscribe({
+    this.lobbyChatService.sendMessage(this.lobbyId || 0, this.senderId, this.newMessage).subscribe({
       next: () => {
         this.newMessage = ""
         this.scrollToBottom()

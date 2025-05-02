@@ -138,6 +138,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       next: (lobby) => {
         this.lobby = lobby
         this.isLeader = this.currentUser?.id === lobby.leader.id
+        console.log(this.isLeader)
 
         if (this.games.length === 0) {
           this.loadGames().then(() => {

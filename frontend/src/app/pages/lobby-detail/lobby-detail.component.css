@@ -4,6 +4,42 @@
   margin: 0 auto;
 }
 
+.lobby-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+  height: calc(100vh - 180px);
+  min-height: 800px;
+}
+
+.lobby-settings,
+.lobby-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lobby-players {
+  flex: 0 1 auto;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  max-height: 40%;
+}
+
+.lobby-chat {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lobby-chat app-lobby-chat {
+  flex: 1;
+  display: block;
+  overflow-y: auto;
+}
+
 .player-item {
   display: flex;
   justify-content: space-between;
@@ -33,25 +69,6 @@
   letter-spacing: 1px;
 }
 
-.lobby-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 16px;
-}
-
-@media (max-width: 768px) {
-  .lobby-content {
-    grid-template-columns: 1fr;
-  }
-
-  .player-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-}
-
 .status-badge {
   padding: 4px 8px;
   border-radius: 4px;
@@ -72,12 +89,6 @@
 .status-badge.finished {
   background-color: #f5f5f5;
   color: #616161;
-}
-
-.lobby-settings, .lobby-players {
-  background-color: rgba(0, 0, 0, 0.02);
-  border-radius: 8px;
-  padding: 16px;
 }
 
 .game-info {
@@ -107,4 +118,24 @@
 .form-field {
   width: 100%;
   margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .lobby-content {
+    grid-template-columns: 1fr;
+  }
+
+  .player-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .lobby-players {
+    max-height: 200px;
+  }
+
+  .lobby-chat {
+    min-height: 350px;
+  }
 }
