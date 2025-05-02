@@ -327,6 +327,7 @@
     "CONNECTION_FAILED": "Failed to connect to game server",
     "ABANDON_GAME": "Abandon Game",
     "ABANDONING": "Abandoning game...",
+    "CONFIRM_ABANDON": "Are you sure you want to abandon this game?",
     "GAME_ABANDONED": "Game abandoned",
     "GO_TO_LOBBY": "Go to Lobby",
     "CURRENT_TRICK": "Current Trick",
