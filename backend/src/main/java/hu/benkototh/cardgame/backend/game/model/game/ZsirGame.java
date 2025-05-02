@@ -34,7 +34,78 @@ public class ZsirGame extends CardGame {
     @Override
     public void initializeGame() {
         logger.debug("Initializing Zsir game with factoryId: {}", factoryId);
-        //TODO: Separate game logic into different modes via factory id
+        switch (factoryId){
+            case 1:
+                initializeGame_Factory_1();
+                break;
+            case 2:
+                initializeGame_Factory_2();
+                break;
+            case 4:
+                initializeGame_Factory_4();
+                break;
+            default:
+                defaultSwithThrow();
+        }
+    }
+
+    @Override
+    protected void processGameStateObjects() {
+        logger.debug("Processing game state objects for Zsir game with factoryId: {}", factoryId);
+        switch (factoryId){
+            case 1:
+                processGameStateObjects_1();
+                break;
+            case 2:
+                processGameStateObjects_2();
+                break;
+            case 4:
+                processGameStateObjects_4();
+                break;
+            default:
+                defaultSwithThrow();
+        }
+    }
+
+    @Override
+    public boolean isValidMove(String playerId, GameAction action) {
+        logger.debug("Validating move for playerId: {} with factoryId: {}", playerId, factoryId);
+        switch (factoryId){
+            case 1:
+                return isValidMove_1(playerId, action);
+            case 2:
+                return isValidMove_2(playerId, action);
+            case 4:
+                return isValidMove_4(playerId, action);
+            default:
+                defaultSwithThrow();
+        }
+        return false;
+    }
+
+    @Override
+    public void executeMove(String playerId, GameAction action) {
+        logger.debug("Executing move for playerId: {} with factoryId: {}", playerId, factoryId);
+        switch (factoryId){
+            case 1:
+                executeMove_1(playerId, action);
+                break;
+            case 2:
+                executeMove_2(playerId, action);
+                break;
+            case 4:
+                executeMove_4(playerId, action);
+                break;
+            default:
+                defaultSwithThrow();
+        }
+    }
+
+    public void initializeGame_Factory_1(){
+        //TODO: Implement AI
+    }
+
+    public void initializeGame_Factory_2(){
         Deck deck = new Deck();
         deck.initializeHungarianDeck();
         deck.shuffle();
@@ -56,8 +127,15 @@ public class ZsirGame extends CardGame {
         getGameState().remove(LAST_PLAYER);
     }
 
-    @Override
-    protected void processGameStateObjects() {
+    public void initializeGame_Factory_4(){
+        //TODO: Implement 4 player game
+    }
+
+    protected void processGameStateObjects_1() {
+        //TODO: Implement AI
+    }
+
+    protected void processGameStateObjects_2() {
         if (getGameState().containsKey(CURRENT_TRICK)) {
             Object currentTrickObj = getGameState(CURRENT_TRICK);
             if (currentTrickObj instanceof List) {
@@ -87,8 +165,16 @@ public class ZsirGame extends CardGame {
         }
     }
 
-    @Override
-    public boolean isValidMove(String playerId, GameAction action) {
+    protected void processGameStateObjects_4() {
+        //TODO: Implement 4 player game
+    }
+
+    public boolean isValidMove_1(String playerId, GameAction action) {
+        //TODO: Implement AI
+        return false;
+    }
+
+    public boolean isValidMove_2(String playerId, GameAction action) {
         if (action == null) {
             return false;
         }
@@ -128,8 +214,16 @@ public class ZsirGame extends CardGame {
         return true;
     }
 
-    @Override
-    public void executeMove(String playerId, GameAction action) {
+    public boolean isValidMove_4(String playerId, GameAction action) {
+        //TODO: Implement 4 player game
+        return false;
+    }
+
+    public void executeMove_1(String playerId, GameAction action) {
+        //TODO: Implement AI
+    }
+
+    public void executeMove_2(String playerId, GameAction action) {
         if ("pass".equals(action.getActionType())) {
             handlePass(playerId);
             return;
@@ -195,6 +289,10 @@ public class ZsirGame extends CardGame {
             Player nextPlayer = getOtherPlayer(player);
             setCurrentPlayer(nextPlayer);
         }
+    }
+
+    public void executeMove_4(String playerId, GameAction action) {
+        //TODO: Implement 4 player game
     }
 
     private void handlePass(String playerId) {
@@ -406,5 +504,10 @@ public class ZsirGame extends CardGame {
         }
 
         return players.get(0).equals(currentPlayer) ? players.get(1) : players.get(0);
+    }
+
+    private void defaultSwithThrow(){
+        logger.error("Invalid factoryId: {}", factoryId);
+        throw new IllegalArgumentException("Invalid factoryId: " + factoryId);
     }
 }

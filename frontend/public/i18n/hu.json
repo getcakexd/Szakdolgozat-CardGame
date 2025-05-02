@@ -327,6 +327,7 @@
     "CONNECTION_FAILED": "Nem sikerült kapcsolódni a játékszerverhez",
     "ABANDON_GAME": "Játék feladása",
     "ABANDONING": "Játék feladása...",
+    "CONFIRM_ABANDON": "Biztosan fel szeretnéd adni ezt a játékot?",
     "GAME_ABANDONED": "Játék feladva",
     "GO_TO_LOBBY": "Vissza a lobbihoz",
     "CURRENT_TRICK": "Aktuális ütés",
