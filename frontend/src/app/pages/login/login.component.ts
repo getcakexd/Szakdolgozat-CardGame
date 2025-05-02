@@ -37,7 +37,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm = new FormGroup({
-    username: new FormControl("", [Validators.required]),
+    email: new FormControl("", [Validators.required, Validators.email]),
     password: new FormControl("", [Validators.required]),
   })
 
@@ -107,7 +107,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.authService.login(
-        this.loginForm.get('username')?.value!,
+        this.loginForm.get('email')?.value!,
         this.loginForm.get('password')?.value!
       ).subscribe({
         next: (response) => {
@@ -169,8 +169,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   getErrorMessage(field: string): string {
     const control = this.loginForm.get(field)
     if (control?.hasError("required")) {
-      return field === 'username'
-        ? this.translate.instant('ERRORS.USERNAME_REQUIRED')
+      return field === 'email'
+        ? this.translate.instant('ERRORS.EMAIL_REQUIRED')
         : this.translate.instant('ERRORS.PASSWORD_REQUIRED')
     }
     return ""

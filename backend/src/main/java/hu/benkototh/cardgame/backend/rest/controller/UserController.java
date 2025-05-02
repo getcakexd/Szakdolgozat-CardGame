@@ -60,7 +60,7 @@ public class UserController {
     }
 
     public User login(User user) {
-        Optional<User> foundUser = Optional.ofNullable(findByUsername(user.getUsername()));
+        Optional<User> foundUser = Optional.ofNullable(findByEmail(user.getEmail()));
 
         if (foundUser.isEmpty()) {
             auditLogController.logAction("LOGIN_FAILED", user.getId(),
@@ -86,7 +86,7 @@ public class UserController {
             existingUser.setFailedLoginAttempts(0);
             auditLogController.logAction("LOGIN_SUCCESS", existingUser.getId(),
                     "User logged in successfully: " + existingUser.getUsername());
-            return userRepository.save(existingUser);
+            return existingUser;
         } else {
             existingUser.setFailedLoginAttempts(existingUser.getFailedLoginAttempts() + 1);
 
