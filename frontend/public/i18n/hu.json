@@ -573,7 +573,6 @@
     "PLAYERS": "Játékosok",
     "LEADER": "Vezető",
     "POINTS": "Pontokkal játszik",
-    "JOIN": "Csatlakozás",
     "ENTER": "Belépés",
     "ALREADY_IN_LOBBY": "Már egy lobbiban vagy",
     "GO_TO_LOBBY": "Ugrás a lobbiba",
@@ -613,6 +612,11 @@
     "LOADING": "Lobbi betöltése...",
     "GO_TO_GAME": "Ugrás a játékra",
     "LOBBY_CODE": "Lobbi",
+    "PUBLIC_LOBBIES": "Nyilvános lobbik",
+    "AVAILABLE_PUBLIC_LOBBIES": "Elérhető nyilvános lobbik",
+    "NO_PUBLIC_LOBBIES": "Jelenleg nincsenek elérhető nyilvános lobbik",
+    "LOADING_PUBLIC_LOBBIES": "Nyilvános lobbik betöltése...",
+    "FAILED_LOAD_PUBLIC_LOBBIES": "Nem sikerült betölteni a nyilvános lobbikat",
     "STATUS": {
       "WAITING": "Várakozás",
       "IN_GAME": "Játékban",
@@ -627,7 +631,9 @@
       "CREATE_BUTTON": "Lobbi létrehozása",
       "CREATING": "Létrehozás...",
       "SUCCESS": "Lobbi sikeresen létrehozva!",
-      "FAILED": "Nem sikerült létrehozni az lobbit"
+      "FAILED": "Nem sikerült létrehozni az lobbit",
+      "PUBLIC_LOBBY": "Nyilvános lobbi",
+      "PUBLIC_DESCRIPTION": "A nyilvános lobbik bárki számára elérhetők és csatlakozhatnak hozzájuk"
     },
     "JOIN": {
       "TITLE": "Csatlakozás kóddal",

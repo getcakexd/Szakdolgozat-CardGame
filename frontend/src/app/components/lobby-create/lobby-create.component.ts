@@ -41,12 +41,12 @@ import {TranslationService} from '../../services/translation/translation.service
   styleUrls: ['./lobby-create.component.css']
 })
 export class LobbyCreateComponent implements OnInit {
-  createForm: FormGroup;
-  games: Game[] = [];
-  currentUser: User | null = null;
-  isLoading = false;
-  isSubmitting = false;
-  selectedGame: Game | null = null;
+  createForm: FormGroup
+  games: Game[] = []
+  currentUser: User | null = null
+  isLoading = false
+  isSubmitting = false
+  selectedGame: Game | null = null
 
   constructor(
     private fb: FormBuilder,
@@ -55,82 +55,77 @@ export class LobbyCreateComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
   ) {
     this.createForm = this.fb.group({
-      gameId: ['', Validators.required],
-      playWithPoints: [false]
-    });
+      gameId: ["", Validators.required],
+      playWithPoints: [false],
+      isPublic: [false],
+    })
   }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUser;
+    this.currentUser = this.authService.currentUser
     if (!this.currentUser) {
-      this.snackBar.open(
-        this.translate.instant('ERRORS.LOGIN_REQUIRED'),
-        this.translate.instant('COMMON.CLOSE'),
-        { duration: 3000 }
-      );
-      this.router.navigate(['/login']);
-      return;
+      this.snackBar.open(this.translate.instant("ERRORS.LOGIN_REQUIRED"), this.translate.instant("COMMON.CLOSE"), {
+        duration: 3000,
+      })
+      this.router.navigate(["/login"])
+      return
     }
 
-    this.loadGames();
+    this.loadGames()
 
-    this.createForm.get('gameId')?.valueChanges.subscribe(gameId => {
-      this.selectedGame = this.games.find(game => game.id === gameId) || null;
-    });
+    this.createForm.get("gameId")?.valueChanges.subscribe((gameId) => {
+      this.selectedGame = this.games.find((game) => game.id === gameId) || null
+    })
   }
 
   loadGames(): void {
-    this.isLoading = true;
+    this.isLoading = true
     this.lobbyService.getAllGames().subscribe({
       next: (games) => {
-        this.games = games.filter(game => game.active);
-        this.isLoading = false;
+        this.games = games.filter((game) => game.active)
+        this.isLoading = false
       },
       error: (error) => {
-        this.isLoading = false;
-        this.snackBar.open(
-          this.translate.instant('LOBBY.FAILED_LOAD_GAMES'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-      }
-    });
+        this.isLoading = false
+        this.snackBar.open(this.translate.instant("LOBBY.FAILED_LOAD_GAMES"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+      },
+    })
   }
 
   onSubmit(): void {
     if (this.createForm.invalid || !this.currentUser) {
-      return;
+      return
     }
 
-    const { gameId, playWithPoints } = this.createForm.value;
+    const { gameId, playWithPoints, isPublic } = this.createForm.value
 
-    this.isSubmitting = true;
-    this.lobbyService.createLobby(this.currentUser.id, gameId, playWithPoints).subscribe({
+    this.isSubmitting = true
+    this.lobbyService.createLobby(this.currentUser.id, gameId, playWithPoints, isPublic).subscribe({
       next: (lobby) => {
-        this.isSubmitting = false;
-        this.snackBar.open(
-          this.translate.instant('LOBBY.CREATE.SUCCESS'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-        this.router.navigate(['/lobby', lobby.id]);
+        this.isSubmitting = false
+        this.snackBar.open(this.translate.instant("LOBBY.CREATE.SUCCESS"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+        this.router.navigate(["/lobby", lobby.id])
       },
       error: (error) => {
-        this.isSubmitting = false;
+        this.isSubmitting = false
         this.snackBar.open(
-          error.error.message || this.translate.instant('LOBBY.CREATE.FAILED'),
-          this.translate.instant('COMMON.CLOSE'),
-          { duration: 3000 }
-        );
-      }
-    });
+          error.error.message || this.translate.instant("LOBBY.CREATE.FAILED"),
+          this.translate.instant("COMMON.CLOSE"),
+          { duration: 3000 },
+        )
+      },
+    })
   }
 
   getSelectedGame(): Game | null {
-    const gameId = this.createForm.get('gameId')?.value;
-    return this.games.find(game => game.id === gameId) || null;
+    const gameId = this.createForm.get("gameId")?.value
+    return this.games.find((game) => game.id === gameId) || null
   }
 }

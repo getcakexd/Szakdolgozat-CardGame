@@ -17,7 +17,7 @@ import {
   MatCardSubtitle,
   MatCardTitle,
 } from "@angular/material/card"
-import { NgIf } from "@angular/common"
+import {NgForOf, NgIf} from "@angular/common"
 import { LobbyJoinComponent } from "../../components/lobby-join/lobby-join.component"
 import { LobbyCreateComponent } from "../../components/lobby-create/lobby-create.component"
 import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
@@ -43,6 +43,7 @@ import {MatDialog} from '@angular/material/dialog';
     MatTab,
     LobbyCreateComponent,
     MatTabGroup,
+    NgForOf,
   ],
   styleUrls: ["./lobby-home.component.css"],
 })
@@ -54,6 +55,8 @@ export class LobbyHomeComponent implements OnInit {
   isLoading = false
   isLoadingUserLobby = false
   selectedTabIndex = 0
+  publicLobbies: Lobby[] = []
+  isLoadingPublicLobbies = false
 
   constructor(
     public lobbyService: LobbyService,
@@ -81,6 +84,7 @@ export class LobbyHomeComponent implements OnInit {
     }
 
     this.loadUserLobby()
+    this.loadPublicLobbies()
   }
 
   loadUserLobby(): void {
@@ -115,13 +119,39 @@ export class LobbyHomeComponent implements OnInit {
     })
   }
 
+  loadPublicLobbies(): void {
+    this.isLoadingPublicLobbies = true
+    this.lobbyService.getPublicLobbies().subscribe({
+      next: (lobbies) => {
+        this.publicLobbies = lobbies
+        this.isLoadingPublicLobbies = false
+      },
+      error: (error) => {
+        this.isLoadingPublicLobbies = false
+        this.snackBar.open(
+          this.translate.instant("LOBBY.FAILED_LOAD_PUBLIC_LOBBIES"),
+          this.translate.instant("COMMON.CLOSE"),
+          { duration: 3000 },
+        )
+      },
+    })
+  }
+
   onTabChange(event: any): void {
     if (event && event.index !== undefined) {
       this.selectedTabIndex = event.index
       localStorage.setItem("lobbyTabIndex", event.index.toString())
+
+      if (event.index === 2) {
+        this.loadPublicLobbies()
+      }
     } else if (typeof event === "number") {
       this.selectedTabIndex = event
       localStorage.setItem("lobbyTabIndex", event.toString())
+
+      if (event === 2) {
+        this.loadPublicLobbies()
+      }
     }
   }
 
@@ -137,6 +167,30 @@ export class LobbyHomeComponent implements OnInit {
         duration: 3000,
       })
     }
+  }
+
+  joinLobbyByCode(code: string): void {
+    if (!this.currentUser) return
+
+    this.isLoading = true
+    this.lobbyService.joinLobby(code, this.currentUser.id).subscribe({
+      next: (lobby) => {
+        this.isLoading = false
+        this.snackBar.open(this.translate.instant("LOBBY.JOIN.SUCCESS"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+        this.loadUserLobby()
+        this.router.navigate(["/lobby", lobby.id])
+      },
+      error: (error) => {
+        this.isLoading = false
+        this.snackBar.open(
+          error.error.message || this.translate.instant("LOBBY.JOIN.FAILED"),
+          this.translate.instant("COMMON.CLOSE"),
+          { duration: 3000 },
+        )
+      },
+    })
   }
 
   confirmLeaveLobby(lobby: Lobby): void {

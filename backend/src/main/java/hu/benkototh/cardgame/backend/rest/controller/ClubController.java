@@ -134,4 +134,8 @@ public class ClubController {
         
         return true;
     }
+
+    public Optional<Club> getClubById(long clubId) {
+        return clubRepository.findById(clubId);
+    }
 }

@@ -34,11 +34,13 @@
   "LOGIN": {
     "TITLE": "Login",
     "USERNAME": "Username",
+    "EMAIL": "Email",
     "PASSWORD": "Password",
     "LOGIN_BUTTON": "Login",
     "NEED_ACCOUNT": "Don't have an account? Sign up",
     "OR": "OR",
     "ENTER_USERNAME": "Enter your username",
+    "ENTER_EMAIL": "Enter your email",
     "ENTER_PASSWORD": "Enter your password",
     "FORGOT_PASSWORD": "Forgot Password?"
   },
@@ -571,7 +573,6 @@
     "PLAYERS": "Players",
     "LEADER": "Leader",
     "POINTS": "Play with points",
-    "JOIN": "Join",
     "ENTER": "Enter",
     "ALREADY_IN_LOBBY": "You are already in a lobby",
     "GO_TO_LOBBY": "Go to Lobby",
@@ -611,6 +612,11 @@
     "LOADING": "Loading lobby...",
     "GO_TO_GAME": "Go to Game",
     "LOBBY_CODE": "Lobby",
+    "PUBLIC_LOBBIES": "Public Lobbies",
+    "AVAILABLE_PUBLIC_LOBBIES": "Available Public Lobbies",
+    "NO_PUBLIC_LOBBIES": "No public lobbies available",
+    "LOADING_PUBLIC_LOBBIES": "Loading public lobbies...",
+    "FAILED_LOAD_PUBLIC_LOBBIES": "Failed to load public lobbies",
     "STATUS": {
       "WAITING": "Waiting",
       "IN_GAME": "In Game",
@@ -625,7 +631,9 @@
       "CREATE_BUTTON": "Create Lobby",
       "CREATING": "Creating...",
       "SUCCESS": "Lobby created successfully!",
-      "FAILED": "Failed to create lobby"
+      "FAILED": "Failed to create lobby",
+      "PUBLIC_LOBBY": "Public Lobby",
+      "PUBLIC_DESCRIPTION": "When enabled, this lobby will be visible to all players"
     },
     "JOIN": {
       "TITLE": "Join an Existing Lobby",

@@ -25,6 +25,15 @@
       </div>
     </div>
 
+    <div class="form-field">
+      <mat-slide-toggle formControlName="isPublic" color="primary">
+        {{ 'LOBBY.CREATE.PUBLIC_LOBBY' | translate }}
+      </mat-slide-toggle>
+      <div class="hint-text">
+        {{ 'LOBBY.CREATE.PUBLIC_DESCRIPTION' | translate }}
+      </div>
+    </div>
+
     <div class="game-info" *ngIf="selectedGame">
       <app-game-card
         [game]="selectedGame"

@@ -3,6 +3,7 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.game.controller.CardGameController;
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.Player;
+import hu.benkototh.cardgame.backend.rest.Data.Club;
 import hu.benkototh.cardgame.backend.rest.Data.Game;
 import hu.benkototh.cardgame.backend.rest.Data.Lobby;
 import hu.benkototh.cardgame.backend.rest.Data.User;
@@ -38,8 +39,10 @@ public class LobbyController {
     public static final String STATUS_WAITING = "WAITING";
     public static final String STATUS_IN_GAME = "IN_GAME";
     public static final String STATUS_FINISHED = "FINISHED";
+    @Autowired
+    private ClubController clubController;
 
-    public Lobby createLobby(long leaderId, long gameId, boolean playWithPoints) {
+    public Lobby createLobby(long leaderId, long gameId, boolean playWithPoints, boolean isPublic) {
         Optional<User> leaderOpt = userRepository.findById(leaderId);
         Optional<Game> gameOpt = gameRepository.findById(gameId);
 
@@ -58,12 +61,44 @@ public class LobbyController {
             lobby.setPlayWithPoints(playWithPoints);
             lobby.setMinPlayers(game.getMinPlayers());
             lobby.addPlayer(leader);
+            lobby.setPublic(isPublic);
             lobby.setStatus(STATUS_WAITING);
 
             return lobbyRepository.save(lobby);
         }
         return null;
     }
+
+    public Lobby createClubLobby(long leaderId, long gameId, boolean playWithPoints, long clubId, boolean isPublic) {
+        Optional<User> leaderOpt = userRepository.findById(leaderId);
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Optional<Club> clubOpt = clubController.getClubById(clubId);
+
+        if (leaderOpt.isPresent() && gameOpt.isPresent() && clubOpt.isPresent()) {
+            User leader = leaderOpt.get();
+            Game game = gameOpt.get();
+            Club club = clubOpt.get();
+
+            List<Lobby> existingLobbies = findByPlayersContaining(leader);
+            if (!existingLobbies.isEmpty()) {
+                return null;
+            }
+
+            Lobby lobby = new Lobby();
+            lobby.setLeader(leader);
+            lobby.setGame(game);
+            lobby.setClub(club);
+            lobby.setPlayWithPoints(playWithPoints);
+            lobby.setMinPlayers(game.getMinPlayers());
+            lobby.addPlayer(leader);
+            lobby.setPublic(false);
+            lobby.setStatus(STATUS_WAITING);
+
+            return lobbyRepository.save(lobby);
+        }
+        return null;
+    }
+
 
     public Lobby joinLobby(String code, long userId) {
         Optional<Lobby> lobbyOpt = findByCode(code);
@@ -287,5 +322,12 @@ public class LobbyController {
                 .filter(lobby -> lobby.getPlayers().stream().anyMatch(player -> player.getId() == userId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<Lobby> getPublicLobbies() {
+        return lobbyRepository.findAll()
+                .stream()
+                .filter(lobby -> lobby.isPublic() && "WAITING".equals(lobby.getStatus()))
+                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 import { User } from './user.model';
 import { Game } from './game.model';
+import {Club} from './club.model';
 
 export const LOBBY_STATUS = {
   WAITING: 'WAITING',
@@ -18,4 +19,6 @@ export interface Lobby {
   status: string;
   createdAt: Date
   cardGameId?: string
+  isPublic: boolean;
+  club: Club;
 }
