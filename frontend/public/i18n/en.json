@@ -373,6 +373,7 @@
       "ACTIVE": "Active",
       "FINISHED": "Finished"
     },
+    "PLAYERS": "Players",
     "CARDS_IN_HAND": "Cards in hand",
     "CARDS_WON": "Cards won",
     "SCORE": "Score",

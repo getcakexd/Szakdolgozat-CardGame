@@ -21,21 +21,16 @@
 
     <mat-card-content>
       <div class="game-content-wrapper">
-        <div class="players-sidebar">
-          <h3>{{ 'GAME.PLAYERS' | translate }}</h3>
-          <div *ngFor="let player of game.players" class="player-info-sidebar"
-               [class.current-player]="player.id === currentPlayer?.id"
-               [class.active-turn]="player.id === game.currentPlayer?.id">
-            <app-player-info
-              [player]="player"
-              [isCurrentPlayer]="player.id === currentPlayer?.id"
-              [isCurrentTurn]="player.id === game.currentPlayer?.id">
-            </app-player-info>
+        <div class="game-table">
+          <div class="last-played-section">
+            <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
+              <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
+              <p>{{ getPlayerName(lastPlayedCard.playerId) }} played:</p>
+              <app-card [card]="lastPlayedCard.card"></app-card>
+            </div>
           </div>
-        </div>
 
-        <div class="game-middle-section">
-          <div class="game-table">
+          <div class="current-trick-section">
             <div class="current-trick" *ngIf="getCurrentTrickCards().length > 0">
               <h4>{{ 'GAME.CURRENT_TRICK' | translate }} ({{ getCurrentTrickCards().length }})</h4>
               <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
@@ -46,43 +41,57 @@
             <div *ngIf="getCurrentTrickCards().length === 0" class="empty-trick">
               <p>{{ 'GAME.NO_CARDS_IN_TRICK' | translate }}</p>
             </div>
+          </div>
 
-            <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
-              <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
-              <p>{{ getPlayerName(lastPlayedCard.playerId) }} played:</p>
-              <app-card [card]="lastPlayedCard.card"></app-card>
+          <div class="cards-left-section">
+            <div class="cards-left-counter">
+              <mat-icon>playing_cards</mat-icon>
+              <span>{{ game.gameState['deck']['cards'].length || 0 }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-hand" *ngIf="currentPlayer">
+          <div class="hand-header">
+            <h3>{{ 'GAME.YOUR_HAND' | translate }}</h3>
+            <div class="hand-cards-counter">
+              <mat-icon>playing_cards</mat-icon>
+              <span>{{ currentPlayer.hand.length }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
             </div>
           </div>
 
-          <div class="player-hand" *ngIf="currentPlayer">
-            <div class="hand-header">
-              <h3>{{ 'GAME.YOUR_HAND' | translate }}</h3>
-              <div class="cards-left-counter">
-                <mat-icon>playing_cards</mat-icon>
-                <span>{{ currentPlayer.hand.length }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
-              </div>
+          <div class="cards-container">
+            <div *ngFor="let card of currentPlayer.hand" class="card-wrapper"
+                 [class.selected]="selectedCard === card"
+                 (click)="onCardSelect(card)">
+              <app-card [card]="card" [selectable]="isCurrentPlayerTurn()"></app-card>
             </div>
+          </div>
 
-            <div class="cards-container">
-              <div *ngFor="let card of currentPlayer.hand" class="card-wrapper"
-                   [class.selected]="selectedCard === card"
-                   (click)="onCardSelect(card)">
-                <app-card [card]="card" [selectable]="isCurrentPlayerTurn()"></app-card>
-              </div>
-            </div>
+          <div class="hand-actions" *ngIf="isCurrentPlayerTurn()">
+            <button mat-raised-button color="primary"
+                    [disabled]="!selectedCard"
+                    (click)="onCardPlay()">
+              {{ 'GAME.PLAY_CARD' | translate }}
+            </button>
 
-            <div class="hand-actions" *ngIf="isCurrentPlayerTurn()">
-              <button mat-raised-button color="primary"
-                      [disabled]="!selectedCard"
-                      (click)="onCardPlay()">
-                {{ 'GAME.PLAY_CARD' | translate }}
-              </button>
+            <button *ngIf="canHit" mat-raised-button color="accent"
+                    (click)="onPass()">
+              {{ 'GAME.PASS' | translate }}
+            </button>
+          </div>
+        </div>
 
-              <button *ngIf="canHit" mat-raised-button color="accent"
-                      (click)="onPass()">
-                {{ 'GAME.PASS' | translate }}
-              </button>
-            </div>
+        <div class="players-sidebar">
+          <h3>{{ 'GAME.PLAYERS' | translate }}</h3>
+          <div *ngFor="let player of game.players" class="player-info-sidebar"
+               [class.current-player]="player.id === currentPlayer?.id"
+               [class.active-turn]="player.id === game.currentPlayer?.id">
+            <app-player-info
+              [player]="player"
+              [isCurrentPlayer]="player.id === currentPlayer?.id"
+              [isCurrentTurn]="player.id === game.currentPlayer?.id">
+            </app-player-info>
           </div>
         </div>
 
