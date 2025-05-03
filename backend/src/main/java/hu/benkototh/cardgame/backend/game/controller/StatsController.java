@@ -6,7 +6,9 @@ import hu.benkototh.cardgame.backend.game.repository.IUserGameStatsRepository;
 import hu.benkototh.cardgame.backend.game.repository.IGameStatisticsRepository;
 import hu.benkototh.cardgame.backend.rest.Data.User;
 import hu.benkototh.cardgame.backend.rest.Data.Game;
+import hu.benkototh.cardgame.backend.rest.Data.Lobby;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
+import hu.benkototh.cardgame.backend.rest.controller.LobbyController;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,12 @@ public class StatsController {
 
     @Autowired
     private UserController userController;
+
+    @Autowired
+    private LobbyController lobbyController;
+
+    @Autowired
+    private ClubStatsController clubStatsController;
 
     @Transactional
     public void recordGameResult(CardGame cardGame, Map<String, Integer> scores, boolean abandoned, String abandonedBy) {
@@ -105,7 +113,20 @@ public class StatsController {
             updateUserGameStats(user, gameDefinition, isWinner, isAbandoner, playerScore, fatCards);
         }
 
+        Lobby lobby = findLobbyByCardGameId(cardGame.getId());
+        if (lobby != null && lobby.getClub() != null) {
+            clubStatsController.recordClubGameResult(cardGame, lobby, scores, abandoned, abandonedBy);
+        }
+
         logger.info("Game result recorded successfully for game {}", cardGame.getId());
+    }
+
+    private Lobby findLobbyByCardGameId(String cardGameId) {
+        if (cardGameId == null) {
+            return null;
+        }
+
+        return lobbyController.findLobbyByCardGameId(cardGameId);
     }
 
     @Transactional
@@ -130,6 +151,7 @@ public class StatsController {
             userStats.incrementGamesWon();
         } else {
             userStats.incrementGamesLost();
+
         }
 
         userStats.addPoints(score);

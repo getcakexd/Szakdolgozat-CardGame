@@ -230,13 +230,7 @@ public class LobbyController {
             }
 
             try {
-                String gameName;
-                if (lobby.getClub() == null){
-                    gameName = "Game from Lobby " + lobby.getCode();
-                } else {
-                    gameName = "Game from Club " + lobby.getClub().getName() +(" - " + lobby.getCode());
-                }
-
+                String gameName = "Game from Lobby " + lobbyId;
                 String creatorId = String.valueOf(lobby.getLeader().getId());
                 long gameDefinitionId = lobby.getGame().getId();
                 boolean trackStatistics = lobby.isPlayWithPoints();
@@ -355,5 +349,17 @@ public class LobbyController {
                         lobby.getClub().getId() == clubId &&
                         STATUS_WAITING.equals(lobby.getStatus()))
                 .collect(Collectors.toList());
+    }
+
+    public Lobby findLobbyByCardGameId(String cardGameId) {
+        if (cardGameId == null || cardGameId.isEmpty()) {
+            return null;
+        }
+
+        return lobbyRepository.findAll()
+                .stream()
+                .filter(lobby -> cardGameId.equals(lobby.getCardGameId()))
+                .findFirst()
+                .orElse(null);
     }
 }
