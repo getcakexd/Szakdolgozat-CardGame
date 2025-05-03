@@ -1,6 +1,6 @@
 <div class="create-club-lobby-container">
   <h2>{{ 'CLUB.LOBBIES.CREATE_TITLE' | translate }}</h2>
-  <p>{{ 'CLUB.LOBBIES.CREATE_SUBTITLE' | translate: { clubName: club?.name } }}</p>
+  <p>{{ 'CLUB.LOBBIES.CREATE_SUBTITLE' | translate: { clubName: club.name } }}</p>
 
   <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
     <div class="form-field">

@@ -25,6 +25,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ClubChatComponent } from '../../components/club-chat/club-chat.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {ClubLobbyComponent} from '../club-lobby/club-lobby.component';
+import {ClubLeaderboardComponent} from '../../components/club-leaderboard/club-leaderboard.component';
+import {ClubStatsComponent} from '../../components/club-stats/club-stats.component';
 
 @Component({
   selector: 'app-club',
@@ -49,7 +51,9 @@ import {ClubLobbyComponent} from '../club-lobby/club-lobby.component';
     ClubChatComponent,
     NgIf,
     NgForOf,
-    ClubLobbyComponent
+    ClubLobbyComponent,
+    ClubLeaderboardComponent,
+    ClubStatsComponent
   ],
   styleUrls: ['./club.component.css']
 })

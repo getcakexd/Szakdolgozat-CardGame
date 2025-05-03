@@ -68,6 +68,7 @@ public class ClubStatsController {
             }
         }
 
+        // Update club stats
         ClubStats clubStats = clubStatsRepository.findByClub(club)
                 .orElse(new ClubStats());
 
@@ -214,6 +215,12 @@ public class ClubStatsController {
 
     public List<ClubMemberStats> getTopMembersByClubAndPoints(Long clubId, int limit) {
         return clubMemberStatsRepository.findTopMembersByClubAndPoints(clubId).stream()
+                .limit(limit)
+                .toList();
+    }
+
+    public List<ClubMemberStats> getTopMembersByClubAndGameAndPoints(Long clubId, Long gameDefinitionId, int limit) {
+        return clubMemberStatsRepository.findTopMembersByClubAndGameAndPoints(clubId, gameDefinitionId).stream()
                 .limit(limit)
                 .toList();
     }

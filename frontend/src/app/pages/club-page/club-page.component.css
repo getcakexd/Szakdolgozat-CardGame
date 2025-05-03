@@ -12,12 +12,39 @@
   margin-right: 8px;
 }
 
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .invite-card {
   margin-bottom: 16px;
   background-color: var(--card-background);
   color: var(--text-primary);
   box-shadow: var(--shadow-medium);
   transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  border-radius: 8px;
+  overflow: hidden;
+  border-left: 4px solid var(--primary-color);
+}
+
+.invite-message {
+  font-style: italic;
+  color: var(--text-secondary);
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.club-avatar {
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .empty-card {
@@ -30,9 +57,16 @@
   transition: background-color var(--transition-normal) ease;
 }
 
-.loading-message {
-  text-align: center;
-  padding: 24px;
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.loading-text {
+  margin-top: 16px;
   color: var(--text-secondary);
 }
 
@@ -64,3 +98,166 @@ h1 {
   transition: color var(--transition-normal) ease;
 }
 
+h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Leaderboard styles */
+.leaderboard-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.section-divider {
+  margin: 40px 0;
+}
+
+.game-selector {
+  min-width: 200px;
+}
+
+.leaderboard-container {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: var(--shadow-small);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.leaderboard-table th {
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--background-light);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.leaderboard-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.leaderboard-row:hover {
+  background-color: var(--hover-color);
+}
+
+.rank-column {
+  width: 80px;
+  text-align: center;
+}
+
+.numeric-column {
+  text-align: right;
+}
+
+.points-column {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--background-light);
+  font-weight: bold;
+}
+
+.gold {
+  background-color: #ffd700;
+  color: #333;
+}
+
+.silver {
+  background-color: #c0c0c0;
+  color: #333;
+}
+
+.bronze {
+  background-color: #cd7f32;
+  color: white;
+}
+
+.club-name-cell {
+  min-width: 200px;
+}
+
+.club-name {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.visibility-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-left: 8px;
+  opacity: 0.6;
+}
+
+.empty-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .game-selector {
+    width: 100%;
+  }
+
+  .leaderboard-table {
+    font-size: 14px;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 12px 8px;
+  }
+
+  .rank-badge {
+    width: 28px;
+    height: 28px;
+  }
+}

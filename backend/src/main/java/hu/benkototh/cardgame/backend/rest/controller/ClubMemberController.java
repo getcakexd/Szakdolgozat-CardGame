@@ -189,4 +189,9 @@ public class ClubMemberController {
                 .toList();
     }
 
+    public int getClubMemberCount(long clubId) {
+        return (int) clubMemberRepository.findAll().stream()
+                .filter(clubMember -> clubMember.getClub().getId() == clubId)
+                .count();
+    }
 }

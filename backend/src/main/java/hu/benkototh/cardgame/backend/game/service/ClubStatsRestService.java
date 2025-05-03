@@ -95,4 +95,13 @@ public class ClubStatsRestService {
         List<ClubMemberStats> topMembers = clubStatsController.getTopMembersByClubAndPoints(clubId, limit);
         return ResponseEntity.ok(topMembers);
     }
+
+    @GetMapping("/{clubId}/leaderboard/game/{gameDefinitionId}")
+    public ResponseEntity<?> getClubMemberLeaderboardByGame(
+            @PathVariable Long clubId,
+            @PathVariable Long gameDefinitionId,
+            @RequestParam(defaultValue = "10") int limit) {
+        List<ClubMemberStats> topMembers = clubStatsController.getTopMembersByClubAndGameAndPoints(clubId, gameDefinitionId, limit);
+        return ResponseEntity.ok(topMembers);
+    }
 }
