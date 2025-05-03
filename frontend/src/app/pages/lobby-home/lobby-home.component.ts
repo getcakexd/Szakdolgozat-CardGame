@@ -227,7 +227,7 @@ export class LobbyHomeComponent implements OnInit {
         this.snackBar.open(this.translate.instant("LOBBY.LEFT_LOBBY"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-        this.loadUserLobby()
+        window.location.reload()
       },
       error: (error) => {
         this.isLoading = false

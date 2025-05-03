@@ -68,7 +68,6 @@ public class ClubStatsController {
             }
         }
 
-        // Update club stats
         ClubStats clubStats = clubStatsRepository.findByClub(club)
                 .orElse(new ClubStats());
 
