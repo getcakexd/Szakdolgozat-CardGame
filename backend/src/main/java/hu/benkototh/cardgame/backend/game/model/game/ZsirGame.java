@@ -1,6 +1,10 @@
 package hu.benkototh.cardgame.backend.game.model.game;
 
 import hu.benkototh.cardgame.backend.game.model.*;
+import hu.benkototh.cardgame.backend.game.model.ai.DefaultZsirAIStrategy;
+import hu.benkototh.cardgame.backend.game.model.ai.ZsirAIMoveExecutor;
+import hu.benkototh.cardgame.backend.game.model.ai.ZsirAIStrategy;
+import hu.benkototh.cardgame.backend.game.model.util.ZsirGameUtils;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -10,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue("ZSIR")
-public class ZsirGame extends CardGame {
+public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCallback {
     private static final Logger logger = LoggerFactory.getLogger(ZsirGame.class);
     private static final int CARDS_PER_PLAYER = 4;
     private static final String CURRENT_TRICK = "currentTrick";
@@ -19,16 +23,28 @@ public class ZsirGame extends CardGame {
     private static final String CAN_HIT = "canHit";
     private static final String LAST_PLAYED_CARD = "lastPlayedCard";
     private static final String LAST_PLAYER = "lastPlayer";
+    private static final String AI_PLAYER = "aiPlayer";
+    private static final String HUMAN_PLAYER = "humanPlayer";
     private static final int MAX_CARDS_IN_TRICK = 8;
     private static int factoryId = 0;
+
+    private transient ZsirAIStrategy aiStrategy;
+    private transient ZsirAIMoveExecutor aiMoveExecutor;
 
     public ZsirGame(int factoryId) {
         super();
         ZsirGame.factoryId = factoryId;
+        initializeAI();
     }
 
     public ZsirGame() {
         super();
+        initializeAI();
+    }
+
+    private void initializeAI() {
+        this.aiStrategy = new DefaultZsirAIStrategy();
+        this.aiMoveExecutor = new ZsirAIMoveExecutor(aiStrategy);
     }
 
     @Override
@@ -102,7 +118,45 @@ public class ZsirGame extends CardGame {
     }
 
     public void initializeGame_Factory_1(){
-        //TODO: Implement AI
+        Deck deck = new Deck();
+        deck.initializeHungarianDeck();
+        deck.shuffle();
+
+        if (getPlayers().size() < 2) {
+            Player aiPlayer = new Player();
+            aiPlayer.setId("ai-player");
+            aiPlayer.setUsername("AI Player");
+            aiPlayer.setHand(new ArrayList<>());
+            aiPlayer.setWonCards(new ArrayList<>());
+            aiPlayer.setActive(true);
+            aiPlayer.setScore(0);
+            aiPlayer.setGame(this);
+
+            getPlayers().add(aiPlayer);
+            setGameState(AI_PLAYER, aiPlayer.getId());
+        }
+
+        Player humanPlayer = getPlayers().get(0);
+        setGameState(HUMAN_PLAYER, humanPlayer.getId());
+
+        for (Player player : getPlayers()) {
+            List<Card> hand = deck.drawCards(CARDS_PER_PLAYER);
+            player.setHand(hand);
+            player.setWonCards(new ArrayList<>());
+            player.setActive(true);
+            player.setScore(0);
+        }
+
+        setCurrentPlayer(getPlayers().get(0));
+        setGameState(DECK, deck);
+        setGameState(CURRENT_TRICK, new ArrayList<Card>());
+        getGameState().remove(TRICK_STARTER);
+        getGameState().remove(CAN_HIT);
+        getGameState().remove(LAST_PLAYED_CARD);
+        getGameState().remove(LAST_PLAYER);
+
+        logger.info("AI game initialized with human player: {} and AI player: {}",
+                getPlayers().get(0).getId(), getPlayers().get(1).getId());
     }
 
     public void initializeGame_Factory_2(){
@@ -132,32 +186,34 @@ public class ZsirGame extends CardGame {
     }
 
     protected void processGameStateObjects_1() {
-        //TODO: Implement AI
+        if (getGameState().containsKey(CURRENT_TRICK)) {
+            Object currentTrickObj = getGameState(CURRENT_TRICK);
+            List<Card> cardList = ZsirGameUtils.convertToCardList(currentTrickObj);
+            setGameState(CURRENT_TRICK, cardList);
+            logger.debug("Processed currentTrick list, size: {}", cardList.size());
+        }
+
+        if (getGameState().containsKey(LAST_PLAYED_CARD)) {
+            Object cardObj = getGameState(LAST_PLAYED_CARD);
+            Card card = ZsirGameUtils.convertToCard(cardObj);
+            if (card != null) {
+                setGameState(LAST_PLAYED_CARD, card);
+                logger.debug("Processed lastPlayedCard");
+            }
+        }
     }
 
     protected void processGameStateObjects_2() {
         if (getGameState().containsKey(CURRENT_TRICK)) {
             Object currentTrickObj = getGameState(CURRENT_TRICK);
-            if (currentTrickObj instanceof List) {
-                @SuppressWarnings("unchecked")
-                List<Object> trickList = (List<Object>) currentTrickObj;
-                List<Card> cardList = new ArrayList<>();
-
-                for (Object obj : trickList) {
-                    Card card = convertToCard(obj);
-                    if (card != null) {
-                        cardList.add(card);
-                    }
-                }
-
-                setGameState(CURRENT_TRICK, cardList);
-                logger.debug("Processed currentTrick list, size: {}", cardList.size());
-            }
+            List<Card> cardList = ZsirGameUtils.convertToCardList(currentTrickObj);
+            setGameState(CURRENT_TRICK, cardList);
+            logger.debug("Processed currentTrick list, size: {}", cardList.size());
         }
 
         if (getGameState().containsKey(LAST_PLAYED_CARD)) {
             Object cardObj = getGameState(LAST_PLAYED_CARD);
-            Card card = convertToCard(cardObj);
+            Card card = ZsirGameUtils.convertToCard(cardObj);
             if (card != null) {
                 setGameState(LAST_PLAYED_CARD, card);
                 logger.debug("Processed lastPlayedCard");
@@ -170,8 +226,48 @@ public class ZsirGame extends CardGame {
     }
 
     public boolean isValidMove_1(String playerId, GameAction action) {
-        //TODO: Implement AI
-        return false;
+        if (action == null) {
+            return false;
+        }
+
+        String aiPlayerId = (String) getGameState(AI_PLAYER);
+        if (playerId.equals(aiPlayerId)) {
+            return true;
+        }
+
+        if ("pass".equals(action.getActionType())) {
+            if (!getCurrentPlayer().getId().equals(playerId)) {
+                return false;
+            }
+
+            Boolean canHit = (Boolean) getGameState(CAN_HIT);
+            return Boolean.TRUE.equals(canHit);
+        }
+
+        if (!"playCard".equals(action.getActionType())) {
+            return false;
+        }
+
+        if (!getCurrentPlayer().getId().equals(playerId)) {
+            return false;
+        }
+
+        Card card = action.getCardParameter("card");
+        if (card == null) {
+            return false;
+        }
+
+        Player player = getPlayerById(playerId);
+        if (player == null || !ZsirGameUtils.playerHasCard(player, card)) {
+            return false;
+        }
+
+        List<Card> currentTrick = fetchCurrentTrickCards();
+        if (currentTrick.size() >= MAX_CARDS_IN_TRICK) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isValidMove_2(String playerId, GameAction action) {
@@ -202,7 +298,7 @@ public class ZsirGame extends CardGame {
         }
 
         Player player = getPlayerById(playerId);
-        if (player == null || !playerHasCard(player, card)) {
+        if (player == null || !ZsirGameUtils.playerHasCard(player, card)) {
             return false;
         }
 
@@ -220,19 +316,29 @@ public class ZsirGame extends CardGame {
     }
 
     public void executeMove_1(String playerId, GameAction action) {
-        //TODO: Implement AI
-    }
+        String aiPlayerId = (String) getGameState(AI_PLAYER);
+        if (getCurrentPlayer().getId().equals(aiPlayerId) && !playerId.equals(aiPlayerId)) {
+            return;
+        }
 
-    public void executeMove_2(String playerId, GameAction action) {
+        if (playerId.equals(aiPlayerId)) {
+            executeAIMove();
+            return;
+        }
+
         if ("pass".equals(action.getActionType())) {
-            handlePass(playerId);
+            this.handlePass(playerId);
+
+            if (getCurrentPlayer().getId().equals(aiPlayerId)) {
+                executeAIMove();
+            }
             return;
         }
 
         Player player = getPlayerById(playerId);
         Card card = action.getCardParameter("card");
 
-        removeCardFromHand(player, card);
+        ZsirGameUtils.removeCardFromHand(player, card);
 
         List<Card> currentTrick = fetchCurrentTrickCards();
         currentTrick.add(card);
@@ -262,7 +368,105 @@ public class ZsirGame extends CardGame {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
             } else if (!isStarterTurn && playerHit) {
-                boolean firstPlayerCanHit = checkIfPlayerCanHit(getPlayerById(trickStarter), card);
+                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
+                setGameState(CAN_HIT, firstPlayerCanHit);
+
+                if (!firstPlayerCanHit) {
+                    trickComplete = true;
+                }
+            }
+        }
+
+        if (currentTrick.size() == MAX_CARDS_IN_TRICK) {
+            trickComplete = true;
+        }
+
+        if (trickComplete) {
+            Player winner = determineTrickWinner(currentTrick, trickStarter);
+            winner.getWonCards().addAll(currentTrick);
+
+            setGameState(CURRENT_TRICK, new ArrayList<Card>());
+            getGameState().remove(TRICK_STARTER);
+            setGameState(CAN_HIT, false);
+
+            checkAndDrawCards();
+            setCurrentPlayer(winner);
+
+            if (getCurrentPlayer().getId().equals(aiPlayerId)) {
+                executeAIMove();
+            }
+        } else {
+            Player nextPlayer = ZsirGameUtils.getOtherPlayer(getPlayers(), player);
+            setCurrentPlayer(nextPlayer);
+
+            if (getCurrentPlayer().getId().equals(aiPlayerId)) {
+                executeAIMove();
+            }
+        }
+    }
+
+    private void executeAIMove() {
+        String aiPlayerId = (String) getGameState(AI_PLAYER);
+        Player aiPlayer = getPlayerById(aiPlayerId);
+
+        if (aiPlayer == null || aiPlayer.getHand().isEmpty()) {
+            return;
+        }
+
+        List<Card> currentTrick = fetchCurrentTrickCards();
+        Boolean canHit = (Boolean) getGameState(CAN_HIT);
+        String trickStarter = (String) getGameState(TRICK_STARTER);
+
+        aiMoveExecutor.executeAIMove(
+                aiPlayer,
+                currentTrick,
+                aiPlayerId,
+                trickStarter,
+                Boolean.TRUE.equals(canHit),
+                this
+        );
+    }
+
+    public void executeMove_2(String playerId, GameAction action) {
+        if ("pass".equals(action.getActionType())) {
+            this.handlePass(playerId);
+            return;
+        }
+
+        Player player = getPlayerById(playerId);
+        Card card = action.getCardParameter("card");
+
+        ZsirGameUtils.removeCardFromHand(player, card);
+
+        List<Card> currentTrick = fetchCurrentTrickCards();
+        currentTrick.add(card);
+        setGameState(CURRENT_TRICK, currentTrick);
+
+        setGameState(LAST_PLAYED_CARD, card);
+        setGameState(LAST_PLAYER, playerId);
+
+        if (currentTrick.size() == 1) {
+            setGameState(TRICK_STARTER, playerId);
+        }
+
+        String trickStarter = (String) getGameState(TRICK_STARTER);
+        boolean isStarterTurn = playerId.equals(trickStarter);
+
+        boolean playerHit = false;
+        if (currentTrick.size() > 1) {
+            Card previousCard = currentTrick.get(currentTrick.size() - 2);
+            playerHit = card.getRank() == Rank.SEVEN || card.getRank() == previousCard.getRank();
+        }
+
+        setGameState(CAN_HIT, false);
+
+        boolean trickComplete = false;
+
+        if (currentTrick.size() >= 2) {
+            if (!isStarterTurn && !playerHit) {
+                trickComplete = true;
+            } else if (!isStarterTurn && playerHit) {
+                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
                 setGameState(CAN_HIT, firstPlayerCanHit);
 
                 if (!firstPlayerCanHit) {
@@ -286,7 +490,7 @@ public class ZsirGame extends CardGame {
             checkAndDrawCards();
             setCurrentPlayer(winner);
         } else {
-            Player nextPlayer = getOtherPlayer(player);
+            Player nextPlayer = ZsirGameUtils.getOtherPlayer(getPlayers(), player);
             setCurrentPlayer(nextPlayer);
         }
     }
@@ -295,74 +499,12 @@ public class ZsirGame extends CardGame {
         //TODO: Implement 4 player game
     }
 
-    private void handlePass(String playerId) {
-        List<Card> currentTrick = fetchCurrentTrickCards();
-        String trickStarter = (String) getGameState(TRICK_STARTER);
-
-        if (currentTrick.isEmpty()) {
-            return;
-        }
-
-        setGameState(CAN_HIT, false);
-
-        Player winner = determineTrickWinner(currentTrick, trickStarter);
-        winner.getWonCards().addAll(currentTrick);
-
-        setGameState(CURRENT_TRICK, new ArrayList<Card>());
-        getGameState().remove(TRICK_STARTER);
-
-        checkAndDrawCards();
-        setCurrentPlayer(winner);
-    }
-
-    private boolean checkIfPlayerCanHit(Player player, Card cardToMatch) {
-        for (Card card : player.getHand()) {
-            if (card.getRank() == Rank.SEVEN || card.getRank() == cardToMatch.getRank()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private List<Card> fetchCurrentTrickCards() {
-        List<Card> currentTrick = new ArrayList<>();
         Object currentTrickObj = getGameState(CURRENT_TRICK);
-
-        if (currentTrickObj instanceof List) {
-            @SuppressWarnings("unchecked")
-            List<?> tempList = (List<?>) currentTrickObj;
-
-            for (Object obj : tempList) {
-                Card convertedCard = convertToCard(obj);
-                if (convertedCard != null) {
-                    currentTrick.add(convertedCard);
-                }
-            }
-        }
-
-        return currentTrick;
+        return ZsirGameUtils.convertToCardList(currentTrickObj);
     }
 
-    private Card convertToCard(Object cardObj) {
-        if (cardObj instanceof Card) {
-            return (Card) cardObj;
-        } else if (cardObj instanceof Map) {
-            try {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> cardMap = (Map<String, Object>) cardObj;
-                return Card.fromMap(cardMap);
-            } catch (Exception e) {
-                logger.error("Error converting card map to Card: {}", e.getMessage());
-                return null;
-            }
-        } else {
-            logger.debug("Cannot convert to Card: {}",
-                    cardObj != null ? cardObj.getClass().getName() : "null");
-            return null;
-        }
-    }
-
-    private Player determineTrickWinner(List<Card> currentTrick, String trickStarter) {
+    public Player determineTrickWinner(List<Card> currentTrick, String trickStarter) {
         if (currentTrick.isEmpty()) {
             return getPlayers().get(0);
         }
@@ -385,13 +527,13 @@ public class ZsirGame extends CardGame {
         if (lastMatchingIndex % 2 == 0) {
             winner = getPlayerById(trickStarter);
         } else {
-            winner = getOtherPlayer(getPlayerById(trickStarter));
+            winner = ZsirGameUtils.getOtherPlayer(getPlayers(), getPlayerById(trickStarter));
         }
 
         return winner;
     }
 
-    private void checkAndDrawCards() {
+    public void checkAndDrawCards() {
         Deck deck = (Deck) getGameState(DECK);
 
         if (deck == null || deck.isEmpty()) {
@@ -460,15 +602,35 @@ public class ZsirGame extends CardGame {
 
     @Override
     public int getMinPlayers() {
-        return 2;
+        switch (factoryId){
+            case 1:
+                return 1;
+            case 2:
+                return 2;
+            case 4:
+                return 4;
+            default:
+                defaultSwithThrow();
+        }
+        return 0;
     }
 
     @Override
     public int getMaxPlayers() {
-        return 2;
+        switch (factoryId){
+            case 1:
+                return 1;
+            case 2:
+                return 2;
+            case 4:
+                return 4;
+            default:
+                defaultSwithThrow();
+        }
+        return 0;
     }
 
-    private Player getPlayerById(String playerId) {
+    public Player getPlayerById(String playerId) {
         for (Player player : getPlayers()) {
             if (player.getId().equals(playerId)) {
                 return player;
@@ -477,37 +639,60 @@ public class ZsirGame extends CardGame {
         return null;
     }
 
-    private boolean playerHasCard(Player player, Card card) {
-        for (Card c : player.getHand()) {
-            if (c.getSuit() == card.getSuit() && c.getRank() == card.getRank()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void removeCardFromHand(Player player, Card card) {
-        Iterator<Card> iterator = player.getHand().iterator();
-        while (iterator.hasNext()) {
-            Card c = iterator.next();
-            if (c.getSuit() == card.getSuit() && c.getRank() == card.getRank()) {
-                iterator.remove();
-                break;
-            }
-        }
-    }
-
-    private Player getOtherPlayer(Player currentPlayer) {
-        List<Player> players = getPlayers();
-        if (players.size() != 2) {
-            return currentPlayer;
-        }
-
-        return players.get(0).equals(currentPlayer) ? players.get(1) : players.get(0);
-    }
-
     private void defaultSwithThrow(){
         logger.error("Invalid factoryId: {}", factoryId);
         throw new IllegalArgumentException("Invalid factoryId: " + factoryId);
+    }
+
+    // GameStateCallback implementation methods
+    @Override
+    public void handlePass(String playerId) {
+        List<Card> currentTrick = fetchCurrentTrickCards();
+        String trickStarter = (String) getGameState(TRICK_STARTER);
+
+        if (currentTrick.isEmpty()) {
+            return;
+        }
+
+        setGameState(CAN_HIT, false);
+
+        Player winner = determineTrickWinner(currentTrick, trickStarter);
+        winner.getWonCards().addAll(currentTrick);
+
+        setGameState(CURRENT_TRICK, new ArrayList<Card>());
+        getGameState().remove(TRICK_STARTER);
+
+        checkAndDrawCards();
+        setCurrentPlayer(winner);
+    }
+
+    @Override
+    public void setCurrentTrick(List<Card> currentTrick) {
+        setGameState(CURRENT_TRICK, currentTrick);
+    }
+
+    @Override
+    public void setLastPlayedCard(Card card) {
+        setGameState(LAST_PLAYED_CARD, card);
+    }
+
+    @Override
+    public void setLastPlayer(String playerId) {
+        setGameState(LAST_PLAYER, playerId);
+    }
+
+    @Override
+    public void setTrickStarter(String playerId) {
+        setGameState(TRICK_STARTER, playerId);
+    }
+
+    @Override
+    public void setCanHit(boolean canHit) {
+        setGameState(CAN_HIT, canHit);
+    }
+
+    @Override
+    public void removeTrickStarter() {
+        getGameState().remove(TRICK_STARTER);
     }
 }

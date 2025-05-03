@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef} from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import {Observable, of, Subscription, tap} from "rxjs"
+import {Subscription} from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
 import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
@@ -18,14 +18,13 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatTooltipModule } from "@angular/material/tooltip"
-import {TranslateModule, TranslateService} from "@ngx-translate/core"
+import { TranslateModule, TranslateService} from "@ngx-translate/core"
 import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
 import {IS_DEV} from '../../../environments/api-config';
 import {LobbyService} from '../../services/lobby/lobby.service';
 import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
-import {map} from 'rxjs/operators';
 
 @Component({
   selector: "app-game",

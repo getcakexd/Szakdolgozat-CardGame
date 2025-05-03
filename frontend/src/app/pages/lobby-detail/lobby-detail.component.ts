@@ -130,7 +130,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       this.snackBar.open(this.translate.instant("LOBBY.INVALID_ID"), this.translate.instant("COMMON.CLOSE"), {
         duration: 3000,
       })
-      this.router.navigate(["/home"])
+      this.router.navigate(["/lobby"])
       return
     }
 
@@ -157,7 +157,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
           this.translate.instant("COMMON.CLOSE"),
           { duration: 3000 },
         )
-        this.router.navigate(["/home"])
+        this.router.navigate(["/lobby"])
       },
     })
   }
@@ -342,7 +342,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
             this.snackBar.open(this.translate.instant("LOBBY.LEFT_LOBBY"), this.translate.instant("COMMON.CLOSE"), {
               duration: 3000,
             })
-            this.router.navigate(["/home"])
+            this.router.navigate(["/lobby"])
           },
           error: (error) => {
             this.isLoading = false

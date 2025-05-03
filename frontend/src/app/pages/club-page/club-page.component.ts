@@ -207,9 +207,7 @@ export class ClubPageComponent implements OnInit {
         this.snackBar.open(this.translate.instant("CLUBS.INVITE_ACCEPTED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-        this.loadInvites()
-        this.loadUserClubs()
-        this.isLoading = false
+        window.location.reload()
       },
       error: (error) => {
         console.error("Error accepting invite:", error)
