@@ -1,0 +1,160 @@
+<h2 mat-dialog-title>{{ 'EDIT_GAME.TITLE' | translate }}</h2>
+<form [formGroup]="gameForm" (ngSubmit)="onSubmit()" class="dialog-content">
+  <mat-dialog-content>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>{{ 'EDIT_GAME.GAME_NAME' | translate }}</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error *ngIf="gameForm.get('name')?.hasError('required')">{{ 'EDIT_GAME.NAME_REQUIRED' | translate }}</mat-error>
+      <mat-error *ngIf="gameForm.get('name')?.hasError('minlength')">{{ 'EDIT_GAME.NAME_MIN_LENGTH' | translate }}</mat-error>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'EDIT_GAME.MIN_PLAYERS' | translate }}</mat-label>
+        <input matInput type="number" formControlName="minPlayers" required min="1" max="10">
+        <mat-error *ngIf="gameForm.get('minPlayers')?.hasError('required')">{{ 'EDIT_GAME.MIN_PLAYERS_REQUIRED' | translate }}</mat-error>
+        <mat-error *ngIf="gameForm.get('minPlayers')?.hasError('min')">{{ 'EDIT_GAME.MIN_PLAYERS_MIN' | translate }}</mat-error>
+        <mat-error *ngIf="gameForm.get('minPlayers')?.hasError('max')">{{ 'EDIT_GAME.MIN_PLAYERS_MAX' | translate }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'EDIT_GAME.MAX_PLAYERS' | translate }}</mat-label>
+        <input matInput type="number" formControlName="maxPlayers" required min="1" max="10">
+        <mat-error *ngIf="gameForm.get('maxPlayers')?.hasError('required')">{{ 'EDIT_GAME.MAX_PLAYERS_REQUIRED' | translate }}</mat-error>
+        <mat-error *ngIf="gameForm.get('maxPlayers')?.hasError('min')">{{ 'EDIT_GAME.MAX_PLAYERS_MIN' | translate }}</mat-error>
+        <mat-error *ngIf="gameForm.get('maxPlayers')?.hasError('max')">{{ 'EDIT_GAME.MAX_PLAYERS_MAX' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'EDIT_GAME.FACTORY_SIGN' | translate }}</mat-label>
+        <input matInput type formControlName="factorySign" required>
+        <mat-error *ngIf="gameForm.get('factorySign')?.hasError('required')">
+          {{ 'EDIT_GAME.FACTORY_SIGN_REQUIRED' | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>{{ 'EDIT_GAME.FACTORY_ID' | translate }}</mat-label>
+        <input matInput type="number" formControlName="factoryId" required min="1">
+        <mat-error *ngIf="gameForm.get('factoryId')?.hasError('required')"> {{ 'EDIT_GAME.FACTORY_ID_REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle formControlName="active" color="primary" class="active-toggle">
+      {{ 'EDIT_GAME.ACTIVE' | translate }}
+    </mat-slide-toggle>
+
+    <h3 class="section-title">{{ 'EDIT_GAME.DESCRIPTIONS' | translate }}</h3>
+    <div formArrayName="descriptions" class="localized-content-section">
+      <div *ngFor="let description of descriptions.controls; let i = index" [formGroupName]="i" class="localized-content-item">
+        <div class="localized-content-header">
+          <h4>{{ 'EDIT_GAME.DESCRIPTION' | translate }} - {{ getLanguageNameByCode(description.get('language')?.value) }}</h4>
+          <button type="button" mat-icon-button color="warn" (click)="removeDescription(i)" [disabled]="descriptions.length <= 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="localized-content-form">
+          <mat-form-field appearance="fill" class="language-select">
+            <mat-label>{{ 'EDIT_GAME.LANGUAGE' | translate }}</mat-label>
+            <mat-select formControlName="language" required>
+              <mat-option *ngFor="let lang of getAvailableLanguagesForDescription(i)" [value]="lang.code">
+                {{ lang.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="markdown-toggle">
+            <mat-checkbox formControlName="markdown" color="primary">
+              {{ 'EDIT_GAME.USE_MARKDOWN' | translate }}
+            </mat-checkbox>
+            <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
+              <mat-icon>help_outline</mat-icon>
+            </a>
+          </div>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'EDIT_GAME.CONTENT' | translate }}</mat-label>
+            <textarea matInput formControlName="content" rows="4" required></textarea>
+            <mat-error *ngIf="description.get('content')?.hasError('required')">
+              {{ 'EDIT_GAME.CONTENT_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <div *ngIf="description.get('markdown')?.value && description.get('content')?.value" class="markdown-preview">
+            <h5>{{ 'EDIT_GAME.PREVIEW' | translate }}</h5>
+            <div class="preview-container">
+              <markdown [data]="previewMarkdown(description.get('content')?.value)"></markdown>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider *ngIf="i < descriptions.length - 1"></mat-divider>
+      </div>
+
+      <button type="button" mat-button color="primary" (click)="addDescription()" class="add-content-button">
+        <mat-icon>add</mat-icon> {{ 'EDIT_GAME.ADD_DESCRIPTION' | translate }}
+      </button>
+    </div>
+
+    <h3 class="section-title">{{ 'EDIT_GAME.RULES' | translate }}</h3>
+    <div formArrayName="rules" class="localized-content-section">
+      <div *ngFor="let rule of rules.controls; let i = index" [formGroupName]="i" class="localized-content-item">
+        <div class="localized-content-header">
+          <h4>{{ 'EDIT_GAME.RULES' | translate }} - {{ getLanguageNameByCode(rule.get('language')?.value) }}</h4>
+          <button type="button" mat-icon-button color="warn" (click)="removeRules(i)" [disabled]="rules.length <= 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="localized-content-form">
+          <mat-form-field appearance="fill" class="language-select">
+            <mat-label>{{ 'EDIT_GAME.LANGUAGE' | translate }}</mat-label>
+            <mat-select formControlName="language" required>
+              <mat-option *ngFor="let lang of getAvailableLanguagesForRules(i)" [value]="lang.code">
+                {{ lang.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="markdown-toggle">
+            <mat-checkbox formControlName="markdown" color="primary">
+              {{ 'EDIT_GAME.USE_MARKDOWN' | translate }}
+            </mat-checkbox>
+            <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank" class="markdown-help">
+              <mat-icon>help_outline</mat-icon>
+            </a>
+          </div>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'EDIT_GAME.CONTENT' | translate }}</mat-label>
+            <textarea matInput formControlName="content" rows="4" required></textarea>
+            <mat-error *ngIf="rule.get('content')?.hasError('required')">
+              {{ 'EDIT_GAME.CONTENT_REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <div *ngIf="rule.get('markdown')?.value && rule.get('content')?.value" class="markdown-preview">
+            <h5>{{ 'EDIT_GAME.PREVIEW' | translate }}</h5>
+            <div class="preview-container">
+              <markdown [data]="previewMarkdown(rule.get('content')?.value)"></markdown>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider *ngIf="i < rules.length - 1"></mat-divider>
+      </div>
+
+      <button type="button" mat-button color="primary" (click)="addRules()" class="add-content-button">
+        <mat-icon>add</mat-icon> {{ 'EDIT_GAME.ADD_RULES' | translate }}
+      </button>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">{{ 'EDIT_GAME.CANCEL' | translate }}</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="gameForm.invalid">{{ 'EDIT_GAME.UPDATE_GAME' | translate }}</button>
+  </mat-dialog-actions>
+</form>

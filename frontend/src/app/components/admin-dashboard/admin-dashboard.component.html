@@ -89,7 +89,8 @@
                     [isAdmin]="true"
                     [showActiveToggle]="true"
                     (toggleActive)="toggleGameActive($event)"
-                    (deleteGame)="deleteGame($event)">
+                    (deleteGame)="deleteGame($event)"
+                    (editGame)="editGame($event)">
                   </app-game-card>
                 </div>
                 <mat-divider *ngIf="!last" class="game-divider"></mat-divider>

@@ -55,6 +55,11 @@
       {{ (showRules ? 'GAME_CARD.HIDE_RULES' : 'GAME_CARD.VIEW_RULES') | translate }}
     </button>
 
+    <button mat-button color="primary" *ngIf="isAdmin" (click)="onEditGame()" type="button">
+      <mat-icon>edit</mat-icon>
+      {{ 'ADMIN.EDIT_GAME' | translate }}
+    </button>
+
     <button mat-button color="warn" *ngIf="isAdmin" (click)="onDeleteGame()" type="button">
       <mat-icon>delete</mat-icon>
       {{ 'ADMIN.DELETE_GAME' | translate }}

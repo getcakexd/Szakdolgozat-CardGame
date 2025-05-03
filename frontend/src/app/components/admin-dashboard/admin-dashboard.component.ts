@@ -30,6 +30,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GameCardComponent } from "../game-card/game-card.component";
 import {MatDivider} from '@angular/material/divider';
+import {EditGameDialogComponent} from '../edit-game-dialog/edit-game-dialog.component';
 
 @Component({
   selector: "app-admin-dashboard",
@@ -331,6 +332,28 @@ export class AdminDashboardComponent implements OnInit {
     this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), {
       duration: 5000,
       panelClass: "error-snackbar",
+    })
+  }
+
+  editGame(game: Game): void {
+    const dialogRef = this.dialog.open(EditGameDialogComponent, {
+      width: "90%",
+      maxWidth: "1200px",
+      panelClass: "wide-dialog",
+      autoFocus: false,
+      data: { game },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.gameService.updateGame(game.id, result).subscribe(
+          () => {
+            this.showSuccess(this.translate.instant("ADMIN.GAME_UPDATED"))
+            this.loadGames()
+          },
+          (error) => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
+        )
+      }
     })
   }
 }

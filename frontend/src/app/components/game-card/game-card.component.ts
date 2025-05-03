@@ -31,82 +31,87 @@ import {MarkdownComponent} from 'ngx-markdown';
   ]
 })
 export class GameCardComponent {
-  @Input() game!: Game;
-  @Input() showRulesButton: boolean = true;
-  @Input() showActiveToggle: boolean = false;
-  @Input() isAdmin: boolean = false;
+  @Input() game!: Game
+  @Input() showRulesButton = true
+  @Input() showActiveToggle = false
+  @Input() isAdmin = false
 
-  @Output() toggleActive = new EventEmitter<{game: Game, active: boolean}>();
-  @Output() deleteGame = new EventEmitter<Game>();
+  @Output() toggleActive = new EventEmitter<{ game: Game; active: boolean }>()
+  @Output() deleteGame = new EventEmitter<Game>()
+  @Output() editGame = new EventEmitter<Game>()
 
-  showRules: boolean = false;
-  currentLanguage: string;
+  showRules = false
+  currentLanguage: string
 
   constructor(
     private translationService: TranslationService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
-    this.currentLanguage = this.translationService.getCurrentLang();
-    this.translationService.currentLang$.subscribe(lang => {
-      this.currentLanguage = lang;
-    });
+    this.currentLanguage = this.translationService.getCurrentLang()
+    this.translationService.currentLang$.subscribe((lang) => {
+      this.currentLanguage = lang
+    })
   }
 
   getDescriptionInCurrentLanguage(): string {
     if (!this.game.descriptions || this.game.descriptions.length === 0) {
-      return '';
+      return ""
     }
 
-    const description = this.game.descriptions.find(desc => desc.language === this.currentLanguage);
-    return description ? description.content : this.game.descriptions[0].content;
+    const description = this.game.descriptions.find((desc) => desc.language === this.currentLanguage)
+    return description ? description.content : this.game.descriptions[0].content
   }
 
   getRulesInCurrentLanguage(): string {
     if (!this.game.rules || this.game.rules.length === 0) {
-      return '';
+      return ""
     }
 
-    const rules = this.game.rules.find(rule => rule.language === this.currentLanguage);
-    return rules ? rules.content : this.game.rules[0].content;
+    const rules = this.game.rules.find((rule) => rule.language === this.currentLanguage)
+    return rules ? rules.content : this.game.rules[0].content
   }
 
   isDescriptionMarkdown(): boolean {
     if (!this.game.descriptions || this.game.descriptions.length === 0) {
-      return false;
+      return false
     }
 
-    const description = this.game.descriptions.find(desc => desc.language === this.currentLanguage);
-    return description ? !!description.markdown : !!this.game.descriptions[0].markdown;
+    const description = this.game.descriptions.find((desc) => desc.language === this.currentLanguage)
+    return description ? !!description.markdown : !!this.game.descriptions[0].markdown
   }
 
   isRulesMarkdown(): boolean {
     if (!this.game.rules || this.game.rules.length === 0) {
-      return false;
+      return false
     }
 
-    const rules = this.game.rules.find(rule => rule.language === this.currentLanguage);
-    return rules ? !!rules.markdown : !!this.game.rules[0].markdown;
+    const rules = this.game.rules.find((rule) => rule.language === this.currentLanguage)
+    return rules ? !!rules.markdown : !!this.game.rules[0].markdown
   }
 
   toggleRules(): void {
-    this.showRules = !this.showRules;
+    this.showRules = !this.showRules
   }
 
   onToggleActive(event: any): void {
     this.toggleActive.emit({
       game: this.game,
-      active: event.checked
-    });
+      active: event.checked,
+    })
   }
 
   onDeleteGame(): void {
-    this.deleteGame.emit(this.game);
+    this.deleteGame.emit(this.game)
+  }
+
+  onEditGame(): void {
+    this.editGame.emit(this.game)
   }
 
   getAvailableLanguages(): string[] {
-    const descriptionLanguages = this.game.descriptions ? this.game.descriptions.map(desc => desc.language) : [];
-    const rulesLanguages = this.game.rules ? this.game.rules.map(rule => rule.language) : [];
+    const descriptionLanguages = this.game.descriptions ? this.game.descriptions.map((desc) => desc.language) : []
+    const rulesLanguages = this.game.rules ? this.game.rules.map((rule) => rule.language) : []
 
-    return [...new Set([...descriptionLanguages, ...rulesLanguages])];
+    return [...new Set([...descriptionLanguages, ...rulesLanguages])]
   }
 }
