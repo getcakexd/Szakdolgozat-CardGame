@@ -39,6 +39,16 @@ public class Lobby {
     )
     private Set<User> players = new HashSet<>();
 
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "club_id",
+            foreignKey = @ForeignKey(name = "fk_lobby_club",
+                    foreignKeyDefinition = "FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE")
+    )
+    private Club club;
+
+    private boolean isPublic = false;
+
     private boolean playWithPoints;
 
     private int minPlayers;
@@ -125,6 +135,22 @@ public class Lobby {
 
     public void removePlayer(User player) {
         this.players.remove(player);
+    }
+
+    public Club getClub() {
+        return club;
+    }
+
+    public void setClub(Club club) {
+        this.club = club;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getStatus() {

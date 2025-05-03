@@ -1,0 +1,89 @@
+.club-leaderboard-container {
+  width: 100%;
+}
+
+.tab-content {
+  padding: 1.5rem 0;
+}
+
+.game-selector {
+  margin-bottom: 1.5rem;
+}
+
+.game-selector mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+.leaderboard-table {
+  width: 100%;
+}
+
+.rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  font-weight: 700;
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.gold {
+  background-color: #ffd700;
+  color: #000;
+}
+
+.silver {
+  background-color: #c0c0c0;
+  color: #000;
+}
+
+.bronze {
+  background-color: #cd7f32;
+  color: #fff;
+}
+
+.current-user {
+  border: 2px solid var(--mat-sys-primary);
+}
+
+.current-user-row {
+  font-weight: 500;
+  color: var(--mat-sys-primary);
+}
+
+.user-indicator {
+  font-size: 1rem;
+  height: 1rem;
+  width: 1rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.no-data-message mat-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .rank-badge {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.875rem;
+  }
+}

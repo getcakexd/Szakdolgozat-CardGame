@@ -96,6 +96,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     this.settingsForm = this.fb.group({
       gameId: ["", Validators.required],
       playWithPoints: [false],
+      isPublic: [false],
     })
   }
 
@@ -138,7 +139,6 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       next: (lobby) => {
         this.lobby = lobby
         this.isLeader = this.currentUser?.id === lobby.leader.id
-        console.log(this.isLeader)
 
         if (this.games.length === 0) {
           this.loadGames().then(() => {
@@ -186,6 +186,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       this.settingsForm.patchValue({
         gameId: this.lobby.game.id,
         playWithPoints: this.lobby.playWithPoints,
+        isPublic: this.lobby.public,
       })
 
       this.selectedGame = this.lobby.game
@@ -223,26 +224,28 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       return
     }
 
-    const { gameId, playWithPoints } = this.settingsForm.value
+    const { gameId, playWithPoints, isPublic } = this.settingsForm.value
 
     this.isLoading = true
-    this.lobbyService.updateLobbySettings(this.lobby.id, this.currentUser!.id, gameId, playWithPoints).subscribe({
-      next: (lobby) => {
-        this.lobby = lobby
-        this.isLoading = false
-        this.snackBar.open(this.translate.instant("LOBBY.SETTINGS_UPDATED"), this.translate.instant("COMMON.CLOSE"), {
-          duration: 3000,
-        })
-      },
-      error: (error) => {
-        this.isLoading = false
-        this.snackBar.open(
-          error.error.message || this.translate.instant("LOBBY.FAILED_UPDATE_SETTINGS"),
-          this.translate.instant("COMMON.CLOSE"),
-          { duration: 3000 },
-        )
-      },
-    })
+    this.lobbyService
+      .updateLobbySettings(this.lobby.id, this.currentUser!.id, gameId, playWithPoints, isPublic)
+      .subscribe({
+        next: (lobby) => {
+          this.lobby = lobby
+          this.isLoading = false
+          this.snackBar.open(this.translate.instant("LOBBY.SETTINGS_UPDATED"), this.translate.instant("COMMON.CLOSE"), {
+            duration: 3000,
+          })
+        },
+        error: (error) => {
+          this.isLoading = false
+          this.snackBar.open(
+            error.error.message || this.translate.instant("LOBBY.FAILED_UPDATE_SETTINGS"),
+            this.translate.instant("COMMON.CLOSE"),
+            { duration: 3000 },
+          )
+        },
+      })
   }
 
   onStartGame(): void {

@@ -1,26 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Game } from '../../models/game.model';
-import { User } from '../../models/user.model';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {AuthService} from '../../services/auth/auth.service';
-import {LobbyService} from '../../services/lobby/lobby.service';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatIcon} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
-import {NgForOf, NgIf} from '@angular/common';
-import {MatSlideToggle} from '@angular/material/slide-toggle';
-import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatOption} from '@angular/material/core';
-import {MatSelect} from '@angular/material/select';
-import {GameCardComponent} from '../game-card/game-card.component';
-import {TranslationService} from '../../services/translation/translation.service';
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core"
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
+import { Router } from "@angular/router"
+import { MatSnackBar } from "@angular/material/snack-bar"
+import { TranslatePipe, TranslateService } from "@ngx-translate/core"
+import { NgIf, NgForOf } from "@angular/common"
+import { MatProgressSpinner } from "@angular/material/progress-spinner"
+import { MatIcon } from "@angular/material/icon"
+import { MatButton } from "@angular/material/button"
+import { MatSlideToggle } from "@angular/material/slide-toggle"
+import { MatError, MatFormField, MatLabel } from "@angular/material/form-field"
+import { MatOption } from "@angular/material/core"
+import { MatSelect } from "@angular/material/select"
+
+import { Game } from "../../models/game.model"
+import { User } from "../../models/user.model"
+import { Club } from "../../models/club.model"
+import { LobbyService } from "../../services/lobby/lobby.service"
+import { AuthService } from "../../services/auth/auth.service"
+import { GameCardComponent } from "../game-card/game-card.component"
 
 @Component({
-  selector: 'app-lobby-create',
-  templateUrl: './lobby-create.component.html',
+  selector: "app-club-lobby-create",
+  templateUrl: "./club-lobby-create.component.html",
   standalone: true,
   imports: [
     MatProgressSpinner,
@@ -36,11 +37,14 @@ import {TranslationService} from '../../services/translation/translation.service
     NgForOf,
     MatLabel,
     MatFormField,
-    GameCardComponent
+    GameCardComponent,
   ],
-  styleUrls: ['./lobby-create.component.css']
+  styleUrls: ["./club-lobby-create.component.css"],
 })
-export class LobbyCreateComponent implements OnInit {
+export class ClubLobbyCreateComponent implements OnInit {
+  @Input() club!: Club
+  @Output() lobbyCreated = new EventEmitter<void>()
+
   createForm: FormGroup
   games: Game[] = []
   currentUser: User | null = null
@@ -55,12 +59,10 @@ export class LobbyCreateComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
-    private translationService: TranslationService,
   ) {
     this.createForm = this.fb.group({
       gameId: ["", Validators.required],
       playWithPoints: [false],
-      isPublic: [false],
     })
   }
 
@@ -98,25 +100,30 @@ export class LobbyCreateComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.createForm.invalid || !this.currentUser) {
+    if (this.createForm.invalid || !this.currentUser || !this.club) {
       return
     }
 
-    const { gameId, playWithPoints, isPublic } = this.createForm.value
+    const { gameId, playWithPoints } = this.createForm.value
 
     this.isSubmitting = true
-    this.lobbyService.createLobby(this.currentUser.id, gameId, playWithPoints, isPublic).subscribe({
+    this.lobbyService.createClubLobby(this.currentUser.id, gameId, playWithPoints, this.club.id).subscribe({
       next: (lobby) => {
         this.isSubmitting = false
-        this.snackBar.open(this.translate.instant("LOBBY.CREATE.SUCCESS"), this.translate.instant("COMMON.CLOSE"), {
-          duration: 3000,
-        })
+        this.snackBar.open(
+          this.translate.instant("CLUB.LOBBIES.CREATE_SUCCESS"),
+          this.translate.instant("COMMON.CLOSE"),
+          {
+            duration: 3000,
+          },
+        )
+        this.lobbyCreated.emit()
         this.router.navigate(["/lobby", lobby.id])
       },
       error: (error) => {
         this.isSubmitting = false
         this.snackBar.open(
-          error.error.message || this.translate.instant("LOBBY.CREATE.FAILED"),
+          error.error.message || this.translate.instant("CLUB.LOBBIES.CREATE_FAILED"),
           this.translate.instant("COMMON.CLOSE"),
           { duration: 3000 },
         )

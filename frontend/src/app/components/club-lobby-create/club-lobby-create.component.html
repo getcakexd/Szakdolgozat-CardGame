@@ -1,5 +1,6 @@
-<div class="create-lobby-container">
-  <h2>{{ 'LOBBY.CREATE.TITLE' | translate }}</h2>
+<div class="create-club-lobby-container">
+  <h2>{{ 'CLUB.LOBBIES.CREATE_TITLE' | translate }}</h2>
+  <p>{{ 'CLUB.LOBBIES.CREATE_SUBTITLE' | translate: { clubName: club.name } }}</p>
 
   <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
     <div class="form-field">
@@ -25,15 +26,6 @@
       </div>
     </div>
 
-    <div class="form-field">
-      <mat-slide-toggle formControlName="isPublic" color="primary">
-        {{ 'LOBBY.CREATE.PUBLIC_LOBBY' | translate }}
-      </mat-slide-toggle>
-      <div class="hint-text">
-        {{ 'LOBBY.CREATE.PUBLIC_DESCRIPTION' | translate }}
-      </div>
-    </div>
-
     <div class="game-info" *ngIf="selectedGame">
       <app-game-card
         [game]="selectedGame"
@@ -50,7 +42,7 @@
         type="submit"
         [disabled]="createForm.invalid || isSubmitting">
         <mat-icon>add</mat-icon>
-        {{ isSubmitting ? ('LOBBY.CREATE.CREATING' | translate) : ('LOBBY.CREATE.CREATE_BUTTON' | translate) }}
+        {{ isSubmitting ? ('CLUB.LOBBIES.CREATING' | translate) : ('CLUB.LOBBIES.CREATE_BUTTON' | translate) }}
       </button>
     </div>
   </form>

@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild } from "@angular/core"
+import { Component, OnInit, Input } from "@angular/core"
 import { Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import { MatTab, MatTabGroup } from "@angular/material/tabs"
-import { User } from "../../models/user.model"
-import { Lobby } from "../../models/lobby.model"
-import { LobbyService } from "../../services/lobby/lobby.service"
-import { AuthService } from "../../services/auth/auth.service"
+import { MatDialog } from "@angular/material/dialog"
 import { TranslatePipe, TranslateService } from "@ngx-translate/core"
+import { NgIf, NgFor } from "@angular/common"
 import { MatProgressSpinner } from "@angular/material/progress-spinner"
 import { MatButton } from "@angular/material/button"
+import { MatIcon } from "@angular/material/icon"
+import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import {
   MatCard,
   MatCardActions,
@@ -17,16 +16,19 @@ import {
   MatCardSubtitle,
   MatCardTitle,
 } from "@angular/material/card"
-import {NgForOf, NgIf} from "@angular/common"
-import { LobbyJoinComponent } from "../../components/lobby-join/lobby-join.component"
-import { LobbyCreateComponent } from "../../components/lobby-create/lobby-create.component"
+
+import { Lobby } from "../../models/lobby.model"
+import { User } from "../../models/user.model"
+import { Club } from "../../models/club.model"
+import { LobbyService } from "../../services/lobby/lobby.service"
+import { AuthService } from "../../services/auth/auth.service"
+import {ClubLobbyCreateComponent} from '../../components/club-lobby-create/club-lobby-create.component';
 import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
 import {CardGameService} from '../../services/card-game/card-game.service';
-import {MatDialog} from '@angular/material/dialog';
 
 @Component({
-  selector: "app-lobby-home",
-  templateUrl: "./lobby-home.component.html",
+  selector: "app-club-lobby",
+  templateUrl: "./club-lobby.component.html",
   standalone: true,
   imports: [
     TranslatePipe,
@@ -37,29 +39,33 @@ import {MatDialog} from '@angular/material/dialog';
     MatCardSubtitle,
     MatCardTitle,
     NgIf,
+    NgFor,
     MatCardHeader,
     MatCard,
-    LobbyJoinComponent,
+    MatIcon,
     MatTab,
-    LobbyCreateComponent,
     MatTabGroup,
-    NgForOf,
+    ClubLobbyCreateComponent,
   ],
-  styleUrls: ["./lobby-home.component.css"],
+  styleUrls: ["./club-lobby.component.css"],
 })
-export class LobbyHomeComponent implements OnInit {
-  @ViewChild("lobbyTabs") lobbyTabs!: MatTabGroup
+export class ClubLobbyComponent implements OnInit {
+  @Input() club!: Club
 
   currentUser: User | null = null
+  clubLobbies: Lobby[] = []
   userLobby: Lobby | null = null
   isLoading = false
   isLoadingUserLobby = false
   selectedTabIndex = 0
-  publicLobbies: Lobby[] = []
-  isLoadingPublicLobbies = false
+  lobbyStatus = {
+    WAITING: "WAITING",
+    IN_GAME: "IN_GAME",
+    FINISHED: "FINISHED",
+  }
 
   constructor(
-    public lobbyService: LobbyService,
+    private lobbyService: LobbyService,
     private authService: AuthService,
     private cardGameService: CardGameService,
     private router: Router,
@@ -78,13 +84,8 @@ export class LobbyHomeComponent implements OnInit {
       return
     }
 
-    const savedTabIndex = localStorage.getItem("lobbyTabIndex")
-    if (savedTabIndex) {
-      this.selectedTabIndex = Number.parseInt(savedTabIndex, 10)
-    }
-
     this.loadUserLobby()
-    this.loadPublicLobbies()
+    this.loadClubLobbies()
   }
 
   loadUserLobby(): void {
@@ -94,19 +95,7 @@ export class LobbyHomeComponent implements OnInit {
     this.lobbyService.getLobbyByPlayer(this.currentUser.id).subscribe({
       next: (lobby) => {
         this.isLoadingUserLobby = false
-
-        if (lobby !== null) {
-          this.userLobby = lobby
-
-          this.snackBar
-            .open(this.translate.instant("LOBBY.ALREADY_IN_LOBBY"), this.translate.instant("LOBBY.GO_TO_LOBBY"), {
-              duration: 5000,
-            })
-            .onAction()
-            .subscribe(() => {
-              this.navigateToLobby(this.userLobby!)
-            })
-        }
+        this.userLobby = lobby
       },
       error: (error) => {
         this.isLoadingUserLobby = false
@@ -119,17 +108,19 @@ export class LobbyHomeComponent implements OnInit {
     })
   }
 
-  loadPublicLobbies(): void {
-    this.isLoadingPublicLobbies = true
-    this.lobbyService.getPublicLobbies().subscribe({
+  loadClubLobbies(): void {
+    if (!this.club) return
+
+    this.isLoading = true
+    this.lobbyService.getClubLobbies(this.club.id).subscribe({
       next: (lobbies) => {
-        this.publicLobbies = lobbies
-        this.isLoadingPublicLobbies = false
+        this.clubLobbies = lobbies
+        this.isLoading = false
       },
       error: (error) => {
-        this.isLoadingPublicLobbies = false
+        this.isLoading = false
         this.snackBar.open(
-          this.translate.instant("LOBBY.FAILED_LOAD_PUBLIC_LOBBIES"),
+          this.translate.instant("LOBBY.FAILED_LOAD_CLUB_LOBBIES"),
           this.translate.instant("COMMON.CLOSE"),
           { duration: 3000 },
         )
@@ -140,17 +131,9 @@ export class LobbyHomeComponent implements OnInit {
   onTabChange(event: any): void {
     if (event && event.index !== undefined) {
       this.selectedTabIndex = event.index
-      localStorage.setItem("lobbyTabIndex", event.index.toString())
 
-      if (event.index === 2) {
-        this.loadPublicLobbies()
-      }
-    } else if (typeof event === "number") {
-      this.selectedTabIndex = event
-      localStorage.setItem("lobbyTabIndex", event.toString())
-
-      if (event === 2) {
-        this.loadPublicLobbies()
+      if (event.index === 0) {
+        this.loadClubLobbies()
       }
     }
   }
@@ -169,11 +152,11 @@ export class LobbyHomeComponent implements OnInit {
     }
   }
 
-  joinLobbyByCode(code: string): void {
+  joinLobby(lobby: Lobby): void {
     if (!this.currentUser) return
 
     this.isLoading = true
-    this.lobbyService.joinLobby(code, this.currentUser.id).subscribe({
+    this.lobbyService.joinLobby(lobby.code, this.currentUser.id).subscribe({
       next: (lobby) => {
         this.isLoading = false
         this.snackBar.open(this.translate.instant("LOBBY.JOIN.SUCCESS"), this.translate.instant("COMMON.CLOSE"), {
@@ -227,7 +210,8 @@ export class LobbyHomeComponent implements OnInit {
         this.snackBar.open(this.translate.instant("LOBBY.LEFT_LOBBY"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-        this.loadUserLobby()
+        this.userLobby = null
+        this.loadClubLobbies()
       },
       error: (error) => {
         this.isLoading = false
@@ -270,6 +254,7 @@ export class LobbyHomeComponent implements OnInit {
           duration: 3000,
         })
         this.loadUserLobby()
+        this.loadClubLobbies()
       },
       error: (error) => {
         this.isLoading = false
@@ -278,5 +263,19 @@ export class LobbyHomeComponent implements OnInit {
         })
       },
     })
+  }
+
+  refreshLobbies(): void {
+    this.loadUserLobby()
+    this.loadClubLobbies()
+  }
+
+  isUserInLobby(): boolean {
+    return this.userLobby !== null
+  }
+
+  isUserInClubLobby(): boolean {
+    if (!this.userLobby || !this.club) return false
+    return this.userLobby.club?.id === this.club.id
   }
 }

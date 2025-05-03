@@ -5,7 +5,8 @@
     "CANCEL": "Cancel",
     "LOADING": "Loading...",
     "YES": "Yes",
-    "NO": "No"
+    "NO": "No",
+    "REFRESH": "Refresh"
   },
   "NAVBAR": {
     "HOME": "Home",
@@ -34,11 +35,13 @@
   "LOGIN": {
     "TITLE": "Login",
     "USERNAME": "Username",
+    "EMAIL": "Email",
     "PASSWORD": "Password",
     "LOGIN_BUTTON": "Login",
     "NEED_ACCOUNT": "Don't have an account? Sign up",
     "OR": "OR",
     "ENTER_USERNAME": "Enter your username",
+    "ENTER_EMAIL": "Enter your email",
     "ENTER_PASSWORD": "Enter your password",
     "FORGOT_PASSWORD": "Forgot Password?"
   },
@@ -144,13 +147,28 @@
     "LOADING_INVITES": "Loading invites...",
     "DECLINE": "Decline",
     "ACCEPT": "Accept",
+    "PENDING_INVITES": "Pending Invites",
     "INVITE_ACCEPTED": "Invite accepted",
     "INVITE_DECLINED": "Invite declined",
     "FAILED_LOAD_INVITES": "Failed to load invites",
     "FAILED_ACCEPT_INVITE": "Failed to accept invite",
-    "FAILED_DECLINE_INVITE": "Failed to decline invite"
+    "FAILED_DECLINE_INVITE": "Failed to decline invite",
+    "CLUB_NAME": "Club Name",
+    "TOP_CLUBS": "Top Clubs",
+    "TOP_CLUBS_OVERALL": "Top Clubs Overall",
+    "TOP_CLUBS_BY_GAME": "Top Clubs By Game",
+    "RANK": "Rank",
+    "GAMES_PLAYED": "Games Played",
+    "POINTS": "Points",
+    "SELECT_GAME": "Select Game",
+    "NO_GAMES_AVAILABLE": "No games available",
+    "NO_LEADERBOARD_DATA": "No leaderboard data available yet",
+    "NO_GAME_LEADERBOARD_DATA": "No leaderboard data available for this game",
+    "LOADING_LEADERBOARD": "Loading leaderboard data...",
+    "LOADING": "Loading clubs..."
   },
   "CLUB": {
+    "ENTER": "Enter",
     "BACK": "Back",
     "PUBLIC": "Public",
     "PRIVATE": "Private",
@@ -224,7 +242,65 @@
     "FAILED_CREATE": "Failed to create club",
     "JOIN_PUBLIC_CLUB": "Join this public club",
     "CLUB_JOINED": "You have joined the club",
-    "FAILED_JOIN": "Failed to join club"
+    "FAILED_JOIN": "Failed to join club",
+    "LOBBIES": {
+      "TAB": "Lobbies",
+      "TITLE": "Club Lobbies",
+      "SUBTITLE": "Play games with your club members",
+      "AVAILABLE": "Available Lobbies",
+      "CREATE": "Create Lobby",
+      "NO_LOBBIES": "No club lobbies available. Create one to get started!",
+      "CREATE_TITLE": "Create Club Lobby",
+      "CREATE_SUBTITLE": "Create a new lobby for {{clubName}} members",
+      "CREATING": "Creating...",
+      "CREATE_BUTTON": "Create Club Lobby",
+      "CREATE_SUCCESS": "Club lobby created successfully",
+      "CREATE_FAILED": "Failed to create club lobby"
+    },
+    "STATS": {
+      "TAB": "Statistics",
+      "TITLE": "Club Statistics",
+      "SUBTITLE": "View performance statistics for this club",
+      "OVERALL": "Overall Club Stats",
+      "GAME_STATS": "Game Stats",
+      "TOP_MEMBERS": "Top Club Members",
+      "GAMES_PLAYED": "Games Played",
+      "TOTAL_POINTS": "Total Points",
+      "UNIQUE_PLAYERS": "Unique Players",
+      "TOTAL_FATS": "Total Fats",
+      "GAME": "Game",
+      "PLAYED": "Played",
+      "POINTS": "Points",
+      "WON": "Won",
+      "WIN_RATE": "Win Rate",
+      "PLAYER": "Player",
+      "FATS": "Fats",
+      "MEMBER": "Member",
+      "SCORE": "Score",
+      "NO_STATS": "No statistics available for this club yet. Play some games to see club stats!",
+      "NO_GAME_STATS": "No game-specific statistics available yet.",
+      "NO_MEMBER_STATS": "No member statistics available yet.",
+      "GAMES_BREAKDOWN": "Games Breakdown",
+      "LAST_PLAYED": "Last Played"
+    },
+    "LEADERBOARD": {
+      "TAB": "Leaderboard",
+      "TITLE": "Club Leaderboard",
+      "SUBTITLE": "See how members rank within this club",
+      "OVERALL": "Overall Leaderboard",
+      "BY_GAME": "Game Leaderboard",
+      "RANK": "Rank",
+      "PLAYER": "Player",
+      "PLAYED": "Played",
+      "WON": "Won",
+      "FATS": "Fats",
+      "WIN_RATE": "Win Rate",
+      "POINTS": "Points",
+      "SELECT_GAME": "Select Game",
+      "SELECT_GAME_PROMPT": "Please select a game to view its leaderboard",
+      "NO_DATA": "No leaderboard data available for this club yet.",
+      "NO_GAME_DATA": "No leaderboard data available for this game."
+    }
   },
   "CLUB_CREATE": {
     "TITLE": "Create Club",
@@ -248,7 +324,8 @@
     "JOIN_BELOW": "Join one below!",
     "NO_AVAILABLE_CLUBS": "There are no available clubs at the moment.",
     "CHECK_BACK": "Check back later!",
-    "JOIN_CLUB": "Join Club"
+    "JOIN_CLUB": "Join Club",
+    "MEMBERS_COUNT": "{{count}} members"
   },
   "CLUB_CHAT": {
     "CHAT": "Chat",
@@ -571,7 +648,6 @@
     "PLAYERS": "Players",
     "LEADER": "Leader",
     "POINTS": "Play with points",
-    "JOIN": "Join",
     "ENTER": "Enter",
     "ALREADY_IN_LOBBY": "You are already in a lobby",
     "GO_TO_LOBBY": "Go to Lobby",
@@ -611,6 +687,13 @@
     "LOADING": "Loading lobby...",
     "GO_TO_GAME": "Go to Game",
     "LOBBY_CODE": "Lobby",
+    "PUBLIC_LOBBY": "Public Lobby",
+    "PUBLIC_LOBBIES": "Public Lobbies",
+    "AVAILABLE_PUBLIC_LOBBIES": "Available Public Lobbies",
+    "NO_PUBLIC_LOBBIES": "No public lobbies available",
+    "LOADING_PUBLIC_LOBBIES": "Loading public lobbies...",
+    "FAILED_LOAD_PUBLIC_LOBBIES": "Failed to load public lobbies",
+    "FAILED_LOAD_CLUB_LOBBIES": "Failed to load club lobbies",
     "STATUS": {
       "WAITING": "Waiting",
       "IN_GAME": "In Game",
@@ -625,7 +708,9 @@
       "CREATE_BUTTON": "Create Lobby",
       "CREATING": "Creating...",
       "SUCCESS": "Lobby created successfully!",
-      "FAILED": "Failed to create lobby"
+      "FAILED": "Failed to create lobby",
+      "PUBLIC_LOBBY": "Public Lobby",
+      "PUBLIC_DESCRIPTION": "When enabled, this lobby will be visible to all players"
     },
     "JOIN": {
       "TITLE": "Join an Existing Lobby",

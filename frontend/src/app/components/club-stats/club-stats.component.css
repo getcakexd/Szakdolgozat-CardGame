@@ -1,0 +1,120 @@
+.club-stats-container {
+  width: 100%;
+}
+
+.tab-content {
+  padding: 1.5rem 0;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--mat-sys-surface-container);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.section-title {
+  margin: 1.5rem 0 1rem;
+}
+
+.section-title h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.stats-table {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.member-name {
+  display: flex;
+  align-items: center;
+}
+
+.rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  font-weight: 700;
+  margin-right: 0.75rem;
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.gold {
+  background-color: #ffd700;
+  color: #000;
+}
+
+.silver {
+  background-color: #c0c0c0;
+  color: #000;
+}
+
+.bronze {
+  background-color: #cd7f32;
+  color: #fff;
+}
+
+.user-indicator {
+  font-size: 1rem;
+  height: 1rem;
+  width: 1rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.no-stats-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.no-stats-message mat-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}

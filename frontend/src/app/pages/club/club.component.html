@@ -240,6 +240,45 @@
               </div>
             </div>
           </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <div class="tab-label">
+                <mat-icon>sports_esports</mat-icon>
+                <span>{{ 'CLUB.LOBBIES.TAB' | translate }}</span>
+              </div>
+            </ng-template>
+
+            <div class="tab-content">
+              <app-club-lobby [club]="club"></app-club-lobby>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <div class="tab-label">
+                <mat-icon>bar_chart</mat-icon>
+                <span>{{ 'CLUB.STATS.TAB' | translate }}</span>
+              </div>
+            </ng-template>
+
+            <div class="tab-content">
+              <app-club-stats [club]="club"></app-club-stats>
+            </div>
+          </mat-tab>
+
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <div class="tab-label">
+                <mat-icon>emoji_events</mat-icon>
+                <span>{{ 'CLUB.LEADERBOARD.TAB' | translate }}</span>
+              </div>
+            </ng-template>
+
+            <div class="tab-content">
+              <app-club-leaderboard [club]="club"></app-club-leaderboard>
+            </div>
+          </mat-tab>
         </mat-tab-group>
       </mat-card-content>
     </mat-card>

@@ -20,10 +20,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth/auth.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ClubChatComponent } from '../club-chat/club-chat.component';
+import { ClubChatComponent } from '../../components/club-chat/club-chat.component';
 import {NgForOf, NgIf} from '@angular/common';
+import {ClubLobbyComponent} from '../club-lobby/club-lobby.component';
+import {ClubLeaderboardComponent} from '../../components/club-leaderboard/club-leaderboard.component';
+import {ClubStatsComponent} from '../../components/club-stats/club-stats.component';
 
 @Component({
   selector: 'app-club',
@@ -47,7 +50,10 @@ import {NgForOf, NgIf} from '@angular/common';
     TranslateModule,
     ClubChatComponent,
     NgIf,
-    NgForOf
+    NgForOf,
+    ClubLobbyComponent,
+    ClubLeaderboardComponent,
+    ClubStatsComponent
   ],
   styleUrls: ['./club.component.css']
 })
@@ -220,15 +226,15 @@ export class ClubComponent implements OnInit {
 
   toggleVisibility() {
     const newVisibility = !this.club.public
-    const visibilityKey = newVisibility ? 'CLUB.VISIBILITY_PUBLIC' : 'CLUB.VISIBILITY_PRIVATE';
-    const visibilityText = this.translate.instant(visibilityKey);
+    const visibilityKey = newVisibility ? "CLUB.VISIBILITY_PUBLIC" : "CLUB.VISIBILITY_PRIVATE"
+    const visibilityText = this.translate.instant(visibilityKey)
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("CLUB.CONFIRM_VISIBILITY", { visibility: visibilityText }),
       },
-    });
+    })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

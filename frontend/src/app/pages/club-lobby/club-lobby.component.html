@@ -1,24 +1,18 @@
-<div class="lobby-home-container">
-  <div class="lobby-header">
-    <h1>{{ 'LOBBY.TITLE' | translate }}</h1>
-    <p>{{ 'LOBBY.SUBTITLE' | translate }}</p>
+<div class="club-lobby-container">
+  <div class="club-lobby-header">
+    <h2>{{ 'CLUB.LOBBIES.TITLE' | translate }}</h2>
+    <p class="club-lobby-subtitle">{{ 'CLUB.LOBBIES.SUBTITLE' | translate }}</p>
+    <button mat-raised-button color="primary" (click)="refreshLobbies()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon> {{ 'COMMON.REFRESH' | translate }}
+    </button>
   </div>
 
   <mat-card>
     <mat-card-content>
-      <mat-tab-group #lobbyTabs
-                     [selectedIndex]="selectedTabIndex"
-                     (selectedIndexChange)="onTabChange($event)"
-                     animationDuration="300ms">
-        <mat-tab [label]="'LOBBY.CREATE_LOBBY' | translate">
+      <mat-tab-group (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
+        <mat-tab [label]="'CLUB.LOBBIES.AVAILABLE' | translate">
           <div class="tab-content">
-            <app-lobby-create></app-lobby-create>
-          </div>
-        </mat-tab>
-
-        <mat-tab [label]="'LOBBY.JOIN_LOBBY' | translate">
-          <div class="tab-content">
-            <div class="user-lobbies-section" *ngIf="userLobby">
+            <div class="user-lobby-section" *ngIf="userLobby && isUserInClubLobby()">
               <h3>{{ 'LOBBY.YOUR_LOBBY' | translate }}</h3>
               <div class="lobbies-grid">
                 <mat-card class="lobby-card user-lobby-card">
@@ -32,7 +26,7 @@
                   <mat-card-content>
                     <p>{{ 'LOBBY.LEADER' | translate }}: {{ userLobby.leader.username }}</p>
                     <p>{{ 'LOBBY.POINTS' | translate }}: {{ userLobby.playWithPoints ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
-                    <p *ngIf="userLobby.status === 'IN_GAME'" class="status-tag in-game">
+                    <p *ngIf="userLobby.status === lobbyStatus.IN_GAME" class="status-tag in-game">
                       {{ 'LOBBY.STATUS.IN_GAME' | translate }}
                     </p>
                   </mat-card-content>
@@ -40,8 +34,8 @@
                     <button
                       mat-raised-button
                       color="warn"
-                      (click)="$event.stopPropagation(); userLobby.status === 'IN_GAME' ? confirmAbandonGame(userLobby) : confirmLeaveLobby(userLobby)">
-                      {{ userLobby.status === 'IN_GAME' ? ('GAME.ABANDON_GAME' | translate) : ('LOBBY.LEAVE_LOBBY' | translate) }}
+                      (click)="$event.stopPropagation(); userLobby.status === lobbyStatus.IN_GAME ? confirmAbandonGame(userLobby) : confirmLeaveLobby(userLobby)">
+                      {{ userLobby.status === lobbyStatus.IN_GAME ? ('GAME.ABANDON_GAME' | translate) : ('LOBBY.LEAVE_LOBBY' | translate) }}
                     </button>
                     <button
                       mat-raised-button
@@ -50,7 +44,7 @@
                       {{ 'LOBBY.ENTER' | translate }}
                     </button>
                     <button
-                      *ngIf="userLobby.status === 'IN_GAME' && userLobby.cardGameId"
+                      *ngIf="userLobby.status === lobbyStatus.IN_GAME && userLobby.cardGameId"
                       mat-raised-button
                       color="accent"
                       (click)="$event.stopPropagation(); navigateToGame(userLobby)">
@@ -61,25 +55,25 @@
               </div>
             </div>
 
-            <div class="loading-container" *ngIf="isLoadingUserLobby">
-              <mat-spinner diameter="40"></mat-spinner>
-              <p>{{ 'LOBBY.LOADING_LOBBY' | translate }}</p>
+            <div class="warning-message" *ngIf="userLobby && !isUserInClubLobby()">
+              <mat-card class="warning-card">
+                <mat-card-content>
+                  <p>{{ 'CLUB.LOBBIES.ALREADY_IN_LOBBY' | translate }}</p>
+                  <p>{{ 'CLUB.LOBBIES.LEAVE_FIRST' | translate }}</p>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                  <button mat-raised-button color="primary" (click)="navigateToLobby(userLobby)">
+                    {{ 'LOBBY.GO_TO_LOBBY' | translate }}
+                  </button>
+                </mat-card-actions>
+              </mat-card>
             </div>
 
-            <div class="join-by-code-section" [class.with-margin]="userLobby">
-              <h3>{{ 'LOBBY.JOIN_BY_CODE' | translate }}</h3>
-              <app-lobby-join></app-lobby-join>
-            </div>
-          </div>
-        </mat-tab>
+            <div class="club-lobbies-section" [class.with-margin]="userLobby && isUserInClubLobby()">
+              <h3>{{ 'CLUB.LOBBIES.AVAILABLE' | translate }}</h3>
 
-        <mat-tab [label]="'LOBBY.PUBLIC_LOBBIES' | translate">
-          <div class="tab-content">
-            <div class="active-lobbies-section">
-              <h2>{{ 'LOBBY.AVAILABLE_PUBLIC_LOBBIES' | translate }}</h2>
-
-              <div class="lobbies-grid" *ngIf="publicLobbies.length > 0">
-                <mat-card class="lobby-card" *ngFor="let lobby of publicLobbies">
+              <div class="lobbies-grid" *ngIf="clubLobbies.length > 0">
+                <mat-card class="lobby-card" *ngFor="let lobby of clubLobbies">
                   <mat-card-header>
                     <mat-card-title>{{ lobby.game.name }}</mat-card-title>
                     <mat-card-subtitle>
@@ -90,37 +84,42 @@
                   <mat-card-content>
                     <p>{{ 'LOBBY.LEADER' | translate }}: {{ lobby.leader.username }}</p>
                     <p>{{ 'LOBBY.POINTS' | translate }}: {{ lobby.playWithPoints ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
-                    <span class="status-tag waiting" *ngIf="lobby.status === 'WAITING'">
+                    <span class="status-tag waiting" *ngIf="lobby.status === lobbyStatus.WAITING">
                       {{ 'LOBBY.STATUS.WAITING' | translate }}
+                    </span>
+                    <span class="status-tag in-game" *ngIf="lobby.status === lobbyStatus.IN_GAME">
+                      {{ 'LOBBY.STATUS.IN_GAME' | translate }}
                     </span>
                   </mat-card-content>
                   <mat-card-actions align="end">
                     <button
                       mat-raised-button
                       color="primary"
-                      [disabled]="userLobby !== null"
-                      (click)="joinLobbyByCode(lobby.code)">
+                      [disabled]="userLobby !== null || lobby.status !== lobbyStatus.WAITING"
+                      (click)="joinLobby(lobby)">
                       {{ 'LOBBY.JOIN.JOIN_BUTTON' | translate }}
                     </button>
                   </mat-card-actions>
                 </mat-card>
               </div>
 
-              <div *ngIf="publicLobbies.length === 0 && !isLoadingPublicLobbies" class="no-lobbies-message">
-                <p>{{ 'LOBBY.NO_PUBLIC_LOBBIES' | translate }}</p>
-              </div>
-
-              <div class="loading-container" *ngIf="isLoadingPublicLobbies">
-                <mat-spinner diameter="40"></mat-spinner>
-                <p>{{ 'LOBBY.LOADING_PUBLIC_LOBBIES' | translate }}</p>
+              <div *ngIf="clubLobbies.length === 0 && !isLoading" class="no-lobbies-message">
+                <p>{{ 'CLUB.LOBBIES.NO_LOBBIES' | translate }}</p>
               </div>
             </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'CLUB.LOBBIES.CREATE' | translate">
+          <div class="tab-content">
+            <app-club-lobby-create [club]="club" (lobbyCreated)="loadClubLobbies()"></app-club-lobby-create>
           </div>
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>
   </mat-card>
-  <div class="loading-container" *ngIf="isLoading">
+
+  <div class="loading-container" *ngIf="isLoading || isLoadingUserLobby">
     <mat-spinner diameter="40"></mat-spinner>
     <p>{{ 'COMMON.LOADING' | translate }}</p>
   </div>

@@ -1,0 +1,133 @@
+<div class="club-stats-container">
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+  <div class="tab-content" *ngIf="clubStats">
+    <div class="stats-overview">
+      <div class="stat-item">
+        <div class="stat-value">{{ clubStats.gamesPlayed }}</div>
+        <div class="stat-label">{{ 'CLUB.STATS.GAMES_PLAYED' | translate }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ clubStats.totalPoints }}</div>
+        <div class="stat-label">{{ 'CLUB.STATS.TOTAL_POINTS' | translate }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ clubStats.uniquePlayersCount }}</div>
+        <div class="stat-label">{{ 'CLUB.STATS.UNIQUE_PLAYERS' | translate }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ clubStats.totalFatsCollected }}</div>
+        <div class="stat-label">{{ 'CLUB.STATS.TOTAL_FATS' | translate }}</div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="section-title">
+      <h3>{{ 'CLUB.STATS.GAMES_BREAKDOWN' | translate }}</h3>
+    </div>
+
+    <table mat-table [dataSource]="clubGameStats" class="stats-table" *ngIf="clubGameStats.length > 0">
+      <ng-container matColumnDef="gameName">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.GAME' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.gameDefinition?.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gamesPlayed">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.PLAYED' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.gamesPlayed }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="points">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.POINTS' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.totalPoints }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fatsCollected">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.FATS' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.totalFatsCollected }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="uniquePlayers">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.UNIQUE_PLAYERS' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.uniquePlayersCount }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastPlayed">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.LAST_PLAYED' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.lastPlayed | date:'short' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="gameStatsColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: gameStatsColumns;"></tr>
+    </table>
+
+    <div class="no-stats-message" *ngIf="clubGameStats.length === 0 && !isLoading">
+      <mat-icon>info</mat-icon>
+      <p>{{ 'CLUB.STATS.NO_GAME_STATS' | translate }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="section-title">
+      <h3>{{ 'CLUB.STATS.TOP_MEMBERS' | translate }}</h3>
+    </div>
+
+    <table mat-table [dataSource]="clubMemberStats.slice(0, 5)" class="stats-table" *ngIf="clubMemberStats.length > 0">
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.PLAYER' | translate }}</th>
+        <td mat-cell *matCellDef="let stat; let i = index">
+          <div class="member-name">
+            <div class="rank-badge" [ngClass]="{
+              'gold': i === 0,
+              'silver': i === 1,
+              'bronze': i === 2
+            }">{{ i + 1 }}</div>
+            {{ stat.user.username }}
+            <mat-icon *ngIf="stat.user.id === userId" class="user-indicator">person</mat-icon>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="gamesPlayed">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.PLAYED' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.gamesPlayed }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gamesWon">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.WON' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.gamesWon }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="winRate">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.WIN_RATE' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">
+          {{ calculateWinRate(stat.gamesWon, stat.gamesPlayed) | number:'1.0-1' }}%
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="points">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.POINTS' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.totalPoints }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fatsCollected">
+        <th mat-header-cell *matHeaderCellDef>{{ 'CLUB.STATS.FATS' | translate }}</th>
+        <td mat-cell *matCellDef="let stat">{{ stat.totalFatsCollected }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="memberStatsColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: memberStatsColumns;"></tr>
+    </table>
+
+    <div class="no-stats-message" *ngIf="clubMemberStats.length === 0 && !isLoading">
+      <mat-icon>info</mat-icon>
+      <p>{{ 'CLUB.STATS.NO_MEMBER_STATS' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="no-stats-message" *ngIf="!clubStats && !isLoading">
+    <mat-icon>info</mat-icon>
+    <p>{{ 'CLUB.STATS.NO_STATS' | translate }}</p>
+  </div>
+</div>

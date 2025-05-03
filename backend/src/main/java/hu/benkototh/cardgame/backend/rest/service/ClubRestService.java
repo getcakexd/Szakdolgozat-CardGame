@@ -121,4 +121,19 @@ public class ClubRestService {
         response.put("message", "Club deleted");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/member/count")
+    public ResponseEntity<Map<String, Integer>> getClubMemberCount(@RequestParam long clubId) {
+        Map<String, Integer> response = new HashMap<>();
+
+        int memberCount = clubMemberController.getClubMemberCount(clubId);
+
+        if (memberCount == -1) {
+            response.put("message", 0);
+            return ResponseEntity.status(404).body(response);
+        }
+
+        response.put("memberCount", memberCount);
+        return ResponseEntity.ok(response);
+    }
 }

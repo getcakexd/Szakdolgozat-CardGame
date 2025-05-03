@@ -1,41 +1,62 @@
 <div class="club-list-container">
-  <mat-card *ngIf="clubs.length === 0 && isUserClubs" class="empty-state-card">
-    <mat-card-content>
-      <div class="empty-state-content">
-        <h2 class="mat-h2">{{ 'CLUB_LIST.NO_USER_CLUBS' | translate }}</h2>
-        <p class="mat-body-1">{{ 'CLUB_LIST.JOIN_BELOW' | translate }}</p>
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="loading-text">{{ 'CLUBS.LOADING' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && clubs.length === 0" class="empty-state">
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <mat-icon class="empty-icon">{{ isUserClubs ? 'groups_off' : 'search_off' }}</mat-icon>
+        <h2 class="empty-title">{{ (isUserClubs ? 'CLUB_LIST.NO_USER_CLUBS' : 'CLUB_LIST.NO_AVAILABLE_CLUBS') | translate }}</h2>
+        <p class="empty-text">{{ (isUserClubs ? 'CLUB_LIST.JOIN_BELOW' : 'CLUB_LIST.CHECK_BACK') | translate }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!isLoading && clubs.length > 0" class="clubs-grid">
+    <mat-card *ngFor="let club of clubs"
+              class="club-card"
+              [ngClass]="{'public-club': club.public, 'private-club': !club.public}"
+              (click)="onClubClick(club.id)">
+      <div class="club-banner" [ngClass]="{'public-banner': club.public, 'private-banner': !club.public}">
+        <mat-icon class="banner-icon">{{ club.public ? 'public' : 'lock' }}</mat-icon>
+        <span class="banner-text">{{ (club.public ? 'CLUB.PUBLIC' : 'CLUB.PRIVATE') | translate }}</span>
       </div>
-    </mat-card-content>
-  </mat-card>
 
-  <mat-card *ngIf="clubs.length === 0 && !isUserClubs" class="empty-state-card">
-    <mat-card-content>
-      <div class="empty-state-content">
-        <h2 class="mat-h2">{{ 'CLUB_LIST.NO_AVAILABLE_CLUBS' | translate }}</h2>
-        <p class="mat-body-1">{{ 'CLUB_LIST.CHECK_BACK' | translate }}</p>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      <mat-card-header>
+        <div mat-card-avatar class="club-avatar">
+          <mat-icon>groups</mat-icon>
+        </div>
+        <mat-card-title class="club-title">{{ club.name }}</mat-card-title>
+        <mat-card-subtitle *ngIf="club.description" class="club-subtitle">{{ club.description }}</mat-card-subtitle>
+      </mat-card-header>
 
-  <mat-list *ngIf="clubs.length > 0">
-    <div *ngFor="let club of clubs; last as isLast">
-      <mat-card class="club-card">
-        <mat-card-header (click)="onClubClick(club.id)" class="clickable-header">
-          <mat-card-title>{{ club.name }}</mat-card-title>
-        </mat-card-header>
+      <mat-card-content>
+        <div class="club-details">
+          <div class="club-detail-item" matTooltip="{{ 'CLUB.MEMBERS_COUNT' | translate: {count: getMemberCount(club)} }}">
+            <mat-icon>people</mat-icon>
+            <span>{{ getMemberCount(club) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
 
-        <mat-card-content *ngIf="!isUserClubs">
-          <p class="mat-body-1">{{ club.description }}</p>
-        </mat-card-content>
+      <mat-card-actions align="end">
+        <button *ngIf="!isUserClubs"
+                mat-raised-button
+                color="primary"
+                (click)="joinClub($event, club.id)">
+          <mat-icon>person_add</mat-icon>
+          {{ 'CLUB_LIST.JOIN_CLUB' | translate }}
+        </button>
 
-        <mat-card-actions *ngIf="!isUserClubs" align="end">
-          <button mat-raised-button color="primary" (click)="JoinClub(club.id)">
-            {{ 'CLUB_LIST.JOIN_CLUB' | translate }}
-          </button>
-        </mat-card-actions>
-      </mat-card>
-
-      <mat-divider *ngIf="!isLast"></mat-divider>
-    </div>
-  </mat-list>
+        <button *ngIf="isUserClubs"
+                mat-raised-button
+                color="primary">
+          <mat-icon>login</mat-icon>
+          {{ 'CLUB.ENTER' | translate }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>

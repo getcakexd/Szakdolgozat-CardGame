@@ -88,4 +88,12 @@ export class ClubService {
       }
     });
   }
+
+  getMemberCount(clubId: number) {
+    return this.http.get<any>(`${this.apiUrl}/member/count`, {
+      params: {
+        clubId: clubId
+      }
+    });
+  }
 }
