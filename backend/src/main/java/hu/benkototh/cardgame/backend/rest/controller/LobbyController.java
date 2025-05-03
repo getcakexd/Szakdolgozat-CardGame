@@ -183,7 +183,7 @@ public class LobbyController {
         return null;
     }
 
-    public Lobby updateLobbySettings(long lobbyId, long leaderId, long gameId, boolean playWithPoints) {
+    public Lobby updateLobbySettings(long lobbyId, long leaderId, long gameId, boolean playWithPoints, boolean isPublic) {
         Optional<Lobby> lobbyOpt = lobbyRepository.findById(lobbyId);
         Optional<Game> gameOpt = gameRepository.findById(gameId);
 
@@ -198,6 +198,7 @@ public class LobbyController {
             lobby.setGame(game);
             lobby.setPlayWithPoints(playWithPoints);
             lobby.setMinPlayers(game.getMinPlayers());
+            lobby.setPublic(isPublic);
 
             return lobbyRepository.save(lobby);
         }

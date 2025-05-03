@@ -612,6 +612,7 @@
     "LOADING": "Loading lobby...",
     "GO_TO_GAME": "Go to Game",
     "LOBBY_CODE": "Lobby",
+    "PUBLIC_LOBBY": "Public Lobby",
     "PUBLIC_LOBBIES": "Public Lobbies",
     "AVAILABLE_PUBLIC_LOBBIES": "Available Public Lobbies",
     "NO_PUBLIC_LOBBIES": "No public lobbies available",

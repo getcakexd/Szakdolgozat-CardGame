@@ -19,6 +19,6 @@ export interface Lobby {
   status: string;
   createdAt: Date
   cardGameId?: string
-  isPublic: boolean;
+  public: boolean;
   club: Club;
 }

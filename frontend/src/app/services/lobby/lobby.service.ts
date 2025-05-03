@@ -65,12 +65,19 @@ export class LobbyService {
     )
   }
 
-  updateLobbySettings(lobbyId: number, leaderId: number, gameId: number, playWithPoints: boolean): Observable<Lobby> {
+  updateLobbySettings(
+    lobbyId: number,
+    leaderId: number,
+    gameId: number,
+    playWithPoints: boolean,
+    isPublic: boolean,
+  ): Observable<Lobby> {
     const params = new HttpParams()
       .set("lobbyId", lobbyId.toString())
       .set("leaderId", leaderId.toString())
       .set("gameId", gameId.toString())
       .set("playWithPoints", playWithPoints.toString())
+      .set("isPublic", isPublic.toString())
 
     return this.http.put<Lobby>(`${this.apiUrl}/update-settings`, null, { params }).pipe(
       tap((lobby) => {

@@ -97,9 +97,13 @@ public class LobbyRestService {
     }
 
     @PutMapping("/update-settings")
-    public ResponseEntity<?> updateLobbySettings(@RequestParam long lobbyId, @RequestParam long leaderId,
-                                                 @RequestParam long gameId, @RequestParam boolean playWithPoints) {
-        Lobby lobby = lobbyController.updateLobbySettings(lobbyId, leaderId, gameId, playWithPoints);
+    public ResponseEntity<?> updateLobbySettings(
+            @RequestParam long lobbyId,
+            @RequestParam long leaderId,
+            @RequestParam long gameId,
+            @RequestParam boolean playWithPoints,
+            @RequestParam boolean isPublic) {
+        Lobby lobby = lobbyController.updateLobbySettings(lobbyId, leaderId, gameId, playWithPoints, isPublic);
 
         if (lobby == null) {
             Map<String, String> response = new HashMap<>();
