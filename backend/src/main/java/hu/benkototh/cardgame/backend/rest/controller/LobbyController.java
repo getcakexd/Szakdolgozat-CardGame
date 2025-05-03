@@ -230,7 +230,13 @@ public class LobbyController {
             }
 
             try {
-                String gameName = "Game from Lobby " + lobbyId;
+                String gameName;
+                if (lobby.getClub() == null){
+                    gameName = "Game from Lobby " + lobby.getCode();
+                } else {
+                    gameName = "Game from Club " + lobby.getClub().getName() +(" - " + lobby.getCode());
+                }
+
                 String creatorId = String.valueOf(lobby.getLeader().getId());
                 long gameDefinitionId = lobby.getGame().getId();
                 boolean trackStatistics = lobby.isPlayWithPoints();

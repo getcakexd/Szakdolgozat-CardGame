@@ -33,6 +33,16 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lobby-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-large);
+}
+
+.user-lobby-card {
+  border: 2px solid var(--primary-color);
 }
 
 .lobby-card mat-card-content {
@@ -49,13 +59,13 @@
 }
 
 .status-tag.waiting {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-color: #ffc107;
+  color: #000;
 }
 
 .status-tag.in-game {
-  background-color: #e8f5e9;
-  color: #388e3c;
+  background-color: #4caf50;
+  color: #fff;
 }
 
 .no-lobbies-message {
@@ -65,18 +75,16 @@
 }
 
 :host-context(.dark-theme) .no-lobbies-message {
-  color: rgba(255, 255, 255, 1);
+  color: rgba(255, 255, 255, 0.7);
 }
-
-.lobby-subtitle {
+.club-lobby-subtitle {
   text-align: center;
   color: var(--text-secondary-color, rgba(0, 0, 0, 0.6));
 }
 
-:host-context(.dark-theme) .lobby-subtitle {
+:host-context(.dark-theme) .club-lobby-subtitle {
   color: rgba(255, 255, 255, 1);
 }
-
 
 .loading-container {
   display: flex;
@@ -88,4 +96,51 @@
 
 .loading-container p {
   margin-top: 16px;
+}
+
+.user-lobby-section {
+  margin-bottom: 32px;
+}
+
+.user-lobby-section h3,
+.club-lobbies-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.club-lobbies-section.with-margin {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.warning-message {
+  margin-bottom: 24px;
+}
+
+.warning-card {
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .lobbies-grid {
+    grid-template-columns: 1fr;
+  }
+
+  mat-card-actions {
+    flex-direction: column;
+  }
+
+  mat-card-actions button {
+    width: 100%;
+  }
 }
