@@ -5,7 +5,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import {ProfileComponent} from './pages/profile/profile.component';
 import {ClubPageComponent} from './pages/club-page/club-page.component';
-import {ClubComponent} from './components/club/club.component';
+import {ClubComponent} from './pages/club/club.component';
 import {AdminDashboardComponent} from './components/admin-dashboard/admin-dashboard.component';
 import {AgentDashboardComponent} from './components/agent-dashboard/agent-dashboard.component';
 import {AuthGuard} from './guards/auth.guard';

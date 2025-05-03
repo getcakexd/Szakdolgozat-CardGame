@@ -28,6 +28,18 @@ export class LobbyService {
       .pipe(tap((lobby) => this.currentLobbySubject.next(lobby)))
   }
 
+  createClubLobby(leaderId: number, gameId: number, playWithPoints: boolean, clubId: number): Observable<Lobby> {
+    const params = new HttpParams()
+      .set("leaderId", leaderId.toString())
+      .set("gameId", gameId.toString())
+      .set("playWithPoints", playWithPoints.toString())
+      .set("clubId", clubId.toString())
+
+    return this.http
+      .post<Lobby>(`${this.apiUrl}/create-club`, null, { params })
+      .pipe(tap((lobby) => this.currentLobbySubject.next(lobby)))
+  }
+
   joinLobby(code: string, userId: number): Observable<Lobby> {
     const params = new HttpParams().set("code", code).set("userId", userId.toString())
 
@@ -127,5 +139,10 @@ export class LobbyService {
 
   getPublicLobbies(): Observable<Lobby[]> {
     return this.http.get<Lobby[]>(`${this.apiUrl}/public-lobbies`)
+  }
+
+  getClubLobbies(clubId: number): Observable<Lobby[]> {
+    const params = new HttpParams().set("clubId", clubId.toString())
+    return this.http.get<Lobby[]>(`${this.apiUrl}/club-lobbies`, { params })
   }
 }

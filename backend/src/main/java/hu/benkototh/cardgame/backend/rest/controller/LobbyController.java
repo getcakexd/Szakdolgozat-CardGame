@@ -79,6 +79,10 @@ public class LobbyController {
             Game game = gameOpt.get();
             Club club = clubOpt.get();
 
+            if (!clubController.isUserMemberOfClub(leader.getId(), club.getId())) {
+                return null;
+            }
+
             List<Lobby> existingLobbies = findByPlayersContaining(leader);
             if (!existingLobbies.isEmpty()) {
                 return null;
@@ -99,7 +103,6 @@ public class LobbyController {
         return null;
     }
 
-
     public Lobby joinLobby(String code, long userId) {
         Optional<Lobby> lobbyOpt = findByCode(code);
         Optional<User> userOpt = userRepository.findById(userId);
@@ -109,6 +112,10 @@ public class LobbyController {
             User user = userOpt.get();
 
             if (!STATUS_WAITING.equals(lobby.getStatus())) {
+                return null;
+            }
+
+            if (lobby.getClub() != null && !clubController.isUserMemberOfClub(user.getId(), lobby.getClub().getId())) {
                 return null;
             }
 
@@ -198,7 +205,10 @@ public class LobbyController {
             lobby.setGame(game);
             lobby.setPlayWithPoints(playWithPoints);
             lobby.setMinPlayers(game.getMinPlayers());
-            lobby.setPublic(isPublic);
+
+            if (lobby.getClub() == null) {
+                lobby.setPublic(isPublic);
+            }
 
             return lobbyRepository.save(lobby);
         }
@@ -328,7 +338,16 @@ public class LobbyController {
     public List<Lobby> getPublicLobbies() {
         return lobbyRepository.findAll()
                 .stream()
-                .filter(lobby -> lobby.isPublic() && "WAITING".equals(lobby.getStatus()))
+                .filter(lobby -> lobby.isPublic() && STATUS_WAITING.equals(lobby.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Lobby> getClubLobbies(long clubId) {
+        return lobbyRepository.findAll()
+                .stream()
+                .filter(lobby -> lobby.getClub() != null &&
+                        lobby.getClub().getId() == clubId &&
+                        STATUS_WAITING.equals(lobby.getStatus()))
                 .collect(Collectors.toList());
     }
 }

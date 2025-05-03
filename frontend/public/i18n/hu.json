@@ -5,7 +5,8 @@
     "CANCEL": "Mégse",
     "LOADING": "Betöltés...",
     "YES": "Igen",
-    "NO": "Nem"
+    "NO": "Nem",
+    "REFRESH": "Újratöltés"
   },
   "NAVBAR": {
     "HOME": "Kezdőlap",
@@ -224,7 +225,21 @@
     "FAILED_CREATE": "Nem sikerült létrehozni a klubot",
     "JOIN_PUBLIC_CLUB": "Csatlakozás ehhez a nyilvános klubhoz",
     "CLUB_JOINED": "Csatlakoztál a klubhoz",
-    "FAILED_JOIN": "Nem sikerült csatlakozni a klubhoz"
+    "FAILED_JOIN": "Nem sikerült csatlakozni a klubhoz",
+    "LOBBIES": {
+      "TAB": "Lobbik",
+      "TITLE": "Klub Lobbik",
+      "SUBTITLE": "Játssz játékokat a klub tagjaival",
+      "AVAILABLE": "Elérhető Lobbik",
+      "CREATE": "Lobbi Létrehozása",
+      "NO_LOBBIES": "Nincsenek elérhető klub lobbik. Hozz létre egyet a kezdéshez!",
+      "CREATE_TITLE": "Klub Lobbi Létrehozása",
+      "CREATE_SUBTITLE": "Új lobbi létrehozása a(z) {{clubName}} tagjai számára",
+      "CREATING": "Létrehozás...",
+      "CREATE_BUTTON": "Klub Lobbi Létrehozása",
+      "CREATE_SUCCESS": "Klub lobbi sikeresen létrehozva",
+      "CREATE_FAILED": "Nem sikerült létrehozni a klub lobbit"
+    }
   },
   "CLUB_CREATE": {
     "TITLE": "Klub létrehozása",
@@ -618,6 +633,7 @@
     "NO_PUBLIC_LOBBIES": "Jelenleg nincsenek elérhető nyilvános lobbik",
     "LOADING_PUBLIC_LOBBIES": "Nyilvános lobbik betöltése...",
     "FAILED_LOAD_PUBLIC_LOBBIES": "Nem sikerült betölteni a nyilvános lobbikat",
+    "FAILED_LOAD_CLUB_LOBBIES": "Nem sikerült betölteni a klub lobbikat",
     "STATUS": {
       "WAITING": "Várakozás",
       "IN_GAME": "Játékban",

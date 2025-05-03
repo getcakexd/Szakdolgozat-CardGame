@@ -40,13 +40,14 @@ public class LobbyRestService {
     public ResponseEntity<?> createClubLobby(
             @RequestParam long leaderId,
             @RequestParam long gameId,
-            @RequestParam boolean playWithPoints
+            @RequestParam boolean playWithPoints,
+            @RequestParam long clubId
     ) {
-        Lobby lobby = lobbyController.createLobby(leaderId, gameId, playWithPoints, false);
+        Lobby lobby = lobbyController.createClubLobby(leaderId, gameId, playWithPoints, clubId, false);
 
         if (lobby == null) {
             Map<String, String> response = new HashMap<>();
-            response.put("message", "Failed to create lobby. User might already be in a lobby.");
+            response.put("message", "Failed to create club lobby. User might already be in a lobby or not a member of the club.");
             return ResponseEntity.status(400).body(response);
         }
 
@@ -59,7 +60,14 @@ public class LobbyRestService {
 
         if (lobby == null) {
             Map<String, String> response = new HashMap<>();
-            response.put("message", "Failed to join lobby. Lobby might be full, in game, or user is already in a lobby.");
+
+            Lobby existingLobby = lobbyController.getLobbyByCode(code);
+            if (existingLobby != null && existingLobby.getClub() != null) {
+                response.put("message", "Failed to join club lobby. You must be a member of the club to join this lobby.");
+            } else {
+                response.put("message", "Failed to join lobby. Lobby might be full, in game, or user is already in a lobby.");
+            }
+
             return ResponseEntity.status(400).body(response);
         }
 
@@ -171,5 +179,10 @@ public class LobbyRestService {
     @GetMapping("/public-lobbies")
     public ResponseEntity<List<Lobby>> getPublicLobbies() {
         return ResponseEntity.ok(lobbyController.getPublicLobbies());
+    }
+
+    @GetMapping("/club-lobbies")
+    public ResponseEntity<List<Lobby>> getClubLobbies(@RequestParam long clubId) {
+        return ResponseEntity.ok(lobbyController.getClubLobbies(clubId));
     }
 }

@@ -5,7 +5,8 @@
     "CANCEL": "Cancel",
     "LOADING": "Loading...",
     "YES": "Yes",
-    "NO": "No"
+    "NO": "No",
+    "REFRESH": "Refresh"
   },
   "NAVBAR": {
     "HOME": "Home",
@@ -226,7 +227,21 @@
     "FAILED_CREATE": "Failed to create club",
     "JOIN_PUBLIC_CLUB": "Join this public club",
     "CLUB_JOINED": "You have joined the club",
-    "FAILED_JOIN": "Failed to join club"
+    "FAILED_JOIN": "Failed to join club",
+    "LOBBIES": {
+      "TAB": "Lobbies",
+      "TITLE": "Club Lobbies",
+      "SUBTITLE": "Play games with your club members",
+      "AVAILABLE": "Available Lobbies",
+      "CREATE": "Create Lobby",
+      "NO_LOBBIES": "No club lobbies available. Create one to get started!",
+      "CREATE_TITLE": "Create Club Lobby",
+      "CREATE_SUBTITLE": "Create a new lobby for {{clubName}} members",
+      "CREATING": "Creating...",
+      "CREATE_BUTTON": "Create Club Lobby",
+      "CREATE_SUCCESS": "Club lobby created successfully",
+      "CREATE_FAILED": "Failed to create club lobby"
+    }
   },
   "CLUB_CREATE": {
     "TITLE": "Create Club",
@@ -618,6 +633,7 @@
     "NO_PUBLIC_LOBBIES": "No public lobbies available",
     "LOADING_PUBLIC_LOBBIES": "Loading public lobbies...",
     "FAILED_LOAD_PUBLIC_LOBBIES": "Failed to load public lobbies",
+    "FAILED_LOAD_CLUB_LOBBIES": "Failed to load club lobbies",
     "STATUS": {
       "WAITING": "Waiting",
       "IN_GAME": "In Game",

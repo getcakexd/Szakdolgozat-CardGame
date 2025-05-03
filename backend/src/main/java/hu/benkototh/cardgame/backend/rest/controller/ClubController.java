@@ -138,4 +138,21 @@ public class ClubController {
     public Optional<Club> getClubById(long clubId) {
         return clubRepository.findById(clubId);
     }
+
+    public boolean isUserMemberOfClub(long userId, long clubId) {
+        User user = userController.getUser(userId);
+
+        if (user == null) {
+            return false;
+        }
+
+        Club club = getClub(clubId);
+
+        if (club == null) {
+            return false;
+        }
+
+        return clubMemberController.isMember(user, club);
+
+    }
 }
