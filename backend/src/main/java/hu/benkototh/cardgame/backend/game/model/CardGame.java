@@ -50,7 +50,7 @@ public abstract class CardGame {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endedAt;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "current_player_id",
             foreignKey = @ForeignKey(name = "FK_CURRENT_PLAYER",
                     foreignKeyDefinition = "FOREIGN KEY (current_player_id) REFERENCES players(id) ON DELETE SET NULL"))

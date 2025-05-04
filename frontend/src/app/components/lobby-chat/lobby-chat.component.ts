@@ -23,12 +23,11 @@ import {LobbyMessage} from '../../models/lobby-message.mode';
 import {LobbyService} from '../../services/lobby/lobby.service';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-lobby-chat",
   templateUrl: "./lobby-chat.component.html",
-  styleUrls: ["./lobby-chat.component.css"],
+  styleUrls: ["./lobby-chat.component.scss"],
   standalone: true,
   imports: [
     CommonModule,

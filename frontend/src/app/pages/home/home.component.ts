@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   templateUrl: './home.component.html',
   standalone: true,
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   username: string | null = null;

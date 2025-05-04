@@ -45,7 +45,7 @@ import {MatDialog} from '@angular/material/dialog';
     MatTabGroup,
     NgForOf,
   ],
-  styleUrls: ["./lobby-home.component.css"],
+  styleUrls: ["./lobby-home.component.scss"],
 })
 export class LobbyHomeComponent implements OnInit {
   @ViewChild("lobbyTabs") lobbyTabs!: MatTabGroup

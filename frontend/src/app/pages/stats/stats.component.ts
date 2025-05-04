@@ -22,7 +22,7 @@ import {GameService} from '../../services/game/game.service';
 @Component({
   selector: "app-stats",
   templateUrl: "./stats.component.html",
-  styleUrls: ["./stats.component.css"],
+  styleUrls: ["./stats.component.scss"],
   standalone: true,
   imports: [
     NgIf,

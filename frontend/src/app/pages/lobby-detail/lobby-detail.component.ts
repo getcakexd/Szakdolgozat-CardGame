@@ -69,7 +69,7 @@ import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.compone
     GameCardComponent,
     LobbyChatComponent,
   ],
-  styleUrls: ['./lobby-detail.component.css']
+  styleUrls: ['./lobby-detail.component.scss']
 })
 export class LobbyDetailComponent implements OnInit, OnDestroy {
   lobby: Lobby | null = null

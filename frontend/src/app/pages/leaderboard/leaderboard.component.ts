@@ -22,7 +22,7 @@ import {IS_DEV} from '../../../environments/api-config';
 @Component({
   selector: "app-leaderboard",
   templateUrl: "./leaderboard.component.html",
-  styleUrls: ["./leaderboard.component.css"],
+  styleUrls: ["./leaderboard.component.scss"],
   standalone: true,
   imports: [
     NgIf,

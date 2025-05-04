@@ -23,7 +23,7 @@ import { Club } from "../../models/club.model"
 @Component({
   selector: "app-club-stats",
   templateUrl: "./club-stats.component.html",
-  styleUrls: ["./club-stats.component.css"],
+  styleUrls: ["./club-stats.component.scss"],
   standalone: true,
   imports: [
     NgIf,

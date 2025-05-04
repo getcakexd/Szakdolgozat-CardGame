@@ -25,7 +25,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     NgIf,
     TranslateModule
   ],
-  styleUrls: ['./club-create.component.css']
+  styleUrls: ['./club-create.component.scss']
 })
 export class ClubCreateComponent {
   name: string = '';

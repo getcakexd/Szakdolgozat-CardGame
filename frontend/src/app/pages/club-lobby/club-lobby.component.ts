@@ -47,7 +47,7 @@ import {CardGameService} from '../../services/card-game/card-game.service';
     MatTabGroup,
     ClubLobbyCreateComponent,
   ],
-  styleUrls: ["./club-lobby.component.css"],
+  styleUrls: ["./club-lobby.component.scss"],
 })
 export class ClubLobbyComponent implements OnInit {
   @Input() club!: Club

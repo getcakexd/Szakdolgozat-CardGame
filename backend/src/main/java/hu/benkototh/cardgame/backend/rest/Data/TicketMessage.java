@@ -11,14 +11,14 @@ public class TicketMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_ticketmessage_ticket",
                     foreignKeyDefinition = "FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE"))
     @JsonIgnore
     private Ticket ticket;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "fk_ticketmessage_user",
                     foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"))

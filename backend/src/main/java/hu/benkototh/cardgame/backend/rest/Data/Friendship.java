@@ -9,13 +9,13 @@ public class Friendship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "user1_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_friendship_user1",
                     foreignKeyDefinition = "FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User user1;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "user2_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_friendship_user2",
                     foreignKeyDefinition = "FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE"))

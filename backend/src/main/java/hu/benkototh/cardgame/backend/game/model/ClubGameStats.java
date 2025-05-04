@@ -15,13 +15,13 @@ public class ClubGameStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "club_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_clubgamestats_club",
                     foreignKeyDefinition = "FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE"))
     private Club club;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "game_definition_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_clubgamestats_game",
                     foreignKeyDefinition = "FOREIGN KEY (game_definition_id) REFERENCES games(id) ON DELETE CASCADE"))

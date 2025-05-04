@@ -55,7 +55,7 @@ import {ClubStatsComponent} from '../../components/club-stats/club-stats.compone
     ClubLeaderboardComponent,
     ClubStatsComponent
   ],
-  styleUrls: ['./club.component.css']
+  styleUrls: ['./club.component.scss']
 })
 export class ClubComponent implements OnInit {
   protected club: any = {}

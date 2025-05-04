@@ -48,7 +48,7 @@ interface ThemePalette {
   ],
   templateUrl: "./profile.component.html",
   standalone: true,
-  styleUrls: ["./profile.component.css"],
+  styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent implements OnInit {
   editForm = false

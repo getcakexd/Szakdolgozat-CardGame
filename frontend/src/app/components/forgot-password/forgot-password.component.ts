@@ -29,7 +29,7 @@ import { PasswordResetService } from '../../services/password-reset/password-res
     RouterLink,
     TranslateModule,
   ],
-  styleUrls: ["./forgot-password.component.css"],
+  styleUrls: ["./forgot-password.component.scss"],
 })
 export class ForgotPasswordComponent implements OnInit {
   forgotPasswordForm = new FormGroup({

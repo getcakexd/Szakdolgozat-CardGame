@@ -9,13 +9,13 @@ public class FriendRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_friendrequest_sender",
                     foreignKeyDefinition = "FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User sender;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_friendrequest_receiver",
                     foreignKeyDefinition = "FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE"))

@@ -32,7 +32,7 @@ import { NgClass } from "@angular/common"
     RouterLink,
     TranslateModule,
   ],
-  styleUrls: ["./reset-password.component.css"],
+  styleUrls: ["./reset-password.component.scss"],
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm = {} as FormGroup

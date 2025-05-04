@@ -27,7 +27,7 @@ import {MatInput} from '@angular/material/input';
     MatFormField,
     MatInput
   ],
-  styleUrls: ['./lobby-join.component.css']
+  styleUrls: ['./lobby-join.component.scss']
 })
 export class LobbyJoinComponent implements OnInit {
   joinForm: FormGroup;

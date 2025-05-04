@@ -38,7 +38,7 @@ import {TranslationService} from '../../services/translation/translation.service
     MatFormField,
     GameCardComponent
   ],
-  styleUrls: ['./lobby-create.component.css']
+  styleUrls: ['./lobby-create.component.scss']
 })
 export class LobbyCreateComponent implements OnInit {
   createForm: FormGroup
