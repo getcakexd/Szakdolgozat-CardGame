@@ -217,6 +217,7 @@ mat-card-content {
 .chat-sidebar app-lobby-chat {
   height: 100%;
   display: block;
+  overflow-y: auto;
 }
 
 @keyframes pulse {

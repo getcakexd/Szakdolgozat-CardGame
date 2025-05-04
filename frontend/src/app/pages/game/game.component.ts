@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import {Subscription} from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
-import { WebSocketService } from "../../services/websocket/websocket.service"
 import { AuthService } from "../../services/auth/auth.service"
 import {
   CardGame,
