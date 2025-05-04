@@ -121,10 +121,8 @@
           </div>
         </div>
 
-        <div class="lobby-sidebar">
-          <div class="lobby-chat">
-            <app-lobby-chat [lobbyName]="lobby.code"></app-lobby-chat>
-          </div>
+        <div class="chat-sidebar">
+          <app-lobby-chat *ngIf="lobby" [lobbyName]="lobby.code"></app-lobby-chat>
         </div>
       </div>
     </mat-card-content>

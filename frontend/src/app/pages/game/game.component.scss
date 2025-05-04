@@ -212,12 +212,14 @@ mat-card-content {
   border-radius: 8px;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-sidebar app-lobby-chat {
   height: 100%;
-  display: block;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes pulse {

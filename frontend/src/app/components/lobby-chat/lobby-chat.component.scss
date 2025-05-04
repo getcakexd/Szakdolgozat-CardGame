@@ -1,5 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
 .chat-card {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   border-radius: 20px;
@@ -44,6 +53,14 @@
   height: 18px;
 }
 
+mat-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;  /* Important for flexbox to allow shrinking below content size */
+}
+
 .messages-container {
   flex: 1;
   overflow-y: auto;
@@ -51,8 +68,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-height: 300px;
-  max-height: 60vh;
+  min-height: 100px;
   background-color: rgba(var(--mat-sys-surface-variant-rgb), 0.5);
 }
 
@@ -175,6 +191,7 @@
   padding: 1rem;
   background-color: var(--mat-sys-surface);
   border-top: 1px solid rgba(var(--mat-sys-outline-variant-rgb), 0.5);
+  flex-shrink: 0; /* Prevent input from shrinking */
 }
 
 .chat-input {
