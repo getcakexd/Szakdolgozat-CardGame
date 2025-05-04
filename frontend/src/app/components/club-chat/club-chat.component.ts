@@ -41,7 +41,7 @@ import { Subscription } from "rxjs"
   ],
   templateUrl: "./club-chat.component.html",
   standalone: true,
-  styleUrls: ["./club-chat.component.css"],
+  styleUrls: ["./club-chat.component.scss"],
 })
 export class ClubChatComponent implements OnInit, OnDestroy {
   @Input() clubId!: number

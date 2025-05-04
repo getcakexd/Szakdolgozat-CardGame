@@ -32,7 +32,7 @@ import {IS_DEV} from '../../../environments/api-config';
     NgClass,
     MatProgressSpinner
   ],
-  styleUrl: './club-list.component.css'
+  styleUrl: './club-list.component.scss'
 })
 export class ClubListComponent implements OnInit {
   @Input() isUserClubs = false

@@ -9,7 +9,7 @@ import { MatIconModule } from "@angular/material/icon"
   standalone: true,
   imports: [CommonModule, MatCardModule, MatIconModule],
   templateUrl: "./card.component.html",
-  styleUrls: ["./card.component.css"],
+  styleUrls: ["./card.component.scss"],
 })
 export class CardComponent {
   @Input() card!: Card

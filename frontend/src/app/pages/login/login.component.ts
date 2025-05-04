@@ -33,7 +33,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     RouterLink,
     TranslateModule
   ],
-  styleUrls: ["./login.component.css"],
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm = new FormGroup({

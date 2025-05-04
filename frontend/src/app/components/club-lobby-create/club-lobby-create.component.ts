@@ -39,7 +39,7 @@ import { GameCardComponent } from "../game-card/game-card.component"
     MatFormField,
     GameCardComponent,
   ],
-  styleUrls: ["./club-lobby-create.component.css"],
+  styleUrls: ["./club-lobby-create.component.scss"],
 })
 export class ClubLobbyCreateComponent implements OnInit {
   @Input() club!: Club

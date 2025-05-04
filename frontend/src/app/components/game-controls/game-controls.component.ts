@@ -11,7 +11,7 @@ import { GameStatus } from "../../models/card-game.model"
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, TranslateModule],
   templateUrl: "./game-controls.component.html",
-  styleUrls: ["./game-controls.component.css"],
+  styleUrls: ["./game-controls.component.scss"],
 
 })
 export class GameControlsComponent {

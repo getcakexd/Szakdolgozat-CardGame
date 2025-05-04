@@ -22,7 +22,7 @@ import {TranslateModule} from '@ngx-translate/core';
   ],
   templateUrl: './friends.component.html',
   standalone: true,
-  styleUrl: './friends.component.css'
+  styleUrl: './friends.component.scss'
 })
 export class FriendsComponent {
   private reloadSubscription: Subscription = new Subscription();

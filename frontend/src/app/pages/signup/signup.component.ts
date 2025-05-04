@@ -36,7 +36,7 @@ import { PasswordValidatorService } from '../../services/password-validator/pass
     GoogleSigninButtonModule,
     TranslateModule
   ],
-  styleUrls: ["./signup.component.css"],
+  styleUrls: ["./signup.component.scss"],
 })
 export class SignupComponent implements OnInit, OnDestroy {
   signupForm: FormGroup = new FormGroup({})

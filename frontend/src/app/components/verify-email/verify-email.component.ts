@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-verify-email',
   templateUrl: './verify-email.component.html',
-  styleUrls: ['./verify-email.component.css'],
+  styleUrls: ['./verify-email.component.scss'],
   standalone: true,
   imports: [
     MatProgressSpinnerModule,

@@ -10,7 +10,7 @@ import {User} from '../../models/user.model';
   imports: [
     NgForOf
   ],
-  styleUrls: ['./user-list.component.css']
+  styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];

@@ -7,7 +7,7 @@ import {Heartbeat} from '../../heartbeat';
   selector: 'app-heartbeat',
   imports: [MatButtonModule, MatCardModule],
   templateUrl: './heartbeat.component.html',
-  styleUrl: './heartbeat.component.css',
+  styleUrl: './heartbeat.component.scss',
   standalone : true
 })
 export class HeartbeatComponent {

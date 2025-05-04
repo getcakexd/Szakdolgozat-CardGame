@@ -23,7 +23,7 @@ import { Subscription } from "rxjs"
 @Component({
   selector: "app-friend-list",
   templateUrl: "./friend-list.component.html",
-  styleUrls: ["./friend-list.component.css"],
+  styleUrls: ["./friend-list.component.scss"],
   imports: [
     NgForOf,
     NgIf,

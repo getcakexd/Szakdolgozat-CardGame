@@ -55,7 +55,7 @@ import {FormsModule} from '@angular/forms';
   ],
   templateUrl: './club-page.component.html',
   standalone: true,
-  styleUrl: './club-page.component.css'
+  styleUrl: './club-page.component.scss'
 })
 export class ClubPageComponent implements OnInit {
   userClubs: Club[] = []

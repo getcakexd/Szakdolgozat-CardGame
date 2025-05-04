@@ -23,7 +23,7 @@ import { ClubMemberStats } from "../../models/club-stats.model"
 @Component({
   selector: "app-club-leaderboard",
   templateUrl: "./club-leaderboard.component.html",
-  styleUrls: ["./club-leaderboard.component.css"],
+  styleUrls: ["./club-leaderboard.component.scss"],
   standalone: true,
   imports: [
     NgIf,

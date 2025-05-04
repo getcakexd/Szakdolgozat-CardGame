@@ -20,7 +20,7 @@ import { MatInputModule } from "@angular/material/input"
 @Component({
   selector: "app-friend-request",
   templateUrl: "./friend-request.component.html",
-  styleUrls: ["./friend-request.component.css"],
+  styleUrls: ["./friend-request.component.scss"],
   imports: [
     FormsModule,
     NgIf,

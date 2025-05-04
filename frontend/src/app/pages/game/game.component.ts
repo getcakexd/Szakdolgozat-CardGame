@@ -28,7 +28,7 @@ import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.compone
 @Component({
   selector: "app-game",
   templateUrl: "./game.component.html",
-  styleUrls: ["./game.component.css"],
+  styleUrls: ["./game.component.scss"],
   standalone: true,
   imports: [
     CommonModule,

@@ -25,7 +25,7 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/mat
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
-  styleUrls: ["./chat.component.css"],
+  styleUrls: ["./chat.component.scss"],
   imports: [
     MatIcon,
     MatMiniFabButton,

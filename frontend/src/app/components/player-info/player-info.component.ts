@@ -11,7 +11,7 @@ import { TranslateModule } from "@ngx-translate/core"
   standalone: true,
   imports: [CommonModule, MatCardModule, MatIconModule, MatBadgeModule, TranslateModule],
   templateUrl: "./player-info.component.html",
-  styleUrls: ["./player-info.component.css"],
+  styleUrls: ["./player-info.component.scss"],
 })
 export class PlayerInfoComponent {
   @Input() player!: Player
