@@ -14,11 +14,17 @@ public class Player {
     private String username;
 
     @ElementCollection
-    @CollectionTable(name = "player_hand", joinColumns = @JoinColumn(name = "player_id"))
+    @CollectionTable(name = "player_hand", joinColumns = @JoinColumn(name = "player_id"
+            , foreignKey = @ForeignKey(name = "fk_player_hand",
+                    foreignKeyDefinition = "FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE")
+    ))
     private List<Card> hand;
 
     @ElementCollection
-    @CollectionTable(name = "player_won_cards", joinColumns = @JoinColumn(name = "player_id"))
+    @CollectionTable(name = "player_won_cards", joinColumns = @JoinColumn(name = "player_id"
+            , foreignKey = @ForeignKey(name = "fk_player_won_cards",
+                    foreignKeyDefinition = "FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE")
+    ))
     private List<Card> wonCards;
 
     private boolean active;
@@ -26,7 +32,9 @@ public class Player {
     private int score;
 
     @ManyToOne
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "game_id"
+            , foreignKey = @ForeignKey(name = "fk_player_game",
+                    foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
     @JsonBackReference
     private CardGame game;
 

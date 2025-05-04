@@ -1,15 +1,13 @@
 package hu.benkototh.cardgame.backend.websocket.handler;
 
 import hu.benkototh.cardgame.backend.game.controller.CardGameController;
-import hu.benkototh.cardgame.backend.game.model.Card;
-import hu.benkototh.cardgame.backend.game.model.GameAction;
-import hu.benkototh.cardgame.backend.game.model.Rank;
-import hu.benkototh.cardgame.backend.game.model.Suit;
+import hu.benkototh.cardgame.backend.game.model.*;
 import hu.benkototh.cardgame.backend.game.service.GameTimeoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Map;
@@ -22,6 +20,9 @@ public class CardGameWebSocketHandler {
 
     @Autowired
     private GameTimeoutService gameTimeoutService;
+
+    @Autowired
+    SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/game.action")
     public void executeGameActionWebSocket(@Payload Map<String, Object> payload) {
@@ -65,7 +66,13 @@ public class CardGameWebSocketHandler {
                 }
             }
 
-            cardGameController.executeGameAction(gameId, userId, action);
+            CardGame game = cardGameController.executeGameAction(gameId, userId, action);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/game/" + game.getId(),
+                    game
+            );
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,8 +88,12 @@ public class CardGameWebSocketHandler {
         headerAccessor.getSessionAttributes().put("gameId", gameId);
         headerAccessor.getSessionAttributes().put("userId", userId);
 
-        cardGameController.joinGame(gameId, userId);
+        CardGame game = cardGameController.joinGame(gameId, userId);
         gameTimeoutService.recordActivity(gameId, userId);
+        messagingTemplate.convertAndSend(
+                "/topic/game/" + game.getId(),
+                game
+        );
     }
 
     @MessageMapping("/game.leave")
@@ -90,7 +101,11 @@ public class CardGameWebSocketHandler {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
-        cardGameController.leaveGame(gameId, userId);
+        CardGame game = cardGameController.leaveGame(gameId, userId);
+        messagingTemplate.convertAndSend(
+                "/topic/game/" + gameId,
+                game
+        );
     }
 
     @MessageMapping("/game.abandon")
@@ -98,7 +113,11 @@ public class CardGameWebSocketHandler {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
-        cardGameController.abandonGame(gameId, userId);
+       CardGame game = cardGameController.abandonGame(gameId, userId);
+        messagingTemplate.convertAndSend(
+                "/topic/game/" + gameId,
+                game
+        );
     }
 
     @MessageMapping("/game.start")
@@ -106,6 +125,10 @@ public class CardGameWebSocketHandler {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
-        cardGameController.startGame(gameId, userId);
+       CardGame game = cardGameController.startGame(gameId, userId);
+        messagingTemplate.convertAndSend(
+                "/topic/game/" + gameId,
+                game
+        );
     }
 }

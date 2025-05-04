@@ -262,13 +262,13 @@ public class LobbyController {
 
                     cardGameController.save(cardGame);
 
-                    cardGameController.debugRepositoryState();
+                    //cardGameController.debugRepositoryState();
 
                     cardGame.startGame();
 
                     cardGameController.save(cardGame);
 
-                    cardGameController.debugRepositoryState();
+//                    cardGameController.debugRepositoryState();
 
                     lobby.setStatus(STATUS_IN_GAME);
                     return lobbyRepository.save(lobby);

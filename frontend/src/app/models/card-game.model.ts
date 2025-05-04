@@ -43,7 +43,7 @@ export interface GameAction {
 }
 
 export interface GameEvent {
-  type: string
+  eventType: string
   gameId: string
   playerId?: string
   timestamp?: Date

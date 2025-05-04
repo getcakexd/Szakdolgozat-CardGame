@@ -1,17 +1,20 @@
 import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
-import {Observable, BehaviorSubject, Subject, tap} from "rxjs"
+import {Observable, BehaviorSubject, Subject, tap, of} from "rxjs"
 import { map, catchError } from "rxjs/operators"
 import { CardGame, GameAction, GameEvent, Card, Player } from "../../models/card-game.model"
-import { WebSocketService } from "../websocket/websocket.service"
 import { AuthService } from "../auth/auth.service"
 import {BACKEND_API_URL, IS_DEV} from "../../../environments/api-config"
+import {IMessage, Stomp} from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 @Injectable({
   providedIn: "root",
 })
 export class CardGameService {
   private apiUrl = BACKEND_API_URL + "/card-games"
+  private wsUrl = BACKEND_API_URL + "/ws"
+
   private currentGameSubject = new BehaviorSubject<CardGame | null>(null)
   currentGame$ = this.currentGameSubject.asObservable()
 
@@ -26,12 +29,22 @@ export class CardGameService {
 
   private lastStateUpdateTime = 0
 
+  private stompClient: any = null
+  private connected = new BehaviorSubject<boolean>(false)
+  connected$ = this.connected.asObservable()
+  private subscriptions: { [destination: string]: any } = {}
+  private connectionAttempts = 0
+  private maxConnectionAttempts = 5
+
   constructor(
     private http: HttpClient,
-    private webSocketService: WebSocketService,
     private authService: AuthService,
   ) {
-    this.webSocketService.connected$.subscribe((connected) => {
+    if (IS_DEV) console.log("CardGameService initialized with WebSocket URL:", this.wsUrl)
+
+    this.initializeWebSocketConnection()
+
+    this.connected$.subscribe((connected) => {
       if (connected) {
         const currentGame = this.currentGameSubject.value
         if (currentGame) {
@@ -41,19 +54,140 @@ export class CardGameService {
     })
   }
 
+  private initializeWebSocketConnection(): void {
+    try {
+      if (IS_DEV) console.log("Initializing WebSocket connection to:", this.wsUrl)
+
+      const socket = new SockJS(this.wsUrl, null, {
+        transports: ["xhr-polling", "xhr-streaming"],
+        timeout: 1000,
+      })
+
+      this.stompClient = Stomp.over(socket)
+
+      if (IS_DEV) {
+        this.stompClient.debug = (str: string) => {
+          if (IS_DEV) console.log("STOMP: " + str)
+        }
+      } else {
+        this.stompClient.debug = () => {}
+      }
+
+      this.stompClient.connect(
+        {},
+        (frame: any) => {
+          if (IS_DEV) console.log("Connected to WebSocket:", frame)
+          this.connected.next(true)
+          this.connectionAttempts = 0
+
+          Object.entries(this.subscriptions).forEach(([destination, callback]) => {
+            this.subscribeInternal(destination, callback)
+          })
+        },
+        (error: any) => {
+          if (IS_DEV) console.error("WebSocket connection error:", error)
+          this.handleConnectionError("WebSocket connection error")
+        },
+      )
+    } catch (error) {
+      if (IS_DEV) console.error("Error initializing WebSocket:", error)
+      this.handleConnectionError("Error initializing WebSocket")
+    }
+  }
+
+  private handleConnectionError(message: string): void {
+    this.connected.next(false)
+    this.connectionAttempts++
+
+    if (this.connectionAttempts < this.maxConnectionAttempts) {
+      if (IS_DEV)
+        console.log(
+          `Connection attempt ${this.connectionAttempts}/${this.maxConnectionAttempts} failed. Retrying in 5 seconds...`,
+        )
+      setTimeout(() => this.initializeWebSocketConnection(), 5000)
+    } else {
+      if (IS_DEV) console.error(`Failed to connect after ${this.maxConnectionAttempts} attempts. Giving up.`)
+    }
+  }
+
+  subscribe(destination: string, callback: (message: any) => void): void {
+    if (IS_DEV) console.log(`Subscribing to ${destination}`)
+    this.subscriptions[destination] = callback
+
+    if (this.isConnected()) {
+      this.subscribeInternal(destination, callback)
+    } else {
+      if (IS_DEV) console.log(`Not connected yet. Will subscribe to ${destination} when connected.`)
+    }
+  }
+
+  private subscribeInternal(destination: string, callback: (message: any) => void): any {
+    if (IS_DEV) console.log(`Actually subscribing to ${destination}`)
+    return this.stompClient.subscribe(destination, (message: IMessage) => {
+      try {
+        const body = JSON.parse(message.body)
+        callback(body)
+      } catch (error) {
+        if (IS_DEV) console.error(`Error processing message from ${destination}:`, error)
+      }
+    })
+  }
+
+  unsubscribe(destination: string): void {
+    if (IS_DEV) console.log(`Unsubscribing from ${destination}`)
+    if (this.subscriptions[destination]) {
+      if (this.isConnected() && this.subscriptions[destination].unsubscribe) {
+        this.subscriptions[destination].unsubscribe()
+      }
+      delete this.subscriptions[destination]
+    }
+  }
+
+  send(destination: string, body: any): void {
+    if (this.isConnected()) {
+      if (IS_DEV) console.log(`Sending message to ${destination}:`, body)
+      this.stompClient.send(destination, {}, JSON.stringify(body))
+    } else {
+      if (IS_DEV) console.error(`Cannot send message to ${destination}, not connected to WebSocket`)
+    }
+  }
+
+  isConnected(): boolean {
+    return this.stompClient !== null && this.stompClient.connected
+  }
+
+  disconnect(): void {
+    if (this.stompClient) {
+      if (IS_DEV) console.log("Disconnecting WebSocket client")
+      this.stompClient.disconnect()
+      this.stompClient = null
+      this.connected.next(false)
+      this.subscriptions = {}
+    }
+  }
+
+  reconnect(): void {
+    if (IS_DEV) console.log("Manually reconnecting WebSocket")
+    this.disconnect()
+    this.connectionAttempts = 0
+    this.initializeWebSocketConnection()
+  }
+
   connectToGame(gameId: string): void {
     if (IS_DEV) console.log(`Connecting to game: ${gameId}`)
 
-    this.webSocketService.subscribe(`/topic/game/${gameId}`, (event: GameEvent) => {
+    const gameTopic = `/topic/game/${gameId}`
+
+    this.subscribe(gameTopic, (event: GameEvent) => {
       if (IS_DEV) console.log("Received game event:", event)
       this.gameEventsSubject.next(event)
 
-      if (event.type === "GAME_ACTION") {
+      if (event.eventType === "GAME_ACTION") {
         this.forceRefreshGame(gameId)
       } else {
         this.getGame(gameId).subscribe({
           next: (game) => {
-            if (IS_DEV) console.log("Game updated after event:", event.type)
+            if (IS_DEV) console.log("Game updated after event:", event.eventType)
           },
           error: (err) => {
             if (IS_DEV) console.error("Error updating game after event:", err)
@@ -62,11 +196,11 @@ export class CardGameService {
       }
     })
 
-    if (this.webSocketService.isConnected()) {
+    if (this.isConnected()) {
       this.joinGame(gameId)
     } else {
       if (IS_DEV) console.log("WebSocket not connected, waiting for connection...")
-      const subscription = this.webSocketService.connected$.subscribe((connected) => {
+      const subscription = this.connected$.subscribe((connected) => {
         if (connected) {
           this.joinGame(gameId)
           subscription.unsubscribe()
@@ -79,38 +213,40 @@ export class CardGameService {
     const userId = this.authService.currentUser?.id.toString()
     if (userId) {
       if (IS_DEV) console.log(`Joining game ${gameId} as user ${userId}`)
-      this.webSocketService.send("/app/game.join", { gameId, userId })
+      this.send("/app/game.join", { gameId, userId })
     } else {
       if (IS_DEV) console.error("Cannot join game: No user ID available")
     }
   }
 
   disconnectFromGame(gameId: string): void {
-    this.webSocketService.unsubscribe(`/topic/game/${gameId}`)
+    const gameTopic = `/topic/game/${gameId}`
+    this.unsubscribe(gameTopic)
 
     const userId = this.authService.currentUser?.id.toString()
-    if (userId && this.webSocketService.isConnected()) {
-      this.webSocketService.send("/app/game.leave", { gameId, userId })
+    if (userId && this.isConnected()) {
+      this.send("/app/game.leave", { gameId, userId })
     }
   }
 
   abandonGame(gameId: string): Observable<any> {
     const userId = this.authService.currentUser?.id.toString()
 
-    if (userId && this.webSocketService.isConnected()) {
-      this.webSocketService.send("/app/game.abandon", { gameId, userId })
+    if (userId && this.isConnected()) {
+      this.send("/app/game.abandon", { gameId, userId })
+      this.clearCurrentGame()
+      return of(null)
+    } else {
+      return this.http.post<any>(`${this.apiUrl}/${gameId}/abandon`, {}).pipe(
+        tap(() => {
+          this.clearCurrentGame()
+        }),
+      )
     }
-
-    return this.http.post<any>(`${this.apiUrl}/${gameId}/abandon`, {}).pipe(
-      tap(() => {
-        this.clearCurrentGame()
-      }),
-    )
   }
 
   forceRefreshGame(gameId: string): void {
     if (IS_DEV) console.log("Forcing complete game refresh")
-
     setTimeout(() => {
       this.http
         .get<CardGame>(`${this.apiUrl}/${gameId}`)
@@ -181,8 +317,7 @@ export class CardGameService {
   }
 
   private processGameState(game: CardGame): CardGame {
-    if (IS_DEV) console.log("Processing game state:", JSON.stringify(game.gameState))
-
+    if (IS_DEV) console.log("Processing game state for game " + game.id + ": ", JSON.stringify(game.gameState))
     const processedGame = JSON.parse(JSON.stringify(game))
 
     if (!processedGame.gameState) {
@@ -209,16 +344,32 @@ export class CardGameService {
 
   executeAction(gameId: string, action: GameAction): void {
     const userId = this.authService.currentUser?.id.toString()
-    if (userId && this.webSocketService.isConnected()) {
+    if (userId) {
       if (IS_DEV) console.log("Executing action:", action)
 
       const actionTime = Date.now()
 
-      this.webSocketService.send("/app/game.action", {
-        gameId,
-        userId,
-        action,
-      })
+      if (this.isConnected()) {
+        this.send("/app/game.action", {
+          gameId,
+          userId,
+          action,
+        })
+      } else {
+        this.http
+          .post<CardGame>(`${this.apiUrl}/${gameId}/action`, {
+            userId,
+            action,
+          })
+          .subscribe({
+            next: (game) => {
+              this.currentGameSubject.next(this.processGameState(game))
+            },
+            error: (err) => {
+              if (IS_DEV) console.error("Error executing action via HTTP:", err)
+            },
+          })
+      }
 
       setTimeout(() => {
         if (actionTime > this.lastStateUpdateTime) {
@@ -226,7 +377,7 @@ export class CardGameService {
         }
       }, 500)
     } else {
-      if (IS_DEV) console.error("Cannot execute action: WebSocket not connected or no user ID")
+      if (IS_DEV) console.error("Cannot execute action: No user ID available")
     }
   }
 
