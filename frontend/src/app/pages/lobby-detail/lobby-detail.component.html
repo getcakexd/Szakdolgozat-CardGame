@@ -61,28 +61,6 @@
             </form>
           </div>
 
-          <div class="lobby-players">
-            <h3>{{ 'LOBBY.PLAYERS' | translate }}</h3>
-            <mat-list>
-              <mat-list-item *ngFor="let player of lobby.players">
-                <div class="player-item">
-                  <div class="player-info">
-                    <span class="player-name">{{ player.username }}</span>
-                    <span *ngIf="player.id === lobby.leader.id" class="leader-badge">{{ 'LOBBY.LEADER' | translate }}</span>
-                  </div>
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    *ngIf="isLeader && player.id !== currentUser?.id && lobby.status === lobbyStatus.WAITING"
-                    (click)="onKickPlayer(player)"
-                    matTooltip="{{ 'LOBBY.KICK_PLAYER' | translate }}">
-                    <mat-icon>person_remove</mat-icon>
-                  </button>
-                </div>
-              </mat-list-item>
-            </mat-list>
-          </div>
-
           <div>
             <mat-card-actions align="end">
               <button *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
@@ -122,6 +100,27 @@
         </div>
 
         <div class="chat-sidebar">
+          <div class="lobby-players">
+            <h3>{{ 'LOBBY.PLAYERS' | translate }}</h3>
+            <mat-list>
+              <mat-list-item *ngFor="let player of lobby.players">
+                <div class="player-item">
+                  <div class="player-info">
+                    <span class="player-name">{{ player.username }}</span>
+                    <span *ngIf="player.id === lobby.leader.id" class="leader-badge">{{ 'LOBBY.LEADER' | translate }}</span>
+                  </div>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    *ngIf="isLeader && player.id !== currentUser?.id && lobby.status === lobbyStatus.WAITING"
+                    (click)="onKickPlayer(player)"
+                    matTooltip="{{ 'LOBBY.KICK_PLAYER' | translate }}">
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
           <app-lobby-chat *ngIf="lobby" [lobbyName]="lobby.code"></app-lobby-chat>
         </div>
       </div>
