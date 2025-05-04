@@ -9,6 +9,8 @@ import hu.benkototh.cardgame.backend.game.model.util.ZsirGameUtils;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import java.util.*;
+
+import org.aspectj.runtime.reflect.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +28,23 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
     private static final String AI_PLAYER = "aiPlayer";
     private static final String HUMAN_PLAYER = "humanPlayer";
     private static final int MAX_CARDS_IN_TRICK = 8;
-    private static int factoryId = 0;
+
+    private int factoryId = 0;
 
     private transient ZsirAIStrategy aiStrategy;
     private transient ZsirAIMoveExecutor aiMoveExecutor;
 
     public ZsirGame(int factoryId) {
-        super();
-        ZsirGame.factoryId = factoryId;
+        if (factoryId == 0) {
+            this.factoryId = (int) getGameState("FACTORY_ID");
+        } else {
+            setGameState("FACTORY_ID", factoryId);
+            this.factoryId = factoryId;
+        }
         initializeAI();
     }
 
     public ZsirGame() {
-        super();
         initializeAI();
     }
 

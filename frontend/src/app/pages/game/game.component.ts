@@ -67,12 +67,10 @@ export class GameComponent implements OnInit, OnDestroy {
   private refreshInterval: any = null
   private lastCardTimer: any = null
 
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private cardGameService: CardGameService,
-    private webSocketService: WebSocketService,
     private authService: AuthService,
     private lobbyService: LobbyService,
     private snackBar: MatSnackBar,
@@ -98,15 +96,15 @@ export class GameComponent implements OnInit, OnDestroy {
       return
     }
 
-    if (!this.webSocketService.isConnected()) {
+    if (!this.cardGameService.isConnected()) {
       if (IS_DEV) console.log("WebSocket not connected. Attempting to reconnect...")
-      this.webSocketService.reconnect()
+      this.cardGameService.reconnect()
 
       this.snackBar.open(this.translate.instant("GAME.CONNECTING"), this.translate.instant("COMMON.CLOSE"), {
         duration: 5000,
       })
 
-      const connectionSub = this.webSocketService.connected$.subscribe((connected) => {
+      const connectionSub = this.cardGameService.connected$.subscribe((connected) => {
         if (connected) {
           connectionSub.unsubscribe()
           this.loadGame()
@@ -114,7 +112,7 @@ export class GameComponent implements OnInit, OnDestroy {
       })
 
       setTimeout(() => {
-        if (!this.webSocketService.isConnected()) {
+        if (!this.cardGameService.isConnected()) {
           connectionSub.unsubscribe()
           this.snackBar.open(this.translate.instant("GAME.CONNECTION_FAILED"), this.translate.instant("COMMON.CLOSE"), {
             duration: 3000,
@@ -228,11 +226,11 @@ export class GameComponent implements OnInit, OnDestroy {
 
       this.lastActionTime = Date.now()
 
-      if (event.type === "GAME_STARTED") {
+      if (event.eventType === "GAME_STARTED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_STARTED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-      } else if (event.type === "GAME_OVER" || event.type === "GAME_ABANDONED") {
+      } else if (event.eventType === "GAME_OVER" || event.eventType === "GAME_ABANDONED") {
         this.snackBar.open(this.translate.instant("GAME.GAME_OVER"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
@@ -240,7 +238,7 @@ export class GameComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.router.navigate(["/lobby"])
         }, 3000)
-      } else if (event.type === "GAME_ACTION") {
+      } else if (event.eventType === "GAME_ACTION") {
         if (this.gameId) {
           setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 300)
         }
@@ -344,7 +342,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   goToLobby() {
-    let userId = this.authService.currentUser?.id  || 0;
+    const userId = this.authService.currentUser?.id || 0
     this.lobbyService.getLobbyByPlayer(userId).subscribe((resp) => {
       if (resp === null) {
         this.router.navigate(["/lobby"])
@@ -354,5 +352,5 @@ export class GameComponent implements OnInit, OnDestroy {
     })
   }
 
-  protected readonly GameStatus = GameStatus;
+  protected readonly GameStatus = GameStatus
 }

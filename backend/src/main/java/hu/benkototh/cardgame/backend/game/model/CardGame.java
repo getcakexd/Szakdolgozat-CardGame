@@ -32,7 +32,9 @@ public abstract class CardGame {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "game_id"
+            , foreignKey = @ForeignKey(name = "fk_game_player",
+                    foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
     @JsonManagedReference
     private List<Player> players;
 

@@ -237,6 +237,7 @@ public class CardGameController {
         if (!cardGame.isValidMove(userId, action)) {
             throw new GameException("Invalid move");
         }
+
         gameTimeoutService.recordActivity(gameId, userId);
         cardGame.executeMove(userId, action);
 
@@ -254,15 +255,14 @@ public class CardGameController {
         }
 
         cardGame = cardGameRepository.save(cardGame);
+        cardGameRepository.flush();
         logger.info("Action executed successfully in game {}", gameId);
-
-        cardGame = cardGameRepository.findById(gameId).orElse(cardGame);
 
         GameEvent event = new GameEvent("GAME_ACTION", cardGame.getId(), userId);
         event.addData("action", action);
         event.addData("gameState", cardGame.getGameState());
         broadcastGameEvent(event);
-
+        logger.info("Current game state: {}", cardGame.getGameState());
         return cardGame;
     }
 
