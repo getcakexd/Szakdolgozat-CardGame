@@ -32,14 +32,14 @@ public class Ticket {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "fk_ticket_user",
                     foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"))
     @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "assigned_to",
             foreignKey = @ForeignKey(name = "fk_ticket_assigned_to",
                     foreignKeyDefinition = "FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL"))

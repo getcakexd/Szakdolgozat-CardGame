@@ -11,7 +11,7 @@ public class ClubStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne
     @JoinColumn(name = "club_id", unique = true,
             foreignKey = @ForeignKey(name = "fk_clubstats_club",
                     foreignKeyDefinition = "FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE"))

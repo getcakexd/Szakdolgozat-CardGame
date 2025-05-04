@@ -17,19 +17,19 @@ public class Lobby {
     @Column(unique = true)
     private String code;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "leader_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_lobby_leader",
                     foreignKeyDefinition = "FOREIGN KEY (leader_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User leader;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "game_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_lobby_game",
                     foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE"))
     private Game game;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
             name = "lobby_players",
             joinColumns = @JoinColumn(name = "lobby_id"),
@@ -39,7 +39,7 @@ public class Lobby {
     )
     private Set<User> players = new HashSet<>();
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(
             name = "club_id",
             foreignKey = @ForeignKey(name = "fk_lobby_club",
