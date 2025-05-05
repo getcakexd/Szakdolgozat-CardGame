@@ -628,7 +628,7 @@
     "EMAIL_REQUIRED": "Email is required",
     "EMAIL_INVALID": "Please enter a valid email",
     "PASSWORD_REQUIRED": "Password is required",
-    "PASSWORD_MIN_LENGTH": "Password must be at least 6 characters long"
+    "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long"
   },
   "LANGUAGE": {
     "SELECT": "Select Language"
@@ -644,7 +644,7 @@
     "PASSWORD_REQUIRED": "Password is required",
     "EMAIL_REQUIRED": "Email is required",
     "EMAIL_INVALID": "Please enter a valid email",
-    "PASSWORD_MIN_LENGTH": "Password must be at least 6 characters long",
+    "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long",
     "FILL_ALL_FIELDS": "Please fill in all fields correctly.",
     "INVALID_CREDENTIALS": "Invalid username or password",
     "GOOGLE_LOGIN_ERROR": "Error during Google login",
@@ -655,7 +655,8 @@
     "PASSWORDS_DONT_MATCH": "Passwords don't match",
     "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
     "EMAIL_NOT_FOUND": "No account found with this email address",
-    "PASSWORD_STRENGTH": "Password must meet all requirements"
+    "PASSWORD_STRENGTH": "Password must meet all requirements",
+    "INVALID_EMAIL": "Invalid email address"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Username updated successfully!",
@@ -760,7 +761,12 @@
     }
   },
   "PASSWORD_RESET": {
-    "RESET_TITLE": "Reset Password",
+    "TITLE": "Reset Password",
+    "INSTRUCTIONS": "Please enter your email address to receive a password reset link",
+    "EMAIL": "Email",
+    "ENTER_EMAIL": "Enter your email address",
+    "EMAIL_SENT": "Password reset link sent to your email",
+    "SUBMIT_BUTTON": "Send Reset Link",
     "NEW_PASSWORD_INSTRUCTIONS": "Please enter your new password below.",
     "NEW_PASSWORD": "New Password",
     "ENTER_NEW_PASSWORD": "Enter new password",

@@ -58,7 +58,7 @@
 
 .filter-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 12px;
   margin-top: 8px;
 }
@@ -199,16 +199,15 @@ mat-paginator {
 }
 
 ::ng-deep .action-select-panel {
-  transform: scale(0.8) !important;
   transform-origin: top left !important;
 }
 
 ::ng-deep .mat-mdc-option {
-  min-height: 32px !important;
+  min-height: 48px !important;
 }
 
 ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
-  font-size: 10px !important;
+  font-size: inherit !important;
 }
 
 .mat-column-action {
@@ -221,9 +220,8 @@ mat-paginator {
 }
 
 ::ng-deep .mat-datepicker-toggle .mat-icon-button {
-  width: 40px !important;
-  height: 40px !important;
-  line-height: 40px !important;
+  display: inline-block !important;
+  color: inherit !important;
 }
 
 ::ng-deep .mat-datepicker-toggle-default-icon {

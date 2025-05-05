@@ -106,7 +106,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddUserDialog(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, {
-      width: "400px",
+      width: "20%",
     })
 
     dialogRef.afterClosed().subscribe((result) => {
