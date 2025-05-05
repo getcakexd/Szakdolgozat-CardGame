@@ -628,7 +628,7 @@
     "EMAIL_REQUIRED": "Az e-mail cím kötelező",
     "EMAIL_INVALID": "Kérjük, adjon meg érvényes e-mail címet",
     "PASSWORD_REQUIRED": "A jelszó kötelező",
-    "PASSWORD_MIN_LENGTH": "A jelszónak legalább 6 karakter hosszúnak kell lennie"
+    "PASSWORD_MIN_LENGTH": "A jelszónak legalább 8 karakter hosszúnak kell lennie"
   },
   "LANGUAGE": {
     "SELECT": "Nyelv kiválasztása"
@@ -644,7 +644,7 @@
     "PASSWORD_REQUIRED": "Jelszó megadása kötelező",
     "EMAIL_REQUIRED": "E-mail cím megadása kötelező",
     "EMAIL_INVALID": "Kérjük, adjon meg érvényes e-mail címet",
-    "PASSWORD_MIN_LENGTH": "A jelszónak legalább 6 karakter hosszúnak kell lennie",
+    "PASSWORD_MIN_LENGTH": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
     "FILL_ALL_FIELDS": "Kérjük, töltse ki helyesen az összes mezőt.",
     "INVALID_CREDENTIALS": "Érvénytelen felhasználónév vagy jelszó",
     "GOOGLE_LOGIN_ERROR": "Hiba a Google bejelentkezés során",
@@ -655,7 +655,8 @@
     "PASSWORDS_DONT_MATCH": "A jelszavak nem egyeznek",
     "PASSWORD_TOO_SHORT": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
     "EMAIL_NOT_FOUND": "Nem található fiók ezzel az e-mail címmel",
-    "PASSWORD_STRENGTH": "A jelszónak meg kell felelnie minden követelménynek"
+    "PASSWORD_STRENGTH": "A jelszónak meg kell felelnie minden követelménynek",
+    "INVALID_EMAIL": "Kérjük, adjon meg érvényes e-mail címet"
   },
   "SUCCESS": {
     "USERNAME_UPDATED": "Felhasználónév sikeresen frissítve!",
@@ -760,14 +761,19 @@
     }
   },
   "PASSWORD_RESET": {
-    "RESET_TITLE": "Jelszó visszaállítása",
+    "TITLE": "Jelszó visszaállítása",
+    "INSTRUCTIONS": "Kérjük, adja meg az e-mail címét, amelyet a fiókjához használt",
+    "EMAIL": "E-mail cím",
+    "ENTER_EMAIL": "Adja meg az e-mail címét",
+    "EMAIL_SENT": "Vissza állítási e-mail elküldve",
+    "SUBMIT_BUTTON": "Jelszó visszaállítása",
     "NEW_PASSWORD_INSTRUCTIONS": "Kérjük, adja meg az új jelszavát.",
     "NEW_PASSWORD": "Új jelszó",
     "ENTER_NEW_PASSWORD": "Adja meg az új jelszót",
     "CONFIRM_PASSWORD": "Jelszó megerősítése",
     "ENTER_CONFIRM_PASSWORD": "Erősítse meg a jelszavát",
     "RESET_BUTTON": "Jelszó visszaállítása",
-    "BACK_TO_LOGIN": "Vissza a bejelentkezéshez",
+    "BACK_TO_LOGIN": "Bejelentkezés",
     "GO_TO_LOGIN": "Ugrás a bejelentkezéshez",
     "TRY_AGAIN": "Próbálja újra",
     "SUCCESS": "A jelszó visszaállítása sikeres! Most már bejelentkezhet az új jelszavával.",

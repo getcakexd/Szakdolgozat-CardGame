@@ -9,10 +9,10 @@ import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { PasswordResetService } from "../../services/password-reset/password-reset.service"
 import { PasswordValidatorService } from "../../services/password-validator/password-validator.service"
 import { NgClass } from "@angular/common"
+import { TranslatePipe, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: "app-reset-password",
@@ -30,7 +30,7 @@ import { NgClass } from "@angular/common"
     MatIconModule,
     MatProgressBarModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
   ],
   styleUrls: ["./reset-password.component.scss"],
 })

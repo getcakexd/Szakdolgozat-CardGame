@@ -40,32 +40,29 @@
                   [attr.aria-pressed]="hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          <mat-error *ngIf="signupForm.get('password')?.invalid">
-            {{ getErrorMessage('password') }}
-          </mat-error>
         </mat-form-field>
 
         <div class="password-strength-container" *ngIf="signupForm.get('password')?.value">
-          <div class="strength-title">Password requirements:</div>
+          <div class="strength-title">{{ 'PASSWORD_RESET.PASSWORD_REQUIREMENTS' | translate }}:</div>
           <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.minLength}">
             <mat-icon>{{ passwordStrengthInfo.minLength ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>At least 8 characters</span>
+            <span>{{ 'PASSWORD_RESET.MIN_LENGTH' | translate }}</span>
           </div>
           <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasUpperCase}">
             <mat-icon>{{ passwordStrengthInfo.hasUpperCase ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>At least one uppercase letter</span>
+            <span>{{ 'PASSWORD_RESET.UPPERCASE' | translate }}</span>
           </div>
           <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasLowerCase}">
             <mat-icon>{{ passwordStrengthInfo.hasLowerCase ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>At least one lowercase letter</span>
+            <span>{{ 'PASSWORD_RESET.LOWERCASE' | translate }}</span>
           </div>
           <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasNumeric}">
             <mat-icon>{{ passwordStrengthInfo.hasNumeric ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>At least one number</span>
+            <span>{{ 'PASSWORD_RESET.NUMBER' | translate }}</span>
           </div>
           <div class="strength-item" [ngClass]="{'met': passwordStrengthInfo.hasSpecialChar}">
             <mat-icon>{{ passwordStrengthInfo.hasSpecialChar ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>At least one special character</span>
+            <span>{{ 'PASSWORD_RESET.SPECIAL_CHAR' | translate }}</span>
           </div>
         </div>
 
