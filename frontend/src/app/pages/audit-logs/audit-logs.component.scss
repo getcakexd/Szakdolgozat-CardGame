@@ -198,17 +198,14 @@ mat-paginator {
   margin-top: 8px;
 }
 
-/* Removed the small size for action select panel */
 ::ng-deep .action-select-panel {
   transform-origin: top left !important;
 }
 
-/* Removed the small size for options */
 ::ng-deep .mat-mdc-option {
   min-height: 48px !important;
 }
 
-/* Removed the small font size for option text */
 ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
   font-size: inherit !important;
 }
@@ -223,9 +220,8 @@ mat-paginator {
 }
 
 ::ng-deep .mat-datepicker-toggle .mat-icon-button {
-  width: 40px !important;
-  height: 40px !important;
-  line-height: 40px !important;
+  display: inline-block !important;
+  color: inherit !important;
 }
 
 ::ng-deep .mat-datepicker-toggle-default-icon {
