@@ -183,6 +183,7 @@ export class TicketDetailComponent implements OnInit {
           (updatedTicket) => {
             this.ticket = updatedTicket;
             this.showSuccess(this.translate.instant('TICKET.STATUS_UPDATED'));
+            window.location.reload()
           },
           (error) => {
             this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS'));
@@ -203,9 +204,7 @@ export class TicketDetailComponent implements OnInit {
 
   canReplyToTicket(): boolean {
     if (!this.ticket) return false;
-    if (this.ticket.status === 'resolved') return false;
-    if (this.ticket.status === 'new' && !this.isAgent) return false;
-    return true;
+    return this.ticket.status === 'in-progress';
   }
 
   private showSuccess(message: string): void {

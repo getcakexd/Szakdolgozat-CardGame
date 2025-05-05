@@ -69,7 +69,7 @@
                     appearance="outlined"
                     class="message-box"
                     [ngClass]="{'agent-message': message.senderType === 'agent'}"
-                    @slideIn [style.animation-delay.ms]="i * 100">
+                    @slideIn [style.animation-delay]="i * 100">
             <mat-card-header>
               <mat-card-title-group>
                 <mat-card-title>{{ message.senderName }}</mat-card-title>
