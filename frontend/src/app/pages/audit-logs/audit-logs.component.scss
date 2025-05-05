@@ -58,7 +58,7 @@
 
 .filter-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 12px;
   margin-top: 8px;
 }
@@ -198,17 +198,19 @@ mat-paginator {
   margin-top: 8px;
 }
 
+/* Removed the small size for action select panel */
 ::ng-deep .action-select-panel {
-  transform: scale(0.8) !important;
   transform-origin: top left !important;
 }
 
+/* Removed the small size for options */
 ::ng-deep .mat-mdc-option {
-  min-height: 32px !important;
+  min-height: 48px !important;
 }
 
+/* Removed the small font size for option text */
 ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
-  font-size: 10px !important;
+  font-size: inherit !important;
 }
 
 .mat-column-action {

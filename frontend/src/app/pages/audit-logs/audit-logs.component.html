@@ -59,16 +59,14 @@
           </div>
 
           <div class="filter-actions">
-            <button mat-stroked-button (click)="resetFilters()" [disabled]="loading">
+            <button mat-raised-button (click)="resetFilters()" [disabled]="loading">
               <mat-icon>refresh</mat-icon>
               {{ 'AUDIT_LOGS.RESET_FILTERS' | translate }}
             </button>
             <button mat-raised-button color="primary" (click)="applyFilters()" [disabled]="loading || isFiltering">
               <mat-spinner diameter="20" *ngIf="isFiltering"></mat-spinner>
-              <span *ngIf="!isFiltering">
-                <mat-icon>filter_alt</mat-icon>
-                {{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}
-              </span>
+              <mat-icon *ngIf="!isFiltering">filter_alt</mat-icon>
+              <p *ngIf="!isFiltering">{{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}</p>
             </button>
           </div>
         </form>
@@ -87,21 +85,21 @@
       <div class="table-container" *ngIf="!loading && !noResults">
         <table mat-table [dataSource]="displayedLogs" matSort class="audit-table">
           <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ID' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.ID' | translate }}</th>
             <td mat-cell *matCellDef="let log">{{ log.id }}</td>
           </ng-container>
 
           <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.ACTION' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.ACTION' | translate }}</th>
             <td mat-cell *matCellDef="let log" class="mat-column-action">
               <span class="action-badge" [ngClass]="getActionClass(log.action)" [matTooltip]="log.action">
-                {{ getShortActionName(log.action) }}
+                {{ getActionDisplayText(log.action) }}
               </span>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="user">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.USER' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.USER' | translate }}</th>
             <td mat-cell *matCellDef="let log">
               <div class="user-info">
                 <mat-icon class="user-icon">person</mat-icon>
@@ -111,7 +109,7 @@
           </ng-container>
 
           <ng-container matColumnDef="timestamp">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}</th>
             <td mat-cell *matCellDef="let log">{{ formatDate(log.timestamp) }}</td>
           </ng-container>
 
