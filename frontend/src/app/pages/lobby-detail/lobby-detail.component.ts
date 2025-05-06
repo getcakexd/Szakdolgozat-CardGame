@@ -28,7 +28,6 @@ import {MatList, MatListItem} from '@angular/material/list';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatOption} from '@angular/material/core';
 import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
-import {TranslationService} from '../../services/translation/translation.service';
 import {GameCardComponent} from '../../components/game-card/game-card.component';
 import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
 
@@ -84,7 +83,6 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private translationService: TranslationService,
   ) {
     this.settingsForm = this.fb.group({
       gameId: ["", Validators.required],
@@ -162,7 +160,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
           this.games = games.filter((game) => game.active)
           resolve()
         },
-        error: (error) => {
+        error: () => {
           this.snackBar.open(
             this.translate.instant("LOBBY.FAILED_LOAD_GAMES"),
             this.translate.instant("COMMON.CLOSE"),
@@ -330,7 +328,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       if (result) {
         this.isLoading = true
         this.lobbyService.leaveLobby(this.lobby!.id, this.currentUser!.id).subscribe({
-          next: (response) => {
+          next: () => {
             this.isLoading = false
             this.snackBar.open(this.translate.instant("LOBBY.LEFT_LOBBY"), this.translate.instant("COMMON.CLOSE"), {
               duration: 3000,

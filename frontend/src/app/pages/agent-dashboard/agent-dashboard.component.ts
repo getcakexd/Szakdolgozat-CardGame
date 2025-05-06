@@ -122,7 +122,7 @@ export class AgentDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant('AGENT.USER_UNLOCKED'))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
+          () => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
         )
       }
     })
