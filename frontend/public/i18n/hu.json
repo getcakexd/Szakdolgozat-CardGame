@@ -846,7 +846,17 @@
     "ENTRIES": "bejegyzés",
     "ERROR_LOADING": "Hiba az audit naplók betöltésekor",
     "ERROR_FILTERING": "Hiba a szűrők alkalmazásakor",
-
+    "DATE_RANGE": "Dátum tartomány",
+    "TODAY": "Ma",
+    "YESTERDAY": "Tegnap",
+    "LAST_7_DAYS": "Elmúlt 7 nap",
+    "LAST_30_DAYS": "Elmúlt 30 nap",
+    "THIS_MONTH": "Ebben a hónapban",
+    "CLEAR": "Törlés",
+    "MONTH": "Hónap",
+    "DAY": "Nap",
+    "YEAR": "Év",
+    "SELECTED_RANGE": "Kiválasztott tartomány",
     "ACTION_TYPES": {
       "LOGIN": "Bejelentkezés",
       "LOGOUT": "Kijelentkezés",

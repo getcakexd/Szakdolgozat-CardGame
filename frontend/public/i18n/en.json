@@ -844,7 +844,17 @@
     "ENTRIES": "entries",
     "ERROR_LOADING": "Error loading audit logs",
     "ERROR_FILTERING": "Error applying filters",
-
+    "DATE_RANGE": "Date Range",
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
+    "LAST_7_DAYS": "Last 7 Days",
+    "LAST_30_DAYS": "Last 30 Days",
+    "THIS_MONTH": "This Month",
+    "CLEAR": "Clear",
+    "MONTH": "Month",
+    "DAY": "Day",
+    "YEAR": "Year",
+    "SELECTED_RANGE": "Selected Range",
     "ACTION_TYPES": {
       "LOGIN": "Login",
       "LOGOUT": "Logout",

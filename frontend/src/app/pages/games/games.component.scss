@@ -83,7 +83,6 @@
   }
 }
 
-/* Force all game cards to have visible overflow */
 :host ::ng-deep app-game-card {
   display: block;
   position: relative;
@@ -103,7 +102,6 @@
   z-index: 5;
 }
 
-/* Override Angular Material styles */
 :host ::ng-deep .mat-mdc-card {
   overflow: visible !important;
 }

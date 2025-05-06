@@ -18,10 +18,9 @@ import { TranslatePipe, TranslateService } from "@ngx-translate/core"
 import { AuditLog, AuditLogFilter } from "../../models/audit-log.model"
 import { AuditLogService } from "../../services/audit-log/audit-log.service"
 import { MatProgressSpinner } from "@angular/material/progress-spinner"
-import { NgClass, NgForOf, NgIf } from "@angular/common"
+import { NgClass, NgForOf, NgIf, DatePipe } from "@angular/common"
 import { MatFormField, MatInput, MatLabel } from "@angular/material/input"
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from "@angular/material/datepicker"
-import { MatOption, provideNativeDateAdapter } from "@angular/material/core"
+import { MatOption } from "@angular/material/core"
 import { MatSelect } from "@angular/material/select"
 import { MatCard, MatCardContent } from "@angular/material/card"
 import { MatButton } from "@angular/material/button"
@@ -52,9 +51,6 @@ import { MatSnackBar } from "@angular/material/snack-bar"
     MatInput,
     MatLabel,
     MatFormField,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatDatepickerInput,
     ReactiveFormsModule,
     NgForOf,
     MatOption,
@@ -67,8 +63,8 @@ import { MatSnackBar } from "@angular/material/snack-bar"
     NgClass,
     MatTooltip,
     MatHint,
+    DatePipe,
   ],
-  providers: [provideNativeDateAdapter()],
   standalone: true,
 })
 export class AuditLogsComponent implements OnInit {
@@ -88,6 +84,23 @@ export class AuditLogsComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort
   Math = Math
 
+  months: string[] = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+
+  currentDate = new Date()
+
   constructor(
     private auditLogService: AuditLogService,
     private fb: FormBuilder,
@@ -99,6 +112,12 @@ export class AuditLogsComponent implements OnInit {
       action: [""],
       startDate: [null],
       endDate: [null],
+      startDay: [null],
+      startMonth: [null],
+      startYear: [null],
+      endDay: [null],
+      endMonth: [null],
+      endYear: [null],
       searchTerm: [""],
     })
   }
@@ -138,6 +157,89 @@ export class AuditLogsComponent implements OnInit {
         console.error("Error fetching actions", error)
       },
     })
+  }
+
+  getDaysInMonth(year: number, month: number): number[] {
+    if (year === null || month === null) {
+      return Array.from({ length: 31 }, (_, i) => i + 1)
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1)
+  }
+
+  updateDaysInStartMonth(): void {
+    const year = this.filterForm.get("startYear")?.value
+    const month = this.filterForm.get("startMonth")?.value
+    const day = this.filterForm.get("startDay")?.value
+
+    if (year !== null && month !== null) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate()
+      if (day > daysInMonth) {
+        this.filterForm.get("startDay")?.setValue(daysInMonth)
+      }
+    }
+
+    this.updateStartDate()
+  }
+
+  updateDaysInEndMonth(): void {
+    const year = this.filterForm.get("endYear")?.value
+    const month = this.filterForm.get("endMonth")?.value
+    const day = this.filterForm.get("endDay")?.value
+
+    if (year !== null && month !== null) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate()
+      if (day > daysInMonth) {
+        this.filterForm.get("endDay")?.setValue(daysInMonth)
+      }
+    }
+
+    this.updateEndDate()
+  }
+
+  updateStartDate(): void {
+    const year = this.filterForm.get("startYear")?.value
+    const month = this.filterForm.get("startMonth")?.value
+    const day = this.filterForm.get("startDay")?.value
+
+    if (year !== null && month !== null && day !== null) {
+      const date = new Date(year, month, day)
+      date.setHours(0, 0, 0, 0)
+      this.filterForm.get("startDate")?.setValue(date)
+
+      const endDate = this.filterForm.get("endDate")?.value
+      if (endDate && endDate < date) {
+        this.filterForm.patchValue({
+          endYear: year,
+          endMonth: month,
+          endDay: day,
+          endDate: new Date(year, month, day, 23, 59, 59, 999),
+        })
+      }
+    } else {
+      this.filterForm.get("startDate")?.setValue(null)
+    }
+  }
+
+
+  updateEndDate(): void {
+    const year = this.filterForm.get("endYear")?.value
+    const month = this.filterForm.get("endMonth")?.value
+    const day = this.filterForm.get("endDay")?.value
+
+    if (year !== null && month !== null && day !== null) {
+      const date = new Date(year, month, day)
+      date.setHours(23, 59, 59, 999)
+      this.filterForm.get("endDate")?.setValue(date)
+
+      const startDate = this.filterForm.get("startDate")?.value
+      if (startDate && date < startDate) {
+        this.showError(this.translate.instant("AUDIT_LOGS.END_DATE_BEFORE_START"))
+      }
+    } else {
+      this.filterForm.get("endDate")?.setValue(null)
+    }
   }
 
   applyFilters(): void {
@@ -263,14 +365,94 @@ export class AuditLogsComponent implements OnInit {
 
   getActionDisplayText(action: string): string {
     return action
-      .replace(/_/g, ' ')
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+      .replace(/_/g, " ")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ")
   }
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleString()
+  }
+
+  setDefaultYear(fieldName: "startYear" | "endYear"): void {
+    const currentValue = this.filterForm.get(fieldName)?.value
+    if (currentValue === null || currentValue === undefined) {
+      const currentYear = new Date().getFullYear()
+      this.filterForm.get(fieldName)?.setValue(currentYear)
+
+      if (fieldName === "startYear") {
+        this.updateDaysInStartMonth()
+      } else {
+        this.updateDaysInEndMonth()
+      }
+    }
+  }
+
+  setDateRange(range: string): void {
+    const today = new Date()
+    let startDate: Date | null = null
+    let endDate: Date | null = null
+
+    switch (range) {
+      case "today":
+        startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)
+        endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999)
+        break
+      case "yesterday":
+        startDate = new Date(today)
+        startDate.setDate(startDate.getDate() - 1)
+        startDate.setHours(0, 0, 0, 0)
+        endDate = new Date(today)
+        endDate.setDate(endDate.getDate() - 1)
+        endDate.setHours(23, 59, 59, 999)
+        break
+      case "last7days":
+        startDate = new Date(today)
+        startDate.setDate(startDate.getDate() - 6)
+        startDate.setHours(0, 0, 0, 0)
+        endDate = new Date(today)
+        endDate.setHours(23, 59, 59, 999)
+        break
+      case "last30days":
+        startDate = new Date(today)
+        startDate.setDate(startDate.getDate() - 29)
+        startDate.setHours(0, 0, 0, 0)
+        endDate = new Date(today)
+        endDate.setHours(23, 59, 59, 999)
+        break
+      case "thisMonth":
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+        endDate.setHours(23, 59, 59, 999)
+        break
+    }
+
+    if (startDate && endDate) {
+      this.filterForm.patchValue({
+        startDate: startDate,
+        endDate: endDate,
+        startDay: startDate.getDate(),
+        startMonth: startDate.getMonth(),
+        startYear: startDate.getFullYear(),
+        endDay: endDate.getDate(),
+        endMonth: endDate.getMonth(),
+        endYear: endDate.getFullYear(),
+      })
+    }
+  }
+
+  clearDateRange(): void {
+    this.filterForm.patchValue({
+      startDate: null,
+      endDate: null,
+      startDay: null,
+      startMonth: null,
+      startYear: null,
+      endDay: null,
+      endMonth: null,
+      endYear: null,
+    })
   }
 
   private showError(message: string): void {
