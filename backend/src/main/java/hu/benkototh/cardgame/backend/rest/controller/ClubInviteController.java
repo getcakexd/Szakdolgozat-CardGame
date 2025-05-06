@@ -33,8 +33,6 @@ public class ClubInviteController {
     private AuditLogController auditLogController;
 
     public List<ClubInvite> getClubInvites(long userId) {
-        auditLogController.logAction("CLUB_INVITES_VIEWED", userId,
-                "Club invites viewed by user");
                 
         return clubInviteRepository.findAll().stream()
                 .filter(invite ->
@@ -45,8 +43,6 @@ public class ClubInviteController {
     }
 
     public List<ClubInvite> getPendingInvites(long clubId) {
-        auditLogController.logAction("PENDING_CLUB_INVITES_VIEWED", 0L,
-                "Pending club invites viewed for club: " + clubId);
                 
          return clubInviteRepository.findAll().stream()
                 .filter(invite ->
@@ -56,8 +52,6 @@ public class ClubInviteController {
     }
 
     public List<ClubInvite> getInviteHistory(long clubId) {
-        auditLogController.logAction("CLUB_INVITE_HISTORY_VIEWED", 0L,
-                "Club invite history viewed for club: " + clubId);
                 
         return clubInviteRepository.findAll().stream()
                 .filter(invite ->
