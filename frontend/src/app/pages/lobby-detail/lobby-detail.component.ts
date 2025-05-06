@@ -18,11 +18,8 @@ import {MatProgressBar} from '@angular/material/progress-bar';
 import {
   MatCard,
   MatCardActions,
-  MatCardAvatar,
   MatCardContent,
-  MatCardFooter, MatCardHeader,
-  MatCardSubtitle,
-  MatCardTitle
+  MatCardFooter,
 } from '@angular/material/card';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton, MatIconButton} from '@angular/material/button';
@@ -60,10 +57,6 @@ import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.compone
     MatLabel,
     MatFormField,
     MatCardContent,
-    MatCardSubtitle,
-    MatCardTitle,
-    MatCardAvatar,
-    MatCardHeader,
     MatCard,
     NgClass,
     GameCardComponent,

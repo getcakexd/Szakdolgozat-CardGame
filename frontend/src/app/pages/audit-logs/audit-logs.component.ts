@@ -26,7 +26,6 @@ import { MatCard, MatCardContent } from "@angular/material/card"
 import { MatButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon"
 import { MatTooltip } from "@angular/material/tooltip"
-import { MatHint } from "@angular/material/form-field"
 import { MatSnackBar } from "@angular/material/snack-bar"
 
 @Component({
@@ -62,7 +61,6 @@ import { MatSnackBar } from "@angular/material/snack-bar"
     MatIcon,
     NgClass,
     MatTooltip,
-    MatHint,
     DatePipe,
   ],
   standalone: true,

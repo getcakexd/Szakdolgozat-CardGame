@@ -22,7 +22,7 @@ import { MatIcon } from "@angular/material/icon"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatButton, MatIconButton } from "@angular/material/button"
 import { NgIf, NgClass, NgFor } from "@angular/common"
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
+import { MatCard } from "@angular/material/card"
 import { AddGameDialogComponent } from "../../components/add-game-dialog/add-game-dialog.component"
 import { AddUserDialogComponent } from "../../components/add-user-dialog/add-user-dialog.component"
 import { AuthService } from '../../services/auth/auth.service';
@@ -55,9 +55,6 @@ import {EditGameDialogComponent} from '../../components/edit-game-dialog/edit-ga
     NgClass,
     NgFor,
     MatTabGroup,
-    MatCardContent,
-    MatCardTitle,
-    MatCardHeader,
     MatCard,
     MatTooltip,
     TranslateModule,

@@ -25,7 +25,7 @@ import { MatIcon } from "@angular/material/icon"
 import {MatButton, MatIconButton} from "@angular/material/button"
 import { DatePipe, NgClass, NgIf } from "@angular/common"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
+import { MatCard } from "@angular/material/card"
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {TicketService} from '../../services/ticket/ticket.service';
 
@@ -51,9 +51,6 @@ import {TicketService} from '../../services/ticket/ticket.service';
     MatTable,
     MatTab,
     MatTabGroup,
-    MatCardContent,
-    MatCardTitle,
-    MatCardHeader,
     MatCard,
     TranslateModule,
     MatButton
