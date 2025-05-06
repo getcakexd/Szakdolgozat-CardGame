@@ -25,7 +25,7 @@ import { MatIcon } from "@angular/material/icon"
 import {MatButton, MatIconButton} from "@angular/material/button"
 import { DatePipe, NgClass, NgIf } from "@angular/common"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
+import { MatCard } from "@angular/material/card"
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {TicketService} from '../../services/ticket/ticket.service';
 
@@ -51,9 +51,6 @@ import {TicketService} from '../../services/ticket/ticket.service';
     MatTable,
     MatTab,
     MatTabGroup,
-    MatCardContent,
-    MatCardTitle,
-    MatCardHeader,
     MatCard,
     TranslateModule,
     MatButton
@@ -86,14 +83,14 @@ export class AgentDashboardComponent implements OnInit {
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users) => (this.users = users),
-      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_USERS')),
+      () => this.showError(this.translate.instant('AGENT.FAILED_LOAD_USERS')),
     )
   }
 
   loadTickets(): void {
     this.ticketService.getAllTickets().subscribe(
       (tickets) => (this.tickets = tickets),
-      (error) => this.showError(this.translate.instant('TICKET.ERROR_LOADING')),
+      () => this.showError(this.translate.instant('TICKET.ERROR_LOADING')),
     )
   }
 
@@ -125,7 +122,7 @@ export class AgentDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant('AGENT.USER_UNLOCKED'))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
+          () => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
         )
       }
     })
@@ -144,7 +141,7 @@ export class AgentDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant('AGENT.USER_MODIFIED'))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant('AGENT.FAILED_MODIFY_USER')),
+          () => this.showError(this.translate.instant('AGENT.FAILED_MODIFY_USER')),
         )
       }
     })
@@ -159,7 +156,7 @@ export class AgentDashboardComponent implements OnInit {
           data: { user, history },
         })
       },
-      (error) => this.showError(this.translate.instant('AGENT.FAILED_LOAD_HISTORY')),
+      () => this.showError(this.translate.instant('AGENT.FAILED_LOAD_HISTORY')),
     )
   }
 
@@ -175,7 +172,7 @@ export class AgentDashboardComponent implements OnInit {
         this.loadTickets();
         this.selectedTabIndex = 1;
       },
-      (error) => this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS')),
+      () => this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS')),
     )
   }
 

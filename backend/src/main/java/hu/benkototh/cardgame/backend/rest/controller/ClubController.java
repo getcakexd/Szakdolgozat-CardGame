@@ -33,12 +33,10 @@ public class ClubController {
     private AuditLogController auditLogController;
 
     public List<Club> getAllClubs() {
-        auditLogController.logAction("ALL_CLUBS_VIEWED", 0L, "All clubs viewed");
         return clubRepository.findAll();
     }
 
     public List<Club> getPublicClubs() {
-        auditLogController.logAction("PUBLIC_CLUBS_VIEWED", 0L, "Public clubs viewed");
         return clubRepository.findAll().stream().filter(Club::isPublic).toList();
     }
 
@@ -48,13 +46,11 @@ public class ClubController {
         if (user == null) {
             return null;
         }
-        
-        auditLogController.logAction("JOINABLE_CLUBS_VIEWED", userId, "Joinable clubs viewed");
+
         return getJoinableClubs(user);
     }
 
     public List<Club> getJoinableClubs(User user) {
-        auditLogController.logAction("JOINABLE_CLUBS_VIEWED", user, "Joinable clubs viewed");
         return clubRepository.findAll().stream()
                 .filter(club -> club.isPublic() &&
                         !clubMemberController.isMember(user, club))
@@ -65,7 +61,6 @@ public class ClubController {
         Club club = clubRepository.findById(clubId).orElse(null);
         
         if (club != null) {
-            auditLogController.logAction("CLUB_VIEWED", 0L, "Club viewed: " + clubId);
         }
         
         return club;
@@ -77,8 +72,7 @@ public class ClubController {
         if (user == null) {
             return null;
         }
-        
-        auditLogController.logAction("USER_CLUBS_VIEWED", userId, "User's clubs viewed");
+
         return clubMemberController.getClubsByUser(user);
     }
 

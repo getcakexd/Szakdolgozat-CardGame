@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { type Card, CardSuit, CardRank } from "../../models/card-game.model"
+import { Card, CardSuit, CardRank } from "../../models/card-game.model"
 import { MatCardModule } from "@angular/material/card"
 import { MatIconModule } from "@angular/material/icon"
 
@@ -82,6 +82,4 @@ export class CardComponent {
         return "?"
     }
   }
-
-
 }

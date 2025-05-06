@@ -25,29 +25,103 @@
               <mat-select formControlName="action" panelClass="action-select-panel">
                 <mat-option value="">{{ 'AUDIT_LOGS.ALL_ACTIONS' | translate }}</mat-option>
                 <mat-option *ngFor="let action of actions" [value]="action" [matTooltip]="action">
-                  {{ action }}
+                  {{ getActionDisplayText(action) }}
                 </mat-option>
               </mat-select>
               <mat-icon matSuffix>category</mat-icon>
             </mat-form-field>
           </div>
 
-          <div class="filter-row">
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>{{ 'AUDIT_LOGS.START_DATE' | translate }}</mat-label>
-              <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-              <mat-datepicker #startPicker></mat-datepicker>
-            </mat-form-field>
+          <div class="filter-row date-range-container">
+            <div class="date-range-header">
+              <span>{{ 'AUDIT_LOGS.DATE_RANGE' | translate }}</span>
+              <div class="date-range-quick-buttons">
+                <button type="button" mat-button (click)="setDateRange('today')" class="quick-date-btn">
+                  {{ 'AUDIT_LOGS.TODAY' | translate }}
+                </button>
+                <button type="button" mat-button (click)="setDateRange('yesterday')" class="quick-date-btn">
+                  {{ 'AUDIT_LOGS.YESTERDAY' | translate }}
+                </button>
+                <button type="button" mat-button (click)="setDateRange('last7days')" class="quick-date-btn">
+                  {{ 'AUDIT_LOGS.LAST_7_DAYS' | translate }}
+                </button>
+                <button type="button" mat-button (click)="setDateRange('last30days')" class="quick-date-btn">
+                  {{ 'AUDIT_LOGS.LAST_30_DAYS' | translate }}
+                </button>
+                <button type="button" mat-button (click)="setDateRange('thisMonth')" class="quick-date-btn">
+                  {{ 'AUDIT_LOGS.THIS_MONTH' | translate }}
+                </button>
+                <button type="button" mat-button (click)="clearDateRange()" class="quick-date-btn clear-btn">
+                  {{ 'AUDIT_LOGS.CLEAR' | translate }}
+                </button>
+              </div>
+            </div>
 
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>{{ 'AUDIT_LOGS.END_DATE' | translate }}</mat-label>
-              <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-              <mat-datepicker #endPicker></mat-datepicker>
-            </mat-form-field>
+            <div class="date-selectors-container">
+              <div class="date-selector-group">
+                <div class="date-label">{{ 'AUDIT_LOGS.START_DATE' | translate }}</div>
+                <div class="date-inputs">
+                  <mat-form-field appearance="outline" class="date-field month-field">
+                    <mat-label>{{ 'AUDIT_LOGS.MONTH' | translate }}</mat-label>
+                    <mat-select formControlName="startMonth" (selectionChange)="updateStartDate()">
+                      <mat-option *ngFor="let month of months; let i = index" [value]="i">
+                        {{ month }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="date-field day-field">
+                    <mat-label>{{ 'AUDIT_LOGS.DAY' | translate }}</mat-label>
+                    <mat-select formControlName="startDay" (selectionChange)="updateStartDate()">
+                      <mat-option *ngFor="let day of getDaysInMonth(filterForm.get('startYear')?.value, filterForm.get('startMonth')?.value)" [value]="day">
+                        {{ day }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="date-field year-field">
+                    <mat-label>{{ 'AUDIT_LOGS.YEAR' | translate }}</mat-label>
+                    <input matInput type="number" formControlName="startYear" min="2000" max="2100" (change)="updateStartDate(); updateDaysInStartMonth()" (focus)="setDefaultYear('startYear')">
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="date-selector-group">
+                <div class="date-label">{{ 'AUDIT_LOGS.END_DATE' | translate }}</div>
+                <div class="date-inputs">
+                  <mat-form-field appearance="outline" class="date-field month-field">
+                    <mat-label>{{ 'AUDIT_LOGS.MONTH' | translate }}</mat-label>
+                    <mat-select formControlName="endMonth" (selectionChange)="updateEndDate()">
+                      <mat-option *ngFor="let month of months; let i = index" [value]="i">
+                        {{ month }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="date-field day-field">
+                    <mat-label>{{ 'AUDIT_LOGS.DAY' | translate }}</mat-label>
+                    <mat-select formControlName="endDay" (selectionChange)="updateEndDate()">
+                      <mat-option *ngFor="let day of getDaysInMonth(filterForm.get('endYear')?.value, filterForm.get('endMonth')?.value)" [value]="day">
+                        {{ day }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="date-field year-field">
+                    <mat-label>{{ 'AUDIT_LOGS.YEAR' | translate }}</mat-label>
+                    <input matInput type="number" formControlName="endYear" min="2000" max="2100" (change)="updateEndDate(); updateDaysInEndMonth()" (focus)="setDefaultYear('endYear')">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <div class="date-range-preview" *ngIf="filterForm.get('startDate')?.value || filterForm.get('endDate')?.value">
+              <span class="preview-label">{{ 'AUDIT_LOGS.SELECTED_RANGE' | translate }}:</span>
+              <span class="preview-value">
+                {{ filterForm.get('startDate')?.value | date:'mediumDate'}} -
+                {{ filterForm.get('endDate')?.value | date:'mediumDate'}}
+              </span>
+            </div>
           </div>
 
           <div class="filter-row">
@@ -66,7 +140,7 @@
             <button mat-raised-button color="primary" (click)="applyFilters()" [disabled]="loading || isFiltering">
               <mat-spinner diameter="20" *ngIf="isFiltering"></mat-spinner>
               <mat-icon *ngIf="!isFiltering">filter_alt</mat-icon>
-              <p *ngIf="!isFiltering">{{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}</p>
+              <span *ngIf="!isFiltering">{{ 'AUDIT_LOGS.APPLY_FILTERS' | translate }}</span>
             </button>
           </div>
         </form>

@@ -477,13 +477,33 @@ html.dark-theme .mat-mdc-text-field-wrapper {
   background-color: var(--mat-component-bg-dark) !important;
 }
 
+.mat-mdc-option {
+  background-color: var(--mat-component-bg-light) !important;
+  transition: background-color 0.2s ease;
+}
+
+html.dark-theme .mat-mdc-option {
+  background-color: var(--mat-component-bg-dark) !important;
+}
+
+.mat-mdc-option:hover {
+  background-color: var(--mat-sys-surface-variant) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected {
+  background-color: var(--mat-sys-primary-container) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text {
+  color: var(--mat-sys-on-primary-container) !important;
+}
+
 .mat-mdc-input-element,
 .mat-mdc-select-value,
 .mat-mdc-select-arrow,
 .mat-mdc-select-trigger,
 .mat-mdc-select,
-.mat-mdc-select-panel,
-.mat-mdc-option {
+.mat-mdc-select-panel {
   background-color: transparent !important;
 }
 

@@ -22,7 +22,7 @@ import { MatIcon } from "@angular/material/icon"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatButton, MatIconButton } from "@angular/material/button"
 import { NgIf, NgClass, NgFor } from "@angular/common"
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
+import { MatCard } from "@angular/material/card"
 import { AddGameDialogComponent } from "../../components/add-game-dialog/add-game-dialog.component"
 import { AddUserDialogComponent } from "../../components/add-user-dialog/add-user-dialog.component"
 import { AuthService } from '../../services/auth/auth.service';
@@ -55,9 +55,6 @@ import {EditGameDialogComponent} from '../../components/edit-game-dialog/edit-ga
     NgClass,
     NgFor,
     MatTabGroup,
-    MatCardContent,
-    MatCardTitle,
-    MatCardHeader,
     MatCard,
     MatTooltip,
     TranslateModule,
@@ -93,14 +90,14 @@ export class AdminDashboardComponent implements OnInit {
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users) => (this.users = users),
-      (error) => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_USERS")),
+      () => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_USERS")),
     )
   }
 
   loadGames(): void {
     this.gameService.getAllGames().subscribe(
       (games) => (this.games = games),
-      (error) => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_GAMES")),
+      () => this.showError(this.translate.instant("ADMIN.FAILED_LOAD_GAMES")),
     )
   }
 
@@ -116,7 +113,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.USER_CREATED"))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_USER")),
         )
       }
     })
@@ -137,7 +134,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.GAME_CREATED"))
             this.loadGames()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_GAME")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_CREATE_GAME")),
         )
       }
     })
@@ -159,7 +156,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.USER_DELETED"))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_USER")),
         )
       }
     })
@@ -181,7 +178,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.GAME_DELETED"))
             this.loadGames()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_GAME")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_DELETE_GAME")),
         )
       }
     })
@@ -207,7 +204,7 @@ export class AdminDashboardComponent implements OnInit {
         this.showSuccess(this.translate.instant("ADMIN.GAME_UPDATED"))
         this.loadGames()
       },
-      (error) => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
+      () => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
     )
   }
 
@@ -227,7 +224,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.PROMOTED_AGENT", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
         )
       }
     })
@@ -249,7 +246,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.DEMOTED_AGENT", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
         )
       }
     })
@@ -271,7 +268,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.PROMOTED_ADMIN", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_PROMOTE_USER")),
         )
       }
     })
@@ -293,7 +290,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.DEMOTED_ADMIN", { username: user.username }))
             this.loadUsers()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_DEMOTE_USER")),
         )
       }
     })
@@ -351,7 +348,7 @@ export class AdminDashboardComponent implements OnInit {
             this.showSuccess(this.translate.instant("ADMIN.GAME_UPDATED"))
             this.loadGames()
           },
-          (error) => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
+          () => this.showError(this.translate.instant("ADMIN.FAILED_UPDATE_GAME")),
         )
       }
     })
