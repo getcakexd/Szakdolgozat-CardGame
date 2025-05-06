@@ -1,224 +1,229 @@
 <div class="club-page-container">
-  <h1 class="mat-headline-4">{{ 'CLUBS.TITLE' | translate }}</h1>
+  <div class="social-header">
+    <h1>{{ 'CLUBS.TITLE' | translate }}</h1>
+    <p>{{ 'CLUBS.SUBTITLE' | translate }}</p>
+  </div>
 
-  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">group</mat-icon>
-        {{ 'CLUBS.MY_CLUBS' | translate }}
-      </ng-template>
+  <mat-card class="social-card">
+    <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">group</mat-icon>
+          <span>{{ 'CLUBS.MY_CLUBS' | translate }}</span>
+        </ng-template>
 
-      <div class="tab-content">
-        <app-club-list [isUserClubs]="true" (clubClick)="goToClub($event)"></app-club-list>
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">group_add</mat-icon>
-        {{ 'CLUBS.JOIN_CLUBS' | translate }}
-      </ng-template>
-
-      <div class="tab-content">
-        <app-club-list [isUserClubs]="false" (clubClick)="goToClub($event)"></app-club-list>
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div class="badge-container">
-          <mat-icon class="tab-icon">mail</mat-icon>
-          <span>{{ 'CLUBS.INVITES' | translate }}</span>
-          <span *ngIf="invites.length > 0" class="invite-badge">{{invites.length}}</span>
+        <div class="tab-content">
+          <app-club-list [isUserClubs]="true" (clubClick)="goToClub($event)"></app-club-list>
         </div>
-      </ng-template>
+      </mat-tab>
 
-      <div class="tab-content">
-        <div class="tab-header">
-          <h2>{{ 'CLUBS.PENDING_INVITES' | translate }}</h2>
-          <button mat-icon-button color="primary" (click)="loadInvites()" matTooltip="{{ 'COMMON.REFRESH' | translate }}">
-            <mat-icon>refresh</mat-icon>
-          </button>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">group_add</mat-icon>
+          <span>{{ 'CLUBS.JOIN_CLUBS' | translate }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <app-club-list [isUserClubs]="false" (clubClick)="goToClub($event)"></app-club-list>
         </div>
+      </mat-tab>
 
-        <mat-card *ngIf="invites.length === 0 && !isLoading" class="empty-card">
-          <mat-card-content>
-            <mat-icon class="empty-icon">mail_outline</mat-icon>
-            <p>{{ 'CLUBS.NO_INVITES' | translate }}</p>
-          </mat-card-content>
-        </mat-card>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="badge-container">
+            <mat-icon class="tab-icon">mail</mat-icon>
+            <span>{{ 'CLUBS.INVITES' | translate }}</span>
+            <span *ngIf="invites.length > 0" class="invite-badge">{{invites.length}}</span>
+          </div>
+        </ng-template>
 
-        <div *ngIf="isLoading" class="loading-container">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p class="loading-text">{{ 'CLUBS.LOADING_INVITES' | translate }}</p>
-        </div>
-
-        <mat-card *ngFor="let invite of invites" class="invite-card">
-          <mat-card-header>
-            <div mat-card-avatar class="club-avatar">
-              <mat-icon>groups</mat-icon>
-            </div>
-            <mat-card-title>{{invite.club.name}}</mat-card-title>
-            <mat-card-subtitle *ngIf="invite.club.description">{{invite.club.description}}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-actions align="end">
-            <button mat-button color="warn" (click)="declineInvite(invite.id)">
-              <mat-icon>close</mat-icon>
-              {{ 'CLUBS.DECLINE' | translate }}
-            </button>
-            <button mat-raised-button color="primary" (click)="acceptInvite(invite.id)">
-              <mat-icon>check</mat-icon>
-              {{ 'CLUBS.ACCEPT' | translate }}
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">emoji_events</mat-icon>
-        {{ 'CLUBS.TOP_CLUBS' | translate }}
-      </ng-template>
-
-      <div class="tab-content">
-        <div class="leaderboard-section">
-          <div class="section-header">
-            <h2 class="section-title">{{ 'CLUBS.TOP_CLUBS_OVERALL' | translate }}</h2>
-            <button mat-icon-button color="primary" (click)="loadTopClubs()" matTooltip="{{ 'COMMON.REFRESH' | translate }}">
+        <div class="tab-content">
+          <div class="tab-header">
+            <h2>{{ 'CLUBS.PENDING_INVITES' | translate }}</h2>
+            <button mat-icon-button color="primary" (click)="loadInvites()" matTooltip="{{ 'COMMON.REFRESH' | translate }}">
               <mat-icon>refresh</mat-icon>
             </button>
           </div>
 
-          <div *ngIf="isLoadingTopClubs" class="loading-container">
-            <mat-spinner diameter="40"></mat-spinner>
-            <p class="loading-text">{{ 'CLUBS.LOADING_LEADERBOARD' | translate }}</p>
-          </div>
-
-          <mat-card *ngIf="topClubs.length === 0 && !isLoadingTopClubs" class="empty-card">
+          <mat-card *ngIf="invites.length === 0 && !isLoading" class="empty-card">
             <mat-card-content>
-              <mat-icon class="empty-icon">emoji_events_off</mat-icon>
-              <p>{{ 'CLUBS.NO_LEADERBOARD_DATA' | translate }}</p>
+              <mat-icon class="empty-icon">mail_outline</mat-icon>
+              <p>{{ 'CLUBS.NO_INVITES' | translate }}</p>
             </mat-card-content>
           </mat-card>
 
-          <div *ngIf="topClubs.length > 0" class="leaderboard-container">
-            <table class="leaderboard-table">
-              <thead>
-              <tr>
-                <th class="rank-column">{{ 'CLUBS.RANK' | translate }}</th>
-                <th>{{ 'CLUBS.CLUB_NAME' | translate }}</th>
-                <th class="numeric-column">{{ 'CLUBS.GAMES_PLAYED' | translate }}</th>
-                <th class="numeric-column">{{ 'CLUBS.POINTS' | translate }}</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let club of topClubs; let i = index"
-                  (click)="goToClub(club.club.id)"
-                  class="leaderboard-row">
-                <td class="rank-column">
-                  <div class="rank-badge" [ngClass]="{'gold': i === 0, 'silver': i === 1, 'bronze': i === 2}">
-                    {{ i + 1 }}
-                  </div>
-                </td>
-                <td class="club-name-cell">
-                  <div class="club-name">
-                    {{ club.club.name }}
-                    <mat-icon *ngIf="club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PUBLIC' | translate }}">public</mat-icon>
-                    <mat-icon *ngIf="!club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PRIVATE' | translate }}">lock</mat-icon>
-                  </div>
-                </td>
-                <td class="numeric-column">{{ club.gamesPlayed }}</td>
-                <td class="numeric-column points-column">{{ club.totalPoints }}</td>
-              </tr>
-              </tbody>
-            </table>
+          <div *ngIf="isLoading" class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p class="loading-text">{{ 'CLUBS.LOADING_INVITES' | translate }}</p>
           </div>
+
+          <mat-card *ngFor="let invite of invites" class="invite-card">
+            <mat-card-header>
+              <div mat-card-avatar class="club-avatar">
+                <mat-icon>groups</mat-icon>
+              </div>
+              <mat-card-title>{{invite.club.name}}</mat-card-title>
+              <mat-card-subtitle *ngIf="invite.club.description">{{invite.club.description}}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="declineInvite(invite.id)">
+                <mat-icon>close</mat-icon>
+                {{ 'CLUBS.DECLINE' | translate }}
+              </button>
+              <button mat-raised-button color="primary" (click)="acceptInvite(invite.id)">
+                <mat-icon>check</mat-icon>
+                {{ 'CLUBS.ACCEPT' | translate }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
         </div>
+      </mat-tab>
 
-        <mat-divider class="section-divider"></mat-divider>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">emoji_events</mat-icon>
+          <span>{{ 'CLUBS.TOP_CLUBS' | translate }}</span>
+        </ng-template>
 
-        <div class="leaderboard-section">
-          <div class="section-header">
-            <h2 class="section-title">{{ 'CLUBS.TOP_CLUBS_BY_GAME' | translate }}</h2>
+        <div class="tab-content">
+          <div class="leaderboard-section">
+            <div class="section-header">
+              <h2 class="section-title">{{ 'CLUBS.TOP_CLUBS_OVERALL' | translate }}</h2>
+              <button mat-icon-button color="primary" (click)="loadTopClubs()" matTooltip="{{ 'COMMON.REFRESH' | translate }}">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
 
-            <div class="game-selector">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'CLUBS.SELECT_GAME' | translate }}</mat-label>
-                <mat-select [(ngModel)]="selectedGameId" (selectionChange)="onGameChange()">
-                  <mat-option *ngFor="let game of games" [value]="game.id">
-                    {{ game.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+            <div *ngIf="isLoadingTopClubs" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p class="loading-text">{{ 'CLUBS.LOADING_LEADERBOARD' | translate }}</p>
+            </div>
+
+            <mat-card *ngIf="topClubs.length === 0 && !isLoadingTopClubs" class="empty-card">
+              <mat-card-content>
+                <mat-icon class="empty-icon">emoji_events_off</mat-icon>
+                <p>{{ 'CLUBS.NO_LEADERBOARD_DATA' | translate }}</p>
+              </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="topClubs.length > 0" class="leaderboard-container">
+              <table class="leaderboard-table">
+                <thead>
+                <tr>
+                  <th class="rank-column">{{ 'CLUBS.RANK' | translate }}</th>
+                  <th>{{ 'CLUBS.CLUB_NAME' | translate }}</th>
+                  <th class="numeric-column">{{ 'CLUBS.GAMES_PLAYED' | translate }}</th>
+                  <th class="numeric-column">{{ 'CLUBS.POINTS' | translate }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let club of topClubs; let i = index"
+                    (click)="goToClub(club.club.id)"
+                    class="leaderboard-row">
+                  <td class="rank-column">
+                    <div class="rank-badge" [ngClass]="{'gold': i === 0, 'silver': i === 1, 'bronze': i === 2}">
+                      {{ i + 1 }}
+                    </div>
+                  </td>
+                  <td class="club-name-cell">
+                    <div class="club-name">
+                      {{ club.club.name }}
+                      <mat-icon *ngIf="club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PUBLIC' | translate }}">public</mat-icon>
+                      <mat-icon *ngIf="!club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PRIVATE' | translate }}">lock</mat-icon>
+                    </div>
+                  </td>
+                  <td class="numeric-column">{{ club.gamesPlayed }}</td>
+                  <td class="numeric-column points-column">{{ club.totalPoints }}</td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div *ngIf="isLoadingGames || isLoadingTopClubsByGame" class="loading-container">
-            <mat-spinner diameter="40"></mat-spinner>
-            <p class="loading-text">{{ 'CLUBS.LOADING_LEADERBOARD' | translate }}</p>
-          </div>
+          <mat-divider class="section-divider"></mat-divider>
 
-          <mat-card *ngIf="games.length === 0 && !isLoadingGames" class="empty-card">
-            <mat-card-content>
-              <mat-icon class="empty-icon">sports_esports_off</mat-icon>
-              <p>{{ 'CLUBS.NO_GAMES_AVAILABLE' | translate }}</p>
-            </mat-card-content>
-          </mat-card>
+          <div class="leaderboard-section">
+            <div class="section-header">
+              <h2 class="section-title">{{ 'CLUBS.TOP_CLUBS_BY_GAME' | translate }}</h2>
 
-          <mat-card *ngIf="topClubsByGame.length === 0 && !isLoadingTopClubsByGame && games.length > 0 && selectedGameId" class="empty-card">
-            <mat-card-content>
-              <mat-icon class="empty-icon">emoji_events_off</mat-icon>
-              <p>{{ 'CLUBS.NO_GAME_LEADERBOARD_DATA' | translate }}</p>
-            </mat-card-content>
-          </mat-card>
+              <div class="game-selector">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'CLUBS.SELECT_GAME' | translate }}</mat-label>
+                  <mat-select [(ngModel)]="selectedGameId" (selectionChange)="onGameChange()">
+                    <mat-option *ngFor="let game of games" [value]="game.id">
+                      {{ game.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
 
-          <div *ngIf="topClubsByGame.length > 0" class="leaderboard-container">
-            <table class="leaderboard-table">
-              <thead>
-              <tr>
-                <th class="rank-column">{{ 'CLUBS.RANK' | translate }}</th>
-                <th>{{ 'CLUBS.CLUB_NAME' | translate }}</th>
-                <th class="numeric-column">{{ 'CLUBS.GAMES_PLAYED' | translate }}</th>
-                <th class="numeric-column">{{ 'CLUBS.POINTS' | translate }}</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let club of topClubsByGame; let i = index"
-                  (click)="goToClub(club.club.id)"
-                  class="leaderboard-row">
-                <td class="rank-column">
-                  <div class="rank-badge" [ngClass]="{'gold': i === 0, 'silver': i === 1, 'bronze': i === 2}">
-                    {{ i + 1 }}
-                  </div>
-                </td>
-                <td class="club-name-cell">
-                  <div class="club-name">
-                    {{ club.club.name }}
-                    <mat-icon *ngIf="club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PUBLIC' | translate }}">public</mat-icon>
-                    <mat-icon *ngIf="!club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PRIVATE' | translate }}">lock</mat-icon>
-                  </div>
-                </td>
-                <td class="numeric-column">{{ club.gamesPlayed }}</td>
-                <td class="numeric-column points-column">{{ club.totalPoints }}</td>
-              </tr>
-              </tbody>
-            </table>
+            <div *ngIf="isLoadingGames || isLoadingTopClubsByGame" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p class="loading-text">{{ 'CLUBS.LOADING_LEADERBOARD' | translate }}</p>
+            </div>
+
+            <mat-card *ngIf="games.length === 0 && !isLoadingGames" class="empty-card">
+              <mat-card-content>
+                <mat-icon class="empty-icon">sports_esports_off</mat-icon>
+                <p>{{ 'CLUBS.NO_GAMES_AVAILABLE' | translate }}</p>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card *ngIf="topClubsByGame.length === 0 && !isLoadingTopClubsByGame && games.length > 0 && selectedGameId" class="empty-card">
+              <mat-card-content>
+                <mat-icon class="empty-icon">emoji_events_off</mat-icon>
+                <p>{{ 'CLUBS.NO_GAME_LEADERBOARD_DATA' | translate }}</p>
+              </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="topClubsByGame.length > 0" class="leaderboard-container">
+              <table class="leaderboard-table">
+                <thead>
+                <tr>
+                  <th class="rank-column">{{ 'CLUBS.RANK' | translate }}</th>
+                  <th>{{ 'CLUBS.CLUB_NAME' | translate }}</th>
+                  <th class="numeric-column">{{ 'CLUBS.GAMES_PLAYED' | translate }}</th>
+                  <th class="numeric-column">{{ 'CLUBS.POINTS' | translate }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let club of topClubsByGame; let i = index"
+                    (click)="goToClub(club.club.id)"
+                    class="leaderboard-row">
+                  <td class="rank-column">
+                    <div class="rank-badge" [ngClass]="{'gold': i === 0, 'silver': i === 1, 'bronze': i === 2}">
+                      {{ i + 1 }}
+                    </div>
+                  </td>
+                  <td class="club-name-cell">
+                    <div class="club-name">
+                      {{ club.club.name }}
+                      <mat-icon *ngIf="club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PUBLIC' | translate }}">public</mat-icon>
+                      <mat-icon *ngIf="!club.club.public" class="visibility-icon" matTooltip="{{ 'CLUB.PRIVATE' | translate }}">lock</mat-icon>
+                    </div>
+                  </td>
+                  <td class="numeric-column">{{ club.gamesPlayed }}</td>
+                  <td class="numeric-column points-column">{{ club.totalPoints }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
-    </mat-tab>
+      </mat-tab>
 
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="tab-icon">add_circle</mat-icon>
-        {{ 'CLUBS.CREATE_CLUB' | translate }}
-      </ng-template>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">add_circle</mat-icon>
+          <span>{{ 'CLUBS.CREATE_CLUB' | translate }}</span>
+        </ng-template>
 
-      <div class="tab-content">
-        <app-club-create></app-club-create>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+        <div class="tab-content">
+          <app-club-create></app-club-create>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
 </div>
