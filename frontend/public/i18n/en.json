@@ -30,7 +30,24 @@
   },
   "HOME": {
     "WELCOME": "Welcome to CardHUB",
-    "WELCOME_USER": "Welcome to CardHUB, {{username}}!"
+    "WELCOME_USER": "Welcome to CardHUB, {{username}}!",
+    "SUBTITLE": "Your ultimate destination for card games and community",
+    "EXPLORE": "Explore",
+    "GET_STARTED": "Get Started",
+    "PLAY_NOW": "Play Now",
+    "JOIN_COMMUNITY": "Join our growing community of card game enthusiasts!",
+    "FEATURE_FRIENDS_TITLE": "Connect with Friends",
+    "FEATURE_FRIENDS_DESC": "Add friends, chat with them, and challenge them to games anytime.",
+    "FEATURE_CLUBS_TITLE": "Join Clubs",
+    "FEATURE_CLUBS_DESC": "Find like-minded players, join clubs, and participate in club tournaments.",
+    "FEATURE_RULES_TITLE": "Learn and Master Games",
+    "FEATURE_RULES_DESC": "Discover new card games, learn the rules, and master different strategies.",
+    "FEATURE_LOBBY_TITLE": "Play Exciting Games",
+    "FEATURE_LOBBY_DESC": "Create or join game lobbies and enjoy playing with friends or new people.",
+    "FEATURE_STATS_TITLE": "Learn from Your Stats",
+    "FEATURE_STATS_DESC": "Track your performance, analyze your gameplay, and improve your skills.",
+    "FEATURE_LEADERBOARD_TITLE": "Conquer the Leaderboards",
+    "FEATURE_LEADERBOARD_DESC": "Compete with players worldwide and climb to the top of our global rankings."
   },
   "LOGIN": {
     "TITLE": "Login",

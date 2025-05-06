@@ -30,7 +30,24 @@
   },
   "HOME": {
     "WELCOME": "Üdvözöljük a CardHUB-on",
-    "WELCOME_USER": "Üdvözöljük a CardHUB-on, {{username}}!"
+    "WELCOME_USER": "Üdvözöljük a CardHUB-on, {{username}}!",
+    "SUBTITLE": "A kártyajátékok és közösség végső célpontja",
+    "EXPLORE": "Felfedezés",
+    "GET_STARTED": "Kezdés",
+    "PLAY_NOW": "Játssz Most",
+    "JOIN_COMMUNITY": "Csatlakozz növekvő kártyajáték-rajongói közösségünkhöz!",
+    "FEATURE_FRIENDS_TITLE": "Kapcsolódj Barátokkal",
+    "FEATURE_FRIENDS_DESC": "Adj hozzá barátokat, csevegj velük és hívd ki őket játékra bármikor.",
+    "FEATURE_CLUBS_TITLE": "Csatlakozz Klubokhoz",
+    "FEATURE_CLUBS_DESC": "Találj hasonló gondolkodású játékosokat, csatlakozz klubokhoz és vegyél részt klub tornákon.",
+    "FEATURE_RULES_TITLE": "Tanulj és Sajátíts el Játékokat",
+    "FEATURE_RULES_DESC": "Fedezz fel új kártyajátékokat, tanuld meg a szabályokat és sajátíts el különböző stratégiákat.",
+    "FEATURE_LOBBY_TITLE": "Játssz Izgalmas Játékokat",
+    "FEATURE_LOBBY_DESC": "Hozz létre vagy csatlakozz játék lobbikhoz és élvezd a játékot barátokkal vagy új emberekkel.",
+    "FEATURE_STATS_TITLE": "Tanulj a Statisztikáidból",
+    "FEATURE_STATS_DESC": "Kövesd teljesítményedet, elemezd játékodat és fejleszd képességeidet.",
+    "FEATURE_LEADERBOARD_TITLE": "Hódítsd meg a Ranglistákat",
+    "FEATURE_LEADERBOARD_DESC": "Versenyezz játékosokkal világszerte és juss a globális ranglisták élére."
   },
   "LOGIN": {
     "TITLE": "Bejelentkezés",

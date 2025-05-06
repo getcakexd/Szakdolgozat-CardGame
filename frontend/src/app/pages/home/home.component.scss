@@ -1,0 +1,197 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header {
+  margin-bottom: 3rem;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    transition: color var(--transition-normal) ease;
+  }
+
+  .home-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  width: 100%;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--mat-sys-primary);
+  }
+
+  &.friends-card::before {
+    background: var(--mat-magenta);
+  }
+
+  &.clubs-card::before {
+    background: var(--mat-violet);
+  }
+
+  &.rules-card::before {
+    background: var(--mat-green);
+  }
+
+  &.lobby-card::before {
+    background: var(--mat-blue);
+  }
+
+  &.stats-card::before {
+    background: var(--mat-cyan);
+  }
+
+  &.leaderboard-card::before {
+    background: var(--mat-orange);
+  }
+}
+
+.card-content {
+  display: flex;
+  padding: 1.5rem;
+  flex: 1;
+  align-items: center;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  margin-right: 1rem;
+
+  color: var(--mat-sys-primary);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transform: scale(1);
+
+  .friends-card & {
+    color: var(--mat-magenta);
+  }
+
+  .clubs-card & {
+    color: var(--mat-violet);
+  }
+
+  .rules-card & {
+    color: var(--mat-green);
+  }
+
+  .lobby-card & {
+    color: var(--mat-blue);
+  }
+
+  .stats-card & {
+    color: var(--mat-cyan);
+  }
+
+  .leaderboard-card & {
+    color: var(--mat-orange);
+  }
+}
+
+.card-text {
+  flex: 1;
+
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}
+
+.card-action {
+  padding: 0.5rem 1rem 1rem;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      margin-left: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover mat-icon {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.home-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 2rem 0;
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-header h1 {
+    font-size: 2rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
