@@ -83,10 +83,21 @@
 
       <app-language-selector></app-language-selector>
 
-      <button class="navbar-button" mat-button routerLink="/support">
-        <mat-icon>support</mat-icon>
-        <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+      <button class="navbar-button" mat-button [matMenuTriggerFor]="helpMenu">
+        <mat-icon>help</mat-icon>
+        <span>{{ 'NAVBAR.HELP' | translate }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
       </button>
+      <mat-menu #helpMenu="matMenu">
+        <button mat-menu-item routerLink="/support">
+          <mat-icon>support</mat-icon>
+          <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+        </button>
+        <button mat-menu-item routerLink="/privacy-policy">
+          <mat-icon>policy</mat-icon>
+          <span>{{ 'NAVBAR.PRIVACY' | translate }}</span>
+        </button>
+      </mat-menu>
 
       <ng-container *ngIf="isLoggedIn">
         <button class="navbar-button" mat-button routerLink="/profile">
@@ -105,7 +116,7 @@
           <span>{{ 'NAVBAR.LOGIN' | translate }}</span>
         </button>
         <button class="navbar-button" mat-button color="primary" routerLink="/signup">
-         <mat-icon>person_add_alt_1</mat-icon> <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
+          <mat-icon>person_add_alt_1</mat-icon> <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
         </button>
       </ng-container>
     </div>

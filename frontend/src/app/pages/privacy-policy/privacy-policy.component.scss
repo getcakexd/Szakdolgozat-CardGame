@@ -1,0 +1,130 @@
+.privacy-policy-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.privacy-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.privacy-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
+}
+
+.privacy-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+  transition: color var(--transition-normal) ease;
+}
+
+.privacy-policy-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-intro {
+  margin: 1rem 0 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.privacy-section {
+  margin: 2rem 0;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--mat-sys-primary);
+  }
+
+  p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+}
+
+.data-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+
+  li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+}
+
+.rights-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.right-item {
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--mat-sys-primary);
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+}
+
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+
+  button {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.contact-email {
+  font-weight: 500;
+  color: var(--mat-sys-primary);
+}
+
+.contact-support {
+  margin-top: 0.5rem;
+
+  a {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .rights-list {
+    grid-template-columns: 1fr;
+  }
+
+  .data-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

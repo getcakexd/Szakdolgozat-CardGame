@@ -38,6 +38,7 @@
               <mat-option value="technical">{{ 'TICKET.CATEGORY_TECHNICAL' | translate }}</mat-option>
               <mat-option value="billing">{{ 'TICKET.CATEGORY_BILLING' | translate }}</mat-option>
               <mat-option value="feedback">{{ 'TICKET.CATEGORY_FEEDBACK' | translate }}</mat-option>
+              <mat-option value="data_correction">{{ 'TICKET.CATEGORY_DATA_CORRECTION' | translate }}</mat-option>
               <mat-option value="other">{{ 'TICKET.CATEGORY_OTHER' | translate }}</mat-option>
             </mat-select>
             <mat-error *ngIf="ticketForm.get('category')?.hasError('required')">

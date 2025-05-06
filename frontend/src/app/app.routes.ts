@@ -25,6 +25,7 @@ import {GamesComponent} from './pages/games/games.component';
 import {GameComponent} from './pages/game/game.component';
 import {StatsComponent} from './pages/stats/stats.component';
 import {LeaderboardComponent} from './pages/leaderboard/leaderboard.component';
+import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -48,6 +49,7 @@ export const routes: Routes = [
   { path: "admin", component: AdminDashboardComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: "agent", component: AgentDashboardComponent, canActivate: [AuthGuard, AgentGuard] },
   { path: "audit-logs", component: AuditLogsComponent, canActivate: [AuthGuard, RootGuard] },
+  { path: "privacy-policy", component: PrivacyPolicyComponent },
   { path: '**', redirectTo: '' }
 ];
 
