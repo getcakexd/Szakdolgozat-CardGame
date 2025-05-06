@@ -4,22 +4,26 @@
     <p>{{ 'GAMES.DESCRIPTION' | translate }}</p>
   </div>
 
-  <div class="games-list" *ngIf="!isLoading && games.length > 0">
-    <ng-container *ngFor="let game of games; let last = last">
-      <div class="game-card-container">
-        <app-game-card
-          [game]="game"
-          [showRulesButton]="true"
-          [showActiveToggle]="false"
-          [isAdmin]="false">
-        </app-game-card>
+  <mat-card class="social-card" *ngIf="!isLoading && games.length > 0">
+    <mat-card-content>
+      <div class="games-list">
+        <ng-container *ngFor="let game of games; let last = last">
+          <div class="game-card-container">
+            <app-game-card
+              [game]="game"
+              [showRulesButton]="true"
+              [showActiveToggle]="false"
+              [isAdmin]="false">
+            </app-game-card>
+          </div>
+          <mat-divider *ngIf="!last" class="game-divider"></mat-divider>
+        </ng-container>
       </div>
-      <mat-divider *ngIf="!last" class="game-divider"></mat-divider>
-    </ng-container>
-  </div>
+    </mat-card-content>
+  </mat-card>
 
   <div class="no-games" *ngIf="!isLoading && games.length === 0">
-    <mat-card>
+    <mat-card class="social-card">
       <mat-card-content>
         <p>{{ 'GAMES.NO_GAMES' | translate }}</p>
       </mat-card-content>

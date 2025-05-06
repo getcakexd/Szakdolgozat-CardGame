@@ -56,6 +56,9 @@
   },
   "PROFILE": {
     "TITLE": "Az Ön profilja",
+    "SUBTITLE": "Szerkessze profilját és kezelje fiókját",
+    "TICKET_DETAILS": "Probléma részletei",
+    "TICKET_DETAILS_SUBTITLE": "Kérjük, adja meg a problémát, amellyel kapcsolatban segítséget kér",
     "USERNAME": "Felhasználónév",
     "EMAIL": "E-mail",
     "PASSWORD": "Jelszó",
@@ -169,6 +172,9 @@
   "CLUB": {
     "ENTER": "Belépés",
     "BACK": "Vissza",
+    "BACK_TO_CLUBS": "Vissza a klubokhoz",
+    "SETTINGS": "Beállítások",
+    "VISIBILITY": "Láthatóság",
     "PUBLIC": "Nyilvános",
     "PRIVATE": "Privát",
     "VISIBILITY_PUBLIC": "nyilvánossá",
@@ -180,6 +186,9 @@
     "EDIT_DESCRIPTION": "Leírás szerkesztése",
     "SAVE_DESCRIPTION": "Leírás mentése",
     "LEAVE_CLUB": "Klub elhagyása",
+    "CLUB_DETAILS": "Klub részletei",
+    "DANGER_ZONE": "Veszélyzóna",
+    "DELETE_WARNING": "Ez a művelet nem vonható vissza!",
     "MAKE_PRIVATE": "Privátá tesz",
     "MAKE_PUBLIC": "Nyilvánossá tesz",
     "DELETE_CLUB": "Klub törlése",
@@ -414,6 +423,7 @@
   },
   "STATS": {
     "TITLE": "Játékos Statisztikák",
+    "SUBTITLE": "A klub teljesítmény statisztikáinak megtekintése",
     "OVERALL": "Összesített Statisztikák",
     "GAME_STATS": "Játék Statisztikák",
     "RECENT_GAMES": "Legutóbbi Játékok",
@@ -444,6 +454,7 @@
   },
   "LEADERBOARD": {
     "TITLE": "Ranglista",
+    "SUBTITLE": "Nézd meg, hogyan rangsorolódnak a tagok a klubon belül",
     "OVERALL": "Összesített Ranglista",
     "BY_GAME": "Játék Ranglista",
     "RANK": "Helyezés",
@@ -461,6 +472,7 @@
   },
   "ADMIN": {
     "TITLE": "Admin vezérlőpult",
+    "SUBTITLE": "Felhasználók és játékok kezelése",
     "USER_MANAGEMENT": "Felhasználók kezelése",
     "GAME_MANAGEMENT": "Játékok kezelése",
     "ADD_USER": "Felhasználó hozzáadása",
@@ -512,6 +524,7 @@
   },
   "AGENT": {
     "TITLE": "Ügynök vezérlőpult",
+    "SUBTITLE": "Felhasználók és kapcsolatfelvételi kérések kezelése",
     "USER_MANAGEMENT": "Felhasználók kezelése",
     "ID": "Azonosító",
     "USERNAME": "Felhasználónév",
@@ -873,6 +886,7 @@
   },
   "TICKET": {
     "SUPPORT_CENTER": "Ügyfélszolgálati Központ",
+    "SUPPORT_SUBTITLE": "Küldjön egy kapcsolatfelvételi kérést, és mi segítünk Önnek",
     "CREATE_TITLE": "Ügyfélszolgálati Jegy Létrehozása",
     "CREATE_TICKET": "Jegy Létrehozása",
     "MY_TICKETS": "Jegyeim",

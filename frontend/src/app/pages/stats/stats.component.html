@@ -1,184 +1,180 @@
 <div class="stats-page-container">
-  <mat-card class="stats-card">
-    <mat-card-header>
-      <div class="stats-header">
-        <mat-card-title>{{ 'STATS.TITLE' | translate }}</mat-card-title>
-        <mat-icon class="stats-icon">leaderboard</mat-icon>
-      </div>
-    </mat-card-header>
+  <div class="social-header">
+    <h1>{{ 'STATS.TITLE' | translate }}</h1>
+    <p>{{ 'STATS.SUBTITLE' | translate }}</p>
+  </div>
 
+  <mat-card class="social-card">
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
-    <mat-card-content>
-      <mat-tab-group>
-        <mat-tab [label]="'STATS.OVERALL' | translate">
-          <div class="tab-content" *ngIf="userStats">
-            <div class="stats-overview">
-              <div class="stat-item">
-                <div class="stat-value">{{ userStats.gamesPlayed }}</div>
-                <div class="stat-label">{{ 'STATS.GAMES_PLAYED' | translate }}</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value">{{ userStats.gamesWon }}</div>
-                <div class="stat-label">{{ 'STATS.GAMES_WON' | translate }}</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value">{{ calculateWinRate(userStats.gamesWon, userStats.gamesPlayed) | number:'1.0-1' }}%</div>
-                <div class="stat-label">{{ 'STATS.WIN_RATE' | translate }}</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value">{{ userStats.totalPoints }}</div>
-                <div class="stat-label">{{ 'STATS.TOTAL_POINTS' | translate }}</div>
-              </div>
+    <mat-tab-group>
+      <mat-tab [label]="'STATS.OVERALL' | translate">
+        <div class="tab-content" *ngIf="userStats">
+          <div class="stats-overview">
+            <div class="stat-item">
+              <div class="stat-value">{{ userStats.gamesPlayed }}</div>
+              <div class="stat-label">{{ 'STATS.GAMES_PLAYED' | translate }}</div>
             </div>
-
-            <mat-divider></mat-divider>
-
-            <div class="stats-details">
-              <div class="stats-row">
-                <div class="stats-label">
-                  <mat-icon>emoji_events</mat-icon>
-                  <span>{{ 'STATS.CURRENT_STREAK' | translate }}</span>
-                </div>
-                <div class="stats-value">{{ userStats.currentWinStreak }}</div>
-              </div>
-              <div class="stats-row">
-                <div class="stats-label">
-                  <mat-icon>military_tech</mat-icon>
-                  <span>{{ 'STATS.BIGGEST_STREAK' | translate }}</span>
-                </div>
-                <div class="stats-value">{{ userStats.biggestWinStreak }}</div>
-              </div>
-              <div class="stats-row">
-                <div class="stats-label">
-                  <mat-icon>close</mat-icon>
-                  <span>{{ 'STATS.GAMES_LOST' | translate }}</span>
-                </div>
-                <div class="stats-value">{{ userStats.gamesLost }}</div>
-              </div>
-              <div class="stats-row">
-                <div class="stats-label">
-                  <mat-icon>logout</mat-icon>
-                  <span>{{ 'STATS.GAMES_ABANDONED' | translate }}</span>
-                </div>
-                <div class="stats-value">{{ userStats.gamesAbandoned }}</div>
-              </div>
-              <div class="stats-row">
-                <div class="stats-label">
-                  <mat-icon>spa</mat-icon>
-                  <span>{{ 'STATS.TOTAL_FATS' | translate }}</span>
-                </div>
-                <div class="stats-value">{{ userStats.totalFatsCollected }}</div>
-              </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ userStats.gamesWon }}</div>
+              <div class="stat-label">{{ 'STATS.GAMES_WON' | translate }}</div>
             </div>
-
-            <div class="leaderboard-link">
-              <button mat-raised-button color="primary" (click)="viewLeaderboard()">
-                <mat-icon>leaderboard</mat-icon>
-                {{ 'STATS.VIEW_LEADERBOARD' | translate }}
-              </button>
+            <div class="stat-item">
+              <div class="stat-value">{{ calculateWinRate(userStats.gamesWon, userStats.gamesPlayed) | number:'1.0-1' }}%</div>
+              <div class="stat-label">{{ 'STATS.WIN_RATE' | translate }}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ userStats.totalPoints }}</div>
+              <div class="stat-label">{{ 'STATS.TOTAL_POINTS' | translate }}</div>
             </div>
           </div>
 
-          <div class="no-stats-message" *ngIf="!userStats && !isLoading">
+          <mat-divider></mat-divider>
+
+          <div class="stats-details">
+            <div class="stats-row">
+              <div class="stats-label">
+                <mat-icon>emoji_events</mat-icon>
+                <span>{{ 'STATS.CURRENT_STREAK' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.currentWinStreak }}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">
+                <mat-icon>military_tech</mat-icon>
+                <span>{{ 'STATS.BIGGEST_STREAK' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.biggestWinStreak }}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">
+                <mat-icon>close</mat-icon>
+                <span>{{ 'STATS.GAMES_LOST' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.gamesLost }}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">
+                <mat-icon>logout</mat-icon>
+                <span>{{ 'STATS.GAMES_ABANDONED' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.gamesAbandoned }}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">
+                <mat-icon>spa</mat-icon>
+                <span>{{ 'STATS.TOTAL_FATS' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.totalFatsCollected }}</div>
+            </div>
+          </div>
+
+          <div class="leaderboard-link">
+            <button mat-raised-button color="primary" (click)="viewLeaderboard()">
+              <mat-icon>leaderboard</mat-icon>
+              {{ 'STATS.VIEW_LEADERBOARD' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="no-stats-message" *ngIf="!userStats && !isLoading">
+          <mat-icon>info</mat-icon>
+          <p>{{ 'STATS.NO_STATS' | translate }}</p>
+        </div>
+      </mat-tab>
+
+      <mat-tab [label]="'STATS.GAME_STATS' | translate">
+        <div class="tab-content">
+          <table mat-table [dataSource]="userGameStats" class="stats-table" *ngIf="userGameStats.length > 0">
+            <ng-container matColumnDef="gameName">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.gameDefinition?.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="gamesPlayed">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.PLAYED' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.gamesPlayed }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="gamesWon">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.WON' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.gamesWon }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="winRate">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.WIN_RATE' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">
+                {{ calculateWinRate(stat.gamesWon, stat.gamesPlayed) | number:'1.0-1' }}%
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="points">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.POINTS' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.totalPoints }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="fatsCollected">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.FATS' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.totalFatsCollected }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="streak">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.BEST_STREAK' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.biggestWinStreak }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="gameStatsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: gameStatsColumns;"></tr>
+          </table>
+
+          <div class="no-stats-message" *ngIf="userGameStats.length === 0 && !isLoading">
             <mat-icon>info</mat-icon>
-            <p>{{ 'STATS.NO_STATS' | translate }}</p>
+            <p>{{ 'STATS.NO_GAME_STATS' | translate }}</p>
           </div>
-        </mat-tab>
+        </div>
+      </mat-tab>
 
-        <mat-tab [label]="'STATS.GAME_STATS' | translate">
-          <div class="tab-content">
-            <table mat-table [dataSource]="userGameStats" class="stats-table" *ngIf="userGameStats.length > 0">
-              <ng-container matColumnDef="gameName">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.gameDefinition?.name }}</td>
-              </ng-container>
+      <mat-tab [label]="'STATS.RECENT_GAMES' | translate">
+        <div class="tab-content">
+          <table mat-table [dataSource]="recentGames" class="stats-table" *ngIf="recentGames.length > 0">
+            <ng-container matColumnDef="gameType">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
+              <td mat-cell *matCellDef="let game">{{ getGameName(game.gameDefinitionId) }}</td>
+            </ng-container>
 
-              <ng-container matColumnDef="gamesPlayed">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.PLAYED' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.gamesPlayed }}</td>
-              </ng-container>
+            <ng-container matColumnDef="result">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.RESULT' | translate }}</th>
+              <td mat-cell *matCellDef="let game" [ngClass]="{'win': game.won, 'loss': !game.won}">
+                {{ game.won ? ('STATS.WON' | translate) : ('STATS.LOST' | translate) }}
+              </td>
+            </ng-container>
 
-              <ng-container matColumnDef="gamesWon">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.WON' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.gamesWon }}</td>
-              </ng-container>
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.SCORE' | translate }}</th>
+              <td mat-cell *matCellDef="let game">{{ game.score }}</td>
+            </ng-container>
 
-              <ng-container matColumnDef="winRate">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.WIN_RATE' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">
-                  {{ calculateWinRate(stat.gamesWon, stat.gamesPlayed) | number:'1.0-1' }}%
-                </td>
-              </ng-container>
+            <ng-container matColumnDef="fatsCollected">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.FATS' | translate }}</th>
+              <td mat-cell *matCellDef="let game">{{ game.fatCardsCollected }}</td>
+            </ng-container>
 
-              <ng-container matColumnDef="points">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.POINTS' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.totalPoints }}</td>
-              </ng-container>
+            <ng-container matColumnDef="playedAt">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.DATE' | translate }}</th>
+              <td mat-cell *matCellDef="let game">{{ game.playedAt | date:'short' }}</td>
+            </ng-container>
 
-              <ng-container matColumnDef="fatsCollected">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.FATS' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.totalFatsCollected }}</td>
-              </ng-container>
+            <tr mat-header-row *matHeaderRowDef="recentGamesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: recentGamesColumns;"
+                (click)="viewGame(row.gameId)" class="clickable-row"></tr>
+          </table>
 
-              <ng-container matColumnDef="streak">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.BEST_STREAK' | translate }}</th>
-                <td mat-cell *matCellDef="let stat">{{ stat.biggestWinStreak }}</td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="gameStatsColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: gameStatsColumns;"></tr>
-            </table>
-
-            <div class="no-stats-message" *ngIf="userGameStats.length === 0 && !isLoading">
-              <mat-icon>info</mat-icon>
-              <p>{{ 'STATS.NO_GAME_STATS' | translate }}</p>
-            </div>
+          <div class="no-stats-message" *ngIf="recentGames.length === 0 && !isLoading">
+            <mat-icon>info</mat-icon>
+            <p>{{ 'STATS.NO_RECENT_GAMES' | translate }}</p>
           </div>
-        </mat-tab>
-
-        <mat-tab [label]="'STATS.RECENT_GAMES' | translate">
-          <div class="tab-content">
-            <table mat-table [dataSource]="recentGames" class="stats-table" *ngIf="recentGames.length > 0">
-              <ng-container matColumnDef="gameType">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.GAME' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{ getGameName(game.gameDefinitionId) }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="result">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.RESULT' | translate }}</th>
-                <td mat-cell *matCellDef="let game" [ngClass]="{'win': game.won, 'loss': !game.won}">
-                  {{ game.won ? ('STATS.WON' | translate) : ('STATS.LOST' | translate) }}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="score">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.SCORE' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{ game.score }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="fatsCollected">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.FATS' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{ game.fatCardsCollected }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="playedAt">
-                <th mat-header-cell *matHeaderCellDef>{{ 'STATS.DATE' | translate }}</th>
-                <td mat-cell *matCellDef="let game">{{ game.playedAt | date:'short' }}</td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="recentGamesColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: recentGamesColumns;"
-                  (click)="viewGame(row.gameId)" class="clickable-row"></tr>
-            </table>
-
-            <div class="no-stats-message" *ngIf="recentGames.length === 0 && !isLoading">
-              <mat-icon>info</mat-icon>
-              <p>{{ 'STATS.NO_RECENT_GAMES' | translate }}</p>
-            </div>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </mat-card-content>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </mat-card>
 </div>

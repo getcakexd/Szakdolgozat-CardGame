@@ -1,13 +1,16 @@
 <div class="club-lobby-container">
-  <div class="club-lobby-header">
-    <h2>{{ 'CLUB.LOBBIES.TITLE' | translate }}</h2>
-    <p class="club-lobby-subtitle">{{ 'CLUB.LOBBIES.SUBTITLE' | translate }}</p>
+  <div class="social-header">
+    <h1>{{ 'CLUB.LOBBIES.TITLE' | translate }}</h1>
+    <p>{{ 'CLUB.LOBBIES.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="refresh-button">
     <button mat-raised-button color="primary" (click)="refreshLobbies()" [disabled]="isLoading">
       <mat-icon>refresh</mat-icon> {{ 'COMMON.REFRESH' | translate }}
     </button>
   </div>
 
-  <mat-card>
+  <mat-card class="social-card">
     <mat-card-content>
       <mat-tab-group (selectedIndexChange)="onTabChange($event)" animationDuration="300ms">
         <mat-tab [label]="'CLUB.LOBBIES.AVAILABLE' | translate">

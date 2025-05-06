@@ -261,9 +261,7 @@ export class AuditLogsComponent implements OnInit {
     return action
   }
 
-  // New method to get alternative text for action badges without underscores
   getActionDisplayText(action: string): string {
-    // Replace underscores with spaces and capitalize each word
     return action
       .replace(/_/g, ' ')
       .split(' ')

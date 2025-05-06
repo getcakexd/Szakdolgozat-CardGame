@@ -1,36 +1,99 @@
 .support-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
 
-  .support-title {
-    font-size: 1.75rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-    color: var(--mat-sys-primary);
-    text-align: center;
+.social-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.social-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
+}
+
+.social-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+  transition: color var(--transition-normal) ease;
+}
+
+.social-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+::ng-deep .mat-mdc-tab-header {
+  background-color: var(--background-color);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-label-active {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+::ng-deep {
+  app-create-ticket, app-ticket-list {
+    .create-ticket-container, .ticket-list-container {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+
+      mat-card {
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .support-container {
+    padding: 16px 8px;
+  }
+
+  .social-header h1 {
+    font-size: 24px;
+  }
+
+  .social-header p {
+    font-size: 14px;
   }
 
   .tab-content {
-    padding: 1.5rem 0;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-content {
+    padding: 12px 8px;
   }
 
-  ::ng-deep {
-    .mat-mdc-tab-header {
-      margin-bottom: 1rem;
-    }
+  ::ng-deep .mat-mdc-tab-label {
+    padding: 0 12px !important;
+  }
 
-    app-create-ticket, app-ticket-list {
-      .create-ticket-container, .ticket-list-container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-
-        mat-card {
-          box-shadow: none;
-          padding: 0;
-        }
-      }
-    }
+  ::ng-deep .mat-mdc-tab-label-content span {
+    display: none;
   }
 }

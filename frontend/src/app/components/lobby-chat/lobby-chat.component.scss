@@ -58,7 +58,7 @@ mat-card-content {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0;  /* Important for flexbox to allow shrinking below content size */
+  min-height: 0;
 }
 
 .messages-container {
@@ -191,7 +191,7 @@ mat-card-content {
   padding: 1rem;
   background-color: var(--mat-sys-surface);
   border-top: 1px solid rgba(var(--mat-sys-outline-variant-rgb), 0.5);
-  flex-shrink: 0; /* Prevent input from shrinking */
+  flex-shrink: 0;
 }
 
 .chat-input {

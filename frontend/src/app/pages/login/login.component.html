@@ -1,11 +1,9 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h2>{{ 'LOGIN.TITLE' | translate }}</h2>
-      </mat-card-title>
-    </mat-card-header>
+  <div class="social-header">
+    <h1>{{ 'LOGIN.TITLE' | translate }}</h1>
+  </div>
 
+  <mat-card class="social-card">
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
     <mat-card-content>

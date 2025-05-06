@@ -4,6 +4,25 @@
   padding: 24px;
 }
 
+.social-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.social-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
+}
+
+.social-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+  transition: color var(--transition-normal) ease;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -24,78 +43,13 @@
   gap: 24px;
 }
 
-.club-header-card {
+.social-card {
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: var(--shadow-medium);
   background-color: var(--card-background);
-}
-
-.club-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.back-button {
-  color: var(--text-secondary);
-}
-
-.club-title {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-}
-
-.club-name {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 500;
   color: var(--text-primary);
-}
-
-.club-title-edit {
-  flex: 1;
-}
-
-.club-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.section-divider {
-  margin: 16px 0;
-}
-
-.club-description {
-  display: flex;
-  align-items: flex-start;
-  margin: 16px 0;
-}
-
-.description-text {
-  flex: 1;
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.club-description-edit {
-  margin: 16px 0;
-}
-
-.admin-actions {
-  display: flex;
-  gap: 16px;
-  margin: 16px 0;
-}
-
-.club-tabs-card {
-  border-radius: 8px;
-  box-shadow: var(--shadow-medium);
-  background-color: var(--card-background);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
 }
 
 .tab-label {
@@ -131,7 +85,7 @@
 }
 
 .tab-content {
-  padding: 24px 0;
+  padding: 24px;
 }
 
 .member-list-item {
@@ -256,64 +210,140 @@
   color: #f44336;
 }
 
+.back-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.settings-section {
+  padding: 16px;
+}
+
+.settings-section h2 {
+  font-size: 20px;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.setting-item {
+  margin-bottom: 32px;
+  padding: 16px 0;
+}
+
+.setting-label {
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.setting-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.setting-value {
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  padding: 4px 0;
+}
+
+.setting-edit {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+mat-divider {
+  margin: 24px 0;
+}
+
+.danger-zone {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--error-color);
+}
+
+.danger-zone .setting-label {
+  color: var(--error-color);
+  font-weight: 600;
+}
+
+::ng-deep .mat-mdc-tab-header {
+  background-color: var(--background-color);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-label-active {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
 @media (max-width: 768px) {
   .club-container {
+    padding: 16px 8px;
+  }
+
+  .social-header h1 {
+    font-size: 24px;
+  }
+
+  .social-header p {
+    font-size: 14px;
+  }
+
+  .tab-content {
     padding: 16px;
   }
 
-  .club-header {
+  .setting-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
   }
 
-  .club-title {
-    margin-bottom: 16px;
+  .back-navigation {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .back-navigation button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-content {
+    padding: 12px 8px;
+  }
+
+  ::ng-deep .mat-mdc-tab-label {
+    padding: 0 12px !important;
+  }
+
+  ::ng-deep .mat-mdc-tab-label-content span {
+    display: none;
+  }
+
+  .member-item,
+  .invite-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
 
-  .club-actions {
+  .member-actions,
+  .invite-actions {
     align-self: flex-end;
   }
-
-  .admin-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .admin-actions button {
-    width: 100%;
-  }
-}
-
-::ng-deep .mat-mdc-tab-body-content {
-  padding: 0 !important;
-}
-
-::ng-deep .mat-mdc-card-header {
-  padding: 16px 16px 0 16px !important;
-}
-
-::ng-deep .mat-mdc-card-content {
-  padding: 16px !important;
-}
-
-::ng-deep .mat-mdc-card-actions {
-  padding: 8px 16px 16px 16px !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
-::ng-deep .mat-mdc-list-item {
-  height: auto !important;
-}
-
-::ng-deep .mat-mdc-list-item-line {
-  margin: 8px 0 !important;
-}
-
-::ng-deep .mat-mdc-chip {
-  font-size: 12px !important;
-  height: 24px !important;
 }
