@@ -1,39 +1,42 @@
-<mat-card class="club-form-card">
-  <mat-card-header>
-    <mat-card-title>{{ 'CLUB_CREATE.TITLE' | translate }}</mat-card-title>
-  </mat-card-header>
+<div class="club-create-container">
+  <mat-card class="club-form-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'CLUB_CREATE.TITLE' | translate }}</mat-card-title>
+    </mat-card-header>
 
-  <mat-card-content>
-    <form (ngSubmit)="createClub()" class="club-form">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ 'CLUB_CREATE.CLUB_NAME' | translate }}</mat-label>
-        <input matInput [(ngModel)]="name" name="name" required placeholder="{{ 'CLUB_CREATE.ENTER_NAME' | translate }}">
-        <mat-hint>{{ 'CLUB_CREATE.NAME_HINT' | translate }}</mat-hint>
-      </mat-form-field>
+    <mat-card-content>
+      <form (ngSubmit)="createClub()" class="club-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'CLUB_CREATE.CLUB_NAME' | translate }}</mat-label>
+          <input matInput [(ngModel)]="name" name="name" required placeholder="{{ 'CLUB_CREATE.ENTER_NAME' | translate }}">
+          <mat-hint>{{ 'CLUB_CREATE.NAME_HINT' | translate }}</mat-hint>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ 'CLUB_CREATE.DESCRIPTION' | translate }}</mat-label>
-        <textarea matInput [(ngModel)]="description" name="description" placeholder="{{ 'CLUB_CREATE.ENTER_DESCRIPTION' | translate }}" rows="3"></textarea>
-        <mat-hint>{{ 'CLUB_CREATE.DESCRIPTION_HINT' | translate }}</mat-hint>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'CLUB_CREATE.DESCRIPTION' | translate }}</mat-label>
+          <textarea matInput [(ngModel)]="description" name="description" placeholder="{{ 'CLUB_CREATE.ENTER_DESCRIPTION' | translate }}" rows="3"></textarea>
+          <mat-hint>{{ 'CLUB_CREATE.DESCRIPTION_HINT' | translate }}</mat-hint>
+        </mat-form-field>
 
-      <div class="checkbox-container">
-        <mat-checkbox [(ngModel)]="isPublic" name="isPublic" color="primary">
-          {{ 'CLUB_CREATE.PUBLIC_CLUB' | translate }}
-        </mat-checkbox>
-        <span class="checkbox-hint">{{ 'CLUB_CREATE.PUBLIC_HINT' | translate }}</span>
-      </div>
+        <div class="checkbox-container">
+          <mat-checkbox [(ngModel)]="isPublic" name="isPublic" color="primary">
+            {{ 'CLUB_CREATE.PUBLIC_CLUB' | translate }}
+          </mat-checkbox>
+          <span class="checkbox-hint">{{ 'CLUB_CREATE.PUBLIC_HINT' | translate }}</span>
+        </div>
 
-      <div *ngIf="message" class="error-message">
-        {{ message }}
-      </div>
-    </form>
-  </mat-card-content>
+        <div *ngIf="message" class="error-message">
+          {{ message }}
+        </div>
+      </form>
+    </mat-card-content>
 
-  <mat-card-actions align="end">
-    <button mat-button (click)="resetForm()" [disabled]="isSubmitting">{{ 'CLUB_CREATE.RESET' | translate }}</button>
-    <button mat-raised-button color="primary" (click)="createClub()" [disabled]="isSubmitting">
-      {{ isSubmitting ? ('CLUB_CREATE.CREATING' | translate) : ('CLUB_CREATE.CREATE' | translate) }}
-    </button>
-  </mat-card-actions>
-</mat-card>
+    <mat-card-actions align="end">
+      <button mat-button (click)="resetForm()" [disabled]="isSubmitting">{{ 'CLUB_CREATE.RESET' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="createClub()" [disabled]="isSubmitting">
+        <mat-icon *ngIf="isSubmitting" class="spinner">sync</mat-icon>
+        {{ isSubmitting ? ('CLUB_CREATE.CREATING' | translate) : ('CLUB_CREATE.CREATE' | translate) }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

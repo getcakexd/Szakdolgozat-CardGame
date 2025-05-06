@@ -4,8 +4,36 @@
   padding: 24px;
 }
 
+.social-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.social-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
+}
+
+.social-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+  transition: color var(--transition-normal) ease;
+}
+
+.social-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
 .tab-content {
-  padding: 24px 0;
+  padding: 24px;
 }
 
 .tab-icon {
@@ -55,6 +83,7 @@
   border-radius: 8px;
   box-shadow: var(--shadow-small);
   transition: background-color var(--transition-normal) ease;
+  margin: 16px 0;
 }
 
 .loading-container {
@@ -90,12 +119,6 @@
 
 mat-card-actions {
   padding: 8px 16px 16px !important;
-}
-
-h1 {
-  margin-bottom: 24px;
-  color: var(--text-primary);
-  transition: color var(--transition-normal) ease;
 }
 
 h2 {
@@ -138,6 +161,7 @@ h2 {
   box-shadow: var(--shadow-small);
   overflow: hidden;
   overflow-x: auto;
+  margin: 16px 0;
 }
 
 .leaderboard-table {
@@ -236,7 +260,50 @@ h2 {
   color: var(--text-secondary);
 }
 
+::ng-deep .mat-mdc-tab-header {
+  background-color: var(--background-color);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-label-active {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  transition: background-color var(--transition-normal) ease;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+::ng-deep .mat-mdc-tab-group {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-tab-body {
+  width: 100%;
+}
+
+mat-card-content {
+  padding: 8px 0;
+}
+
 @media (max-width: 768px) {
+  .club-page-container {
+    padding: 16px 8px;
+  }
+
+  .social-header h1 {
+    font-size: 24px;
+  }
+
+  .social-header p {
+    font-size: 14px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -259,4 +326,47 @@ h2 {
     width: 28px;
     height: 28px;
   }
+}
+
+@media (max-width: 480px) {
+  .tab-content {
+    padding: 12px 8px;
+  }
+
+  ::ng-deep .mat-mdc-tab-label {
+    padding: 0 12px !important;
+  }
+
+  ::ng-deep .mat-mdc-tab-label-content span {
+    display: none;
+  }
+
+  .tab-icon {
+    margin-right: 0;
+  }
+}
+
+.invite-card mat-card-header {
+  padding: 16px 16px 0 16px;
+}
+
+.invite-card mat-card-actions {
+  padding: 8px 16px 16px !important;
+  margin: 0;
+}
+
+::ng-deep .mat-mdc-form-field {
+  width: 100%;
+}
+
+.tab-content .mat-mdc-card {
+  margin-bottom: 16px;
+}
+
+::ng-deep .mat-mdc-tab-header .mdc-tab-indicator {
+  z-index: 1;
+}
+
+::ng-deep .mat-mdc-tab .mat-ripple-element {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
 }

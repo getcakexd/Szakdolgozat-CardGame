@@ -1,12 +1,10 @@
 <div class="profile-page-container">
-  <mat-card class="profile-card">
-    <mat-card-header>
-      <div class="profile-header">
-        <mat-card-title>{{ 'PROFILE.TITLE' | translate }}</mat-card-title>
-        <mat-icon class="profile-icon">account_circle</mat-icon>
-      </div>
-    </mat-card-header>
+  <div class="social-header">
+    <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
+    <p>{{ 'PROFILE.SUBTITLE' | translate }}</p>
+  </div>
 
+  <mat-card class="social-card">
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
     <mat-card-content>
@@ -189,7 +187,7 @@
           </div>
           <div class="info-content">
             <button mat-stroked-button color="warn" (click)="confirmDelete()" *ngIf="!deleteFormVisible">
-              <mat-icon>delete</mat-icon> {{ 'PROFILE.DELETE_PROFILE' | translate }}
+              {{ 'PROFILE.DELETE_PROFILE' | translate }}
             </button>
           </div>
 

@@ -3,12 +3,12 @@ import { MatDialog } from "@angular/material/dialog"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Router } from "@angular/router"
 import { User } from "../../models/user.model"
-import { ModifyUserDialogComponent } from "../modify-user-dialog/modify-user-dialog.component"
-import { UserHistoryDialogComponent } from "../user-history-dialog/user-history-dialog.component"
+import { ModifyUserDialogComponent } from "../../components/modify-user-dialog/modify-user-dialog.component"
+import { UserHistoryDialogComponent } from "../../components/user-history-dialog/user-history-dialog.component"
 import { Ticket } from "../../models/ticket.model"
 import { UserHistory } from "../../models/user-history.model"
 import { UserService } from "../../services/user/user.service"
-import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component"
+import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component"
 import {
   MatCell,
   MatCellDef,

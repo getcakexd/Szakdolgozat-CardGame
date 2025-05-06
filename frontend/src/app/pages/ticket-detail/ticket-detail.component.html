@@ -1,10 +1,15 @@
 <div class="ticket-detail-container">
+  <div class="social-header">
+    <h1>{{ 'TICKET.TICKET_DETAILS' | translate }}</h1>
+    <p>{{ 'TICKET.TICKET_DETAILS_SUBTITLE' | translate }}</p>
+  </div>
+
   <div *ngIf="isLoading" class="loading-container">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
   <div *ngIf="!isLoading && ticket" class="ticket-content" @fadeIn>
-    <mat-card appearance="outlined" class="ticket-header-card">
+    <mat-card appearance="outlined" class="social-card ticket-header-card">
       <mat-card-header>
         <mat-card-title>{{ ticket.subject }}</mat-card-title>
         <mat-card-subtitle>
@@ -58,7 +63,7 @@
       </mat-card-actions>
     </mat-card>
 
-    <mat-card appearance="outlined" class="messages-card">
+    <mat-card appearance="outlined" class="social-card messages-card">
       <mat-card-header>
         <mat-card-title>{{ 'TICKET.MESSAGES' | translate }}</mat-card-title>
       </mat-card-header>
@@ -135,9 +140,12 @@
 
         <mat-card *ngIf="ticket.status === 'new' && !isAgent" class="status-message-card waiting-card">
           <mat-card-content>
-            <mat-icon>hourglass_empty</mat-icon>
-            <p>{{ 'TICKET.WAITING_FOR_AGENT' | translate }}</p>
-            <p class="secondary-text">{{ 'TICKET.AGENT_WILL_RESPOND' | translate }}</p>
+            && !isAgent" class="status-message-card waiting-card">
+            <mat-card-content>
+              <mat-icon>hourglass_empty</mat-icon>
+              <p>{{ 'TICKET.WAITING_FOR_AGENT' | translate }}</p>
+              <p class="secondary-text">{{ 'TICKET.AGENT_WILL_RESPOND' | translate }}</p>
+            </mat-card-content>
           </mat-card-content>
         </mat-card>
       </mat-card-content>

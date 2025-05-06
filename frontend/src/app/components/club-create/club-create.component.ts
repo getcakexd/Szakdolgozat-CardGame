@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-club-create',
@@ -22,6 +23,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MatCheckboxModule,
     MatButtonModule,
     MatCardModule,
+    MatIcon,
     NgIf,
     TranslateModule
   ],

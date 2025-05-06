@@ -1,4 +1,4 @@
-.leaderboard-page-container {
+.agent-dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
@@ -32,90 +32,64 @@
   transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
 }
 
+.full-width-table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
 .tab-content {
   padding: 24px;
 }
 
-.game-selector {
-  margin-bottom: 1.5rem;
-}
-
-.game-selector mat-form-field {
-  width: 100%;
-  max-width: 400px;
-}
-
-.leaderboard-table {
-  width: 100%;
-}
-
-.rank-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  font-weight: 700;
-  background-color: var(--mat-sys-surface-container-high);
-}
-
-.gold {
-  background-color: #ffd700;
-  color: #000;
-}
-
-.silver {
-  background-color: #c0c0c0;
-  color: #000;
-}
-
-.bronze {
-  background-color: #cd7f32;
-  color: #fff;
-}
-
-.current-user {
-  border: 2px solid var(--mat-sys-primary);
-}
-
-.current-user-row {
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: var(--mat-sys-primary);
+  text-transform: uppercase;
+
+  &.locked {
+    background-color: var(--mat-red);
+    color: white;
+  }
+
+  &.active {
+    background-color: var(--mat-green);
+    color: white;
+  }
+
+  &.status-new {
+    background-color: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
+  }
+
+  &.status-progress {
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  &.status-resolved {
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
 }
 
-.user-indicator {
-  font-size: 1rem;
-  height: 1rem;
-  width: 1rem;
-  margin-left: 0.5rem;
-  vertical-align: middle;
-}
-
-.clickable-row {
-  cursor: pointer;
-}
-
-.clickable-row:hover {
-  background-color: var(--mat-sys-surface-container-high);
-}
-
-.no-data-message {
+.filter-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.no-data-message mat-icon {
-  font-size: 3rem;
-  height: 3rem;
-  width: 3rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 1rem;
-  opacity: 0.7;
+
+  button {
+    border-radius: 1.5rem;
+    padding: 0 1.5rem;
+
+    &.active {
+      background-color: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+    }
+  }
 }
 
 ::ng-deep .mat-mdc-tab-header {
@@ -134,7 +108,7 @@
 }
 
 @media (max-width: 768px) {
-  .leaderboard-page-container {
+  .agent-dashboard-container {
     padding: 16px 8px;
   }
 
@@ -148,12 +122,6 @@
 
   .tab-content {
     padding: 16px;
-  }
-
-  .rank-badge {
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 0.875rem;
   }
 }
 

@@ -1,26 +1,23 @@
 <div class="lobby-detail-container">
-  <mat-card *ngIf="lobby">
-    <mat-card-header>
-      <div mat-card-avatar>
-        <mat-icon>groups</mat-icon>
-      </div>
-      <mat-card-title>
-        {{ 'LOBBY.LOBBY_CODE' | translate }}: {{ lobby.code }}
-        <button mat-icon-button (click)="copyLobbyCode()" matTooltip="{{ 'LOBBY.COPY_CODE' | translate }}">
-          <mat-icon>content_copy</mat-icon>
-        </button>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <span class="status-badge" [ngClass]="{
-          'waiting': lobby.status === lobbyStatus.WAITING,
-          'in-game': lobby.status === lobbyStatus.IN_GAME,
-          'finished': lobby.status === lobbyStatus.FINISHED
-        }">
-          {{ 'LOBBY.STATUS.' + lobby.status | translate }}
-        </span>
-      </mat-card-subtitle>
-    </mat-card-header>
+  <div *ngIf="lobby" class="social-header">
+    <h1>
+      {{ 'LOBBY.LOBBY_CODE' | translate }}: {{ lobby.code }}
+      <button mat-icon-button (click)="copyLobbyCode()" matTooltip="{{ 'LOBBY.COPY_CODE' | translate }}">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </h1>
+    <p>
+      <span class="status-badge" [ngClass]="{
+        'waiting': lobby.status === lobbyStatus.WAITING,
+        'in-game': lobby.status === lobbyStatus.IN_GAME,
+        'finished': lobby.status === lobbyStatus.FINISHED
+      }">
+        {{ 'LOBBY.STATUS.' + lobby.status | translate }}
+      </span>
+    </p>
+  </div>
 
+  <mat-card *ngIf="lobby" class="social-card">
     <mat-card-content>
       <div class="lobby-content">
         <div class="lobby-settings">
@@ -61,7 +58,7 @@
             </form>
           </div>
 
-          <div>
+          <div class="settings-actions">
             <mat-card-actions align="end">
               <button *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
                       mat-raised-button

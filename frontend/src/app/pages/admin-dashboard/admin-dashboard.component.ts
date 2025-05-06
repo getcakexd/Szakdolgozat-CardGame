@@ -5,7 +5,7 @@ import { User } from "../../models/user.model"
 import { Game } from "../../models/game.model"
 import { UserService } from "../../services/user/user.service"
 import { GameService } from "../../services/game/game.service"
-import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component"
+import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component"
 import {
   MatCell,
   MatCellDef,
@@ -23,14 +23,14 @@ import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatButton, MatIconButton } from "@angular/material/button"
 import { NgIf, NgClass, NgFor } from "@angular/common"
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card"
-import { AddGameDialogComponent } from "../add-game-dialog/add-game-dialog.component"
-import { AddUserDialogComponent } from "../add-user-dialog/add-user-dialog.component"
+import { AddGameDialogComponent } from "../../components/add-game-dialog/add-game-dialog.component"
+import { AddUserDialogComponent } from "../../components/add-user-dialog/add-user-dialog.component"
 import { AuthService } from '../../services/auth/auth.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { GameCardComponent } from "../game-card/game-card.component";
+import { GameCardComponent } from "../../components/game-card/game-card.component";
 import {MatDivider} from '@angular/material/divider';
-import {EditGameDialogComponent} from '../edit-game-dialog/edit-game-dialog.component';
+import {EditGameDialogComponent} from '../../components/edit-game-dialog/edit-game-dialog.component';
 
 @Component({
   selector: "app-admin-dashboard",

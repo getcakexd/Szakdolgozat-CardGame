@@ -1,7 +1,10 @@
-<div class="app-container" [ngClass]="{'dark-theme': isDarkMode$ | async}">
-  <app-navbar></app-navbar>
+<div class="mesh-background">
+  <div class="app-container" [ngClass]="{'dark-theme': isDarkMode$ | async}">
+    <app-navbar></app-navbar>
 
-  <div class="content-container">
-    <router-outlet></router-outlet>
+    <div class="content-container">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>
+

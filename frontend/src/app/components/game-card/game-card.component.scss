@@ -1,6 +1,12 @@
 .game-card {
   margin-bottom: 16px;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
 
   &:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -18,10 +24,20 @@ mat-card-header {
   margin-left: auto;
 }
 
+mat-card-content {
+  flex: 1;
+  overflow: visible !important;
+  height: auto;
+  position: relative;
+  z-index: 1;
+}
+
 .game-info {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .game-description {
@@ -113,6 +129,11 @@ mat-card-header {
   padding: 16px;
   background-color: rgba(0, 0, 0, 0.03);
   border-radius: 4px;
+  overflow: visible !important;
+  height: auto;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
   h3 {
     margin-top: 0;
@@ -179,4 +200,21 @@ mat-card-actions {
   display: flex;
   justify-content: flex-start;
   padding: 8px 16px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+::ng-deep .mat-mdc-card-content {
+  padding-bottom: 0 !important;
+  overflow: visible !important;
+}
+
+::ng-deep .mat-mdc-card {
+  overflow: visible !important;
+}
+
+::ng-deep markdown {
+  display: block;
+  width: 100%;
+  overflow: visible;
 }

@@ -1,4 +1,4 @@
-.leaderboard-page-container {
+.admin-dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
@@ -36,86 +36,89 @@
   padding: 24px;
 }
 
-.game-selector {
-  margin-bottom: 1.5rem;
-}
-
-.game-selector mat-form-field {
-  width: 100%;
-  max-width: 400px;
-}
-
-.leaderboard-table {
-  width: 100%;
-}
-
-.rank-badge {
+.action-bar {
+  margin-bottom: 20px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  font-weight: 700;
-  background-color: var(--mat-sys-surface-container-high);
+  justify-content: flex-start;
 }
 
-.gold {
-  background-color: #ffd700;
-  color: #000;
+.full-width-table {
+  width: 100%;
 }
 
-.silver {
-  background-color: #c0c0c0;
-  color: #000;
-}
-
-.bronze {
-  background-color: #cd7f32;
-  color: #fff;
-}
-
-.current-user {
-  border: 2px solid var(--mat-sys-primary);
-}
-
-.current-user-row {
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--mat-sys-primary);
+  text-transform: uppercase;
+
+  &.role-root {
+    background-color: var(--info-color);
+    color: white;
+  }
+
+  &.role-admin {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  &.role-agent {
+    background-color: var(--accent-color);
+    color: white;
+  }
+
+  &.role-user {
+    background-color: var(--success-color);
+    color: white;
+  }
 }
 
-.user-indicator {
-  font-size: 1rem;
-  height: 1rem;
-  width: 1rem;
-  margin-left: 0.5rem;
-  vertical-align: middle;
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.active {
+    background-color: var(--success-color);
+    color: white;
+  }
+
+  &.locked {
+    background-color: var(--error-color);
+    color: white;
+  }
+
+  &.new {
+    background-color: var(--info-color);
+    color: white;
+  }
+
+  &.in-progress {
+    background-color: var(--warning-color);
+    color: white;
+  }
+
+  &.resolved {
+    background-color: var(--success-color);
+    color: white;
+  }
 }
 
-.clickable-row {
-  cursor: pointer;
-}
-
-.clickable-row:hover {
-  background-color: var(--mat-sys-surface-container-high);
-}
-
-.no-data-message {
+.games-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--mat-sys-on-surface-variant);
+  gap: 0;
 }
 
-.no-data-message mat-icon {
-  font-size: 3rem;
-  height: 3rem;
-  width: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.7;
+.game-card-container {
+  padding: 16px 0;
+}
+
+.game-divider {
+  margin: 0;
 }
 
 ::ng-deep .mat-mdc-tab-header {
@@ -133,8 +136,14 @@
   overflow: hidden !important;
 }
 
+:host-context(.dark-theme) {
+  .game-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
 @media (max-width: 768px) {
-  .leaderboard-page-container {
+  .admin-dashboard-container {
     padding: 16px 8px;
   }
 
@@ -150,10 +159,8 @@
     padding: 16px;
   }
 
-  .rank-badge {
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 0.875rem;
+  .games-grid {
+    grid-template-columns: 1fr;
   }
 }
 

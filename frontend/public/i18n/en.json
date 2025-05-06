@@ -58,6 +58,7 @@
   },
   "PROFILE": {
     "TITLE": "Your Profile",
+    "SUBTITLE": "Manage your account settings",
     "USERNAME": "Username",
     "EMAIL": "Email",
     "PASSWORD": "Password",
@@ -139,6 +140,7 @@
   },
   "CLUBS": {
     "TITLE": "Clubs",
+    "SUBTITLE": "Connect with friends and play together",
     "MY_CLUBS": "My Clubs",
     "JOIN_CLUBS": "Join Clubs",
     "INVITES": "Invites",
@@ -170,6 +172,9 @@
   "CLUB": {
     "ENTER": "Enter",
     "BACK": "Back",
+    "BACK_TO_CLUBS": "Back to Clubs",
+    "SETTINGS": "Settings",
+    "VISIBILITY": "Visibility",
     "PUBLIC": "Public",
     "PRIVATE": "Private",
     "VISIBILITY_PUBLIC": "public",
@@ -181,6 +186,9 @@
     "EDIT_DESCRIPTION": "Edit description",
     "SAVE_DESCRIPTION": "Save description",
     "LEAVE_CLUB": "Leave Club",
+    "CLUB_DETAILS": "Club Details",
+    "DANGER_ZONE": "Danger Zone",
+    "DELETE_WARNING": "This action cannot be undone!",
     "MAKE_PRIVATE": "Make Private",
     "MAKE_PUBLIC": "Make Public",
     "DELETE_CLUB": "Delete Club",
@@ -415,6 +423,7 @@
   },
   "STATS": {
     "TITLE": "Player Statistics",
+    "SUBTITLE": "View performance statistics for this club",
     "OVERALL": "Overall Stats",
     "GAME_STATS": "Game Stats",
     "RECENT_GAMES": "Recent Games",
@@ -445,6 +454,7 @@
   },
   "LEADERBOARD": {
     "TITLE": "Leaderboard",
+    "SUBTITLE": "See how members rank within this club",
     "OVERALL": "Overall Leaderboard",
     "BY_GAME": "Game Leaderboard",
     "RANK": "Rank",
@@ -462,6 +472,7 @@
   },
   "ADMIN": {
     "TITLE": "Admin Dashboard",
+    "SUBTITLE": "Manage users and games",
     "USER_MANAGEMENT": "User Management",
     "GAME_MANAGEMENT": "Game Management",
     "ADD_USER": "Add User",
@@ -513,6 +524,7 @@
   },
   "AGENT": {
     "TITLE": "Agent Dashboard",
+    "SUBTITLE": "Manage users and support requests",
     "USER_MANAGEMENT": "User Management",
     "ID": "ID",
     "USERNAME": "Username",
@@ -872,6 +884,9 @@
   },
   "TICKET": {
     "SUPPORT_CENTER": "Support Center",
+    "SUPPORT_SUBTITLE": "Submit a support ticket for assistance",
+    "TICKET_DETAILS": "Ticket Details",
+    "TICKET_DETAILS_SUBTITLE": "Provide details about your issue",
     "CREATE_TITLE": "Create Support Ticket",
     "CREATE_TICKET": "Create Ticket",
     "MY_TICKETS": "My Tickets",

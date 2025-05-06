@@ -2,21 +2,63 @@
   padding: 16px;
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.social-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.social-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  transition: color var(--transition-normal) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.social-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0;
+  transition: color var(--transition-normal) ease;
+  display: flex;
+  justify-content: center;
+}
+
+.social-card {
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  display: flex;
+  flex-direction: column;
+  overflow: visible !important;
 }
 
 .lobby-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 24px;
-  margin-top: 16px;
-  height: calc(100vh - 180px);
-  min-height: 800px;
+  min-height: 700px;
+  position: relative;
+  overflow: visible !important;
 }
 
 .lobby-settings {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   height: 100%;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
 }
 
 .lobby-players {
@@ -30,9 +72,11 @@
   background-color: rgba(0, 0, 0, 0.02);
   border-radius: 8px;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 0;
+  align-self: stretch;
 }
 
 .chat-sidebar app-lobby-chat {
@@ -71,10 +115,11 @@
 }
 
 .status-badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
   font-weight: 500;
+  display: inline-block;
 }
 
 .status-badge.waiting {
@@ -95,6 +140,9 @@
 .game-info {
   margin-top: 16px;
   margin-bottom: 16px;
+  overflow: visible !important;
+  position: relative;
+  z-index: 2;
 }
 
 .player-count-info {
@@ -106,6 +154,7 @@
 
 .settings-actions {
   margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 .loading-container {
@@ -121,10 +170,55 @@
   margin-bottom: 16px;
 }
 
+:host ::ng-deep app-game-card .game-card {
+  overflow: visible !important;
+  z-index: 10;
+  position: relative;
+}
+
+:host ::ng-deep app-game-card .game-rules {
+  position: relative;
+  z-index: 10;
+  background-color: var(--card-background, #fff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px -8px;
+  padding: 16px;
+  border-radius: 8px;
+  width: calc(100% + 16px);
+}
+
+::ng-deep .mat-mdc-card {
+  overflow: visible !important;
+}
+
+::ng-deep .mat-mdc-card-content {
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep mat-card-content > * {
+  overflow: visible !important;
+}
+
+::ng-deep .mat-mdc-tab-body-wrapper {
+  overflow: visible !important;
+}
+
+::ng-deep .mat-mdc-tab-body {
+  overflow: visible !important;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  overflow: visible !important;
+}
+
 @media (max-width: 768px) {
   .lobby-content {
     grid-template-columns: 1fr;
     grid-template-rows: auto 350px;
+    height: auto;
+    min-height: auto;
   }
 
   .player-info {
@@ -139,5 +233,13 @@
 
   .chat-sidebar {
     min-height: 350px;
+  }
+
+  .social-header h1 {
+    font-size: 24px;
+  }
+
+  .social-header p {
+    font-size: 14px;
   }
 }

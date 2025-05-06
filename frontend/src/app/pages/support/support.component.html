@@ -1,35 +1,36 @@
 <div class="support-container">
-  <mat-card>
-    <mat-card-content>
-      <h2 class="support-title">{{ 'TICKET.SUPPORT_CENTER' | translate }}</h2>
+  <div class="social-header">
+    <h1>{{ 'TICKET.SUPPORT_CENTER' | translate }}</h1>
+    <p>{{ 'TICKET.SUPPORT_SUBTITLE' | translate }}</p>
+  </div>
 
-      <mat-tab-group *ngIf="isLoggedIn" animationDuration="300ms">
-        <mat-tab [label]="'TICKET.CREATE_TICKET' | translate">
-          <div class="tab-content">
-            <app-create-ticket></app-create-ticket>
-          </div>
-        </mat-tab>
+  <mat-card class="social-card">
+    <mat-tab-group *ngIf="isLoggedIn" animationDuration="300ms">
+      <mat-tab [label]="'TICKET.CREATE_TICKET' | translate">
+        <div class="tab-content">
+          <app-create-ticket></app-create-ticket>
+        </div>
+      </mat-tab>
 
-        <mat-tab [label]="'TICKET.MY_TICKETS' | translate">
-          <div class="tab-content">
-            <app-ticket-list [showMyTickets]="true"></app-ticket-list>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
+      <mat-tab [label]="'TICKET.MY_TICKETS' | translate">
+        <div class="tab-content">
+          <app-ticket-list [showMyTickets]="true"></app-ticket-list>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
 
-      <mat-tab-group *ngIf="!isLoggedIn" animationDuration="300ms">
-        <mat-tab [label]="'TICKET.CREATE_TICKET' | translate">
-          <div class="tab-content">
-            <app-create-ticket></app-create-ticket>
-          </div>
-        </mat-tab>
+    <mat-tab-group *ngIf="!isLoggedIn" animationDuration="300ms">
+      <mat-tab [label]="'TICKET.CREATE_TICKET' | translate">
+        <div class="tab-content">
+          <app-create-ticket></app-create-ticket>
+        </div>
+      </mat-tab>
 
-        <mat-tab [label]="'TICKET.FIND_TICKET' | translate">
-          <div class="tab-content">
-            <app-ticket-list [showMyTickets]="false"></app-ticket-list>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </mat-card-content>
+      <mat-tab [label]="'TICKET.FIND_TICKET' | translate">
+        <div class="tab-content">
+          <app-ticket-list [showMyTickets]="false"></app-ticket-list>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </mat-card>
 </div>

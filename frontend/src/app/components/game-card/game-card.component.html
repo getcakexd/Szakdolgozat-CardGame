@@ -1,7 +1,7 @@
 <mat-card class="game-card">
   <mat-card-header>
     <mat-card-title>{{ game.name }}</mat-card-title>
-    <div class="game-status" *ngIf="isAdmin">
+    <div class="game-status" *ngIf="isAdmin && showActiveToggle">
       <mat-slide-toggle
         [checked]="game.active"
         (change)="onToggleActive($event)"

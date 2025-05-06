@@ -11,22 +11,39 @@
   h1 {
     font-size: 2rem;
     margin-bottom: 8px;
+    color: var(--text-primary);
+    transition: color var(--transition-normal) ease;
   }
 
-  .games-description {
-    font-size: 1.1rem;
-    color: rgba(0, 0, 0, 0.6);
+  p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin: 0;
+    transition: color var(--transition-normal) ease;
   }
+}
+
+.social-card {
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  margin-bottom: 24px;
+  position: relative;
+  display: block;
+  width: 100%;
 }
 
 .games-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  display: block;
+  width: 100%;
+  position: relative;
 }
 
 .game-card-container {
-  padding: 16px 0;
+  padding: 16px;
+  position: relative;
 }
 
 .game-divider {
@@ -66,14 +83,56 @@
   }
 }
 
+/* Force all game cards to have visible overflow */
+:host ::ng-deep app-game-card {
+  display: block;
+  position: relative;
+}
+
+:host ::ng-deep app-game-card .game-card {
+  overflow: visible !important;
+}
+
+:host ::ng-deep app-game-card .game-rules {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px 0;
+  padding: 16px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Override Angular Material styles */
+:host ::ng-deep .mat-mdc-card {
+  overflow: visible !important;
+}
+
+:host ::ng-deep .mat-mdc-card-content {
+  overflow: visible !important;
+  position: static !important;
+}
+
+:host ::ng-deep mat-card {
+  overflow: visible !important;
+}
+
+:host ::ng-deep mat-card-content {
+  overflow: visible !important;
+}
+
 @media (max-width: 768px) {
   .games-header {
     h1 {
       font-size: 1.5rem;
     }
 
-    .games-description {
+    p {
       font-size: 1rem;
     }
+  }
+
+  .game-card-container {
+    padding: 12px 8px;
   }
 }
