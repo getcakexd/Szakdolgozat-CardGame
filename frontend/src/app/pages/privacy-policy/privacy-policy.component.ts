@@ -5,10 +5,10 @@ import { MatCardModule } from "@angular/material/card"
 import { MatDividerModule } from "@angular/material/divider"
 import { MatExpansionModule } from "@angular/material/expansion"
 import { MatIconModule } from "@angular/material/icon"
-import { MatDialogModule, MatDialog } from "@angular/material/dialog"
+import { MatDialogModule } from "@angular/material/dialog"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
-import {Router, RouterLink} from "@angular/router"
+import { Router, RouterLink } from "@angular/router"
 import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { GdprService } from "../../services/gdpr/gdpr.service"
 import { AuthService } from "../../services/auth/auth.service"
@@ -39,7 +39,6 @@ export class PrivacyPolicyComponent implements OnInit {
   constructor(
     private gdprService: GdprService,
     private authService: AuthService,
-    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
     private router: Router,
@@ -49,10 +48,6 @@ export class PrivacyPolicyComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn()
-
-    if (this.isLoggedIn) {
-      this.gdprService.logDataAccess("privacy_policy", "view").subscribe()
-    }
   }
 
   exportUserData(): void {
@@ -61,33 +56,37 @@ export class PrivacyPolicyComponent implements OnInit {
       return
     }
 
-    this.gdprService.exportUserData().subscribe(
-      (data) => {
+    this.gdprService.exportUserData().subscribe({
+      next: (data) => {
         const dataStr = JSON.stringify(data, null, 2)
         const dataBlob = new Blob([dataStr], { type: "application/json" })
 
+        // Create a filename with date
+        const date = new Date().toISOString().split("T")[0]
+        const filename = `cardhub-user-data-${date}.json`
+
+        // Create and trigger download
         const url = URL.createObjectURL(dataBlob)
         const link = document.createElement("a")
         link.href = url
-        link.download = "my-cardhub-data.json"
+        link.download = filename
+        document.body.appendChild(link) // Needed for Firefox
         link.click()
-
+        document.body.removeChild(link)
         URL.revokeObjectURL(url)
 
         this.snackBar.open(this.translate.instant("GDPR.DATA_EXPORT_SUCCESS"), this.translate.instant("GDPR.CLOSE"), {
           duration: 5000,
         })
-
-        this.gdprService.logDataAccess("user_data", "export").subscribe()
       },
-      (error) => {
+      error: (error) => {
         console.error("Error exporting user data:", error)
         this.snackBar.open(this.translate.instant("GDPR.DATA_EXPORT_ERROR"), this.translate.instant("GDPR.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],
         })
       },
-    )
+    })
   }
 
   private showLoginRequiredMessage(): void {

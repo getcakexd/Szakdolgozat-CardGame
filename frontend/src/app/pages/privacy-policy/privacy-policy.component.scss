@@ -82,6 +82,24 @@
   }
 }
 
+.data-export-info {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--mat-sys-primary);
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+}
+
 .data-actions {
   display: flex;
   flex-wrap: wrap;
@@ -92,6 +110,8 @@
   button {
     display: flex;
     align-items: center;
+    min-width: 200px;
+    justify-content: center;
 
     mat-icon {
       margin-right: 0.5rem;

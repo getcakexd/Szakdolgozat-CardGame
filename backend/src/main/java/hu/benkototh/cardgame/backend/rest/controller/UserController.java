@@ -1,5 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
+import hu.benkototh.cardgame.backend.game.controller.StatsController;
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
 import hu.benkototh.cardgame.backend.rest.util.GoogleTokenVerifier;
@@ -10,11 +11,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.Calendar;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -34,6 +32,18 @@ public class UserController {
     @Autowired
     private SimpleEmailService emailService;
 
+    @Autowired
+    private StatsController statsController;
+
+    @Autowired
+    private FriendshipController friendshipController;
+
+    @Autowired
+    private ChatController chatController;
+
+    @Autowired
+    private ClubMemberController clubMemberController;
+
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private static final int MAX_LOGIN_ATTEMPTS = 5;
@@ -50,6 +60,8 @@ public class UserController {
     private LobbyController lobbyController;
     @Autowired
     private TicketController ticketController;
+    @Autowired
+    private ClubChatController clubChatController;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -191,6 +203,70 @@ public class UserController {
                     "Google login failed: " + e.getMessage());
             return null;
         }
+    }
+
+    public Map<String, Object> getUserProfileData(long userId) {
+        Map<String, Object> profileData = new HashMap<>();
+
+        User user = getUser(userId);
+        if (user == null) {
+            return null;
+        }
+
+        User sanitizedUser = new User();
+        sanitizedUser.setId(user.getId());
+        sanitizedUser.setUsername(user.getUsername());
+        sanitizedUser.setEmail(user.getEmail());
+        sanitizedUser.setRole(user.getRole());
+        sanitizedUser.setVerified(user.isVerified());
+
+        profileData.put("user", sanitizedUser);
+
+        profileData.put("stats", statsController.getUserStats(userId));
+
+        profileData.put("gameStats", statsController.getUserGameStats(userId));
+
+        profileData.put("recentGames", statsController.getRecentGames(userId, 10));
+
+        List<User> friends = friendshipController.getFriends(userId);
+        if (friends != null) {
+            List<Map<String, Object>> sanitizedFriends = friends.stream()
+                    .map(friend -> {
+                        Map<String, Object> friendData = new HashMap<>();
+                        friendData.put("id", friend.getId());
+                        friendData.put("username", friend.getUsername());
+                        return friendData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("friends", sanitizedFriends);
+            profileData.put("messages", chatController.getSentMessagesByUser(userId));
+        }
+
+        List<Club> clubs = clubMemberController.getClubsByUser(user);
+        if (clubs != null && !clubs.isEmpty()) {
+            List<Map<String, Object>> clubData = clubs.stream()
+                    .map(club -> {
+                        Map<String, Object> clubInfo = new HashMap<>();
+                        clubInfo.put("id", club.getId());
+                        clubInfo.put("name", club.getName());
+                        clubInfo.put("role", clubMemberController.getClubMemberRole(club.getId(), userId));
+                        return clubInfo;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("clubs", clubData);
+            profileData.put("clubMessages", clubChatController.getMessagesByUser(userId));
+        }
+
+        List<Ticket> tickets = ticketController.getUserTickets(userId);
+        if (tickets != null && !tickets.isEmpty()) {
+            profileData.put("tickets", tickets);
+        }
+        profileData.put("ticketMessages", ticketController.getMessagesByUser(userId));
+
+        auditLogController.logAction("PROFILE_DATA_ACCESSED", userId,
+                "User profile data accessed for user: " + userId);
+
+        return profileData;
     }
 
     public boolean verifyEmail(String token) {
@@ -437,6 +513,11 @@ public class UserController {
         }
 
         return result;
+    }
+
+    public void logDataAccess(long userId, String dataType, String action) {
+        auditLogController.logAction("DATA_ACCESS", userId,
+                "User accessed " + dataType + " data with action: " + action);
     }
 
     public User findByUsername(String username) {

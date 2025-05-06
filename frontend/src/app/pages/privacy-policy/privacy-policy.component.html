@@ -108,18 +108,32 @@
         <p>{{ 'GDPR.DATA_ACTIONS_DESC' | translate }}</p>
 
         <div class="data-actions">
-          <button mat-raised-button color="primary" (click)="exportUserData()" [disabled]="(dataExportInProgress$ | async)">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="exportUserData()"
+            [disabled]="(dataExportInProgress$ | async)"
+          >
             <mat-spinner diameter="20" *ngIf="(dataExportInProgress$ | async)"></mat-spinner>
             <mat-icon *ngIf="!(dataExportInProgress$ | async)">download</mat-icon>
             {{ 'GDPR.DOWNLOAD_DATA' | translate }}
           </button>
 
-          <button mat-raised-button color="primary" (click)="goToSupport()">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="goToSupport()"
+          >
             <mat-icon>edit</mat-icon>
             {{ 'GDPR.REQUEST_CORRECTION' | translate }}
           </button>
 
-          <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="goToProfile()">
+          <button
+            mat-raised-button
+            color="warn"
+            *ngIf="isLoggedIn"
+            (click)="goToProfile()"
+          >
             <mat-icon>delete_forever</mat-icon>
             {{ 'GDPR.DELETE_ACCOUNT' | translate }}
           </button>

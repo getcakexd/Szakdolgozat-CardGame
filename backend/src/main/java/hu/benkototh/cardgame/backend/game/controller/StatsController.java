@@ -13,6 +13,7 @@ import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,12 +36,15 @@ public class StatsController {
     @Autowired
     private IGameRepository gameRepository;
 
+    @Lazy
     @Autowired
     private UserController userController;
 
+    @Lazy
     @Autowired
     private LobbyController lobbyController;
 
+    @Lazy
     @Autowired
     private ClubStatsController clubStatsController;
 
