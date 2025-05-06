@@ -1,45 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { Observable } from 'rxjs';
-import {ThemeMode, ThemeService} from '../../services/theme/theme.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable, Subscription } from 'rxjs';
+import { ThemeMode, ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
   template: `
-    <button mat-icon-button [matMenuTriggerFor]="themeMenu" aria-label="Theme selector">
-      <mat-icon>{{ (isDarkMode$ | async) ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    <button
+      mat-icon-button
+      (click)="toggleTheme()"
+      aria-label="Toggle theme"
+      [matTooltip]="getTooltipText()">
+      <mat-icon>{{ getThemeIcon() }}</mat-icon>
     </button>
-    <mat-menu #themeMenu="matMenu">
-      <button mat-menu-item (click)="setTheme('light')">
-        <mat-icon>light_mode</mat-icon>
-        <span>Light</span>
-      </button>
-      <button mat-menu-item (click)="setTheme('dark')">
-        <mat-icon>dark_mode</mat-icon>
-        <span>Dark</span>
-      </button>
-      <button mat-menu-item (click)="setTheme('system')">
-        <mat-icon>settings_suggest</mat-icon>
-        <span>System</span>
-      </button>
-    </mat-menu>
-  `
+  `,
+  styles: [`
+    button {
+      transition: transform 0.3s ease;
+    }
+    button:active {
+      transform: rotate(30deg);
+    }
+  `]
 })
-export class ThemeToggleComponent implements OnInit {
+export class ThemeToggleComponent implements OnInit, OnDestroy {
   isDarkMode$!: Observable<boolean>;
+  currentTheme: ThemeMode = 'system';
+  private themeSubscription!: Subscription;
 
   constructor(private themeService: ThemeService) {}
 
   ngOnInit(): void {
     this.isDarkMode$ = this.themeService.isDarkMode$;
+    this.themeSubscription = this.themeService.themeMode$.subscribe(theme => {
+      this.currentTheme = theme;
+    });
   }
 
-  setTheme(mode: 'light' | 'dark' | 'system'): void {
-    this.themeService.setTheme(mode as ThemeMode);
+  ngOnDestroy(): void {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  getThemeIcon(): string {
+    if (this.currentTheme === 'light') {
+      return 'light_mode';
+    } else if (this.currentTheme === 'dark') {
+      return 'dark_mode';
+    } else {
+      return this.themeService.getCurrentTheme() ? 'dark_mode' : 'light_mode';
+    }
+  }
+
+  getTooltipText(): string {
+    switch (this.currentTheme) {
+      case 'light':
+        return 'Light mode (click to toggle)';
+      case 'dark':
+        return 'Dark mode (click to toggle)';
+      case 'system':
+        return 'System theme (click to toggle)';
+      default:
+        return 'Toggle theme';
+    }
   }
 }

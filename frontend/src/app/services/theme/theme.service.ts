@@ -76,12 +76,14 @@ export class ThemeService {
     window.location.reload();
   }
 
+  getCurrentTheme(): ThemeMode {
+    return this.themeMode.value;
+  }
+
   toggleTheme(): void {
     const currentMode = this.themeMode.value;
     if (currentMode === 'light') {
       this.setTheme('dark');
-    } else if (currentMode === 'dark') {
-      this.setTheme('system');
     } else {
       this.setTheme('light');
     }
