@@ -1,4 +1,25 @@
 <div class="home-container">
-  <h1 *ngIf="username">{{ 'HOME.WELCOME_USER' | translate: { username: username } }}</h1>
-  <h1 *ngIf="!username">{{ 'HOME.WELCOME' | translate }}</h1>
+  <div class="home-header">
+    <h1 *ngIf="username">{{ 'HOME.WELCOME_USER' | translate: { username: username } }}</h1>
+    <h1 *ngIf="!username">{{ 'HOME.WELCOME' | translate }}</h1>
+    <p class="home-subtitle">{{ 'HOME.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="features-grid">
+    <mat-card *ngFor="let card of featureCards" class="feature-card" [ngClass]="card.color" [routerLink]="card.route">
+      <div class="card-content" matRipple>
+        <mat-icon class="feature-icon">{{card.icon}}</mat-icon>
+        <div class="card-text">
+          <h2>{{ card.title | translate }}</h2>
+          <p>{{ card.description | translate }}</p>
+        </div>
+      </div>
+      <div class="card-action">
+        <button mat-button color="primary">
+          {{ 'HOME.EXPLORE' | translate }}
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
 </div>

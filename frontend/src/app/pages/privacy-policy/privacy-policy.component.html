@@ -1,0 +1,159 @@
+<div class="privacy-policy-container">
+  <div class="privacy-header">
+    <h1>{{ 'GDPR.PRIVACY_POLICY' | translate }}</h1>
+    <p class="privacy-subtitle">{{ 'GDPR.LAST_UPDATED' | translate: { date: '2023-05-01' } }}</p>
+  </div>
+  <mat-card class="privacy-policy-card">
+    <mat-card-content>
+      <div class="privacy-intro">
+        <p>{{ 'GDPR.PRIVACY_INTRO' | translate }}</p>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.DATA_COLLECTION_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.DATA_COLLECTION_DESC' | translate }}</p>
+
+        <ul class="data-list">
+          <li>{{ 'GDPR.DATA_ITEM_1' | translate }}</li>
+          <li>{{ 'GDPR.DATA_ITEM_2' | translate }}</li>
+          <li>{{ 'GDPR.DATA_ITEM_3' | translate }}</li>
+          <li>{{ 'GDPR.DATA_ITEM_4' | translate }}</li>
+        </ul>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.DATA_USAGE_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.DATA_USAGE_DESC' | translate }}</p>
+
+        <ul class="data-list">
+          <li>{{ 'GDPR.USAGE_ITEM_1' | translate }}</li>
+          <li>{{ 'GDPR.USAGE_ITEM_2' | translate }}</li>
+          <li>{{ 'GDPR.USAGE_ITEM_3' | translate }}</li>
+          <li>{{ 'GDPR.USAGE_ITEM_4' | translate }}</li>
+        </ul>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.DATA_RETENTION_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.DATA_RETENTION_DESC' | translate }}</p>
+
+        <ul class="data-list">
+          <li>{{ 'GDPR.RETENTION_ITEM_1' | translate }}</li>
+          <li>{{ 'GDPR.RETENTION_ITEM_2' | translate }}</li>
+          <li>{{ 'GDPR.RETENTION_ITEM_3' | translate }}</li>
+        </ul>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.THIRD_PARTIES_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.THIRD_PARTIES_DESC' | translate }}</p>
+
+        <ul class="data-list">
+          <li>{{ 'GDPR.THIRD_PARTY_ITEM_1' | translate }}</li>
+          <li>{{ 'GDPR.THIRD_PARTY_ITEM_2' | translate }}</li>
+        </ul>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.YOUR_RIGHTS_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.YOUR_RIGHTS_DESC' | translate }}</p>
+
+        <div class="rights-list">
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_ACCESS' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_ACCESS_DESC' | translate }}</p>
+          </div>
+
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_RECTIFICATION' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_RECTIFICATION_DESC' | translate }}</p>
+          </div>
+
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_ERASURE' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_ERASURE_DESC' | translate }}</p>
+          </div>
+
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_RESTRICT' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_RESTRICT_DESC' | translate }}</p>
+          </div>
+
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_PORTABILITY' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_PORTABILITY_DESC' | translate }}</p>
+          </div>
+
+          <div class="right-item">
+            <h3>{{ 'GDPR.RIGHT_OBJECT' | translate }}</h3>
+            <p>{{ 'GDPR.RIGHT_OBJECT_DESC' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.DATA_ACTIONS_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.DATA_ACTIONS_DESC' | translate }}</p>
+
+        <div class="data-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="exportUserData()"
+            [disabled]="(dataExportInProgress$ | async)"
+          >
+            <mat-spinner diameter="20" *ngIf="(dataExportInProgress$ | async)"></mat-spinner>
+            <mat-icon *ngIf="!(dataExportInProgress$ | async)">download</mat-icon>
+            {{ 'GDPR.DOWNLOAD_DATA' | translate }}
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="goToSupport()"
+          >
+            <mat-icon>edit</mat-icon>
+            {{ 'GDPR.REQUEST_CORRECTION' | translate }}
+          </button>
+
+          <button
+            mat-raised-button
+            color="warn"
+            *ngIf="isLoggedIn"
+            (click)="goToProfile()"
+          >
+            <mat-icon>delete_forever</mat-icon>
+            {{ 'GDPR.DELETE_ACCOUNT' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="privacy-section">
+        <h2>{{ 'GDPR.CONTACT_TITLE' | translate }}</h2>
+        <p>{{ 'GDPR.CONTACT_DESC' | translate }}</p>
+        <p class="contact-email">noreply.cardhub&#64;gmail.com</p>
+        <p class="contact-support">{{ 'GDPR.CONTACT_SUPPORT' | translate }} <a routerLink="/support">{{ 'GDPR.SUPPORT_PAGE' | translate }}</a></p>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button [routerLink]="['/']">
+        {{ 'GDPR.BACK_TO_HOME' | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

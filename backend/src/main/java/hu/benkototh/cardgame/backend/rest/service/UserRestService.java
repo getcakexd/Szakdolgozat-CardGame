@@ -259,4 +259,17 @@ public class UserRestService {
             }
         }
     }
+
+    @GetMapping("/export-data/{userId}")
+    public ResponseEntity<Map<String, Object>> exportUserData(@PathVariable long userId) {
+        Map<String, Object> userData = userController.getUserProfileData(userId);
+
+        if (userData == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        userController.logDataAccess(userId, "data_export", "User exported their data: " + userId);
+
+        return ResponseEntity.ok(userData);
+    }
 }

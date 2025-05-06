@@ -23,3 +23,12 @@ export interface TicketMessage {
   isFromAgent?: boolean;
   createdAt: Date;
 }
+
+export enum TicketCategory {
+  ACCOUNT = "account",
+  TECHNICAL = "technical",
+  BILLING = "billing",
+  FEEDBACK = "feedback",
+  DATA_CORRECTION = "data_correction",
+  OTHER = "other",
+}

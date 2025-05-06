@@ -95,4 +95,16 @@ public class ChatController {
                 message.getSender().getId() == friendId && message.getReceiver().getId() == userId
         ).toList();
     }
+
+    public List<Message> getMessagesByUser(long userId) {
+        return messageRepository.findAll().stream()
+                .filter(message -> message.getSender().getId() == userId || message.getReceiver().getId() == userId)
+                .toList();
+    }
+
+    public List<Message> getSentMessagesByUser(long userId) {
+        return messageRepository.findAll().stream()
+                .filter(message -> message.getSender().getId() == userId)
+                .toList();
+    }
 }

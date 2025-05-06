@@ -256,4 +256,9 @@ public class TicketController {
                 .collect(Collectors.toList());
     }
 
+    public List<TicketMessage> getMessagesByUser(long userId) {
+        return ticketMessageRepository.findAll().stream()
+                .filter(message -> message.getUser() != null && message.getUser().getId() == userId)
+                .toList();
+    }
 }
