@@ -1,6 +1,9 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
 import hu.benkototh.cardgame.backend.game.controller.StatsController;
+import hu.benkototh.cardgame.backend.game.model.GameStatistics;
+import hu.benkototh.cardgame.backend.game.model.UserGameStats;
+import hu.benkototh.cardgame.backend.game.model.UserStats;
 import hu.benkototh.cardgame.backend.rest.Data.*;
 import hu.benkototh.cardgame.backend.rest.repository.*;
 import hu.benkototh.cardgame.backend.rest.util.GoogleTokenVerifier;
@@ -213,23 +216,77 @@ public class UserController {
             return null;
         }
 
-        User sanitizedUser = new User();
-        sanitizedUser.setId(user.getId());
-        sanitizedUser.setUsername(user.getUsername());
-        sanitizedUser.setEmail(user.getEmail());
-        sanitizedUser.setRole(user.getRole());
-        sanitizedUser.setVerified(user.isVerified());
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", user.getId());
+        userData.put("username", user.getUsername());
+        userData.put("email", user.getEmail());
+        userData.put("role", user.getRole());
+        userData.put("verified", user.isVerified());
+        profileData.put("user", userData);
 
-        profileData.put("user", sanitizedUser);
+        UserStats userStats = statsController.getUserStats(userId);
+        if (userStats != null) {
+            Map<String, Object> sanitizedStats = new HashMap<>();
+            sanitizedStats.put("gamesPlayed", userStats.getGamesPlayed());
+            sanitizedStats.put("gamesWon", userStats.getGamesWon());
+            sanitizedStats.put("gamesLost", userStats.getGamesLost());
+            sanitizedStats.put("gamesAbandoned", userStats.getGamesAbandoned());
+            sanitizedStats.put("totalPoints", userStats.getTotalPoints());
+            sanitizedStats.put("currentWinStreak", userStats.getCurrentWinStreak());
+            sanitizedStats.put("biggestWinStreak", userStats.getBiggestWinStreak());
+            sanitizedStats.put("totalFatsCollected", userStats.getTotalFatsCollected());
+            profileData.put("stats", sanitizedStats);
+        }
 
-        profileData.put("stats", statsController.getUserStats(userId));
+        List<UserGameStats> gameStats = statsController.getUserGameStats(userId);
+        if (gameStats != null && !gameStats.isEmpty()) {
+            List<Map<String, Object>> sanitizedGameStats = gameStats.stream()
+                    .map(stat -> {
+                        Map<String, Object> gameStatData = new HashMap<>();
+                        gameStatData.put("gamesPlayed", stat.getGamesPlayed());
+                        gameStatData.put("gamesWon", stat.getGamesWon());
+                        gameStatData.put("gamesLost", stat.getGamesLost());
+                        gameStatData.put("gamesAbandoned", stat.getGamesAbandoned());
+                        gameStatData.put("totalPoints", stat.getTotalPoints());
+                        gameStatData.put("highestScore", stat.getHighestScore());
+                        gameStatData.put("totalFatsCollected", stat.getTotalFatsCollected());
+                        gameStatData.put("highestFatsInGame", stat.getHighestFatsInGame());
+                        gameStatData.put("currentWinStreak", stat.getCurrentWinStreak());
+                        gameStatData.put("biggestWinStreak", stat.getBiggestWinStreak());
+                        gameStatData.put("lastPlayed", stat.getLastPlayed());
 
-        profileData.put("gameStats", statsController.getUserGameStats(userId));
+                        if (stat.getGameDefinition() != null) {
+                            gameStatData.put("gameId", stat.getGameDefinition().getId());
+                            gameStatData.put("gameName", stat.getGameDefinition().getName());
+                        }
 
-        profileData.put("recentGames", statsController.getRecentGames(userId, 10));
+                        return gameStatData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("gameStats", sanitizedGameStats);
+        }
+
+        List<GameStatistics> recentGames = statsController.getRecentGames(userId, 10);
+        if (recentGames != null && !recentGames.isEmpty()) {
+            List<Map<String, Object>> sanitizedRecentGames = recentGames.stream()
+                    .map(game -> {
+                        Map<String, Object> gameData = new HashMap<>();
+                        gameData.put("gameId", game.getGameId());
+                        gameData.put("gameDefinitionId", game.getGameDefinitionId());
+                        gameData.put("gameType", game.getGameType());
+                        gameData.put("score", game.getScore());
+                        gameData.put("won", game.isWon());
+                        gameData.put("fatCardsCollected", game.getFatCardsCollected());
+                        gameData.put("tricksTaken", game.getTricksTaken());
+                        gameData.put("playedAt", game.getPlayedAt());
+                        return gameData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("recentGames", sanitizedRecentGames);
+        }
 
         List<User> friends = friendshipController.getFriends(userId);
-        if (friends != null) {
+        if (friends != null && !friends.isEmpty()) {
             List<Map<String, Object>> sanitizedFriends = friends.stream()
                     .map(friend -> {
                         Map<String, Object> friendData = new HashMap<>();
@@ -239,7 +296,27 @@ public class UserController {
                     })
                     .collect(Collectors.toList());
             profileData.put("friends", sanitizedFriends);
-            profileData.put("messages", chatController.getSentMessagesByUser(userId));
+        }
+
+        List<Message> messages = chatController.getSentMessagesByUser(userId);
+        if (messages != null && !messages.isEmpty()) {
+            List<Map<String, Object>> sanitizedMessages = messages.stream()
+                    .map(message -> {
+                        Map<String, Object> messageData = new HashMap<>();
+                        messageData.put("id", message.getId());
+                        messageData.put("content", message.getContent());
+                        messageData.put("timestamp", message.getTimestamp());
+                        messageData.put("status", message.getStatus());
+
+                        if (message.getReceiver() != null) {
+                            messageData.put("receiverUsername", message.getReceiver().getUsername());
+                            messageData.put("receiverId", message.getReceiver().getId());
+                        }
+
+                        return messageData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("messages", sanitizedMessages);
         }
 
         List<Club> clubs = clubMemberController.getClubsByUser(user);
@@ -254,14 +331,74 @@ public class UserController {
                     })
                     .collect(Collectors.toList());
             profileData.put("clubs", clubData);
-            profileData.put("clubMessages", clubChatController.getMessagesByUser(userId));
+        }
+
+        List<ClubMessage> clubMessages = clubChatController.getMessagesByUser(userId);
+        if (clubMessages != null && !clubMessages.isEmpty()) {
+            List<Map<String, Object>> sanitizedClubMessages = clubMessages.stream()
+                    .map(message -> {
+                        Map<String, Object> messageData = new HashMap<>();
+                        messageData.put("id", message.getId());
+                        messageData.put("content", message.getContent());
+                        messageData.put("timestamp", message.getTimestamp());
+                        messageData.put("status", message.getStatus());
+
+                        if (message.getClub() != null) {
+                            messageData.put("clubName", message.getClub().getName());
+                            messageData.put("clubId", message.getClub().getId());
+                        }
+
+                        return messageData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("clubMessages", sanitizedClubMessages);
         }
 
         List<Ticket> tickets = ticketController.getUserTickets(userId);
         if (tickets != null && !tickets.isEmpty()) {
-            profileData.put("tickets", tickets);
+            List<Map<String, Object>> sanitizedTickets = tickets.stream()
+                    .map(ticket -> {
+                        Map<String, Object> ticketData = new HashMap<>();
+                        ticketData.put("id", ticket.getId());
+                        ticketData.put("reference", ticket.getReference());
+                        ticketData.put("subject", ticket.getSubject());
+                        ticketData.put("category", ticket.getCategory());
+                        ticketData.put("status", ticket.getStatus());
+                        ticketData.put("createdAt", ticket.getCreatedAt());
+                        ticketData.put("updatedAt", ticket.getUpdatedAt());
+
+                        if (ticket.getAssignedTo() != null) {
+                            ticketData.put("assignedToUsername", ticket.getAssignedTo().getUsername());
+                        }
+
+                        return ticketData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("tickets", sanitizedTickets);
         }
-        profileData.put("ticketMessages", ticketController.getMessagesByUser(userId));
+
+        List<TicketMessage> ticketMessages = ticketController.getMessagesByUser(userId);
+        if (ticketMessages != null && !ticketMessages.isEmpty()) {
+            List<Map<String, Object>> sanitizedTicketMessages = ticketMessages.stream()
+                    .map(message -> {
+                        Map<String, Object> messageData = new HashMap<>();
+                        messageData.put("id", message.getId());
+                        messageData.put("message", message.getMessage());
+                        messageData.put("senderName", message.getSenderName());
+                        messageData.put("senderType", message.getSenderType());
+                        messageData.put("createdAt", message.getCreatedAt());
+                        messageData.put("fromAgent", message.isFromAgent());
+
+                        if (message.getTicket() != null) {
+                            messageData.put("ticketReference", message.getTicket().getReference());
+                            messageData.put("ticketId", message.getTicket().getId());
+                        }
+
+                        return messageData;
+                    })
+                    .collect(Collectors.toList());
+            profileData.put("ticketMessages", sanitizedTicketMessages);
+        }
 
         auditLogController.logAction("PROFILE_DATA_ACCESSED", userId,
                 "User profile data accessed for user: " + userId);

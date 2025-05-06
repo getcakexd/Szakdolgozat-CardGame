@@ -85,7 +85,7 @@ public class ClubChatController {
         return updatedMessage;
     }
 
-    public Object getMessagesByUser(long userId) {
+    public List<ClubMessage> getMessagesByUser(long userId) {
         return clubMessageRepository.findAll().stream()
                 .filter(message -> message.getSender().getId() == userId)
                 .toList();
