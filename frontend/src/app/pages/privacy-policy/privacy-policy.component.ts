@@ -61,23 +61,17 @@ export class PrivacyPolicyComponent implements OnInit {
         const dataStr = JSON.stringify(data, null, 2)
         const dataBlob = new Blob([dataStr], { type: "application/json" })
 
-        // Create a filename with date
         const date = new Date().toISOString().split("T")[0]
         const filename = `cardhub-user-data-${date}.json`
 
-        // Create and trigger download
         const url = URL.createObjectURL(dataBlob)
         const link = document.createElement("a")
         link.href = url
         link.download = filename
-        document.body.appendChild(link) // Needed for Firefox
+        document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
-
-        this.snackBar.open(this.translate.instant("GDPR.DATA_EXPORT_SUCCESS"), this.translate.instant("GDPR.CLOSE"), {
-          duration: 5000,
-        })
       },
       error: (error) => {
         console.error("Error exporting user data:", error)
