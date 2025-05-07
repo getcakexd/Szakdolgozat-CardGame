@@ -31,14 +31,14 @@
             </div>
 
             <div class="friend-actions">
-              <button mat-icon-button color="warn" (click)="deleteFriend(friend.id)"
-                      [attr.aria-label]="'SOCIAL.REMOVE_FRIEND' | translate" [matTooltip]="'SOCIAL.REMOVE_FRIEND' | translate">
+              <button mat-raised-button color="warn" (click)="deleteFriend(friend.id)" [matTooltip]="'SOCIAL.REMOVE_FRIEND' | translate">
                 <mat-icon>delete</mat-icon>
+                <p>{{'SOCIAL.REMOVE_FRIEND' | translate}}</p>
               </button>
 
-              <button mat-icon-button color="primary" (click)="toggleChat(friend.id)"
-                      [matTooltip]="openChats[parseInt(friend.id)] ? ('SOCIAL.CLOSE_CHAT' | translate) : ('SOCIAL.OPEN_CHAT' | translate)">
+              <button mat-raised-button color="primary" (click)="toggleChat(friend.id)">
                 <mat-icon>{{ openChats[parseInt(friend.id)] ? 'close' : 'chat' }}</mat-icon>
+                <p>{{ openChats[parseInt(friend.id)] ? ('SOCIAL.CLOSE_CHAT' | translate) : ('SOCIAL.OPEN_CHAT' | translate) }}</p>
               </button>
             </div>
           </div>
