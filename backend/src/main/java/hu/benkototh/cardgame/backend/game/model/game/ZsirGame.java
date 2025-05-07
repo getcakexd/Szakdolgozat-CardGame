@@ -390,6 +390,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         if (trickComplete) {
             Player winner = determineTrickWinner(currentTrick, trickStarter);
             winner.getWonCards().addAll(currentTrick);
+            addScore(winner, currentTrick);
 
             setGameState(CURRENT_TRICK, new ArrayList<Card>());
             getGameState().remove(TRICK_STARTER);
@@ -488,6 +489,8 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         if (trickComplete) {
             Player winner = determineTrickWinner(currentTrick, trickStarter);
             winner.getWonCards().addAll(currentTrick);
+            addScore(winner, currentTrick);
+
 
             setGameState(CURRENT_TRICK, new ArrayList<Card>());
             getGameState().remove(TRICK_STARTER);
@@ -643,6 +646,12 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             }
         }
         return null;
+    }
+
+    public void addScore(Player winner, List<Card> currentTrick) {
+        for (Card card : currentTrick) {
+            winner.setScore(winner.getScore() + card.getValue());
+        }
     }
 
     private void defaultSwithThrow(){
