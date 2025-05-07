@@ -70,7 +70,6 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
     this.senderId = this.authService.currentUser?.id || 0;
-
     if (this.senderId) {
       this.lobbyService.getLobbyByPlayer(this.senderId).subscribe((lobby) => {
         this.lobbyId = lobby.id;
@@ -83,6 +82,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         });
         this.scrollToBottom()
+        this.isLoading = false
       });
     } else {
       console.warn("No valid sender ID found.");
@@ -108,6 +108,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       next: (messages) => {
         this.messages = messages
         this.shouldScrollToBottom = true;
+        this.isLoading = false
       },
       error: (error) => {
         console.error(this.translate.instant("CHAT.ERROR_LOADING"), error)
