@@ -10,7 +10,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import java.util.*;
 
-import org.aspectj.runtime.reflect.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -269,11 +268,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         }
 
         List<Card> currentTrick = fetchCurrentTrickCards();
-        if (currentTrick.size() >= MAX_CARDS_IN_TRICK) {
-            return false;
-        }
-
-        return true;
+        return currentTrick.size() < MAX_CARDS_IN_TRICK;
     }
 
     public boolean isValidMove_2(String playerId, GameAction action) {
@@ -309,11 +304,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         }
 
         List<Card> currentTrick = fetchCurrentTrickCards();
-        if (currentTrick.size() >= MAX_CARDS_IN_TRICK) {
-            return false;
-        }
-
-        return true;
+        return currentTrick.size() < MAX_CARDS_IN_TRICK;
     }
 
     public boolean isValidMove_4(String playerId, GameAction action) {
@@ -373,7 +364,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         if (currentTrick.size() >= 2) {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
-            } else if (!isStarterTurn && playerHit) {
+            } else if (!isStarterTurn) {
                 boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
                 setGameState(CAN_HIT, firstPlayerCanHit);
 
@@ -472,7 +463,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         if (currentTrick.size() >= 2) {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
-            } else if (!isStarterTurn && playerHit) {
+            } else if (!isStarterTurn) {
                 boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
                 setGameState(CAN_HIT, firstPlayerCanHit);
 
@@ -584,11 +575,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         }
 
         List<Card> currentTrick = fetchCurrentTrickCards();
-        if (!currentTrick.isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return currentTrick.isEmpty();
     }
 
     @Override

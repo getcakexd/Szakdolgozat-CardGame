@@ -69,7 +69,7 @@ public class LobbyController {
         return null;
     }
 
-    public Lobby createClubLobby(long leaderId, long gameId, boolean playWithPoints, long clubId, boolean isPublic) {
+    public Lobby createClubLobby(long leaderId, long gameId, boolean playWithPoints, long clubId) {
         Optional<User> leaderOpt = userRepository.findById(leaderId);
         Optional<Game> gameOpt = gameRepository.findById(gameId);
         Optional<Club> clubOpt = clubController.getClubById(clubId);
