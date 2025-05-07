@@ -164,7 +164,9 @@
               </button>
             </div>
 
-            <app-club-chat *ngIf="showChat" [clubId]="club.id" [clubName]="club.name"></app-club-chat>
+            <div *ngIf="showChat" class="chat-container">
+              <app-club-chat [clubId]="club.id" [clubName]="club.name"></app-club-chat>
+            </div>
 
             <div *ngIf="showChat" class="chat-toggle">
               <button mat-button (click)="toggleChat()">

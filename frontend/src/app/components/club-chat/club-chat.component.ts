@@ -1,107 +1,121 @@
-import { Component, ElementRef, Input, OnInit, OnDestroy, ViewChild } from "@angular/core"
-import { ClubChatService } from "../../services/club-chat/club-chat.service"
-import { ClubMessage } from "../../models/club-message.model"
-import { FormsModule } from "@angular/forms"
-import { ClubService } from "../../services/club/club.service"
-import { Club } from "../../models/club.model"
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf} from "@angular/common"
-import { ClubMemberService } from "../../services/club-member/club-member.service"
-import { MatCardModule } from "@angular/material/card"
-import { MatButtonModule } from "@angular/material/button"
-import { MatIconModule } from "@angular/material/icon"
-import { MatInputModule } from "@angular/material/input"
-import { MatFormFieldModule } from "@angular/material/form-field"
-import { MatDividerModule } from "@angular/material/divider"
-import { MatTooltipModule } from "@angular/material/tooltip"
-import { MatBadgeModule } from "@angular/material/badge"
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
-import { AuthService } from "../../services/auth/auth.service"
-import { TranslateModule, TranslateService } from "@ngx-translate/core"
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  NgZone
+} from "@angular/core"
+import { ActivatedRoute } from "@angular/router"
 import { Subscription } from "rxjs"
+import {ClubChatService} from '../../services/club-chat/club-chat.service';
+import {AuthService} from '../../services/auth/auth.service';
+import {MatIcon} from '@angular/material/icon';
+import {MatIconButton, MatMiniFabButton} from '@angular/material/button';
+import {AsyncPipe, DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
+import {TranslatePipe} from '@ngx-translate/core';
+import {FormsModule} from '@angular/forms';
+import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatDivider} from '@angular/material/divider';
+import {MatTooltip} from '@angular/material/tooltip';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {ClubService} from "../../services/club/club.service";
+import {ClubMemberService} from "../../services/club-member/club-member.service";
 
 @Component({
   selector: "app-club-chat",
+  templateUrl: "./club-chat.component.html",
+  styleUrls: ["./club-chat.component.scss"],
   imports: [
+    MatIcon,
+    MatMiniFabButton,
+    AsyncPipe,
+    TranslatePipe,
     FormsModule,
-    NgForOf,
-    NgClass,
+    MatInput,
+    MatLabel,
+    MatFormField,
+    MatDivider,
+    MatIconButton,
+    MatTooltip,
     DatePipe,
     NgIf,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatDividerModule,
-    MatTooltipModule,
-    MatBadgeModule,
-    MatProgressSpinnerModule,
-    TranslateModule,
-    AsyncPipe,
+    NgClass,
+    NgForOf,
+    MatProgressSpinner,
+    MatCardContent,
+    MatCardTitle,
+    MatCardHeader,
+    MatCard
   ],
-  templateUrl: "./club-chat.component.html",
-  standalone: true,
-  styleUrls: ["./club-chat.component.scss"],
+  standalone: true
 })
-export class ClubChatComponent implements OnInit, OnDestroy {
-  @Input() clubId!: number
-  @Input() clubName!: string
-  @ViewChild("messageContainer") private messageContainer!: ElementRef
+export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+  @ViewChild("messageContainer", { static: false }) private messageContainer!: ElementRef;
 
-  club: any
-  messages: ClubMessage[] = []
+  @Input() clubId: number = 0
+  @Input() clubName = ""
+
+  senderId: number = 0
+  messages: any[] = []
   newMessage = ""
-  senderId = 0
-  hasPermission = false
   isLoading = true
+  hasPermission = false
 
   private subscriptions: Subscription[] = []
+  private shouldScrollToBottom = true
+  private initialScrollDone = false
 
   constructor(
-    private authService: AuthService,
+    private route: ActivatedRoute,
     protected clubChatService: ClubChatService,
+    private authService: AuthService,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService,
-    private translate: TranslateService,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
-    this.senderId = this.authService.getCurrentUserId() || 0
-    this.getClub(this.clubId)
-    this.loadMessages()
-    this.setHasPermission()
+    this.senderId = this.authService.currentUser?.id || 0
 
-    this.clubChatService.connect().subscribe()
+    if (!this.clubId) {
+      this.subscriptions.push(
+        this.route.params.subscribe((params) => {
+          this.clubId = +params["id"]
+          if (params["name"]) {
+            this.clubName = params["name"]
+          }
+        }),
+      )
+    }
+
+    if (typeof this.clubId === "string") {
+      this.clubId = Number.parseInt(this.clubId, 10)
+    }
+
+    this.clubChatService.connect().subscribe((connected) => {
+      if (connected) {
+        this.loadMessages()
+      }
+    })
+
+    this.scrollToBottom()
+
+    this.setHasPermission()
+  }
+
+  ngAfterViewChecked() {
+    if (this.shouldScrollToBottom && !this.initialScrollDone) {
+      this.scrollToBottom()
+      this.initialScrollDone = true
+    }
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe())
-  }
-
-  getClub(clubId: number) {
-    this.clubService.getClub(clubId).subscribe((club: Club) => {
-      this.club = club
-    })
-  }
-
-  loadMessages() {
-    if (!this.clubId) return
-
-    this.isLoading = true
-
-    const subscription = this.clubChatService.getMessages(this.clubId).subscribe({
-      next: (messages) => {
-        this.messages = messages
-        this.scrollToBottom()
-        this.isLoading = false
-      },
-      error: (error) => {
-        console.error(this.translate.instant("CLUB_CHAT.ERROR_LOADING"), error)
-        this.isLoading = false
-      },
-    })
-
-    this.subscriptions.push(subscription)
   }
 
   setHasPermission() {
@@ -110,50 +124,69 @@ export class ClubChatComponent implements OnInit, OnDestroy {
     })
   }
 
-  sendMessage() {
-    if (!this.newMessage.trim()) return
+  loadMessages(): void {
+    if (!this.clubId) return
 
-    this.clubChatService.sendMessage(this.clubId, this.senderId, this.newMessage).subscribe({
-      next: () => {
-        this.newMessage = ""
-        this.scrollToBottom()
-      },
-      error: (error) => {
-        console.error(this.translate.instant("CLUB_CHAT.ERROR_SENDING"), error)
-      },
-    })
+    this.isLoading = true
+    this.initialScrollDone = false
+
+    this.subscriptions.push(
+      this.clubChatService.getMessages(this.clubId).subscribe({
+        next: (data) => {
+          this.messages = data
+          this.isLoading = false
+          this.shouldScrollToBottom = true
+        },
+        error: (error) => {
+          console.error("Error loading messages:", error)
+          this.isLoading = false
+        },
+      }),
+    )
   }
 
-  unsendMessage(messageId: number) {
-    this.clubChatService.unsendMessage(messageId).subscribe({
-      error: (error) => {
-        console.error(this.translate.instant("CLUB_CHAT.ERROR_UNSENDING"), error)
-      },
-    })
-  }
-
-  removeMessage(messageId: number) {
-    this.clubChatService.removeMessage(messageId).subscribe({
-      error: (error) => {
-        console.error(this.translate.instant("CLUB_CHAT.ERROR_REMOVING"), error)
-      },
-    })
-  }
-
-  private scrollToBottom(): void {
-    try {
-      setTimeout(() => {
-        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
-      }, 100)
-    } catch (err) {
-      console.error("Scroll error:", err)
+  sendMessage(): void {
+    if (this.newMessage.trim() && this.clubId) {
+      this.clubChatService.sendMessage(this.clubId, this.senderId, this.newMessage.trim())
+      this.newMessage = ""
+      this.shouldScrollToBottom = true
+      
+      this.ngZone.runOutsideAngular(() => {
+        setTimeout(() => {
+          this.ngZone.run(() => {
+            this.scrollToBottom()
+          })
+        }, 300)
+      })
     }
   }
 
-  onKeyPress(event: KeyboardEvent) {
+  unsendMessage(messageId: number): void {
+    this.clubChatService.unsendMessage(messageId)
+  }
+
+  removeMessage(messageId: number): void {
+    if (this.hasPermission) {
+      this.clubChatService.removeMessage(messageId)
+    }
+  }
+
+  onKeyPress(event: KeyboardEvent): void {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
       this.sendMessage()
+    }
+  }
+
+  scrollToBottom(): void {
+    try {
+      if (this.messageContainer && this.messageContainer.nativeElement) {
+        console.log('Scrolling to bottom, height:', this.messageContainer.nativeElement.scrollHeight);
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      }
+      this.shouldScrollToBottom = false;
+    } catch (err) {
+      console.error("Error scrolling to bottom:", err);
     }
   }
 }
