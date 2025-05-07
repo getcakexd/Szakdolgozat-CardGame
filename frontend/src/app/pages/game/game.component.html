@@ -13,8 +13,11 @@
         }">
           {{ 'GAME.STATUS.' + game.status | translate }}
         </span>
-        <button mat-icon-button color="primary" (click)="refreshGameState()" matTooltip="Refresh game state">
-          <mat-icon>refresh</mat-icon>
+        <button *ngIf="game.status === GameStatus.FINISHED" mat-button color="warn" (click)="goToLobby()">
+          <mat-icon>exit_to_app</mat-icon> {{ 'GAME.GO_TO_LOBBY' | translate }}
+        </button>
+        <button *ngIf="game.status === GameStatus.ACTIVE" mat-button color="warn" (click)="abandonGame()">
+          <mat-icon>cancel</mat-icon> {{ 'GAME.ABANDON_GAME' | translate }}
         </button>
       </mat-card-subtitle>
     </mat-card-header>
@@ -100,15 +103,6 @@
         </div>
       </div>
     </mat-card-content>
-
-    <mat-card-actions align="end">
-      <button mat-button color="warn" (click)="goToLobby()">
-        <mat-icon>exit_to_app</mat-icon> {{ 'GAME.GO_TO_LOBBY' | translate }}
-      </button>
-      <button *ngIf="game.status === GameStatus.ACTIVE" mat-button color="warn" (click)="abandonGame()">
-        <mat-icon>cancel</mat-icon> {{ 'GAME.ABANDON_GAME' | translate }}
-      </button>
-    </mat-card-actions>
 
     <mat-card-footer *ngIf="isLoading">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>

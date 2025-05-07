@@ -58,6 +58,7 @@
                   </button>
 
                   <button
+                    *ngIf="lobby.status === lobbyStatus.WAITING"
                     mat-button
                     color="warn"
                     (click)="onLeaveLobby()"

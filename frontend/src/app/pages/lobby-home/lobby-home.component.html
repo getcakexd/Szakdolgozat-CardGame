@@ -43,7 +43,7 @@
                       (click)="$event.stopPropagation(); userLobby.status === 'IN_GAME' ? confirmAbandonGame(userLobby) : confirmLeaveLobby(userLobby)">
                       {{ userLobby.status === 'IN_GAME' ? ('GAME.ABANDON_GAME' | translate) : ('LOBBY.LEAVE_LOBBY' | translate) }}
                     </button>
-                    <button
+                    <button *ngIf="userLobby.status === 'WAITING'"
                       mat-raised-button
                       color="primary"
                       (click)="navigateToLobby(userLobby)" >

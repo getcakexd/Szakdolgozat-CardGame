@@ -24,6 +24,7 @@ import { PlayerInfoComponent } from "../../components/player-info/player-info.co
 import {IS_DEV} from '../../../environments/api-config';
 import {LobbyService} from '../../services/lobby/lobby.service';
 import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
+import {LOBBY_STATUS} from '../../models/lobby.model';
 
 @Component({
   selector: "app-game",
@@ -344,4 +345,5 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   protected readonly GameStatus = GameStatus
+  protected readonly lobbyStatus = LOBBY_STATUS;
 }

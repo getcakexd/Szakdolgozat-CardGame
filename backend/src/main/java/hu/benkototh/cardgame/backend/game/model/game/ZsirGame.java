@@ -659,7 +659,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         throw new IllegalArgumentException("Invalid factoryId: " + factoryId);
     }
 
-    // GameStateCallback implementation methods
     @Override
     public void handlePass(String playerId) {
         List<Card> currentTrick = fetchCurrentTrickCards();
