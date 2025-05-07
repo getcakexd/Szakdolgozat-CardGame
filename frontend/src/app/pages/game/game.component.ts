@@ -233,10 +233,6 @@ export class GameComponent implements OnInit, OnDestroy {
         this.snackBar.open(this.translate.instant("GAME.GAME_OVER"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-
-        setTimeout(() => {
-          this.router.navigate(["/lobby"])
-        }, 3000)
       } else if (event.eventType === "GAME_ACTION") {
         if (this.gameId) {
           setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 300)
@@ -304,10 +300,6 @@ export class GameComponent implements OnInit, OnDestroy {
     })
 
     this.cardGameService.abandonGame(this.gameId)
-
-    setTimeout(() => {
-      this.router.navigate(["/lobby"])
-    }, 2000)
   }
 
   isCurrentPlayerTurn(): boolean {

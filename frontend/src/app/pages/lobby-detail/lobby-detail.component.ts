@@ -191,7 +191,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
   }
 
   startRefreshInterval(): void {
-    this.refreshSubscription = interval(5000)
+    this.refreshSubscription = interval(2500)
       .pipe(
         switchMap(() => {
           if (this.lobby) {
@@ -334,7 +334,6 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
               duration: 3000,
             })
             this.router.navigate(["/lobby"])
-            window.location.reload()
           },
           error: (error) => {
             this.isLoading = false
