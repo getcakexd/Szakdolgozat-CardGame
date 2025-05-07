@@ -5,6 +5,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  AfterViewChecked,
 } from "@angular/core"
 import {FormsModule, ReactiveFormsModule} from "@angular/forms"
 import { Subscription } from "rxjs"
@@ -46,7 +47,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     MatProgressSpinner,
   ],
 })
-export class LobbyChatComponent implements OnInit, OnDestroy {
+export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() lobbyName?: string
   @ViewChild("messageContainer") private messageContainer!: ElementRef
 
@@ -57,6 +58,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
   isLoading = true
   lobbyId: number = 0
 
+  private shouldScrollToBottom = true
   private subscriptions: Subscription[] = []
 
   constructor(
@@ -68,21 +70,30 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.senderId = this.authService.currentUser?.id || 0;
-
     if (this.senderId) {
       this.lobbyService.getLobbyByPlayer(this.senderId).subscribe((lobby) => {
         this.lobbyId = lobby.id;
         this.lobbyName = lobby.code;
         this.hasPermission = lobby.leader.id === this.senderId;
 
-        this.loadMessages();
-        this.lobbyChatService.connect().subscribe();
+        this.lobbyChatService.connect(this.lobbyId).subscribe((connected) => {
+          if (connected) {
+            this.loadMessages();
+          }
+        });
+        this.scrollToBottom()
+        this.isLoading = false
       });
     } else {
       console.warn("No valid sender ID found.");
       this.isLoading = false;
     }
+  }
 
+  ngAfterViewChecked() {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+    }
   }
 
   ngOnDestroy(): void {
@@ -96,7 +107,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
     const subscription = this.lobbyChatService.getMessages(this.lobbyId).subscribe({
       next: (messages) => {
         this.messages = messages
-        this.scrollToBottom()
+        this.shouldScrollToBottom = true;
         this.isLoading = false
       },
       error: (error) => {
@@ -113,6 +124,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
     this.lobbyChatService.sendMessage(this.lobbyId || 0, this.senderId, this.newMessage).subscribe({
       next: () => {
         this.newMessage = ""
+        this.shouldScrollToBottom = true;
         this.scrollToBottom()
       },
       error: (error) => {
@@ -137,13 +149,15 @@ export class LobbyChatComponent implements OnInit, OnDestroy {
     })
   }
 
-  private scrollToBottom(): void {
+  scrollToBottom(): void {
     try {
-      setTimeout(() => {
-        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
-      }, 100)
+      if (this.messageContainer && this.messageContainer.nativeElement) {
+        const element = this.messageContainer.nativeElement;
+        element.scrollTop = element.scrollHeight;
+      }
+      this.shouldScrollToBottom = false;
     } catch (err) {
-      console.error("Scroll error:", err)
+      console.error("Scroll error:", err);
     }
   }
 

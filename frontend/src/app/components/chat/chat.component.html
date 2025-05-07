@@ -46,7 +46,8 @@
             <span class="message-timestamp">{{ msg.timestamp | date:'short' }}</span>
 
             <div class="message-actions" *ngIf="!msg.unsent && msg.sender.id === senderId">
-              <button mat-icon-button size="small" (click)="unsendMessage(msg.id)" matTooltip="{{ 'CHAT.UNSEND_MESSAGE' | translate }}">
+              <button mat-icon-button size="small" (click)="unsendMessage(msg.id)"
+                      matTooltip="{{ 'CHAT.UNSEND_MESSAGE' | translate }}">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>

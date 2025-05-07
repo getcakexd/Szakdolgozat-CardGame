@@ -43,7 +43,7 @@ public class LobbyRestService {
             @RequestParam boolean playWithPoints,
             @RequestParam long clubId
     ) {
-        Lobby lobby = lobbyController.createClubLobby(leaderId, gameId, playWithPoints, clubId, false);
+        Lobby lobby = lobbyController.createClubLobby(leaderId, gameId, playWithPoints, clubId);
 
         if (lobby == null) {
             Map<String, String> response = new HashMap<>();

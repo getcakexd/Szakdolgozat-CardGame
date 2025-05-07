@@ -20,8 +20,6 @@
 }
 
 html {
-  color-scheme: light dark;
-
   @include mat.theme((
     color: mat.$blue-palette,
     typography: (
@@ -33,6 +31,14 @@ html {
     ),
     density: 0
   ));
+}
+
+html.light-theme {
+  color-scheme: light;
+}
+
+html.dark-theme {
+  color-scheme: dark;
 }
 
 html[data-theme-palette="red-palette"] {
@@ -369,14 +375,6 @@ body > div:first-child::before {
   z-index: 1000;
 }
 
-html.light-theme {
-  color-scheme: light;
-}
-
-html.dark-theme {
-  color-scheme: dark;
-}
-
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -411,30 +409,30 @@ html.dark-theme {
   overflow: hidden;
 }
 
-.mat-mdc-card,
-.mat-mdc-dialog-container,
-.mat-mdc-menu-panel,
-.mat-mdc-select-panel,
-.mat-mdc-autocomplete-panel,
-.mat-mdc-snack-bar-container,
-.mat-mdc-bottom-sheet-container,
-.mat-mdc-paginator,
-.mat-mdc-toolbar,
-.mat-mdc-tab-header,
-.mat-mdc-tab-body-content,
-.mat-mdc-expansion-panel,
-.mat-mdc-option,
-.mat-mdc-optgroup,
-.mat-mdc-table,
-.mat-mdc-drawer-content,
-.mat-mdc-drawer,
-.mat-mdc-sidenav,
-.mat-mdc-sidenav-content,
-.mat-mdc-list-item,
-.mat-mdc-stepper-horizontal,
-.mat-mdc-stepper-vertical,
-.mat-mdc-tab-group,
-.mat-mdc-form-field-flex {
+html.light-theme .mat-mdc-card,
+html.light-theme .mat-mdc-dialog-container,
+html.light-theme .mat-mdc-menu-panel,
+html.light-theme .mat-mdc-select-panel,
+html.light-theme .mat-mdc-autocomplete-panel,
+html.light-theme .mat-mdc-snack-bar-container,
+html.light-theme .mat-mdc-bottom-sheet-container,
+html.light-theme .mat-mdc-paginator,
+html.light-theme .mat-mdc-toolbar,
+html.light-theme .mat-mdc-tab-header,
+html.light-theme .mat-mdc-tab-body-content,
+html.light-theme .mat-mdc-expansion-panel,
+html.light-theme .mat-mdc-option,
+html.light-theme .mat-mdc-optgroup,
+html.light-theme .mat-mdc-table,
+html.light-theme .mat-mdc-drawer-content,
+html.light-theme .mat-mdc-drawer,
+html.light-theme .mat-mdc-sidenav,
+html.light-theme .mat-mdc-sidenav-content,
+html.light-theme .mat-mdc-list-item,
+html.light-theme .mat-mdc-stepper-horizontal,
+html.light-theme .mat-mdc-stepper-vertical,
+html.light-theme .mat-mdc-tab-group,
+html.light-theme .mat-mdc-form-field-flex {
   background-color: var(--mat-component-bg-light) !important;
 }
 
@@ -469,7 +467,7 @@ html.dark-theme .mat-mdc-form-field-flex {
   background-color: transparent !important;
 }
 
-.mat-mdc-text-field-wrapper {
+html.light-theme .mat-mdc-text-field-wrapper {
   background-color: var(--mat-component-bg-light) !important;
 }
 
@@ -477,7 +475,7 @@ html.dark-theme .mat-mdc-text-field-wrapper {
   background-color: var(--mat-component-bg-dark) !important;
 }
 
-.mat-mdc-option {
+html.light-theme .mat-mdc-option {
   background-color: var(--mat-component-bg-light) !important;
   transition: background-color 0.2s ease;
 }
@@ -511,7 +509,7 @@ html.dark-theme .mat-mdc-option {
   background-color: transparent !important;
 }
 
-.mat-mdc-dialog-container .mat-mdc-dialog-surface {
+html.light-theme .mat-mdc-dialog-container .mat-mdc-dialog-surface {
   background-color: var(--mat-component-bg-light) !important;
 }
 

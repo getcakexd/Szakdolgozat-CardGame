@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
-import {BACKEND_API_URL, IS_DEV} from "../../../environments/api-config"
-import { BehaviorSubject, type Observable, of } from "rxjs"
+import { BACKEND_API_URL, IS_DEV } from "../../../environments/api-config"
+import { BehaviorSubject, Observable, of } from "rxjs"
 import { Stomp } from "@stomp/stompjs"
 import SockJS from "sockjs-client"
-import type { ClubMessage } from "../../models/club-message.model"
 
 @Injectable({
   providedIn: "root",
@@ -14,11 +13,11 @@ export class ClubChatService {
   private stompClient: any
   private connected = new BehaviorSubject<boolean>(false)
 
-  private messageStore: { [key: string]: BehaviorSubject<ClubMessage[]> } = {}
+  private messageStore: { [key: string]: BehaviorSubject<any[]> } = {}
 
   constructor(private http: HttpClient) {}
 
-  connect(): Observable<boolean> {
+  connect(clubId: number): Observable<boolean> {
     if (this.stompClient && this.stompClient.connected) {
       return this.connected.asObservable()
     }
@@ -44,6 +43,21 @@ export class ClubChatService {
       {},
       () => {
         if (IS_DEV) console.log("WebSocket connection established successfully")
+
+        this.stompClient.subscribe("/topic/club/" + clubId, (message: any) => {
+          if (IS_DEV) console.log("Received message on club topic:", message)
+          const data = JSON.parse(message.body)
+
+          if (Array.isArray(data)) {
+            const clubKey = `club_${clubId}`
+            if (this.messageStore[clubKey]) {
+              this.messageStore[clubKey].next(data)
+            }
+          } else {
+            this.handleNewClubMessage(clubId, data)
+          }
+        })
+
         this.connected.next(true)
       },
       (error: any) => {
@@ -62,34 +76,39 @@ export class ClubChatService {
     this.connected.next(false)
   }
 
-  subscribeToClub(clubId: number): Observable<ClubMessage[]> {
+  getMessages(clubId: number): Observable<any[]> {
     const clubKey = `club_${clubId}`
 
     if (!this.messageStore[clubKey]) {
-      this.messageStore[clubKey] = new BehaviorSubject<ClubMessage[]>([])
+      this.messageStore[clubKey] = new BehaviorSubject<any[]>([])
+    }
 
-      this.connect().subscribe((connected) => {
-        if (connected) {
-          this.stompClient.subscribe("/topic/club/" + clubId, (message: any) => {
-            const data = JSON.parse(message.body)
-
-            if (Array.isArray(data)) {
-              this.messageStore[clubKey].next(data)
-            } else {
-              this.handleNewClubMessage(clubId, data)
-            }
-          })
-
-          this.requestMessages(clubId)
-        }
-      })
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.send(
+        "/app/club.getMessages",
+        {},
+        JSON.stringify({
+          clubId: clubId,
+        }),
+      )
+    } else {
+      this.http
+        .get<any[]>(`${this.apiUrl}/history`, {
+          params: {
+            clubId: clubId.toString(),
+          },
+        })
+        .subscribe({
+          next: (messages) => {
+            this.messageStore[clubKey].next(messages)
+          },
+          error: (error) => {
+            console.error("Error fetching club messages via HTTP:", error)
+          },
+        })
     }
 
     return this.messageStore[clubKey].asObservable()
-  }
-
-  getMessages(clubId: number): Observable<ClubMessage[]> {
-    return this.subscribeToClub(clubId)
   }
 
   sendMessage(clubId: number, senderId: number, content: string): Observable<any> {
@@ -105,7 +124,7 @@ export class ClubChatService {
       )
       return of(null)
     } else {
-      return this.http.post<ClubMessage>(`${this.apiUrl}/send`, null, {
+      return this.http.post<any>(`${this.apiUrl}/send`, null, {
         params: {
           clubId: clubId.toString(),
           senderId: senderId.toString(),
@@ -126,7 +145,7 @@ export class ClubChatService {
       )
       return of(null)
     } else {
-      return this.http.put<any[]>(`${this.apiUrl}/unsend`, null, {
+      return this.http.put<any>(`${this.apiUrl}/unsend`, null, {
         params: {
           messageId: messageId.toString(),
         },
@@ -145,7 +164,7 @@ export class ClubChatService {
       )
       return of(null)
     } else {
-      return this.http.put<any[]>(`${this.apiUrl}/remove`, null, {
+      return this.http.put<any>(`${this.apiUrl}/remove`, null, {
         params: {
           messageId: messageId.toString(),
         },
@@ -153,37 +172,7 @@ export class ClubChatService {
     }
   }
 
-  private requestMessages(clubId: number): void {
-    if (this.stompClient && this.stompClient.connected) {
-      this.stompClient.send(
-        "/app/club.getMessages",
-        {},
-        JSON.stringify({
-          clubId: clubId,
-        }),
-      )
-    } else {
-      this.http
-        .get<ClubMessage[]>(`${this.apiUrl}/history`, {
-          params: {
-            clubId: clubId.toString(),
-          },
-        })
-        .subscribe({
-          next: (messages) => {
-            const clubKey = `club_${clubId}`
-            if (this.messageStore[clubKey]) {
-              this.messageStore[clubKey].next(messages)
-            }
-          },
-          error: (error) => {
-            console.error("Error fetching club messages via HTTP:", error)
-          },
-        })
-    }
-  }
-
-  private handleNewClubMessage(clubId: number, message: ClubMessage) {
+  private handleNewClubMessage(clubId: number, message: any) {
     const clubKey = `club_${clubId}`
 
     if (this.messageStore[clubKey]) {

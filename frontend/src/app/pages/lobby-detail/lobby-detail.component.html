@@ -47,6 +47,44 @@
                 </mat-slide-toggle>
               </div>
 
+              <div class="settings-actions">
+                <mat-card-actions align="start">
+                  <button *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
+                          mat-raised-button
+                          color="primary"
+                          [disabled]="settingsForm.invalid || isLoading"
+                          (click)="onSaveSettings()">
+                    {{ 'LOBBY.SAVE_SETTINGS' | translate }}
+                  </button>
+
+                  <button
+                    *ngIf="lobby.status === lobbyStatus.WAITING"
+                    mat-button
+                    color="warn"
+                    (click)="onLeaveLobby()"
+                    [disabled]="isLoading">
+                    <mat-icon>exit_to_app</mat-icon> {{ 'LOBBY.LEAVE_LOBBY' | translate }}
+                  </button>
+
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    *ngIf="lobby.status === lobbyStatus.IN_GAME && lobby.cardGameId"
+                    (click)="goToGame()">
+                    <mat-icon>sports_esports</mat-icon> {{ 'LOBBY.GO_TO_GAME' | translate }}
+                  </button>
+
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
+                    [disabled]="!canStartGame() || isLoading"
+                    (click)="onStartGame()">
+                    <mat-icon>play_arrow</mat-icon> {{ 'LOBBY.START_GAME' | translate }}
+                  </button>
+                </mat-card-actions>
+              </div>
+
               <div class="game-info" *ngIf="selectedGame">
                 <app-game-card
                   [game]="selectedGame"
@@ -58,47 +96,11 @@
             </form>
           </div>
 
-          <div class="settings-actions">
-            <mat-card-actions align="end">
-              <button *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
-                      mat-raised-button
-                      color="primary"
-                      [disabled]="settingsForm.invalid || isLoading"
-                      (click)="onSaveSettings()">
-                {{ 'LOBBY.SAVE_SETTINGS' | translate }}
-              </button>
-
-              <button
-                mat-button
-                color="warn"
-                (click)="onLeaveLobby()"
-                [disabled]="isLoading">
-                <mat-icon>exit_to_app</mat-icon> {{ 'LOBBY.LEAVE_LOBBY' | translate }}
-              </button>
-
-              <button
-                mat-raised-button
-                color="accent"
-                *ngIf="lobby.status === lobbyStatus.IN_GAME && lobby.cardGameId"
-                (click)="goToGame()">
-                <mat-icon>sports_esports</mat-icon> {{ 'LOBBY.GO_TO_GAME' | translate }}
-              </button>
-
-              <button
-                mat-raised-button
-                color="primary"
-                *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
-                [disabled]="!canStartGame() || isLoading"
-                (click)="onStartGame()">
-                <mat-icon>play_arrow</mat-icon> {{ 'LOBBY.START_GAME' | translate }}
-              </button>
-            </mat-card-actions>
-          </div>
         </div>
 
-        <div class="chat-sidebar">
+        <div class="players-section">
+          <h3>{{ 'LOBBY.PLAYERS' | translate }} ( {{ lobby.players.length }} / {{ selectedGame?.maxPlayers }} )</h3>
           <div class="lobby-players">
-            <h3>{{ 'LOBBY.PLAYERS' | translate }}</h3>
             <mat-list>
               <mat-list-item *ngFor="let player of lobby.players">
                 <div class="player-item">
@@ -118,6 +120,9 @@
               </mat-list-item>
             </mat-list>
           </div>
+        </div>
+
+        <div class="chat-sidebar">
           <app-lobby-chat *ngIf="lobby" [lobbyName]="lobby.code"></app-lobby-chat>
         </div>
       </div>

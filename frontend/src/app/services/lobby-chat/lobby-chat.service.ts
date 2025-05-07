@@ -16,11 +16,9 @@ export class LobbyChatService {
 
   private messageStore: { [key: string]: BehaviorSubject<LobbyMessage[]> } = {}
 
-  constructor(private http: HttpClient) {
-    this.connect()
-  }
+  constructor(private http: HttpClient) {}
 
-  connect(): Observable<boolean> {
+  connect(lobbyId?: number): Observable<boolean> {
     if (this.stompClient && this.stompClient.connected) {
       return this.connected.asObservable()
     }
@@ -46,6 +44,23 @@ export class LobbyChatService {
       {},
       () => {
         if (IS_DEV) console.log("WebSocket connection established successfully")
+
+        if (lobbyId) {
+          this.stompClient.subscribe("/topic/lobby/" + lobbyId, (message: any) => {
+            if (IS_DEV) console.log(`Received message on lobby topic:`, message)
+            const data = JSON.parse(message.body)
+
+            if (Array.isArray(data)) {
+              const lobbyKey = `lobby_${lobbyId}`
+              if (this.messageStore[lobbyKey]) {
+                this.messageStore[lobbyKey].next(data)
+              }
+            } else {
+              this.handleNewMessage(lobbyId, data)
+            }
+          })
+        }
+
         this.connected.next(true)
 
         Object.keys(this.messageStore).forEach((key) => {
@@ -59,7 +74,7 @@ export class LobbyChatService {
         if (IS_DEV) console.error("WebSocket connection error:", error)
         this.connected.next(false)
 
-        setTimeout(() => this.connect(), 5000)
+        setTimeout(() => this.connect(lobbyId), 5000)
       },
     )
 
@@ -73,18 +88,35 @@ export class LobbyChatService {
     this.connected.next(false)
   }
 
-  subscribeToLobby(lobbyId: number): Observable<LobbyMessage[]> {
+  getMessages(lobbyId: number): Observable<LobbyMessage[]> {
     const lobbyKey = `lobby_${lobbyId}`
 
     if (!this.messageStore[lobbyKey]) {
-      if (IS_DEV) console.log(`Creating new message store for lobby ${lobbyId}`)
       this.messageStore[lobbyKey] = new BehaviorSubject<LobbyMessage[]>([])
+    }
 
-      this.loadMessagesViaHttp(lobbyId)
-
-      if (this.stompClient && this.stompClient.connected) {
-        this.subscribeToWebSocketTopic(lobbyId)
-      }
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.send(
+        "/app/lobby.getMessages",
+        {},
+        JSON.stringify({
+          lobbyId: lobbyId,
+        }),
+      )
+    } else {
+      this.http
+        .get<LobbyMessage[]>(`${this.apiUrl}/lobby/${lobbyId}`)
+        .subscribe({
+          next: (messages) => {
+            if (IS_DEV) console.log(`Received ${messages.length} messages via HTTP for lobby ${lobbyId}`)
+            if (this.messageStore[lobbyKey]) {
+              this.messageStore[lobbyKey].next(messages)
+            }
+          },
+          error: (error) => {
+            console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
+          },
+        })
     }
 
     return this.messageStore[lobbyKey].asObservable()
@@ -92,7 +124,6 @@ export class LobbyChatService {
 
   private subscribeToWebSocketTopic(lobbyId: number): void {
     if (IS_DEV) console.log(`Subscribing to WebSocket topic for lobby ${lobbyId}`)
-    const lobbyKey = `lobby_${lobbyId}`
 
     this.stompClient.subscribe("/topic/lobby/" + lobbyId, (message: any) => {
       if (IS_DEV) console.log(`Received WebSocket message for lobby ${lobbyId}:`, message)
@@ -101,7 +132,10 @@ export class LobbyChatService {
 
         if (Array.isArray(data)) {
           if (IS_DEV) console.log(`Received array of ${data.length} messages for lobby ${lobbyId}`)
-          this.messageStore[lobbyKey].next(data)
+          const lobbyKey = `lobby_${lobbyId}`
+          if (this.messageStore[lobbyKey]) {
+            this.messageStore[lobbyKey].next(data)
+          }
         } else {
           if (IS_DEV) console.log(`Received single message for lobby ${lobbyId}:`, data)
           this.handleNewMessage(lobbyId, data)
@@ -110,29 +144,6 @@ export class LobbyChatService {
         console.error("Error processing WebSocket message:", error)
       }
     })
-
-    this.requestMessagesViaWebSocket(lobbyId)
-  }
-
-  private loadMessagesViaHttp(lobbyId: number): void {
-    if (IS_DEV) console.log(`Loading messages via HTTP for lobby ${lobbyId}`)
-    const lobbyKey = `lobby_${lobbyId}`
-
-    this.http.get<LobbyMessage[]>(`${this.apiUrl}/lobby/${lobbyId}`).subscribe({
-      next: (messages) => {
-        if (IS_DEV) console.log(`Received ${messages.length} messages via HTTP for lobby ${lobbyId}`)
-        if (this.messageStore[lobbyKey]) {
-          this.messageStore[lobbyKey].next(messages)
-        }
-      },
-      error: (error) => {
-        console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
-      },
-    })
-  }
-
-  getMessages(lobbyId: number): Observable<LobbyMessage[]> {
-    return this.subscribeToLobby(lobbyId)
   }
 
   sendMessage(lobbyId: number, senderId: number, content: string): Observable<any> {
@@ -198,19 +209,6 @@ export class LobbyChatService {
     }
   }
 
-  private requestMessagesViaWebSocket(lobbyId: number): void {
-    if (this.stompClient && this.stompClient.connected) {
-      if (IS_DEV) console.log(`Requesting messages via WebSocket for lobby ${lobbyId}`)
-      this.stompClient.send(
-        "/app/lobby.getMessages",
-        {},
-        JSON.stringify({
-          lobbyId: lobbyId,
-        }),
-      )
-    }
-  }
-
   private handleNewMessage(lobbyId: number, message: LobbyMessage) {
     const lobbyKey = `lobby_${lobbyId}`
 
@@ -235,9 +233,28 @@ export class LobbyChatService {
   }
 
   refreshMessages(lobbyId: number): void {
-    this.loadMessagesViaHttp(lobbyId)
     if (this.stompClient && this.stompClient.connected) {
-      this.requestMessagesViaWebSocket(lobbyId)
+      this.stompClient.send(
+        "/app/lobby.getMessages",
+        {},
+        JSON.stringify({
+          lobbyId: lobbyId,
+        }),
+      )
+    } else {
+      const lobbyKey = `lobby_${lobbyId}`
+      this.http
+        .get<LobbyMessage[]>(`${this.apiUrl}/lobby/${lobbyId}`)
+        .subscribe({
+          next: (messages) => {
+            if (this.messageStore[lobbyKey]) {
+              this.messageStore[lobbyKey].next(messages)
+            }
+          },
+          error: (error) => {
+            console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
+          },
+        })
     }
   }
 }

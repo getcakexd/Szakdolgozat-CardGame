@@ -1,6 +1,6 @@
 .lobby-detail-container {
   padding: 16px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -44,11 +44,12 @@
 
 .lobby-content {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   gap: 24px;
   min-height: 700px;
   position: relative;
   overflow: visible !important;
+  align-items: start;
 }
 
 .lobby-settings {
@@ -61,28 +62,49 @@
   z-index: 1;
 }
 
+.players-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.01);
+  border-radius: 8px;
+  padding: 16px;
+}
+
 .lobby-players {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   overflow-y: auto;
   margin-bottom: 16px;
-  max-height: 40%;
+  max-height: 100%;
 }
 
 .chat-sidebar {
   background-color: rgba(0, 0, 0, 0.02);
   border-radius: 8px;
-  height: 100%;
+  height: 700px;
+  max-height: 700px;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 0;
-  align-self: stretch;
+  align-self: start;
+  overflow: hidden;
 }
 
 .chat-sidebar app-lobby-chat {
+  flex: 1;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-height: 100%;
+}
+
+::ng-deep .mat-mdc-card-content {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
 .player-item {
@@ -179,7 +201,8 @@
 :host ::ng-deep app-game-card .game-rules {
   position: relative;
   z-index: 10;
-  background-color: var(--card-background, #fff);
+  background-color: var(--card-background) !important;
+  color: var(--text-primary) !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 16px -8px;
   padding: 16px;
@@ -213,10 +236,36 @@
   overflow: visible !important;
 }
 
+@media (max-width: 1200px) {
+  .lobby-content {
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas:
+      "settings players"
+      "chat chat";
+  }
+
+  .lobby-settings {
+    grid-area: settings;
+  }
+
+  .players-section {
+    grid-area: players;
+  }
+
+  .chat-sidebar {
+    grid-area: chat;
+    height: 350px;
+    max-height: 350px;
+  }
+}
+
 @media (max-width: 768px) {
   .lobby-content {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 350px;
+    grid-template-areas:
+      "settings"
+      "players"
+      "chat";
     height: auto;
     min-height: auto;
   }
@@ -233,6 +282,8 @@
 
   .chat-sidebar {
     min-height: 350px;
+    height: 350px;
+    max-height: 350px;
   }
 
   .social-header h1 {

@@ -1,88 +1,80 @@
-<mat-card class="chat-card">
-  <mat-card-header>
-    <mat-card-title>
-      <div class="chat-header">
-        <h2>{{ 'CHAT.LOBBY_CHAT' | translate }}</h2>
-        <div class="chat-actions">
-          <span class="connection-status" [ngClass]="{'connected': lobbyChatService.isConnected() | async}">
-            <mat-icon>{{ (lobbyChatService.isConnected() | async) ? 'wifi' : 'wifi_off' }}</mat-icon>
-          </span>
-          <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CHAT.REFRESH' | translate }}">
-            <mat-icon>refresh</mat-icon>
-          </button>
-        </div>
-      </div>
-    </mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-    <div class="messages-container" #messageContainer>
-      <div *ngIf="isLoading" class="loading-spinner">
-        <mat-spinner diameter="40"></mat-spinner>
-      </div>
-
-      <div *ngIf="messages.length === 0 && !isLoading" class="no-messages">
-        <p>{{ 'CHAT.NO_MESSAGES' | translate }}</p>
-      </div>
-
-      <div *ngFor="let msg of messages"
-           class="message-wrapper"
-           [ngClass]="{'my-message-wrapper': msg.user.id === senderId, 'other-message-wrapper': msg.user.id !== senderId}">
-
-        <div class="message-bubble"
-             [ngClass]="{'my-message': msg.user.id === senderId, 'other-message': msg.user.id !== senderId,
-                        'unsent-message': msg.status === 'unsent', 'removed-message': msg.status === 'removed'}">
-
-          <div class="message-header">
-            <span class="sender-name">{{ msg.user.username }}</span>
-          </div>
-
-          <div class="message-content">
-            <ng-container *ngIf="msg.status === 'unsent'">
-              <em>{{ 'CHAT.MESSAGE_UNSENT' | translate }}</em>
-            </ng-container>
-            <ng-container *ngIf="msg.status === 'removed'">
-              <em>{{ 'CHAT.MESSAGE_REMOVED' | translate }}</em>
-            </ng-container>
-            <ng-container *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
-              {{ msg.content }}
-            </ng-container>
-          </div>
-
-          <div class="message-footer">
-            <span class="message-timestamp">{{ msg.timestamp | date:'short' }}</span>
-
-            <div class="message-actions" *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
-              <button mat-icon-button size="small" *ngIf="msg.user.id === senderId"
-                      (click)="unsendMessage(msg.id)" matTooltip="{{ 'CHAT.UNSEND_MESSAGE' | translate }}">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-
-              <button mat-icon-button size="small" *ngIf="hasPermission && msg.user.id !== senderId"
-                      (click)="removeMessage(msg.id)" matTooltip="{{ 'CHAT.REMOVE_MESSAGE' | translate }}">
-                <mat-icon>block</mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <mat-divider></mat-divider>
-
-    <div class="chat-input-container">
-      <mat-form-field appearance="outline" class="chat-input">
-        <mat-label>{{ 'CHAT.TYPE_MESSAGE' | translate }}</mat-label>
-        <input matInput [(ngModel)]="newMessage"
-               placeholder="{{ 'CHAT.TYPE_MESSAGE' | translate }}"
-               (keypress)="onKeyPress($event)">
-      </mat-form-field>
-
-      <button mat-fab color="primary" (click)="sendMessage()"
-              [disabled]="!newMessage.trim() || !(lobbyChatService.isConnected() | async)"
-              matTooltip="{{ 'CHAT.SEND_MESSAGE' | translate }}">
-        <mat-icon>send</mat-icon>
+<div class="chat-wrapper">
+  <div class="chat-header">
+    <h2>{{ 'CHAT.LOBBY_CHAT' | translate }}</h2>
+    <div class="chat-actions">
+      <span class="connection-status" [ngClass]="{'connected': lobbyChatService.isConnected() | async}">
+        <mat-icon>{{ (lobbyChatService.isConnected() | async) ? 'wifi' : 'wifi_off' }}</mat-icon>
+      </span>
+      <button mat-icon-button color="primary" (click)="loadMessages()" matTooltip="{{ 'CHAT.REFRESH' | translate }}">
+        <mat-icon>refresh</mat-icon>
       </button>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <div class="messages-container" #messageContainer>
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="messages.length === 0 && !isLoading" class="no-messages">
+      <p>{{ 'CHAT.NO_MESSAGES' | translate }}</p>
+    </div>
+
+    <div *ngFor="let msg of messages"
+         class="message-wrapper"
+         [ngClass]="{'my-message-wrapper': msg.user.id === senderId, 'other-message-wrapper': msg.user.id !== senderId}">
+
+      <div class="message-bubble"
+           [ngClass]="{'my-message': msg.user.id === senderId, 'other-message': msg.user.id !== senderId,
+                      'unsent-message': msg.status === 'unsent', 'removed-message': msg.status === 'removed'}">
+
+        <div class="message-header" *ngIf="msg.user.id !== senderId">
+          <span class="sender-name">{{ msg.user.username }}</span>
+        </div>
+
+        <div class="message-content">
+          <ng-container *ngIf="msg.status === 'unsent'">
+            <em>{{ 'CHAT.MESSAGE_UNSENT' | translate }}</em>
+          </ng-container>
+          <ng-container *ngIf="msg.status === 'removed'">
+            <em>{{ 'CHAT.MESSAGE_REMOVED' | translate }}</em>
+          </ng-container>
+          <ng-container *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
+            {{ msg.content }}
+          </ng-container>
+        </div>
+
+        <div class="message-footer">
+          <span class="message-timestamp">{{ msg.timestamp | date:'short' }}</span>
+
+          <div class="message-actions" *ngIf="msg.status !== 'unsent' && msg.status !== 'removed'">
+            <button mat-icon-button size="small" *ngIf="msg.user.id === senderId"
+                    (click)="unsendMessage(msg.id)" matTooltip="{{ 'CHAT.UNSEND_MESSAGE' | translate }}">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+
+            <button mat-icon-button size="small" *ngIf="hasPermission && msg.user.id !== senderId"
+                    (click)="removeMessage(msg.id)" matTooltip="{{ 'CHAT.REMOVE_MESSAGE' | translate }}">
+              <mat-icon>block</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input-container">
+    <mat-form-field appearance="outline" class="chat-input">
+      <mat-label>{{ 'CHAT.TYPE_MESSAGE' | translate }}</mat-label>
+      <input matInput [(ngModel)]="newMessage"
+             placeholder="{{ 'CHAT.TYPE_MESSAGE' | translate }}"
+             (keypress)="onKeyPress($event)">
+    </mat-form-field>
+
+    <button mat-mini-fab color="primary" (click)="sendMessage()"
+            [disabled]="!newMessage.trim() || !(lobbyChatService.isConnected() | async)"
+            matTooltip="{{ 'CHAT.SEND_MESSAGE' | translate }}">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>

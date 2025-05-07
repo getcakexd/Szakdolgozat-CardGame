@@ -93,6 +93,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.loadMessages()
       }
     })
+    this.scrollToBottom()
   }
 
   ngAfterViewChecked() {

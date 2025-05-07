@@ -131,6 +131,11 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
         this.lobby = lobby
         this.isLeader = this.currentUser?.id === lobby.leader.id
 
+        if (lobby.status === LOBBY_STATUS.IN_GAME && lobby.cardGameId) {
+          this.router.navigate(["/game", lobby.cardGameId]);
+          return;
+        }
+
         if (this.games.length === 0) {
           this.loadGames().then(() => {
             this.updateSettingsForm()
@@ -191,7 +196,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
   }
 
   startRefreshInterval(): void {
-    this.refreshSubscription = interval(5000)
+    this.refreshSubscription = interval(2500)
       .pipe(
         switchMap(() => {
           if (this.lobby) {
@@ -202,6 +207,12 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (lobby) => {
+          if (lobby.status === LOBBY_STATUS.IN_GAME && lobby.cardGameId &&
+            (!this.lobby || this.lobby.status !== LOBBY_STATUS.IN_GAME)) {
+            this.router.navigate(["/game", lobby.cardGameId]);
+            return;
+          }
+
           this.lobby = lobby
           this.isLeader = this.currentUser?.id === lobby.leader.id
           this.updateSettingsForm()
