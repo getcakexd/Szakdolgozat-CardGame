@@ -36,8 +36,6 @@ export class ThemeService {
       }
 
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-      this.updateDarkModeStatus(prefersDark.matches);
-
       prefersDark.addEventListener('change', (e) => {
         if (this.themeMode.value === 'system') {
           this.updateDarkModeStatus(e.matches);
@@ -61,6 +59,11 @@ export class ThemeService {
       this.updateDarkModeStatus(true);
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        this.renderer.addClass(document.documentElement, 'dark-theme');
+      } else {
+        this.renderer.addClass(document.documentElement, 'light-theme');
+      }
       this.updateDarkModeStatus(prefersDark);
     }
   }
@@ -91,5 +94,16 @@ export class ThemeService {
 
   private updateDarkModeStatus(isDark: boolean): void {
     this.isDarkMode.next(isDark);
+
+    if (this.themeMode.value === 'system') {
+      this.renderer.removeClass(document.documentElement, 'light-theme');
+      this.renderer.removeClass(document.documentElement, 'dark-theme');
+
+      if (isDark) {
+        this.renderer.addClass(document.documentElement, 'dark-theme');
+      } else {
+        this.renderer.addClass(document.documentElement, 'light-theme');
+      }
+    }
   }
 }
