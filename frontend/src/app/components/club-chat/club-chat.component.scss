@@ -228,29 +228,6 @@ mat-card-content {
   margin-bottom: 0 !important;
 }
 
-.scroll-to-bottom {
-  position: absolute;
-  bottom: 90px;
-  right: 20px;
-  z-index: 100;
-  background-color: var(--mat-sys-primary);
-  color: white;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-.scroll-to-bottom:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;

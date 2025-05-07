@@ -334,6 +334,7 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
               duration: 3000,
             })
             this.router.navigate(["/lobby"])
+            window.location.reload()
           },
           error: (error) => {
             this.isLoading = false

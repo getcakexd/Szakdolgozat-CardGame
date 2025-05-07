@@ -259,9 +259,9 @@ mat-card-content {
 }
 
 .chat-sidebar app-lobby-chat {
+  flex: 1;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-height: 100%;
 }
 
 @keyframes pulse {

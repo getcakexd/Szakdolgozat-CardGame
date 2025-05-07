@@ -89,10 +89,6 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
     }
 
-    if (typeof this.clubId === "string") {
-      this.clubId = Number.parseInt(this.clubId, 10)
-    }
-
     this.clubChatService.connect(this.clubId).subscribe((connected) => {
       if (connected) {
         this.loadMessages()
