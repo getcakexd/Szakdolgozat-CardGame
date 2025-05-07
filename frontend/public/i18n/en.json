@@ -274,6 +274,8 @@
       "TAB": "Lobbies",
       "TITLE": "Club Lobbies",
       "SUBTITLE": "Play games with your club members",
+      "ALREADY_IN_LOBBY": "You are already in a lobby",
+      "LEAVE_FIRST": "Leave the current lobby to join a new one",
       "AVAILABLE": "Available Lobbies",
       "CREATE": "Create Lobby",
       "NO_LOBBIES": "No club lobbies available. Create one to get started!",

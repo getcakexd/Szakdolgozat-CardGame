@@ -275,6 +275,8 @@
       "TITLE": "Klub Lobbik",
       "SUBTITLE": "Játssz játékokat a klub tagjaival",
       "AVAILABLE": "Elérhető Lobbik",
+      "ALREADY_IN_LOBBY": "You are already in a lobby",
+      "LEAVE_FIRST": "Leave the current lobby to join a new one",
       "CREATE": "Lobbi Létrehozása",
       "NO_LOBBIES": "Nincsenek elérhető klub lobbik. Hozz létre egyet a kezdéshez!",
       "CREATE_TITLE": "Klub Lobbi Létrehozása",
