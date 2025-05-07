@@ -6,7 +6,6 @@ import {
   ViewChild,
   ElementRef,
   AfterViewChecked,
-  NgZone
 } from "@angular/core"
 import { ActivatedRoute } from "@angular/router"
 import { Subscription } from "rxjs"
@@ -54,7 +53,7 @@ import {ClubMemberService} from "../../services/club-member/club-member.service"
   standalone: true
 })
 export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
-  @ViewChild("messageContainer", { static: false }) private messageContainer!: ElementRef;
+  @ViewChild("messageContainer") private messageContainer!: ElementRef;
 
   @Input() clubId: number = 0
   @Input() clubName = ""
@@ -67,7 +66,6 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private subscriptions: Subscription[] = []
   private shouldScrollToBottom = true
-  private initialScrollDone = false
 
   constructor(
     private route: ActivatedRoute,
@@ -75,7 +73,6 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private authService: AuthService,
     private clubService: ClubService,
     private clubMemberService: ClubMemberService,
-    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +93,7 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.clubId = Number.parseInt(this.clubId, 10)
     }
 
-    this.clubChatService.connect().subscribe((connected) => {
+    this.clubChatService.connect(this.clubId).subscribe((connected) => {
       if (connected) {
         this.loadMessages()
       }
@@ -108,9 +105,8 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    if (this.shouldScrollToBottom && !this.initialScrollDone) {
+    if (this.shouldScrollToBottom) {
       this.scrollToBottom()
-      this.initialScrollDone = true
     }
   }
 
@@ -128,7 +124,6 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (!this.clubId) return
 
     this.isLoading = true
-    this.initialScrollDone = false
 
     this.subscriptions.push(
       this.clubChatService.getMessages(this.clubId).subscribe({
@@ -150,14 +145,7 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.clubChatService.sendMessage(this.clubId, this.senderId, this.newMessage.trim())
       this.newMessage = ""
       this.shouldScrollToBottom = true
-      
-      this.ngZone.runOutsideAngular(() => {
-        setTimeout(() => {
-          this.ngZone.run(() => {
-            this.scrollToBottom()
-          })
-        }, 300)
-      })
+      this.scrollToBottom()
     }
   }
 
@@ -181,7 +169,6 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   scrollToBottom(): void {
     try {
       if (this.messageContainer && this.messageContainer.nativeElement) {
-        console.log('Scrolling to bottom, height:', this.messageContainer.nativeElement.scrollHeight);
         this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
       }
       this.shouldScrollToBottom = false;

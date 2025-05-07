@@ -78,7 +78,6 @@ mat-card-content {
   scroll-behavior: smooth;
 }
 
-/* Ensure scrollbar is visible in WebKit browsers */
 .messages-container::-webkit-scrollbar {
   width: 8px;
 }

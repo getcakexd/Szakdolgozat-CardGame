@@ -17,7 +17,7 @@ export class ClubChatService {
 
   constructor(private http: HttpClient) {}
 
-  connect(): Observable<boolean> {
+  connect(clubId: number): Observable<boolean> {
     if (this.stompClient && this.stompClient.connected) {
       return this.connected.asObservable()
     }
@@ -43,6 +43,21 @@ export class ClubChatService {
       {},
       () => {
         if (IS_DEV) console.log("WebSocket connection established successfully")
+
+        this.stompClient.subscribe("/topic/club/" + clubId, (message: any) => {
+          if (IS_DEV) console.log("Received message on club topic:", message)
+          const data = JSON.parse(message.body)
+
+          if (Array.isArray(data)) {
+            const clubKey = `club_${clubId}`
+            if (this.messageStore[clubKey]) {
+              this.messageStore[clubKey].next(data)
+            }
+          } else {
+            this.handleNewClubMessage(clubId, data)
+          }
+        })
+
         this.connected.next(true)
       },
       (error: any) => {
@@ -66,17 +81,6 @@ export class ClubChatService {
 
     if (!this.messageStore[clubKey]) {
       this.messageStore[clubKey] = new BehaviorSubject<any[]>([])
-
-      if (this.stompClient && this.stompClient.connected) {
-        this.stompClient.subscribe("/topic/club/" + clubId, (message: any) => {
-          const messages = JSON.parse(message.body)
-          if (Array.isArray(messages)) {
-            this.messageStore[clubKey].next(messages)
-          } else {
-            this.handleNewClubMessage(clubId, messages)
-          }
-        })
-      }
     }
 
     if (this.stompClient && this.stompClient.connected) {
