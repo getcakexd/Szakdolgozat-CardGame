@@ -13,6 +13,7 @@
 .friend-item {
   height: auto !important;
   padding: 12px 0;
+  margin-bottom: 16px;
 }
 
 .friend-content {
@@ -40,6 +41,20 @@
 .friend-actions {
   display: flex;
   gap: 8px;
+  margin-bottom: 8px;
+}
+
+.friend-actions button {
+  height: auto;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.friend-actions p {
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 0 4px;
 }
 
 .chat-container {
@@ -83,11 +98,16 @@
   .friend-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 16px;
   }
 
   .friend-actions {
     align-self: flex-end;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .friend-item {
+    margin-bottom: 24px;
   }
 }
-
