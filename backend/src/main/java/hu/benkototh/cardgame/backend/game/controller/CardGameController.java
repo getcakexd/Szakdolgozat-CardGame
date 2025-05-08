@@ -181,6 +181,9 @@ public class CardGameController {
 
         CardGame cardGame = optionalCardGame.get();
 
+        cardGame.addAbandonedUser(userId);
+        logger.info("User {} added to abandoned users list for game {}", userId, gameId);
+
         if (cardGame.getStatus() != GameStatus.FINISHED) {
             cardGame.endGame();
 
@@ -196,6 +199,8 @@ public class CardGameController {
                     "Game abandoned: " + cardGame.getName() + " (ID: " + gameId + ")");
 
             GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
+            event.addData("abandonedBy", userId);
+            event.addData("abandonedUsers", cardGame.getAbandonedUsers());
             broadcastGameEvent(event);
         }
 

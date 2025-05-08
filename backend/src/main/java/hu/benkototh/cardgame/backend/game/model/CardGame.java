@@ -34,9 +34,17 @@ public abstract class CardGame {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "game_id"
             , foreignKey = @ForeignKey(name = "fk_game_player",
-                    foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
+            foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
     @JsonManagedReference
     private List<Player> players;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "abandoned_users",
+            joinColumns = @JoinColumn(name = "game_id")
+    )
+    @Column(name = "user_id")
+    private List<String> abandonedUsers = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private GameStatus status;
@@ -67,6 +75,7 @@ public abstract class CardGame {
     public CardGame() {
         this.id = UUID.randomUUID().toString();
         this.players = new ArrayList<>();
+        this.abandonedUsers = new ArrayList<>();
         this.status = GameStatus.WAITING;
         this.createdAt = new Date();
         this.gameState = new ConcurrentHashMap<>();
@@ -102,6 +111,25 @@ public abstract class CardGame {
         } else {
             logger.warn("Player {} not found in game {}", playerId, this.id);
         }
+    }
+
+    public void addAbandonedUser(String userId) {
+        if (!abandonedUsers.contains(userId)) {
+            abandonedUsers.add(userId);
+            logger.info("User {} added to abandoned users list for game {}", userId, this.id);
+        }
+    }
+
+    public List<String> getAbandonedUsers() {
+        return abandonedUsers;
+    }
+
+    public void setAbandonedUsers(List<String> abandonedUsers) {
+        this.abandonedUsers = abandonedUsers;
+    }
+
+    public boolean hasUserAbandoned(String userId) {
+        return abandonedUsers.contains(userId);
     }
 
     public void startGame() {
