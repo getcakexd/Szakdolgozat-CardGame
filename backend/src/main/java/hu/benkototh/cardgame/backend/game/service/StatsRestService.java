@@ -74,4 +74,22 @@ public class StatsRestService {
         List<GameStatistics> recentGames = statsController.getRecentGames(userId, limit);
         return ResponseEntity.ok(recentGames);
     }
+
+    @GetMapping("/user/{userId}/draws")
+    public ResponseEntity<?> getUserDrawStats(@PathVariable Long userId) {
+        UserStats stats = statsController.getUserStats(userId);
+
+        if (stats == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User not found");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        Map<String, Object> drawStats = new HashMap<>();
+        drawStats.put("gamesDrawn", stats.getGamesDrawn());
+        drawStats.put("drawPercentage", stats.getGamesPlayed() > 0 ?
+                (double) stats.getGamesDrawn() / stats.getGamesPlayed() * 100 : 0);
+
+        return ResponseEntity.ok(drawStats);
+    }
 }

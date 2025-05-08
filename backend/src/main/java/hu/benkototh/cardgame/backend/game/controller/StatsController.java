@@ -50,7 +50,14 @@ public class StatsController {
 
     @Transactional
     public void recordGameResult(CardGame cardGame, Map<String, Integer> scores, boolean abandoned, String abandonedBy) {
-        logger.info("Recording game result for game {}, abandoned: {}", cardGame.getId(), abandoned);
+        recordGameResult(cardGame, scores, abandoned, abandonedBy, false, Collections.emptyList());
+    }
+
+    @Transactional
+    public void recordGameResult(CardGame cardGame, Map<String, Integer> scores, boolean abandoned,
+                                 String abandonedBy, boolean isDraw, List<String> drawPlayerIds) {
+        logger.info("Recording game result for game {}, abandoned: {}, draw: {}",
+                cardGame.getId(), abandoned, isDraw);
 
         Optional<Game> gameDefinitionOpt = gameRepository.findById(cardGame.getGameDefinitionId());
         if (gameDefinitionOpt.isEmpty()) {
@@ -59,23 +66,11 @@ public class StatsController {
         }
         Game gameDefinition = gameDefinitionOpt.get();
 
-        String winnerId = null;
-        int highestScore = -1;
-
-        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-            if (entry.getValue() > highestScore) {
-                highestScore = entry.getValue();
-                winnerId = entry.getKey();
-            }
-        }
-
         if (abandoned && abandonedBy != null) {
             for (Player player : cardGame.getPlayers()) {
                 if (!player.getId().equals(abandonedBy)) {
                     Integer currentScore = scores.getOrDefault(player.getId(), 0);
                     scores.put(player.getId(), currentScore + ABANDON_PENALTY_POINTS);
-
-                    winnerId = player.getId();
                 }
             }
         }
@@ -89,9 +84,22 @@ public class StatsController {
                 continue;
             }
 
-            boolean isWinner = playerId.equals(winnerId);
+            boolean isWinner = false;
+            boolean isDrawn = false;
             boolean isAbandoner = abandoned && playerId.equals(abandonedBy);
             int playerScore = scores.getOrDefault(playerId, 0);
+
+            if (!abandoned) {
+                if (isDraw) {
+                    isDrawn = drawPlayerIds.contains(playerId);
+                } else {
+                    int highestScore = scores.values().stream()
+                            .mapToInt(Integer::intValue)
+                            .max()
+                            .orElse(0);
+                    isWinner = playerScore == highestScore;
+                }
+            }
 
             int fatCards = 0;
             for (Card card : player.getWonCards()) {
@@ -107,14 +115,15 @@ public class StatsController {
             gameStats.setGameType(cardGame.getClass().getSimpleName());
             gameStats.setScore(playerScore);
             gameStats.setWon(isWinner);
+            gameStats.setDrawn(isDrawn);
             gameStats.setFatCardsCollected(fatCards);
             gameStats.setTricksTaken(player.getWonCards().size() / 2);
             gameStats.setPlayedAt(new Date());
             gameStatisticsRepository.save(gameStats);
 
-            updateUserStats(user, isWinner, isAbandoner, playerScore, fatCards);
+            updateUserStats(user, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
 
-            updateUserGameStats(user, gameDefinition, isWinner, isAbandoner, playerScore, fatCards);
+            updateUserGameStats(user, gameDefinition, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
         }
 
         Lobby lobby = findLobbyByCardGameId(cardGame.getId());
@@ -134,7 +143,7 @@ public class StatsController {
     }
 
     @Transactional
-    protected void updateUserStats(User user, boolean won, boolean abandoned, int score, int fatCards) {
+    protected void updateUserStats(User user, boolean won, boolean drawn, boolean abandoned, int score, int fatCards) {
         if (user == null) {
             logger.warn("Cannot update stats for null user");
             return;
@@ -153,9 +162,10 @@ public class StatsController {
             userStats.incrementGamesAbandoned();
         } else if (won) {
             userStats.incrementGamesWon();
+        } else if (drawn) {
+            userStats.incrementGamesDrawn();
         } else {
             userStats.incrementGamesLost();
-
         }
 
         userStats.addPoints(score);
@@ -165,7 +175,8 @@ public class StatsController {
     }
 
     @Transactional
-    protected void updateUserGameStats(User user, Game gameDefinition, boolean won, boolean abandoned, int score, int fatCards) {
+    protected void updateUserGameStats(User user, Game gameDefinition, boolean won, boolean drawn,
+                                       boolean abandoned, int score, int fatCards) {
         if (user == null || gameDefinition == null) {
             logger.warn("Cannot update game stats for null user or game definition");
             return;
@@ -185,6 +196,8 @@ public class StatsController {
             userGameStats.incrementGamesAbandoned();
         } else if (won) {
             userGameStats.incrementGamesWon();
+        } else if (drawn) {
+            userGameStats.incrementGamesDrawn();
         } else {
             userGameStats.incrementGamesLost();
         }

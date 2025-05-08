@@ -30,6 +30,7 @@ public class UserGameStats {
     private int gamesPlayed;
     private int gamesWon;
     private int gamesLost;
+    private int gamesDrawn;
     private int gamesAbandoned;
     private int totalPoints;
     private int highestScore;
@@ -45,6 +46,7 @@ public class UserGameStats {
         this.gamesPlayed = 0;
         this.gamesWon = 0;
         this.gamesLost = 0;
+        this.gamesDrawn = 0;
         this.gamesAbandoned = 0;
         this.totalPoints = 0;
         this.highestScore = 0;
@@ -101,6 +103,14 @@ public class UserGameStats {
 
     public void setGamesLost(int gamesLost) {
         this.gamesLost = gamesLost;
+    }
+
+    public int getGamesDrawn() {
+        return gamesDrawn;
+    }
+
+    public void setGamesDrawn(int gamesDrawn) {
+        this.gamesDrawn = gamesDrawn;
     }
 
     public int getGamesAbandoned() {
@@ -184,6 +194,11 @@ public class UserGameStats {
     public void incrementGamesLost() {
         this.gamesLost++;
         this.currentWinStreak = 0;
+        this.lastPlayed = new Date();
+    }
+
+    public void incrementGamesDrawn() {
+        this.gamesDrawn++;
         this.lastPlayed = new Date();
     }
 
