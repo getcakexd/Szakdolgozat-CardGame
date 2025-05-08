@@ -1,124 +1,289 @@
-<mat-toolbar class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-left">
-
-      <button class="navbar-button" mat-button routerLink="/home">
-        <mat-icon>home</mat-icon>
-        <span>{{ 'NAVBAR.HOME' | translate }}</span>
+<ng-container *ngIf="isMobile">
+  <mat-toolbar class="navbar">
+    <div class="navbar-mobile-container">
+      <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
+        <mat-icon>menu</mat-icon>
       </button>
-
-      <button class="navbar-button" *ngIf="!isLoggedIn" mat-button routerLink="/games">
-        <mat-icon>videogame_asset</mat-icon>
-        <span>{{ 'NAVBAR.GAMES' | translate }}</span>
-      </button>
-
-      <ng-container *ngIf="isLoggedIn">
-        <button class="navbar-button" mat-button [matMenuTriggerFor]="socialMenu">
-          <mat-icon>people</mat-icon>
-          <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #socialMenu="matMenu">
-          <button mat-menu-item routerLink="/friends">
-            <mat-icon>person</mat-icon>
-            <span>{{ 'NAVBAR.FRIENDS' | translate }}</span>
+      <div class="navbar-right">
+        <app-theme-toggle></app-theme-toggle>
+        <app-language-selector></app-language-selector>
+        <ng-container *ngIf="isLoggedIn">
+          <button class="navbar-button" mat-icon-button routerLink="/profile">
+            <mat-icon>account_circle</mat-icon>
           </button>
-          <button mat-menu-item routerLink="/clubs">
-            <mat-icon>groups</mat-icon>
-            <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
-          </button>
-        </mat-menu>
-
-        <button class="navbar-button" mat-button [matMenuTriggerFor]="playMenu">
-          <mat-icon>games</mat-icon>
-          <span>{{ 'NAVBAR.PLAY' | translate }}</span>
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #playMenu="matMenu">
-          <button mat-menu-item routerLink="/games">
-            <mat-icon>videogame_asset</mat-icon>
-            <span>{{ 'NAVBAR.GAMES' | translate }}</span>
-          </button>
-          <button mat-menu-item routerLink="/lobby">
-            <mat-icon>casino</mat-icon>
-            <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
-          </button>
-          <button mat-menu-item routerLink="/stats">
-            <mat-icon>ssid_chart</mat-icon>
-            <span>{{ 'NAVBAR.STATS' | translate }}</span>
-          </button>
-          <button mat-menu-item routerLink="/leaderboard">
-            <mat-icon>leaderboard</mat-icon>
-            <span>{{ 'NAVBAR.LEADERBOARD' | translate }}</span>
-          </button>
-        </mat-menu>
-
-        <ng-container *ngIf="isAdmin || isAgent || isRoot">
-          <button class="navbar-button" mat-button [matMenuTriggerFor]="adminMenu">
-            <mat-icon>admin_panel_settings</mat-icon>
-            <span>{{ 'NAVBAR.ADMIN_AREA' | translate }}</span>
-            <mat-icon>arrow_drop_down</mat-icon>
-          </button>
-          <mat-menu #adminMenu="matMenu">
-            <button *ngIf="isAdmin || isRoot" mat-menu-item routerLink="/admin">
-              <mat-icon>admin_panel_settings</mat-icon>
-              <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
-            </button>
-            <button *ngIf="isAdmin || isAgent || isRoot" mat-menu-item routerLink="/agent">
-              <mat-icon>support_agent</mat-icon>
-              <span>{{ 'NAVBAR.AGENT' | translate }}</span>
-            </button>
-            <button *ngIf="isRoot" mat-menu-item routerLink="/audit-logs">
-              <mat-icon>history</mat-icon>
-              <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
-            </button>
-          </mat-menu>
         </ng-container>
-      </ng-container>
-
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="navbar-button" mat-icon-button routerLink="/login">
+            <mat-icon>login</mat-icon>
+          </button>
+        </ng-container>
+      </div>
     </div>
+  </mat-toolbar>
 
-    <div class="navbar-right">
-      <app-theme-toggle></app-theme-toggle>
+  <div class="sidenav-overlay" [class.active]="sidenavOpen" (click)="closeSidenav($event)">
+    <div class="mobile-sidenav" [class.open]="sidenavOpen" (click)="$event.stopPropagation()">
+      <div class="sidenav-header">
+        <button mat-icon-button (click)="toggleSidenav()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
 
-      <app-language-selector></app-language-selector>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/home" (click)="toggleSidenav()">
+          <mat-icon>home</mat-icon>
+          <span>{{ 'NAVBAR.HOME' | translate }}</span>
+        </a>
 
-      <button class="navbar-button" mat-button [matMenuTriggerFor]="helpMenu">
-        <mat-icon>help</mat-icon>
-        <span>{{ 'NAVBAR.HELP' | translate }}</span>
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #helpMenu="matMenu">
-        <button mat-menu-item routerLink="/support">
-          <mat-icon>support</mat-icon>
-          <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
-        </button>
-        <button mat-menu-item routerLink="/privacy-policy">
-          <mat-icon>policy</mat-icon>
-          <span>{{ 'NAVBAR.PRIVACY' | translate }}</span>
-        </button>
-      </mat-menu>
+        <a mat-list-item *ngIf="!isLoggedIn" routerLink="/games" (click)="toggleSidenav()">
+          <mat-icon>videogame_asset</mat-icon>
+          <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+        </a>
 
-      <ng-container *ngIf="isLoggedIn">
-        <button class="navbar-button" mat-button routerLink="/profile">
-          <mat-icon>account_circle</mat-icon>
-          <span>{{ username }}</span>
-        </button>
-        <button class="navbar-button" mat-button (click)="logout()">
-          <mat-icon>exit_to_app</mat-icon>
-          <span>{{ 'NAVBAR.LOGOUT' | translate }}</span>
-        </button>
-      </ng-container>
+        <ng-container *ngIf="isLoggedIn">
+          <mat-expansion-panel class="sidenav-expansion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>people</mat-icon>
+                <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-nav-list>
+              <a mat-list-item routerLink="/friends" (click)="toggleSidenav()">
+                <mat-icon>person</mat-icon>
+                <span>{{ 'NAVBAR.FRIENDS' | translate }}</span>
+              </a>
+              <a mat-list-item routerLink="/clubs" (click)="toggleSidenav()">
+                <mat-icon>groups</mat-icon>
+                <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
+              </a>
+            </mat-nav-list>
+          </mat-expansion-panel>
 
-      <ng-container *ngIf="!isLoggedIn">
-        <button class="navbar-button" mat-button routerLink="/login">
-          <mat-icon>login</mat-icon>
-          <span>{{ 'NAVBAR.LOGIN' | translate }}</span>
-        </button>
-        <button class="navbar-button" mat-button color="primary" routerLink="/signup">
-          <mat-icon>person_add_alt_1</mat-icon> <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
-        </button>
-      </ng-container>
+          <mat-expansion-panel class="sidenav-expansion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>games</mat-icon>
+                <span>{{ 'NAVBAR.PLAY' | translate }}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-nav-list>
+              <a mat-list-item routerLink="/games" (click)="toggleSidenav()">
+                <mat-icon>videogame_asset</mat-icon>
+                <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+              </a>
+              <a mat-list-item routerLink="/lobby" (click)="toggleSidenav()">
+                <mat-icon>casino</mat-icon>
+                <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+              </a>
+              <a mat-list-item routerLink="/stats" (click)="toggleSidenav()">
+                <mat-icon>ssid_chart</mat-icon>
+                <span>{{ 'NAVBAR.STATS' | translate }}</span>
+              </a>
+              <a mat-list-item routerLink="/leaderboard" (click)="toggleSidenav()">
+                <mat-icon>leaderboard</mat-icon>
+                <span>{{ 'NAVBAR.LEADERBOARD' | translate }}</span>
+              </a>
+            </mat-nav-list>
+          </mat-expansion-panel>
+
+          <ng-container *ngIf="isAdmin || isAgent || isRoot">
+            <mat-expansion-panel class="sidenav-expansion">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  <span>{{ 'NAVBAR.ADMIN_AREA' | translate }}</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-nav-list>
+                <a *ngIf="isAdmin || isRoot" mat-list-item routerLink="/admin" (click)="toggleSidenav()">
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
+                </a>
+                <a *ngIf="isAdmin || isAgent || isRoot" mat-list-item routerLink="/agent" (click)="toggleSidenav()">
+                  <mat-icon>support_agent</mat-icon>
+                  <span>{{ 'NAVBAR.AGENT' | translate }}</span>
+                </a>
+                <a *ngIf="isRoot" mat-list-item routerLink="/audit-logs" (click)="toggleSidenav()">
+                  <mat-icon>history</mat-icon>
+                  <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
+                </a>
+              </mat-nav-list>
+            </mat-expansion-panel>
+          </ng-container>
+        </ng-container>
+
+        <mat-expansion-panel class="sidenav-expansion">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>help</mat-icon>
+              <span>{{ 'NAVBAR.HELP' | translate }}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-nav-list>
+            <a mat-list-item routerLink="/support" (click)="toggleSidenav()">
+              <mat-icon>support</mat-icon>
+              <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/privacy-policy" (click)="toggleSidenav()">
+              <mat-icon>policy</mat-icon>
+              <span>{{ 'NAVBAR.PRIVACY' | translate }}</span>
+            </a>
+          </mat-nav-list>
+        </mat-expansion-panel>
+
+        <div class="sidenav-actions">
+          <app-theme-toggle></app-theme-toggle>
+          <app-language-selector></app-language-selector>
+        </div>
+
+        <ng-container *ngIf="isLoggedIn">
+          <a mat-list-item routerLink="/profile" (click)="toggleSidenav()">
+            <mat-icon>account_circle</mat-icon>
+            <span>{{ username }}</span>
+          </a>
+          <a mat-list-item (click)="logout(); toggleSidenav()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>{{ 'NAVBAR.LOGOUT' | translate }}</span>
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="!isLoggedIn">
+          <a mat-list-item routerLink="/login" (click)="toggleSidenav()">
+            <mat-icon>login</mat-icon>
+            <span>{{ 'NAVBAR.LOGIN' | translate }}</span>
+          </a>
+          <a mat-list-item routerLink="/signup" (click)="toggleSidenav()">
+            <mat-icon>person_add_alt_1</mat-icon>
+            <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
+          </a>
+        </ng-container>
+      </mat-nav-list>
     </div>
   </div>
-</mat-toolbar>
+</ng-container>
+
+<ng-container *ngIf="!isMobile">
+  <mat-toolbar class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <button class="navbar-button" mat-button routerLink="/home">
+          <mat-icon>home</mat-icon>
+          <span>{{ 'NAVBAR.HOME' | translate }}</span>
+        </button>
+
+        <button class="navbar-button" *ngIf="!isLoggedIn" mat-button routerLink="/games">
+          <mat-icon>videogame_asset</mat-icon>
+          <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+        </button>
+
+        <ng-container *ngIf="isLoggedIn">
+          <button class="navbar-button" mat-button [matMenuTriggerFor]="socialMenu">
+            <mat-icon>people</mat-icon>
+            <span>{{ 'NAVBAR.SOCIAL' | translate }}</span>
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #socialMenu="matMenu">
+            <button mat-menu-item routerLink="/friends">
+              <mat-icon>person</mat-icon>
+              <span>{{ 'NAVBAR.FRIENDS' | translate }}</span>
+            </button>
+            <button mat-menu-item routerLink="/clubs">
+              <mat-icon>groups</mat-icon>
+              <span>{{ 'NAVBAR.CLUBS' | translate }}</span>
+            </button>
+          </mat-menu>
+
+          <button class="navbar-button" mat-button [matMenuTriggerFor]="playMenu">
+            <mat-icon>games</mat-icon>
+            <span>{{ 'NAVBAR.PLAY' | translate }}</span>
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #playMenu="matMenu">
+            <button mat-menu-item routerLink="/games">
+              <mat-icon>videogame_asset</mat-icon>
+              <span>{{ 'NAVBAR.GAMES' | translate }}</span>
+            </button>
+            <button mat-menu-item routerLink="/lobby">
+              <mat-icon>casino</mat-icon>
+              <span>{{ 'NAVBAR.LOBBY' | translate }}</span>
+            </button>
+            <button mat-menu-item routerLink="/stats">
+              <mat-icon>ssid_chart</mat-icon>
+              <span>{{ 'NAVBAR.STATS' | translate }}</span>
+            </button>
+            <button mat-menu-item routerLink="/leaderboard">
+              <mat-icon>leaderboard</mat-icon>
+              <span>{{ 'NAVBAR.LEADERBOARD' | translate }}</span>
+            </button>
+          </mat-menu>
+
+          <ng-container *ngIf="isAdmin || isAgent || isRoot">
+            <button class="navbar-button" mat-button [matMenuTriggerFor]="adminMenu">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>{{ 'NAVBAR.ADMIN_AREA' | translate }}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #adminMenu="matMenu">
+              <button *ngIf="isAdmin || isRoot" mat-menu-item routerLink="/admin">
+                <mat-icon>admin_panel_settings</mat-icon>
+                <span>{{ 'NAVBAR.ADMIN' | translate }}</span>
+              </button>
+              <button *ngIf="isAdmin || isAgent || isRoot" mat-menu-item routerLink="/agent">
+                <mat-icon>support_agent</mat-icon>
+                <span>{{ 'NAVBAR.AGENT' | translate }}</span>
+              </button>
+              <button *ngIf="isRoot" mat-menu-item routerLink="/audit-logs">
+                <mat-icon>history</mat-icon>
+                <span>{{ 'NAVBAR.AUDIT_LOGS' | translate }}</span>
+              </button>
+            </mat-menu>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <div class="navbar-right">
+        <app-theme-toggle></app-theme-toggle>
+
+        <app-language-selector></app-language-selector>
+
+        <button class="navbar-button" mat-button [matMenuTriggerFor]="helpMenu">
+          <mat-icon>help</mat-icon>
+          <span>{{ 'NAVBAR.HELP' | translate }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #helpMenu="matMenu">
+          <button mat-menu-item routerLink="/support">
+            <mat-icon>support</mat-icon>
+            <span>{{ 'NAVBAR.SUPPORT' | translate }}</span>
+          </button>
+          <button mat-menu-item routerLink="/privacy-policy">
+            <mat-icon>policy</mat-icon>
+            <span>{{ 'NAVBAR.PRIVACY' | translate }}</span>
+          </button>
+        </mat-menu>
+
+        <ng-container *ngIf="isLoggedIn">
+          <button class="navbar-button" mat-button routerLink="/profile">
+            <mat-icon>account_circle</mat-icon>
+            <span>{{ username }}</span>
+          </button>
+          <button class="navbar-button" mat-button (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>{{ 'NAVBAR.LOGOUT' | translate }}</span>
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="navbar-button" mat-button routerLink="/login">
+            <mat-icon>login</mat-icon>
+            <span>{{ 'NAVBAR.LOGIN' | translate }}</span>
+          </button>
+          <button class="navbar-button" mat-button color="primary" routerLink="/signup">
+            <mat-icon>person_add_alt_1</mat-icon> <span>{{ 'NAVBAR.SIGNUP' | translate }}</span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </mat-toolbar>
+</ng-container>
