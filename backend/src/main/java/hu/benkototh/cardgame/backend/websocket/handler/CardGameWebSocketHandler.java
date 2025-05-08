@@ -3,6 +3,8 @@ package hu.benkototh.cardgame.backend.websocket.handler;
 import hu.benkototh.cardgame.backend.game.controller.CardGameController;
 import hu.benkototh.cardgame.backend.game.model.*;
 import hu.benkototh.cardgame.backend.game.service.GameTimeoutService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -15,6 +17,7 @@ import java.util.Map;
 
 @Controller
 public class CardGameWebSocketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(CardGameWebSocketHandler.class);
 
     @Autowired
     private CardGameController cardGameController;
@@ -32,10 +35,13 @@ public class CardGameWebSocketHandler {
             String gameId = (String) payload.get("gameId");
             String userId = (String) payload.get("userId");
 
+            logger.debug("Received game action from user {} for game {}", userId, gameId);
+
             @SuppressWarnings("unchecked")
             Map<String, Object> actionMap = (Map<String, Object>) payload.get("action");
 
             if (gameId == null || userId == null || actionMap == null) {
+                logger.warn("Invalid payload for game action: missing gameId, userId, or action");
                 return;
             }
 
@@ -44,6 +50,7 @@ public class CardGameWebSocketHandler {
             Map<String, Object> parameters = (Map<String, Object>) actionMap.get("parameters");
 
             if (actionType == null || parameters == null) {
+                logger.warn("Invalid action: missing actionType or parameters");
                 return;
             }
 
@@ -68,6 +75,8 @@ public class CardGameWebSocketHandler {
                 }
             }
 
+            gameTimeoutService.recordActivity(gameId, userId);
+
             CardGame game = cardGameController.executeGameAction(gameId, userId, action);
 
             messagingTemplate.convertAndSend(
@@ -76,7 +85,7 @@ public class CardGameWebSocketHandler {
             );
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error executing game action", e);
         }
     }
 
@@ -88,11 +97,15 @@ public class CardGameWebSocketHandler {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
+        logger.debug("User {} joining game {}", userId, gameId);
+
         headerAccessor.getSessionAttributes().put("gameId", gameId);
         headerAccessor.getSessionAttributes().put("userId", userId);
 
         CardGame game = cardGameController.joinGame(gameId, userId);
+
         gameTimeoutService.recordActivity(gameId, userId);
+
         messagingTemplate.convertAndSend(
                 "/topic/game/" + game.getId(),
                 game
@@ -104,6 +117,8 @@ public class CardGameWebSocketHandler {
     public void leaveGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
+
+        logger.debug("User {} leaving game {}", userId, gameId);
 
         CardGame game = cardGameController.leaveGame(gameId, userId);
         messagingTemplate.convertAndSend(
@@ -118,6 +133,8 @@ public class CardGameWebSocketHandler {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
+        logger.debug("User {} abandoning game {}", userId, gameId);
+
         CardGame game = cardGameController.abandonGame(gameId, userId);
         messagingTemplate.convertAndSend(
                 "/topic/game/" + gameId,
@@ -130,6 +147,10 @@ public class CardGameWebSocketHandler {
     public void startGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
+
+        logger.debug("User {} starting game {}", userId, gameId);
+
+        gameTimeoutService.recordActivity(gameId, userId);
 
         CardGame game = cardGameController.startGame(gameId, userId);
         messagingTemplate.convertAndSend(

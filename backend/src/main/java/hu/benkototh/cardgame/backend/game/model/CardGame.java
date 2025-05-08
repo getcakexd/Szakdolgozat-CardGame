@@ -31,21 +31,6 @@ public abstract class CardGame {
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "game_id"
-            , foreignKey = @ForeignKey(name = "fk_game_player",
-            foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
-    @JsonManagedReference
-    private List<Player> players;
-
-    @ElementCollection
-    @CollectionTable(
-            name = "abandoned_users",
-            joinColumns = @JoinColumn(name = "game_id")
-    )
-    @Column(name = "user_id")
-    private List<String> abandonedUsers = new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
@@ -58,13 +43,28 @@ public abstract class CardGame {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endedAt;
 
+    private boolean trackStatistics;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id"
+            , foreignKey = @ForeignKey(name = "fk_game_player",
+            foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
+    @JsonManagedReference
+    private List<Player> players;
+
     @ManyToOne
     @JoinColumn(name = "current_player_id",
             foreignKey = @ForeignKey(name = "FK_CURRENT_PLAYER",
                     foreignKeyDefinition = "FOREIGN KEY (current_player_id) REFERENCES players(id) ON DELETE SET NULL"))
     private Player currentPlayer;
 
-    private boolean trackStatistics;
+    @ElementCollection
+    @CollectionTable(
+            name = "abandoned_users",
+            joinColumns = @JoinColumn(name = "game_id")
+    )
+    @Column(name = "user_id")
+    private List<String> abandonedUsers = new ArrayList<>();
 
     @Transient
     private Map<String, Object> gameState;

@@ -184,26 +184,30 @@ public class CardGameController {
 
         CardGame cardGame = optionalCardGame.get();
 
+        if (cardGame.getStatus() == GameStatus.FINISHED) {
+            logger.info("Game {} is already finished, cannot abandon", gameId);
+            return cardGame;
+        }
+
         cardGame.addAbandonedUser(userId);
         logger.info("User {} added to abandoned users list for game {}", userId, gameId);
 
-        if (cardGame.getStatus() != GameStatus.FINISHED) {
-            cardGame.endGame();
+        cardGame.endGame();
+        logger.info("Game {} ended due to abandonment by user {}", gameId, userId);
 
-            statisticsController.recordAbandonedGame(cardGame, userId);
-            auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
-                    "Abandoned game statistics recorded for game ID: " + gameId);
+        statisticsController.recordAbandonedGame(cardGame, userId);
+        auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
+                "Abandoned game statistics recorded for game ID: " + gameId);
 
-            cardGame = cardGameRepository.save(cardGame);
-            lobbyController.endGame(cardGame.getId());
-            auditLogController.logAction("GAME_ABANDONED", Long.parseLong(userId),
-                    "Game abandoned: " + cardGame.getName() + " (ID: " + gameId + ")");
+        cardGame = cardGameRepository.save(cardGame);
+        lobbyController.endGame(cardGame.getId());
+        auditLogController.logAction("GAME_ABANDONED", Long.parseLong(userId),
+                "Game abandoned: " + cardGame.getName() + " (ID: " + gameId + ")");
 
-            GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
-            event.addData("abandonedBy", userId);
-            event.addData("abandonedUsers", cardGame.fetchAbandonedUsers());
-            broadcastGameEvent(event);
-        }
+        GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
+        event.addData("abandonedBy", userId);
+        event.addData("abandonedUsers", cardGame.fetchAbandonedUsers());
+        broadcastGameEvent(event);
 
         return cardGame;
     }
@@ -232,6 +236,10 @@ public class CardGameController {
         auditLogController.logAction("GAME_STARTED", Long.parseLong(userId),
                 "Game started: " + cardGame.getName() + " (ID: " + gameId + ")");
 
+        for (Player player : cardGame.getPlayers()) {
+            gameTimeoutService.recordActivity(gameId, player.getId());
+        }
+
         GameEvent event = new GameEvent("GAME_STARTED", cardGame.getId());
         event.addData("game", cardGame);
         broadcastGameEvent(event);
@@ -254,7 +262,7 @@ public class CardGameController {
             throw new GameException("Game is not active");
         }
 
-        if (!cardGame.getCurrentPlayer().getId().equals(userId)) {
+        if (cardGame.getCurrentPlayer() == null || !cardGame.getCurrentPlayer().getId().equals(userId)) {
             throw new GameException("It's not your turn");
         }
 
@@ -263,6 +271,7 @@ public class CardGameController {
         }
 
         gameTimeoutService.recordActivity(gameId, userId);
+
         cardGame.executeMove(userId, action);
         auditLogController.logAction("GAME_ACTION_EXECUTED", Long.parseLong(userId),
                 "Action executed: " + action.getActionType() + " in game: " + cardGame.getName() + " (ID: " + gameId + ")");
@@ -290,6 +299,14 @@ public class CardGameController {
         event.addData("action", action);
         event.addData("gameState", cardGame.getGameState());
         broadcastGameEvent(event);
+
+        if (cardGame.getStatus() == GameStatus.ACTIVE && cardGame.getCurrentPlayer() != null) {
+            String nextPlayerId = cardGame.getCurrentPlayer().getId();
+            if (!nextPlayerId.equals(userId)) {
+                gameTimeoutService.recordActivity(gameId, nextPlayerId);
+            }
+        }
+
         logger.info("Current game state: {}", cardGame.getGameState());
         return cardGame;
     }

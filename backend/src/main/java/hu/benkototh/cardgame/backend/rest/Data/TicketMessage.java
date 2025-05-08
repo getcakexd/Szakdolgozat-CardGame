@@ -27,7 +27,7 @@ public class TicketMessage {
 
     private String senderName;
     private String senderEmail;
-    private String senderType; // 'user' or 'agent'
+    private String senderType;
 
     @Column(length = 1000)
     private String message;
