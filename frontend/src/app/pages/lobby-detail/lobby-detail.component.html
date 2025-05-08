@@ -26,7 +26,6 @@
             <form [formGroup]="settingsForm">
               <div class="form-field">
                 <mat-form-field appearance="fill">
-                  <mat-label>{{ 'LOBBY.GAME' | translate }}</mat-label>
                   <mat-select formControlName="gameId">
                     <mat-option *ngFor="let game of games" [value]="game.id">
                       {{ game.name }}
