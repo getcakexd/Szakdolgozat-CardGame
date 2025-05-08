@@ -1,4 +1,4 @@
-<div class="audit-logs-container">
+<div class="audit-logs-container" (window:resize)="onResize($event)">
   <div class="audit-header">
     <h1>{{ 'AUDIT_LOGS.TITLE' | translate }}</h1>
     <p>{{ 'AUDIT_LOGS.SUBTITLE' | translate }}</p>
@@ -156,9 +156,9 @@
         <p>{{ 'AUDIT_LOGS.NO_LOGS_FOUND' | translate }}</p>
       </div>
 
-      <div class="table-container" *ngIf="!loading && !noResults">
+      <div class="table-responsive" *ngIf="!loading && !noResults">
         <table mat-table [dataSource]="displayedLogs" matSort class="audit-table">
-          <ng-container matColumnDef="id">
+          <ng-container matColumnDef="id" *ngIf="!isMobile">
             <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.ID' | translate }}</th>
             <td mat-cell *matCellDef="let log">{{ log.id }}</td>
           </ng-container>
@@ -187,13 +187,13 @@
             <td mat-cell *matCellDef="let log">{{ formatDate(log.timestamp) }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="details">
+          <ng-container matColumnDef="details" *ngIf="!isMobileSmall">
             <th mat-header-cell *matHeaderCellDef>{{ 'AUDIT_LOGS.DETAILS' | translate }}</th>
             <td mat-cell *matCellDef="let log" class="details-cell" [matTooltip]="log.details">{{ log.details }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="log-row"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="log-row" (click)="showLogDetails(row)"></tr>
         </table>
 
         <div class="pagination-info">

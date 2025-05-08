@@ -14,6 +14,7 @@ import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TicketService } from '../../services/ticket/ticket.service';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-create-ticket",
@@ -116,13 +117,13 @@ export class CreateTicketComponent implements OnInit {
               }
             },
             (error) => {
-              console.error('Error adding message:', error);
+              if(IS_DEV) console.error('Error adding message:', error);
               this.showError(this.translate.instant('TICKET.ERROR_MESSAGE'));
             }
           );
         },
         (error) => {
-          console.error('Error creating ticket:', error);
+          if(IS_DEV) console.error('Error creating ticket:', error);
           this.isSubmitting = false;
           this.showError(this.translate.instant('TICKET.ERROR_MESSAGE'));
         }

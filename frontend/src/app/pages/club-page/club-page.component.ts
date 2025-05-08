@@ -131,7 +131,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("User clubs:", clubs)
       },
       error: (error) => {
-        console.error("Error loading user clubs:", error)
+        if(IS_DEV) console.error("Error loading user clubs:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_LOAD_USER_CLUBS"),
           this.translate.instant("COMMON.CLOSE"),
@@ -151,7 +151,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("Public clubs:", clubs)
       },
       error: (error) => {
-        console.error("Error loading public clubs:", error)
+        if(IS_DEV) console.error("Error loading public clubs:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_LOAD_PUBLIC_CLUBS"),
           this.translate.instant("COMMON.CLOSE"),
@@ -189,7 +189,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("Club invites:", data)
       },
       error: (error) => {
-        console.error("Error loading invites:", error)
+        if(IS_DEV) console.error("Error loading invites:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_LOAD_INVITES"),
           this.translate.instant("COMMON.CLOSE"),
@@ -210,7 +210,7 @@ export class ClubPageComponent implements OnInit {
         window.location.reload()
       },
       error: (error) => {
-        console.error("Error accepting invite:", error)
+        if(IS_DEV) console.error("Error accepting invite:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_ACCEPT_INVITE"),
           this.translate.instant("COMMON.CLOSE"),
@@ -232,7 +232,7 @@ export class ClubPageComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error declining invite:", error)
+        if(IS_DEV) console.error("Error declining invite:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_DECLINE_INVITE"),
           this.translate.instant("COMMON.CLOSE"),
@@ -255,7 +255,7 @@ export class ClubPageComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error joining club:", error)
+        if(IS_DEV) console.error("Error joining club:", error)
         this.snackBar.open(this.translate.instant("CLUBS.JOIN_FAILED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
@@ -273,7 +273,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("Top clubs:", data)
       },
       error: (error) => {
-        console.error("Error loading top clubs:", error)
+        if(IS_DEV) console.error("Error loading top clubs:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_LOAD_LEADERBOARD"),
           this.translate.instant("COMMON.CLOSE"),
@@ -297,7 +297,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("Games:", data)
       },
       error: (error) => {
-        console.error("Error loading games:", error)
+        if(IS_DEV) console.error("Error loading games:", error)
         this.snackBar.open(this.translate.instant("CLUBS.FAILED_LOAD_GAMES"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
@@ -317,7 +317,7 @@ export class ClubPageComponent implements OnInit {
         if (IS_DEV) console.log("Top clubs by game:", data)
       },
       error: (error) => {
-        console.error("Error loading top clubs by game:", error)
+        if(IS_DEV) console.error("Error loading top clubs by game:", error)
         this.snackBar.open(
           this.translate.instant("CLUBS.FAILED_LOAD_LEADERBOARD"),
           this.translate.instant("COMMON.CLOSE"),

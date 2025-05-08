@@ -1,4 +1,5 @@
 import { type SocialAuthServiceConfig, GoogleLoginProvider } from "@abacritt/angularx-social-login"
+import {IS_DEV} from './api-config';
 
 export const socialAuthServiceConfig: SocialAuthServiceConfig = {
   autoLogin: false,
@@ -15,6 +16,6 @@ export const socialAuthServiceConfig: SocialAuthServiceConfig = {
     },
   ],
   onError: (err) => {
-    console.error(err)
+    if(IS_DEV) console.error(err)
   },
 }

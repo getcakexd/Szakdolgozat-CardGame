@@ -307,14 +307,14 @@ body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  color: var(--mat-sys-primary);
   transition: color 0.3s ease;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
 }
 
-body::before {
+body::before, body::after  {
   content: '';
   position: fixed;
   top: -50%;
@@ -337,31 +337,6 @@ body::before {
       rgba(var(--mesh-color-3-rgb), 1) 0%,
       transparent 40%);
   animation: move-gradient-1 15s ease infinite;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  right: -50%;
-  bottom: -50%;
-  width: 200%;
-  height: 200%;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.07;
-  background:
-    radial-gradient(circle at 70% 60%,
-      rgba(var(--mesh-color-2-rgb), 1) 0%,
-      transparent 40%),
-    radial-gradient(circle at 30% 30%,
-      rgba(var(--mesh-color-3-rgb), 1) 0%,
-      transparent 40%),
-    radial-gradient(circle at 50% 70%,
-      rgba(var(--mesh-color-1-rgb), 1) 0%,
-      transparent 40%);
-  animation: move-gradient-2 20s ease infinite;
 }
 
 body > div:first-child::before {
@@ -414,7 +389,6 @@ html.light-theme .mat-mdc-dialog-container,
 html.light-theme .mat-mdc-menu-panel,
 html.light-theme .mat-mdc-select-panel,
 html.light-theme .mat-mdc-autocomplete-panel,
-html.light-theme .mat-mdc-snack-bar-container,
 html.light-theme .mat-mdc-bottom-sheet-container,
 html.light-theme .mat-mdc-paginator,
 html.light-theme .mat-mdc-toolbar,
@@ -441,7 +415,6 @@ html.dark-theme .mat-mdc-dialog-container,
 html.dark-theme .mat-mdc-menu-panel,
 html.dark-theme .mat-mdc-select-panel,
 html.dark-theme .mat-mdc-autocomplete-panel,
-html.dark-theme .mat-mdc-snack-bar-container,
 html.dark-theme .mat-mdc-bottom-sheet-container,
 html.dark-theme .mat-mdc-paginator,
 html.dark-theme .mat-mdc-toolbar,
@@ -515,4 +488,69 @@ html.light-theme .mat-mdc-dialog-container .mat-mdc-dialog-surface {
 
 html.dark-theme .mat-mdc-dialog-container .mat-mdc-dialog-surface {
   background-color: var(--mat-component-bg-dark) !important;
+}
+
+html.light-theme .mat-mdc-snack-bar-container {
+  background-color: var(--mat-component-bg-light) !important;
+}
+
+html.dark-theme .mat-mdc-snack-bar-container {
+  background-color: var(--mat-component-bg-dark) !important;
+}
+
+html.light-theme .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--mat-component-bg-light) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+html.dark-theme .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--mat-component-bg-dark) !important;
+  color: var(--mat-sys-on-surface) !important;
+}
+
+html.light-theme .mat-mdc-snack-bar-container .mat-mdc-button {
+  color: var(--mat-sys-primary) !important;
+}
+
+html.dark-theme .mat-mdc-snack-bar-container .mat-mdc-button {
+  color: var(--mat-sys-primary) !important;
+}
+
+@media (max-width: 768px) {
+  .mat-mdc-table {
+    border-radius: 6px;
+  }
+
+  .mat-mdc-card {
+    border-radius: 8px;
+  }
+
+  .mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-outlined-button {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-mdc-icon-button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
+  }
+
+  .mat-mdc-icon-button .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  .mat-mdc-table .mat-mdc-cell:first-of-type,
+  .mat-mdc-table .mat-mdc-header-cell:first-of-type {
+    padding-left: 8px;
+  }
+
+  .mat-mdc-table .mat-mdc-cell:last-of-type,
+  .mat-mdc-table .mat-mdc-header-cell:last-of-type {
+    padding-right: 8px;
+  }
 }

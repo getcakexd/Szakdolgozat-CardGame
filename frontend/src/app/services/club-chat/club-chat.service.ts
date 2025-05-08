@@ -103,7 +103,7 @@ export class ClubChatService {
             this.messageStore[clubKey].next(messages)
           },
           error: (error) => {
-            console.error("Error fetching club messages via HTTP:", error)
+            if(IS_DEV) console.error("Error fetching club messages via HTTP:", error)
           },
         })
     }

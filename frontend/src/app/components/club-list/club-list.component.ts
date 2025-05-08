@@ -104,7 +104,7 @@ export class ClubListComponent implements OnInit {
           if (IS_DEV) console.log(`Member count for club ${club.id}:`, response.memberCount)
         },
         error: (error) => {
-          console.error(`Error loading member count for club ${club.id}:`, error)
+          if(IS_DEV) console.error(`Error loading member count for club ${club.id}:`, error)
           this.memberCounts.set(club.id, 0)
         },
       })

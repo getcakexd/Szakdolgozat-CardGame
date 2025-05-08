@@ -114,7 +114,7 @@ export class LobbyChatService {
             }
           },
           error: (error) => {
-            console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
+            if(IS_DEV) console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
           },
         })
     }
@@ -141,7 +141,7 @@ export class LobbyChatService {
           this.handleNewMessage(lobbyId, data)
         }
       } catch (error) {
-        console.error("Error processing WebSocket message:", error)
+        if(IS_DEV) console.error("Error processing WebSocket message:", error)
       }
     })
   }
@@ -252,7 +252,7 @@ export class LobbyChatService {
             }
           },
           error: (error) => {
-            console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
+            if(IS_DEV) console.error(`Error fetching lobby messages via HTTP for lobby ${lobbyId}:`, error)
           },
         })
     }

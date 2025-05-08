@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
 import { BehaviorSubject, Observable, throwError } from "rxjs"
 import { catchError, finalize } from "rxjs/operators"
-import { BACKEND_API_URL } from "../../../environments/api-config"
+import {BACKEND_API_URL, IS_DEV} from "../../../environments/api-config"
 import { AuthService } from "../auth/auth.service"
 
 @Injectable({
@@ -33,7 +33,7 @@ export class GdprService {
     return this.http.get<any>(`${this.apiUrl}/export-data/${userId}`).pipe(
       finalize(() => this.dataExportInProgressSubject.next(false)),
       catchError((error) => {
-        console.error("Error exporting user data:", error)
+        if(IS_DEV) console.error("Error exporting user data:", error)
         return throwError(() => new Error("Failed to export user data"))
       }),
     )

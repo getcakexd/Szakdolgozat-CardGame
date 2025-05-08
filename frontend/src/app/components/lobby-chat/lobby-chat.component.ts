@@ -22,8 +22,8 @@ import { MatMenuModule } from "@angular/material/menu"
 import {TranslateModule, TranslateService} from "@ngx-translate/core"
 import {LobbyMessage} from '../../models/lobby-message.mode';
 import {LobbyService} from '../../services/lobby/lobby.service';
-import {MatDivider} from '@angular/material/divider';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-lobby-chat",
@@ -43,7 +43,6 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     TranslateModule,
     DatePipe,
     FormsModule,
-    MatDivider,
     MatProgressSpinner,
   ],
 })
@@ -111,7 +110,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.isLoading = false
       },
       error: (error) => {
-        console.error(this.translate.instant("CHAT.ERROR_LOADING"), error)
+        if(IS_DEV) console.error(this.translate.instant("CHAT.ERROR_LOADING"), error)
         this.isLoading = false
       },
     })
@@ -128,7 +127,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.scrollToBottom()
       },
       error: (error) => {
-        console.error(this.translate.instant("CHAT.ERROR_SENDING"), error)
+        if(IS_DEV) console.error(this.translate.instant("CHAT.ERROR_SENDING"), error)
       },
     })
   }
@@ -136,7 +135,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   unsendMessage(messageId: number) {
     this.lobbyChatService.unsendMessage(messageId).subscribe({
       error: (error) => {
-        console.error(this.translate.instant("CHAT.ERROR_UNSENDING"), error)
+        if(IS_DEV) console.error(this.translate.instant("CHAT.ERROR_UNSENDING"), error)
       },
     })
   }
@@ -144,7 +143,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   removeMessage(messageId: number) {
     this.lobbyChatService.removeMessage(messageId).subscribe({
       error: (error) => {
-        console.error(this.translate.instant("CHAT.ERROR_REMOVING"), error)
+        if(IS_DEV) console.error(this.translate.instant("CHAT.ERROR_REMOVING"), error)
       },
     })
   }
@@ -157,7 +156,7 @@ export class LobbyChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       this.shouldScrollToBottom = false;
     } catch (err) {
-      console.error("Scroll error:", err);
+      if(IS_DEV) console.error("Scroll error:", err);
     }
   }
 

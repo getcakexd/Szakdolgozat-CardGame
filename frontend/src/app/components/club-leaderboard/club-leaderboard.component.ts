@@ -84,7 +84,7 @@ export class ClubLeaderboardComponent implements OnInit {
         this.games = games.filter((game) => game.active)
       },
       error: (error) => {
-        console.error("Error loading games:", error)
+        if(IS_DEV) console.error("Error loading games:", error)
         this.snackBar.open(
           this.translate.instant("CLUB.LEADERBOARD.FAILED_LOAD_GAMES"),
           this.translate.instant("COMMON.CLOSE"),
@@ -106,7 +106,7 @@ export class ClubLeaderboardComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading club member leaderboard:", error)
+        if(IS_DEV) console.error("Error loading club member leaderboard:", error)
         this.snackBar.open(
           this.translate.instant("CLUB.LEADERBOARD.FAILED_LOAD"),
           this.translate.instant("COMMON.CLOSE"),
@@ -131,7 +131,7 @@ export class ClubLeaderboardComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading club game leaderboard:", error)
+        if(IS_DEV) console.error("Error loading club game leaderboard:", error)
         this.snackBar.open(
           this.translate.instant("CLUB.LEADERBOARD.FAILED_LOAD"),
           this.translate.instant("COMMON.CLOSE"),

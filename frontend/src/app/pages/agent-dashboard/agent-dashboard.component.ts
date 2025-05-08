@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnInit, OnDestroy } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Router } from "@angular/router"
@@ -22,12 +22,12 @@ import {
   MatTable,
 } from "@angular/material/table"
 import { MatIcon } from "@angular/material/icon"
-import {MatButton, MatIconButton} from "@angular/material/button"
+import { MatButton, MatIconButton } from "@angular/material/button"
 import { DatePipe, NgClass, NgIf } from "@angular/common"
 import { MatTab, MatTabGroup } from "@angular/material/tabs"
 import { MatCard } from "@angular/material/card"
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {TicketService} from '../../services/ticket/ticket.service';
+import { TranslateModule, TranslateService } from "@ngx-translate/core"
+import { TicketService } from "../../services/ticket/ticket.service"
 
 @Component({
   selector: "app-agent-dashboard",
@@ -53,18 +53,19 @@ import {TicketService} from '../../services/ticket/ticket.service';
     MatTabGroup,
     MatCard,
     TranslateModule,
-    MatButton
+    MatButton,
   ],
   standalone: true,
 })
-export class AgentDashboardComponent implements OnInit {
+export class AgentDashboardComponent implements OnInit, OnDestroy {
   users: User[] = []
   tickets: Ticket[] = []
   userDisplayedColumns: string[] = ["id", "username", "email", "locked", "actions"]
   ticketDisplayedColumns: string[] = ["reference", "name", "email", "subject", "status", "createdAt", "actions"]
   userHistory: UserHistory[] = []
-  activeFilter: 'all' | 'new' | 'in-progress' | 'resolved' = 'all'
-  selectedTabIndex = 0;
+  activeFilter: "all" | "new" | "in-progress" | "resolved" = "all"
+  selectedTabIndex = 0
+  isMobile = window.innerWidth < 768
 
   constructor(
     private userService: UserService,
@@ -72,46 +73,67 @@ export class AgentDashboardComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
     this.loadUsers()
     this.loadTickets()
+    this.updateDisplayColumns()
+    window.addEventListener("resize", this.onResize.bind(this))
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener("resize", this.onResize.bind(this))
+  }
+
+  onResize(event: any): void {
+    this.isMobile = window.innerWidth < 768
+    this.updateDisplayColumns()
+  }
+
+  updateDisplayColumns(): void {
+    if (this.isMobile) {
+      this.userDisplayedColumns = ["username", "locked", "actions"]
+      this.ticketDisplayedColumns = ["reference", "subject", "status", "actions"]
+    } else {
+      this.userDisplayedColumns = ["id", "username", "email", "locked", "actions"]
+      this.ticketDisplayedColumns = ["reference", "name", "email", "subject", "status", "createdAt", "actions"]
+    }
   }
 
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users) => (this.users = users),
-      () => this.showError(this.translate.instant('AGENT.FAILED_LOAD_USERS')),
+      () => this.showError(this.translate.instant("AGENT.FAILED_LOAD_USERS")),
     )
   }
 
   loadTickets(): void {
     this.ticketService.getAllTickets().subscribe(
       (tickets) => (this.tickets = tickets),
-      () => this.showError(this.translate.instant('TICKET.ERROR_LOADING')),
+      () => this.showError(this.translate.instant("TICKET.ERROR_LOADING")),
     )
   }
 
-  applyFilter(filter: 'all' | 'new' | 'in-progress' | 'resolved'): void {
-    this.activeFilter = filter;
+  applyFilter(filter: "all" | "new" | "in-progress" | "resolved"): void {
+    this.activeFilter = filter
   }
 
   getFilteredTickets(): Ticket[] {
-    if (this.activeFilter === 'all') {
-      return this.tickets;
+    if (this.activeFilter === "all") {
+      return this.tickets
     } else {
-      return this.tickets.filter(ticket => ticket.status === this.activeFilter);
+      return this.tickets.filter((ticket) => ticket.status === this.activeFilter)
     }
   }
 
   unlockUser(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
-        title: this.translate.instant('COMMON.CONFIRM'),
-        message: this.translate.instant('AGENT.CONFIRM_UNLOCK', { username: user.username })
+        title: this.translate.instant("COMMON.CONFIRM"),
+        message: this.translate.instant("AGENT.CONFIRM_UNLOCK", { username: user.username }),
       },
     })
 
@@ -119,10 +141,10 @@ export class AgentDashboardComponent implements OnInit {
       if (result) {
         this.userService.unlockUser(user.id).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('AGENT.USER_UNLOCKED'))
+            this.showSuccess(this.translate.instant("AGENT.USER_UNLOCKED"))
             this.loadUsers()
           },
-          () => this.showError(this.translate.instant('AGENT.FAILED_UNLOCK_USER')),
+          () => this.showError(this.translate.instant("AGENT.FAILED_UNLOCK_USER")),
         )
       }
     })
@@ -130,7 +152,7 @@ export class AgentDashboardComponent implements OnInit {
 
   modifyUser(user: User): void {
     const dialogRef = this.dialog.open(ModifyUserDialogComponent, {
-      width: "400px",
+      width: this.isMobile ? "90%" : "400px",
       data: { user },
     })
 
@@ -138,10 +160,10 @@ export class AgentDashboardComponent implements OnInit {
       if (result) {
         this.userService.modifyUserData(user.id, result).subscribe(
           () => {
-            this.showSuccess(this.translate.instant('AGENT.USER_MODIFIED'))
+            this.showSuccess(this.translate.instant("AGENT.USER_MODIFIED"))
             this.loadUsers()
           },
-          () => this.showError(this.translate.instant('AGENT.FAILED_MODIFY_USER')),
+          () => this.showError(this.translate.instant("AGENT.FAILED_MODIFY_USER")),
         )
       }
     })
@@ -152,48 +174,55 @@ export class AgentDashboardComponent implements OnInit {
       (history) => {
         this.userHistory = history
         this.dialog.open(UserHistoryDialogComponent, {
-          width: "600px",
+          width: this.isMobile ? "90%" : "600px",
           data: { user, history },
         })
       },
-      () => this.showError(this.translate.instant('AGENT.FAILED_LOAD_HISTORY')),
+      () => this.showError(this.translate.instant("AGENT.FAILED_LOAD_HISTORY")),
     )
   }
 
-  updateTicketStatus(ticket: Ticket, status: 'in-progress' | 'resolved'): void {
+  updateTicketStatus(ticket: Ticket, status: "in-progress" | "resolved"): void {
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}")
     this.ticketService.updateTicketStatus(ticket.id!.toString(), status, currentUser.id).subscribe(
       (updatedTicket) => {
-        const index = this.tickets.findIndex(t => t.id === updatedTicket.id);
+        const index = this.tickets.findIndex((t) => t.id === updatedTicket.id)
         if (index !== -1) {
-          this.tickets[index] = updatedTicket;
+          this.tickets[index] = updatedTicket
         }
-        this.showSuccess(this.translate.instant('TICKET.STATUS_UPDATED'));
-        this.loadTickets();
-        this.selectedTabIndex = 1;
+        this.showSuccess(this.translate.instant("TICKET.STATUS_UPDATED"))
+        this.loadTickets()
+        this.selectedTabIndex = 1
       },
-      () => this.showError(this.translate.instant('TICKET.ERROR_UPDATING_STATUS')),
+      () => this.showError(this.translate.instant("TICKET.ERROR_UPDATING_STATUS")),
     )
   }
 
   viewTicket(ticketId: string): void {
-    this.router.navigate(['/ticket', ticketId]);
+    this.router.navigate(["/ticket", ticketId])
   }
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'new': return 'status-new';
-      case 'in-progress': return 'status-progress';
-      case 'resolved': return 'status-resolved';
-      default: return '';
+      case "new":
+        return "status-new"
+      case "in-progress":
+        return "status-progress"
+      case "resolved":
+        return "status-resolved"
+      default:
+        return ""
     }
   }
 
   private showSuccess(message: string): void {
-    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 3000 })
+    this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), { duration: 3000 })
   }
 
   private showError(message: string): void {
-    this.snackBar.open(message, this.translate.instant('COMMON.CLOSE'), { duration: 5000, panelClass: "error-snackbar" })
+    this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), {
+      duration: 5000,
+      panelClass: "error-snackbar",
+    })
   }
 }

@@ -31,7 +31,6 @@ public class SecurityConfig {
                         authorizeHttpRequests
                                 .requestMatchers("/api/ws/**", "/api/ws").permitAll()
                                 .requestMatchers("/api/heartbeat", "/api/**").permitAll()
-                                //.hasAnyAuthority("ROLE_USER")
                                 .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

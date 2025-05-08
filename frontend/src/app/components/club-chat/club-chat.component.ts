@@ -23,6 +23,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
 import {ClubService} from "../../services/club/club.service";
 import {ClubMemberService} from "../../services/club-member/club-member.service";
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-club-chat",
@@ -129,7 +130,7 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.shouldScrollToBottom = true
         },
         error: (error) => {
-          console.error("Error loading messages:", error)
+          if(IS_DEV) console.error("Error loading messages:", error)
           this.isLoading = false
         },
       }),
@@ -169,7 +170,7 @@ export class ClubChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       this.shouldScrollToBottom = false;
     } catch (err) {
-      console.error("Error scrolling to bottom:", err);
+      if(IS_DEV) console.error("Error scrolling to bottom:", err);
     }
   }
 }

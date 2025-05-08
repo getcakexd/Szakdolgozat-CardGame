@@ -20,6 +20,7 @@ import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-
 import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { ThemeService } from "../../services/theme/theme.service"
 import { PasswordValidatorService } from "../../services/password-validator/password-validator.service"
+import {IS_DEV} from '../../../environments/api-config';
 
 interface ThemePalette {
   name: string
@@ -131,7 +132,7 @@ export class ProfileComponent implements OnInit {
           this.isLoading = false
         },
         error: (error) => {
-          console.error("Error checking Google auth status:", error)
+          if(IS_DEV) console.error("Error checking Google auth status:", error)
           this.isLoading = false
         },
       })

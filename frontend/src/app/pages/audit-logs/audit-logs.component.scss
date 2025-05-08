@@ -213,11 +213,10 @@
   color: var(--text-secondary);
 }
 
-.table-container {
-  display: flex;
-  flex-direction: column;
+.table-responsive {
   width: 100%;
-  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pagination-info {
@@ -234,6 +233,7 @@
 
 .log-row {
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .log-row:hover {
@@ -328,18 +328,50 @@ mat-paginator {
   min-width: 220px;
 }
 
+@media (max-width: 1024px) {
+  .audit-logs-container {
+    padding: 16px;
+  }
+
+  .audit-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .date-range-quick-buttons {
+    justify-content: center;
+  }
+}
+
 @media (max-width: 768px) {
+  .audit-logs-container {
+    padding: 12px;
+  }
+
+  .audit-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .audit-header p {
+    font-size: 0.9rem;
+  }
+
   .filter-row {
     flex-direction: column;
+    gap: 12px;
   }
 
   .filter-field {
     width: 100%;
+    min-width: 100%;
   }
 
   .date-selectors-container {
     flex-direction: column;
     gap: 16px;
+  }
+
+  .date-selector-group {
+    min-width: 100%;
   }
 
   .date-inputs {
@@ -359,5 +391,109 @@ mat-paginator {
   .quick-date-btn {
     flex: 1 0 calc(33.333% - 8px);
     text-align: center;
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+
+  .date-range-preview {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-actions button {
+    width: 100%;
+  }
+
+  .audit-table {
+    min-width: 650px;
+  }
+
+  .action-badge {
+    max-width: 150px;
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .pagination-info {
+    text-align: center;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .audit-logs-container {
+    padding: 8px;
+  }
+
+  .audit-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .audit-header p {
+    font-size: 0.8rem;
+  }
+
+  .filters-section h2 {
+    font-size: 1rem;
+  }
+
+  .date-range-container {
+    padding: 12px 8px;
+  }
+
+  .date-range-header span {
+    font-size: 0.9rem;
+  }
+
+  .date-label {
+    font-size: 0.9rem;
+  }
+
+  .quick-date-btn {
+    flex: 1 0 calc(50% - 4px);
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+
+  .audit-table {
+    min-width: 450px;
+  }
+
+  .mat-column-action {
+    min-width: 150px;
+  }
+
+  .action-badge {
+    max-width: 120px;
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+
+  .user-info {
+    gap: 4px;
+  }
+
+  .user-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+  }
+
+  .user-id {
+    font-size: 10px;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size {
+    margin-right: 4px !important;
+  }
+
+  ::ng-deep .mat-mdc-paginator-range-label {
+    margin: 0 4px !important;
   }
 }

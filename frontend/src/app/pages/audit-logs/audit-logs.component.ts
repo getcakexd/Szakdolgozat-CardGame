@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core"
+import { Component, OnInit, ViewChild, Inject } from "@angular/core"
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms"
 import { MatPaginator, PageEvent } from "@angular/material/paginator"
 import { MatSort } from "@angular/material/sort"
@@ -18,7 +18,7 @@ import { TranslatePipe, TranslateService } from "@ngx-translate/core"
 import { AuditLog, AuditLogFilter } from "../../models/audit-log.model"
 import { AuditLogService } from "../../services/audit-log/audit-log.service"
 import { MatProgressSpinner } from "@angular/material/progress-spinner"
-import { NgClass, NgForOf, NgIf, DatePipe } from "@angular/common"
+import {NgClass, NgForOf, DatePipe, NgIf} from "@angular/common"
 import { MatFormField, MatInput, MatLabel } from "@angular/material/input"
 import { MatOption } from "@angular/material/core"
 import { MatSelect } from "@angular/material/select"
@@ -27,6 +27,14 @@ import { MatButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon"
 import { MatTooltip } from "@angular/material/tooltip"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialogContent,
+  MatDialogTitle, MatDialogActions, MatDialogClose
+} from "@angular/material/dialog"
+import { IS_DEV } from "../../../environments/api-config"
 
 @Component({
   selector: "app-audit-logs",
@@ -46,7 +54,6 @@ import { MatSnackBar } from "@angular/material/snack-bar"
     MatPaginator,
     MatTable,
     MatProgressSpinner,
-    NgIf,
     MatInput,
     MatLabel,
     MatFormField,
@@ -62,6 +69,7 @@ import { MatSnackBar } from "@angular/material/snack-bar"
     NgClass,
     MatTooltip,
     DatePipe,
+    NgIf,
   ],
   standalone: true,
 })
@@ -79,6 +87,8 @@ export class AuditLogsComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 25, 50, 100]
   pageIndex = 0
   totalItems = 0
+  isMobile = window.innerWidth < 768
+  isMobileSmall = window.innerWidth < 480
   @ViewChild(MatSort) sort!: MatSort
   Math = Math
 
@@ -104,6 +114,7 @@ export class AuditLogsComponent implements OnInit {
     private fb: FormBuilder,
     public translate: TranslateService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {
     this.filterForm = this.fb.group({
       userId: [""],
@@ -123,6 +134,23 @@ export class AuditLogsComponent implements OnInit {
   ngOnInit(): void {
     this.loadAuditLogs()
     this.loadActions()
+    this.updateDisplayColumns()
+  }
+
+  onResize(event: any): void {
+    this.isMobile = window.innerWidth < 768
+    this.isMobileSmall = window.innerWidth < 480
+    this.updateDisplayColumns()
+  }
+
+  updateDisplayColumns(): void {
+    if (this.isMobileSmall) {
+      this.displayedColumns = ["action", "user", "timestamp"]
+    } else if (this.isMobile) {
+      this.displayedColumns = ["action", "user", "timestamp", "details"]
+    } else {
+      this.displayedColumns = ["id", "action", "user", "timestamp", "details"]
+    }
   }
 
   loadAuditLogs(): void {
@@ -139,7 +167,7 @@ export class AuditLogsComponent implements OnInit {
         this.loading = false
       },
       error: (error) => {
-        console.error("Error fetching audit logs", error)
+        if (IS_DEV) console.error("Error fetching audit logs", error)
         this.showError(this.translate.instant("AUDIT_LOGS.ERROR_LOADING"))
         this.loading = false
       },
@@ -152,7 +180,7 @@ export class AuditLogsComponent implements OnInit {
         this.actions = actions
       },
       error: (error) => {
-        console.error("Error fetching actions", error)
+        if (IS_DEV) console.error("Error fetching actions", error)
       },
     })
   }
@@ -220,7 +248,6 @@ export class AuditLogsComponent implements OnInit {
     }
   }
 
-
   updateEndDate(): void {
     const year = this.filterForm.get("endYear")?.value
     const month = this.filterForm.get("endMonth")?.value
@@ -287,7 +314,7 @@ export class AuditLogsComponent implements OnInit {
         this.isFiltering = false
       },
       error: (error) => {
-        console.error("Error fetching filtered audit logs", error)
+        if (IS_DEV) console.error("Error fetching filtered audit logs", error)
         this.showError(this.translate.instant("AUDIT_LOGS.ERROR_FILTERING"))
         this.loading = false
         this.isFiltering = false
@@ -453,10 +480,77 @@ export class AuditLogsComponent implements OnInit {
     })
   }
 
+  showLogDetails(log: AuditLog): void {
+    if (this.isMobileSmall) {
+      this.dialog.open(LogDetailsDialogComponent, {
+        width: "95%",
+        maxWidth: "500px",
+        data: log,
+      })
+    }
+  }
+
   private showError(message: string): void {
     this.snackBar.open(message, this.translate.instant("COMMON.CLOSE"), {
       duration: 5000,
       panelClass: "error-snackbar",
     })
   }
+}
+
+@Component({
+  selector: "log-details-dialog",
+  template: `
+    <h2 mat-dialog-title>{{ 'AUDIT_LOGS.LOG_DETAILS' | translate }}</h2>
+    <mat-dialog-content>
+      <div class="log-detail-item">
+        <span class="detail-label">{{ 'AUDIT_LOGS.ID' | translate }}:</span>
+        <span class="detail-value">{{ data.id }}</span>
+      </div>
+      <div class="log-detail-item">
+        <span class="detail-label">{{ 'AUDIT_LOGS.ACTION' | translate }}:</span>
+        <span class="detail-value">{{ data.action }}</span>
+      </div>
+      <div class="log-detail-item">
+        <span class="detail-label">{{ 'AUDIT_LOGS.USER' | translate }}:</span>
+        <span class="detail-value">{{ data.userId || 'N/A' }}</span>
+      </div>
+      <div class="log-detail-item">
+        <span class="detail-label">{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}:</span>
+        <span class="detail-value">{{ data.timestamp | date:'medium' }}</span>
+      </div>
+      <div class="log-detail-item">
+        <span class="detail-label">{{ 'AUDIT_LOGS.DETAILS' | translate }}:</span>
+        <span class="detail-value">{{ data.details }}</span>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>{{ 'COMMON.CLOSE' | translate }}</button>
+    </mat-dialog-actions>
+  `,
+  styles: [
+    `
+    .log-detail-item {
+      margin-bottom: 12px;
+    }
+    .detail-label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--mat-sys-on-surface-variant);
+    }
+    .detail-value {
+      display: block;
+      word-break: break-word;
+    }
+  `,
+  ],
+  standalone: true,
+  imports: [MatButton, TranslatePipe, DatePipe, MatDialogContent, MatDialogTitle, MatDialogActions, MatDialogClose],
+})
+export class LogDetailsDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<LogDetailsDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: AuditLog
+  ) {}
 }

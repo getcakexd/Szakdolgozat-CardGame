@@ -73,7 +73,7 @@ export class LeaderboardComponent implements OnInit {
         this.games = games.filter((game) => game.active)
       },
       error: (error) => {
-        console.error("Error loading games:", error)
+        if(IS_DEV) console.error("Error loading games:", error)
         this.snackBar.open(
           this.translate.instant("LEADERBOARD.FAILED_LOAD_GAMES"),
           this.translate.instant("COMMON.CLOSE"),
@@ -95,7 +95,7 @@ export class LeaderboardComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading leaderboard:", error)
+        if(IS_DEV) console.error("Error loading leaderboard:", error)
         this.snackBar.open(this.translate.instant("LEADERBOARD.FAILED_LOAD"), this.translate.instant("COMMON.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],
@@ -116,7 +116,7 @@ export class LeaderboardComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading game leaderboard:", error)
+        if(IS_DEV) console.error("Error loading game leaderboard:", error)
         this.snackBar.open(this.translate.instant("LEADERBOARD.FAILED_LOAD"), this.translate.instant("COMMON.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],
