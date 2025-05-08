@@ -14,7 +14,7 @@ import {ThemeService} from './services/theme/theme.service';
   ],
   templateUrl: './app.component.html',
   standalone: true,
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   isDarkMode$: Observable<boolean>;
