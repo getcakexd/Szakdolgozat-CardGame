@@ -1,4 +1,4 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component, OnInit, OnDestroy } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { User } from "../../models/user.model"
@@ -25,12 +25,12 @@ import { NgIf, NgClass, NgFor } from "@angular/common"
 import { MatCard } from "@angular/material/card"
 import { AddGameDialogComponent } from "../../components/add-game-dialog/add-game-dialog.component"
 import { AddUserDialogComponent } from "../../components/add-user-dialog/add-user-dialog.component"
-import { AuthService } from '../../services/auth/auth.service';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { GameCardComponent } from "../../components/game-card/game-card.component";
-import {MatDivider} from '@angular/material/divider';
-import {EditGameDialogComponent} from '../../components/edit-game-dialog/edit-game-dialog.component';
+import { AuthService } from "../../services/auth/auth.service"
+import { MatTooltip } from "@angular/material/tooltip"
+import { TranslateModule, TranslateService } from "@ngx-translate/core"
+import { GameCardComponent } from "../../components/game-card/game-card.component"
+import { MatDivider } from "@angular/material/divider"
+import { EditGameDialogComponent } from "../../components/edit-game-dialog/edit-game-dialog.component"
 
 @Component({
   selector: "app-admin-dashboard",
@@ -59,14 +59,15 @@ import {EditGameDialogComponent} from '../../components/edit-game-dialog/edit-ga
     MatTooltip,
     TranslateModule,
     GameCardComponent,
-    MatDivider
+    MatDivider,
   ],
   standalone: true,
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   users: User[] = []
   games: Game[] = []
   userDisplayedColumns: string[] = ["id", "username", "email", "role", "actions"]
+  isMobile = window.innerWidth < 768
 
   isRoot = false
   isAdmin = false
@@ -85,6 +86,25 @@ export class AdminDashboardComponent implements OnInit {
     this.loadGames()
     this.isRoot = this.authService.isRoot()
     this.isAdmin = this.authService.isAdmin()
+    this.updateDisplayColumns()
+    window.addEventListener("resize", this.onResize.bind(this))
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener("resize", this.onResize.bind(this))
+  }
+
+  onResize(event: any): void {
+    this.isMobile = window.innerWidth < 768
+    this.updateDisplayColumns()
+  }
+
+  updateDisplayColumns(): void {
+    if (this.isMobile) {
+      this.userDisplayedColumns = ["username", "role", "actions"]
+    } else {
+      this.userDisplayedColumns = ["id", "username", "email", "role", "actions"]
+    }
   }
 
   loadUsers(): void {
@@ -103,7 +123,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddUserDialog(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, {
-      width: "20%",
+      width: this.isMobile ? "90%" : "20%",
     })
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -121,7 +141,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openAddGameDialog(): void {
     const dialogRef = this.dialog.open(AddGameDialogComponent, {
-      width: "90%",
+      width: this.isMobile ? "95%" : "90%",
       maxWidth: "1200px",
       panelClass: "wide-dialog",
       autoFocus: false,
@@ -142,7 +162,7 @@ export class AdminDashboardComponent implements OnInit {
 
   deleteUser(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_DELETE_USER", { username: user.username }),
@@ -164,7 +184,7 @@ export class AdminDashboardComponent implements OnInit {
 
   deleteGame(game: Game): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_DELETE_GAME", { name: game.name }),
@@ -210,7 +230,7 @@ export class AdminDashboardComponent implements OnInit {
 
   promoteToAgent(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_PROMOTION_AGENT", { username: user.username }),
@@ -232,7 +252,7 @@ export class AdminDashboardComponent implements OnInit {
 
   demoteFromAgent(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_DEMOTION_AGENT", { username: user.username }),
@@ -254,7 +274,7 @@ export class AdminDashboardComponent implements OnInit {
 
   promoteToAdmin(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_PROMOTION_ADMIN", { username: user.username }),
@@ -276,7 +296,7 @@ export class AdminDashboardComponent implements OnInit {
 
   demoteFromAdmin(user: User): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "300px",
+      width: this.isMobile ? "90%" : "300px",
       data: {
         title: this.translate.instant("COMMON.CONFIRM"),
         message: this.translate.instant("ADMIN.CONFIRM_DEMOTION_ADMIN", { username: user.username }),
@@ -334,7 +354,7 @@ export class AdminDashboardComponent implements OnInit {
 
   editGame(game: Game): void {
     const dialogRef = this.dialog.open(EditGameDialogComponent, {
-      width: "90%",
+      width: this.isMobile ? "95%" : "90%",
       maxWidth: "1200px",
       panelClass: "wide-dialog",
       autoFocus: false,

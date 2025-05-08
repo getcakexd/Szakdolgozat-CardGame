@@ -107,6 +107,12 @@
   overflow: hidden !important;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 768px) {
   .agent-dashboard-container {
     padding: 16px 8px;
@@ -123,6 +129,19 @@
   .tab-content {
     padding: 16px;
   }
+
+  .full-width-table {
+    min-width: 800px;
+  }
+
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .filter-buttons button {
+    padding: 0 8px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -136,5 +155,18 @@
 
   ::ng-deep .mat-mdc-tab-label-content span {
     display: none;
+  }
+
+  .status-badge {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+
+  .mat-mdc-row .mat-mdc-cell {
+    font-size: 12px;
+  }
+
+  .mat-mdc-header-row .mat-mdc-header-cell {
+    font-size: 12px;
   }
 }

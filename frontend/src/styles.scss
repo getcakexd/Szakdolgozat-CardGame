@@ -515,3 +515,42 @@ html.light-theme .mat-mdc-snack-bar-container .mat-mdc-button {
 html.dark-theme .mat-mdc-snack-bar-container .mat-mdc-button {
   color: var(--mat-sys-primary) !important;
 }
+
+@media (max-width: 768px) {
+  .mat-mdc-table {
+    border-radius: 6px;
+  }
+
+  .mat-mdc-card {
+    border-radius: 8px;
+  }
+
+  .mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-outlined-button {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-mdc-icon-button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
+  }
+
+  .mat-mdc-icon-button .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  .mat-mdc-table .mat-mdc-cell:first-of-type,
+  .mat-mdc-table .mat-mdc-header-cell:first-of-type {
+    padding-left: 8px;
+  }
+
+  .mat-mdc-table .mat-mdc-cell:last-of-type,
+  .mat-mdc-table .mat-mdc-header-cell:last-of-type {
+    padding-right: 8px;
+  }
+}
