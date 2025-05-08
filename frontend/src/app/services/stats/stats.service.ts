@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import {BACKEND_API_URL} from '../../../environments/api-config';
-import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
-import {GameStatistics, LeaderboardEntry, UserGameStats, UserStats} from '../../models/user-stats.model';
-import {map} from 'rxjs/operators';
-import {GameService} from '../game/game.service';
-import {Game} from '../../models/game.model';
-import {ClubGameStats, ClubMemberStats, ClubStats} from '../../models/club-stats.model';
+import { Injectable } from "@angular/core"
+import { BACKEND_API_URL } from "../../../environments/api-config"
+import { HttpClient } from "@angular/common/http"
+import { Observable, of } from "rxjs"
+import { GameStatistics, LeaderboardEntry, UserGameStats, UserStats } from "../../models/user-stats.model"
+import { map } from "rxjs/operators"
+import { GameService } from "../game/game.service"
+import { Game } from "../../models/game.model"
+import { ClubGameStats, ClubMemberStats, ClubStats } from "../../models/club-stats.model"
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class StatsService {
   private apiUrl = BACKEND_API_URL + "/stats"
@@ -34,6 +34,10 @@ export class StatsService {
         return stats
       }),
     )
+  }
+
+  getUserDrawStats(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user/${userId}/draws`)
   }
 
   getRecentGames(userId: number, limit = 10): Observable<GameStatistics[]> {
@@ -63,6 +67,10 @@ export class StatsService {
     return this.http.get<ClubStats>(`${this.apiUrl}/club/${clubId}`)
   }
 
+  getClubDrawStats(clubId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/club/${clubId}/draws`)
+  }
+
   getClubGameStats(clubId: number): Observable<ClubGameStats[]> {
     return this.http.get<ClubGameStats[]>(`${this.apiUrl}/club/${clubId}/games`)
   }
@@ -85,6 +93,10 @@ export class StatsService {
 
   getClubLeaderboardByGame(gameId: number, limit = 10): Observable<ClubGameStats[]> {
     return this.http.get<ClubGameStats[]>(`${this.apiUrl}/club/leaderboard/game/${gameId}?limit=${limit}`)
+  }
+
+  getTopClubsByDraws(limit = 10): Observable<ClubGameStats[]> {
+    return this.http.get<ClubGameStats[]>(`${this.apiUrl}/club/leaderboard/draws?limit=${limit}`)
   }
 
   getClubMemberLeaderboard(clubId: number, limit = 10): Observable<ClubMemberStats[]> {
