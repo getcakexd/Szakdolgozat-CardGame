@@ -35,6 +35,7 @@ export class CardGameService {
   private subscriptions: { [destination: string]: any } = {}
   private connectionAttempts = 0
   private maxConnectionAttempts = 5
+  private reconnectTimeout: any = null
 
   constructor(
     private http: HttpClient,
@@ -52,6 +53,15 @@ export class CardGameService {
         }
       }
     })
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        if (!this.isConnected()) {
+          if (IS_DEV) console.log("Page became visible, reconnecting WebSocket...")
+          this.reconnect()
+        }
+      }
+    })
   }
 
   private initializeWebSocketConnection(): void {
@@ -59,8 +69,8 @@ export class CardGameService {
       if (IS_DEV) console.log("Initializing WebSocket connection to:", this.wsUrl)
 
       const socket = new SockJS(this.wsUrl, null, {
-        transports: ["xhr-polling", "xhr-streaming"],
-        timeout: 1000,
+        transports: ["websocket", "xhr-streaming", "xhr-polling"],
+        timeout: 5000,
       })
 
       this.stompClient = Stomp.over(socket)
@@ -99,12 +109,17 @@ export class CardGameService {
     this.connected.next(false)
     this.connectionAttempts++
 
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout)
+    }
+
     if (this.connectionAttempts < this.maxConnectionAttempts) {
+      const reconnectDelay = Math.min(5000 * Math.pow(1.5, this.connectionAttempts - 1), 30000)
       if (IS_DEV)
         console.log(
-          `Connection attempt ${this.connectionAttempts}/${this.maxConnectionAttempts} failed. Retrying in 5 seconds...`,
+          `Connection attempt ${this.connectionAttempts}/${this.maxConnectionAttempts} failed. Retrying in ${reconnectDelay / 1000} seconds...`,
         )
-      setTimeout(() => this.initializeWebSocketConnection(), 5000)
+      this.reconnectTimeout = setTimeout(() => this.initializeWebSocketConnection(), reconnectDelay)
     } else {
       if (IS_DEV) console.error(`Failed to connect after ${this.maxConnectionAttempts} attempts. Giving up.`)
     }
@@ -149,6 +164,12 @@ export class CardGameService {
       this.stompClient.send(destination, {}, JSON.stringify(body))
     } else {
       if (IS_DEV) console.error(`Cannot send message to ${destination}, not connected to WebSocket`)
+      this.reconnect()
+      setTimeout(() => {
+        if (this.isConnected()) {
+          this.stompClient.send(destination, {}, JSON.stringify(body))
+        }
+      }, 1000)
     }
   }
 
