@@ -65,8 +65,11 @@ public class CardGameController {
         CardGame cardGame = GameFactory.createGame(gameEntity.getFactorySign(), gameEntity.getFactoryId());
         cardGame.setGameDefinitionId(gameDefinitionId);
         cardGame.setName(gameName);
-        cardGame.setTrackStatistics(trackStatistics);
-
+        if (gameEntity.getMaxPlayers() == 1) {
+            cardGame.setTrackStatistics(false);
+        } else {
+            cardGame.setTrackStatistics(trackStatistics);
+        }
         User user = userController.getUser(Long.parseLong(creatorId));
         if (user == null) {
             throw new GameException("User not found");
@@ -200,7 +203,7 @@ public class CardGameController {
 
             GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
             event.addData("abandonedBy", userId);
-            event.addData("abandonedUsers", cardGame.getAbandonedUsers());
+            event.addData("abandonedUsers", cardGame.fetchAbandonedUsers());
             broadcastGameEvent(event);
         }
 

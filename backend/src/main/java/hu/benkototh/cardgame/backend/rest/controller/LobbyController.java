@@ -235,6 +235,8 @@ public class LobbyController {
                 long gameDefinitionId = lobby.getGame().getId();
                 boolean trackStatistics = lobby.isPlayWithPoints();
 
+
+
                 CardGame cardGame = cardGameController.createCardGame(
                         gameDefinitionId,
                         creatorId,

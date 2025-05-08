@@ -120,7 +120,7 @@ public abstract class CardGame {
         }
     }
 
-    public List<String> getAbandonedUsers() {
+    public List<String> fetchAbandonedUsers() {
         return abandonedUsers;
     }
 

@@ -78,6 +78,7 @@ public class StatsController {
 
         for (Player player : cardGame.getPlayers()) {
             String playerId = player.getId();
+
             User user = userController.getUser(Long.parseLong(playerId));
 
             if (user == null) {
