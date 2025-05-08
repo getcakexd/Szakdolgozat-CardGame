@@ -18,6 +18,7 @@ public class ClubStats {
     private Club club;
 
     private int gamesPlayed;
+    private int gamesDrawn;
     private int totalPoints;
     private int totalFatsCollected;
     private int uniquePlayersCount;
@@ -25,6 +26,7 @@ public class ClubStats {
 
     public ClubStats() {
         this.gamesPlayed = 0;
+        this.gamesDrawn = 0;
         this.totalPoints = 0;
         this.totalFatsCollected = 0;
         this.uniquePlayersCount = 0;
@@ -53,6 +55,14 @@ public class ClubStats {
 
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
+    }
+
+    public int getGamesDrawn() {
+        return gamesDrawn;
+    }
+
+    public void setGamesDrawn(int gamesDrawn) {
+        this.gamesDrawn = gamesDrawn;
     }
 
     public int getTotalPoints() {
@@ -89,6 +99,10 @@ public class ClubStats {
 
     public void incrementGamesPlayed() {
         this.gamesPlayed++;
+    }
+
+    public void incrementGamesDrawn() {
+        this.gamesDrawn++;
     }
 
     public void addPoints(int points) {

@@ -23,7 +23,7 @@ mat-card-content {
 
 .game-content-wrapper {
   display: grid;
-  grid-template-columns: 2fr 1fr 300px;
+  grid-template-columns: 2.2fr 0.8fr 300px;
   grid-template-rows: minmax(180px, auto) minmax(250px, auto);
   grid-template-areas:
     "game-table players chat"
@@ -44,6 +44,61 @@ mat-card-content {
   align-items: center;
   overflow: visible;
   gap: 1rem;
+  position: relative;
+}
+
+.game-result-announcement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: 16px;
+  animation: fadeIn 0.5s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.game-result-announcement.win {
+  background-color: rgba(76, 175, 80, 0.85);
+}
+
+.game-result-announcement.loss {
+  background-color: rgba(244, 67, 54, 0.85);
+}
+
+.game-result-announcement.draw {
+  background-color: rgba(255, 152, 0, 0.85);
+}
+
+.game-result-content {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 80%;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.game-result-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.game-result-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.game-result-content button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
 }
 
 .last-played-section {
@@ -53,16 +108,35 @@ mat-card-content {
   align-items: center;
   padding: 0.5rem;
   overflow: visible;
+  height: 150px;
+  min-height: 150px;
 }
 
 .last-played-card {
   text-align: center;
   padding: 0.75rem;
-  background-color: rgba(200, 200, 200, 0.7);
+  background-color: transparent;
   border-radius: 8px;
   animation: fadeIn 0.5s ease-in-out;
   max-width: 220px;
   margin: 0.5rem 0;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.last-played-card app-card {
+  display: block;
+  transform: scale(0.8);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+  margin: 0 auto;
+}
+
+.last-played-card app-card:hover {
+  transform: translateY(-5px) scale(0.8);
 }
 
 .current-trick-section {
@@ -73,25 +147,31 @@ mat-card-content {
   justify-content: center;
   padding: 0.5rem;
   overflow: visible;
+  width: 100%;
+  min-height: 150px;
 }
 
 .current-trick {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 1rem;
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   overflow: visible;
 }
 
 .trick-card {
   transition: transform 0.3s ease;
-  margin: 0.5rem;
+  margin: 0.25rem;
+  display: inline-block;
+  position: relative;
+  transform-origin: center;
+  transform: scale(0.8);
 }
 
 .trick-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(0.8);
 }
 
 .empty-trick {
@@ -99,6 +179,10 @@ mat-card-content {
   color: var(--text-secondary-color, rgba(0, 0, 0, 0.6));
   font-style: italic;
   font-size: 1.1rem;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :host-context(.dark-theme) .empty-trick {
@@ -223,7 +307,7 @@ mat-card-content {
   grid-area: players;
   background-color: rgba(255, 255, 0, 0.05);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.75rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -231,13 +315,15 @@ mat-card-content {
 }
 
 .players-sidebar h3 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .player-info-sidebar {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   border-radius: 8px;
-  padding: 0.75rem;
+  padding: 0.5rem;
   transition: all 0.3s ease;
 }
 
@@ -323,9 +409,36 @@ mat-card-content {
   color: #fff;
 }
 
+:host ::ng-deep app-player-info {
+  font-size: 0.9rem;
+}
+
+:host ::ng-deep app-player-info .player-name {
+  font-size: 0.95rem;
+}
+
+:host ::ng-deep app-player-info .player-score {
+  font-size: 0.9rem;
+}
+
+:host ::ng-deep app-player-info .player-cards {
+  font-size: 0.85rem;
+}
+
+.current-trick-cards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.5rem;
+}
+
 @media (max-width: 1200px) {
   .game-content-wrapper {
-    grid-template-columns: 1.5fr 1fr 250px;
+    grid-template-columns: 2fr 0.8fr 220px;
   }
 
   .card-wrapper {
@@ -337,11 +450,23 @@ mat-card-content {
   }
 
   .trick-card {
-    transform: scale(1.1);
+    transform: scale(0.8);
   }
 
   .trick-card:hover {
-    transform: translateY(-10px) scale(1.1);
+    transform: translateY(-10px) scale(0.8);
+  }
+
+  .game-result-title {
+    font-size: 2rem;
+  }
+
+  .game-result-subtitle {
+    font-size: 1rem;
+  }
+
+  .players-sidebar {
+    max-width: 180px;
   }
 }
 
@@ -372,10 +497,12 @@ mat-card-content {
     flex-direction: row;
     overflow-x: auto;
     padding: 1rem;
+    max-width: 100%;
+    justify-self: stretch;
   }
 
   .player-info-sidebar {
-    min-width: 220px;
+    min-width: 180px;
     margin-right: 1rem;
   }
 
@@ -392,10 +519,34 @@ mat-card-content {
   }
 
   .trick-card {
-    transform: scale(1);
+    transform: scale(0.7);
   }
 
   .trick-card:hover {
-    transform: translateY(-10px) scale(1);
+    transform: translateY(-10px) scale(0.7);
+  }
+
+  .game-result-title {
+    font-size: 1.8rem;
+  }
+
+  .game-result-subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .game-result-content {
+    padding: 1rem;
+    max-width: 90%;
+  }
+
+  .game-result-title {
+    font-size: 1.5rem;
+  }
+
+  .game-result-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
   }
 }

@@ -51,9 +51,26 @@ export class ClubStatsComponent implements OnInit {
   clubGameStats: ClubGameStats[] = []
   clubMemberStats: ClubMemberStats[] = []
   games: Map<number, Game> = new Map()
+  drawStats: any = null
 
-  gameStatsColumns: string[] = ["gameName", "gamesPlayed", "points", "fatsCollected", "uniquePlayers", "lastPlayed"]
-  memberStatsColumns: string[] = ["username", "gamesPlayed", "gamesWon", "winRate", "points", "fatsCollected"]
+  gameStatsColumns: string[] = [
+    "gameName",
+    "gamesPlayed",
+    "gamesDrawn",
+    "points",
+    "fatsCollected",
+    "uniquePlayers",
+    "lastPlayed",
+  ]
+  memberStatsColumns: string[] = [
+    "username",
+    "gamesPlayed",
+    "gamesWon",
+    "gamesDrawn",
+    "winRate",
+    "points",
+    "fatsCollected",
+  ]
 
   constructor(
     private statsService: StatsService,
@@ -112,6 +129,16 @@ export class ClubStatsComponent implements OnInit {
       },
     })
 
+    this.statsService.getClubDrawStats(this.club.id).subscribe({
+      next: (stats) => {
+        if (IS_DEV) console.log("Club draw stats:", stats)
+        this.drawStats = stats
+      },
+      error: (error) => {
+        console.error("Error loading club draw stats:", error)
+      },
+    })
+
     this.statsService.getClubGameStats(this.club.id).subscribe({
       next: (stats) => {
         if (IS_DEV) console.log("Club game stats:", stats)
@@ -141,6 +168,11 @@ export class ClubStatsComponent implements OnInit {
   calculateWinRate(won: number, played: number): number {
     if (played === 0) return 0
     return (won / played) * 100
+  }
+
+  calculateDrawRate(drawn: number, played: number): number {
+    if (played === 0) return 0
+    return (drawn / played) * 100
   }
 
   formatDate(date: Date): string {

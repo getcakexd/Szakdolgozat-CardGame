@@ -60,6 +60,7 @@ export interface CardGame {
   startedAt?: Date
   endedAt?: Date
   currentPlayer?: Player
+  abandonedUsers: string[]
   trackStatistics: boolean
   gameState: { [key: string]: any }
 }

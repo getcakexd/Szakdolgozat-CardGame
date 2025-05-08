@@ -65,8 +65,11 @@ public class CardGameController {
         CardGame cardGame = GameFactory.createGame(gameEntity.getFactorySign(), gameEntity.getFactoryId());
         cardGame.setGameDefinitionId(gameDefinitionId);
         cardGame.setName(gameName);
-        cardGame.setTrackStatistics(trackStatistics);
-
+        if (gameEntity.getMaxPlayers() == 1) {
+            cardGame.setTrackStatistics(false);
+        } else {
+            cardGame.setTrackStatistics(trackStatistics);
+        }
         User user = userController.getUser(Long.parseLong(creatorId));
         if (user == null) {
             throw new GameException("User not found");
@@ -181,14 +184,15 @@ public class CardGameController {
 
         CardGame cardGame = optionalCardGame.get();
 
+        cardGame.addAbandonedUser(userId);
+        logger.info("User {} added to abandoned users list for game {}", userId, gameId);
+
         if (cardGame.getStatus() != GameStatus.FINISHED) {
             cardGame.endGame();
 
-            if (cardGame.isTrackStatistics()) {
-                statisticsController.recordAbandonedGame(cardGame, userId);
-                auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
-                        "Abandoned game statistics recorded for game ID: " + gameId);
-            }
+            statisticsController.recordAbandonedGame(cardGame, userId);
+            auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
+                    "Abandoned game statistics recorded for game ID: " + gameId);
 
             cardGame = cardGameRepository.save(cardGame);
             lobbyController.endGame(cardGame.getId());
@@ -196,6 +200,8 @@ public class CardGameController {
                     "Game abandoned: " + cardGame.getName() + " (ID: " + gameId + ")");
 
             GameEvent event = new GameEvent("GAME_ABANDONED", cardGame.getId(), userId);
+            event.addData("abandonedBy", userId);
+            event.addData("abandonedUsers", cardGame.fetchAbandonedUsers());
             broadcastGameEvent(event);
         }
 
@@ -267,13 +273,11 @@ public class CardGameController {
             auditLogController.logAction("GAME_COMPLETED", Long.parseLong(userId),
                     "Game completed: " + cardGame.getName() + " (ID: " + gameId + ")");
 
-            if (cardGame.isTrackStatistics()) {
-                Map<String, Integer> scores = cardGame.calculateScores();
-                statisticsController.updateStatistics(cardGame, scores);
-                logger.info("Statistics updated for game {}", gameId);
-                auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
-                        "Game statistics updated for game ID: " + gameId);
-            }
+            Map<String, Integer> scores = cardGame.calculateScores();
+            statisticsController.updateStatistics(cardGame, scores);
+            logger.info("Statistics updated for game {}", gameId);
+            auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
+                    "Game statistics updated for game ID: " + gameId);
 
             lobbyController.endGame(cardGame.getId());
         }
@@ -339,5 +343,9 @@ public class CardGameController {
             logger.info("Game ID: {}, Name: {}, Status: {}, Players: {}",
                     game.getId(), game.getName(), game.getStatus(), game.getPlayers().size());
         });
+    }
+
+    public void saveGame(CardGame game) {
+        cardGameRepository.save(game);
     }
 }

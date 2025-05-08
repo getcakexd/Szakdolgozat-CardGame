@@ -9,15 +9,15 @@ import { MatButtonModule } from "@angular/material/button"
 import { MatChipsModule } from "@angular/material/chips"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { NgIf, NgClass, DatePipe, DecimalPipe } from "@angular/common"
-import {TranslatePipe, TranslateService} from "@ngx-translate/core"
+import { TranslatePipe, TranslateService } from "@ngx-translate/core"
 import { StatsService } from "../../services/stats/stats.service"
 import { AuthService } from "../../services/auth/auth.service"
 import { UserStats, UserGameStats, GameStatistics } from "../../models/user-stats.model"
 import { Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import {IS_DEV} from '../../../environments/api-config';
-import {Game} from '../../models/game.model';
-import {GameService} from '../../services/game/game.service';
+import { IS_DEV } from "../../../environments/api-config"
+import { Game } from "../../models/game.model"
+import { GameService } from "../../services/game/game.service"
 
 @Component({
   selector: "app-stats",
@@ -48,9 +48,19 @@ export class StatsComponent implements OnInit {
   userGameStats: UserGameStats[] = []
   recentGames: GameStatistics[] = []
   games: Map<number, Game> = new Map()
+  drawStats: any = null
 
-  gameStatsColumns: string[] = ["gameName", "gamesPlayed", "gamesWon", "winRate", "points", "fatsCollected", "streak"]
-  recentGamesColumns: string[] = ["gameType", "result", "score", "fatsCollected", "playedAt"]
+  gameStatsColumns: string[] = [
+    "gameName",
+    "gamesPlayed",
+    "gamesWon",
+    "gamesDrawn",
+    "winRate",
+    "points",
+    "fatsCollected",
+    "streak",
+  ]
+  recentGamesColumns: string[] = ["gameType", "result", "score", "fatsCollected", "playedAt", "isFriendly"]
 
   constructor(
     private statsService: StatsService,
@@ -104,6 +114,16 @@ export class StatsComponent implements OnInit {
       },
     })
 
+    this.statsService.getUserDrawStats(this.userId).subscribe({
+      next: (stats) => {
+        if (IS_DEV) console.log("User draw stats:", stats)
+        this.drawStats = stats
+      },
+      error: (error) => {
+        console.error("Error loading draw stats:", error)
+      },
+    })
+
     this.statsService.getUserGameStats(this.userId).subscribe({
       next: (stats) => {
         if (IS_DEV) console.log("User game stats:", stats)
@@ -135,8 +155,26 @@ export class StatsComponent implements OnInit {
     return (won / played) * 100
   }
 
+  calculateDrawRate(drawn: number, played: number): number {
+    if (played === 0) return 0
+    return (drawn / played) * 100
+  }
+
   formatDate(date: Date): string {
     return new Date(date).toLocaleDateString()
+  }
+
+  getGameResult(game: GameStatistics): string {
+    console.log("Game result:", game)
+    if (game.won) return this.translate.instant("STATS.WON")
+    if (game.drawn) return this.translate.instant("STATS.DRAWN")
+    return this.translate.instant("STATS.LOST")
+  }
+
+  getResultClass(game: GameStatistics): string {
+    if (game.won) return "win"
+    if (game.drawn) return "draw"
+    return "loss"
   }
 
   viewGame(gameId: string): void {

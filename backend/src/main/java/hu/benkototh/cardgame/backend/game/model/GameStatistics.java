@@ -17,12 +17,17 @@ public class GameStatistics {
     private String gameType;
     private int score;
     private boolean won;
-
-    private int tricksTaken;
+    private boolean drawn;
     private int fatCardsCollected;
+    private int tricksTaken;
+    private boolean friendly;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date playedAt;
+
+    public GameStatistics() {
+        this.playedAt = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -80,12 +85,20 @@ public class GameStatistics {
         this.won = won;
     }
 
-    public Date getPlayedAt() {
-        return playedAt;
+    public boolean isDrawn() {
+        return drawn;
     }
 
-    public void setPlayedAt(Date playedAt) {
-        this.playedAt = playedAt;
+    public void setDrawn(boolean drawn) {
+        this.drawn = drawn;
+    }
+
+    public int getFatCardsCollected() {
+        return fatCardsCollected;
+    }
+
+    public void setFatCardsCollected(int fatCardsCollected) {
+        this.fatCardsCollected = fatCardsCollected;
     }
 
     public int getTricksTaken() {
@@ -96,11 +109,19 @@ public class GameStatistics {
         this.tricksTaken = tricksTaken;
     }
 
-    public int getFatCardsCollected() {
-        return fatCardsCollected;
+    public Date getPlayedAt() {
+        return playedAt;
     }
 
-    public void setFatCardsCollected(int fatCardsCollected) {
-        this.fatCardsCollected = fatCardsCollected;
+    public void setPlayedAt(Date playedAt) {
+        this.playedAt = playedAt;
+    }
+
+    public boolean isFriendly() {
+        return friendly;
+    }
+
+    public void setFriendly(boolean friendly) {
+        this.friendly = friendly;
     }
 }

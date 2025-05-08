@@ -376,7 +376,8 @@ export class LobbyDetailComponent implements OnInit, OnDestroy {
       this.isLeader &&
       this.lobby !== null &&
       this.lobby.status === LOBBY_STATUS.WAITING &&
-      this.lobby.players.length >= this.lobby.minPlayers
+      this.lobby.players.length >= this.lobby.minPlayers &&
+      this.lobby.players.length <= ( this.selectedGame?.maxPlayers || 0 )
     )
   }
 

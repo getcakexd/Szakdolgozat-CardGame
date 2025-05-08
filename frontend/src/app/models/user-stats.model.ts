@@ -1,4 +1,4 @@
-import {Game} from './game.model';
+import type { Game } from "./game.model"
 
 export interface UserStats {
   id?: number
@@ -6,6 +6,7 @@ export interface UserStats {
   gamesPlayed: number
   gamesWon: number
   gamesLost: number
+  gamesDrawn: number
   gamesAbandoned: number
   totalPoints: number
   currentWinStreak: number
@@ -20,6 +21,7 @@ export interface UserGameStats {
   gamesPlayed: number
   gamesWon: number
   gamesLost: number
+  gamesDrawn: number
   gamesAbandoned: number
   totalPoints: number
   totalFatsCollected: number
@@ -38,9 +40,11 @@ export interface GameStatistics {
   gameType: string
   score: number
   won: boolean
+  drawn: boolean
   tricksTaken: number
   fatCardsCollected: number
   playedAt: Date
+  friendly: boolean
 }
 
 export interface LeaderboardEntry {
@@ -48,7 +52,9 @@ export interface LeaderboardEntry {
   username: string
   gamesPlayed: number
   gamesWon: number
+  gamesDrawn: number
   points: number
   winRate: number
+  drawRate: number
   gameDefinition?: Game
 }

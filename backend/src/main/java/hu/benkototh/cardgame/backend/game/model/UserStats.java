@@ -20,6 +20,7 @@ public class UserStats {
     private int gamesPlayed;
     private int gamesWon;
     private int gamesLost;
+    private int gamesDrawn;
     private int gamesAbandoned;
     private int totalPoints;
     private int currentWinStreak;
@@ -30,6 +31,7 @@ public class UserStats {
         this.gamesPlayed = 0;
         this.gamesWon = 0;
         this.gamesLost = 0;
+        this.gamesDrawn = 0;
         this.gamesAbandoned = 0;
         this.totalPoints = 0;
         this.currentWinStreak = 0;
@@ -75,6 +77,14 @@ public class UserStats {
 
     public void setGamesLost(int gamesLost) {
         this.gamesLost = gamesLost;
+    }
+
+    public int getGamesDrawn() {
+        return gamesDrawn;
+    }
+
+    public void setGamesDrawn(int gamesDrawn) {
+        this.gamesDrawn = gamesDrawn;
     }
 
     public int getGamesAbandoned() {
@@ -132,6 +142,10 @@ public class UserStats {
     public void incrementGamesLost() {
         this.gamesLost++;
         this.currentWinStreak = 0;
+    }
+
+    public void incrementGamesDrawn() {
+        this.gamesDrawn++;
     }
 
     public void incrementGamesAbandoned() {

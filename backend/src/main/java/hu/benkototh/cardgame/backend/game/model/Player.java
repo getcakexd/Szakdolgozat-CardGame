@@ -38,11 +38,14 @@ public class Player {
     @JsonBackReference
     private CardGame game;
 
+    private boolean isAI;
+
     public Player() {
         this.hand = new ArrayList<>();
         this.wonCards = new ArrayList<>();
         this.active = true;
         this.score = 0;
+        this.isAI = false;
     }
 
     public String getId() {
@@ -99,6 +102,14 @@ public class Player {
 
     public void setGame(CardGame game) {
         this.game = game;
+    }
+
+    public boolean isAI() {
+        return isAI;
+    }
+
+    public void setAI(boolean AI) {
+        isAI = AI;
     }
 
     public void addCardToHand(Card card) {

@@ -48,6 +48,13 @@
             </div>
             <div class="stats-row">
               <div class="stats-label">
+                <mat-icon>handshake</mat-icon>
+                <span>{{ 'STATS.GAMES_DRAWN' | translate }}</span>
+              </div>
+              <div class="stats-value">{{ userStats.gamesDrawn }}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">
                 <mat-icon>close</mat-icon>
                 <span>{{ 'STATS.GAMES_LOST' | translate }}</span>
               </div>
@@ -101,6 +108,11 @@
               <td mat-cell *matCellDef="let stat">{{ stat.gamesWon }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="gamesDrawn">
+              <th mat-header-cell *matHeaderCellDef>{{ 'STATS.DRAWN' | translate }}</th>
+              <td mat-cell *matCellDef="let stat">{{ stat.gamesDrawn }}</td>
+            </ng-container>
+
             <ng-container matColumnDef="winRate">
               <th mat-header-cell *matHeaderCellDef>{{ 'STATS.WIN_RATE' | translate }}</th>
               <td mat-cell *matCellDef="let stat">
@@ -144,8 +156,8 @@
 
             <ng-container matColumnDef="result">
               <th mat-header-cell *matHeaderCellDef>{{ 'STATS.RESULT' | translate }}</th>
-              <td mat-cell *matCellDef="let game" [ngClass]="{'win': game.won, 'loss': !game.won}">
-                {{ game.won ? ('STATS.WON' | translate) : ('STATS.LOST' | translate) }}
+              <td mat-cell *matCellDef="let game" [ngClass]="getResultClass(game)">
+                {{ getGameResult(game) }}
               </td>
             </ng-container>
 
@@ -162,6 +174,11 @@
             <ng-container matColumnDef="playedAt">
               <th mat-header-cell *matHeaderCellDef>{{ 'STATS.DATE' | translate }}</th>
               <td mat-cell *matCellDef="let game">{{ game.playedAt | date:'short' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="isFriendly">
+              <th mat-header-cell *matHeaderCellDef>{{'STATS.FRIENDLY' | translate}}</th>
+              <td mat-cell *matCellDef="let game"> {{ game.friendly ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate )}}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="recentGamesColumns"></tr>

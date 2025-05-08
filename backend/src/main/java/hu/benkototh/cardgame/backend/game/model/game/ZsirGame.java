@@ -1,9 +1,7 @@
 package hu.benkototh.cardgame.backend.game.model.game;
 
+import hu.benkototh.cardgame.backend.game.model.ai.ZsirGameAI;
 import hu.benkototh.cardgame.backend.game.model.*;
-import hu.benkototh.cardgame.backend.game.model.ai.DefaultZsirAIStrategy;
-import hu.benkototh.cardgame.backend.game.model.ai.ZsirAIMoveExecutor;
-import hu.benkototh.cardgame.backend.game.model.ai.ZsirAIStrategy;
 import hu.benkototh.cardgame.backend.game.model.util.ZsirGameUtils;
 
 import jakarta.persistence.DiscriminatorValue;
@@ -15,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue("ZSIR")
-public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCallback {
+public class ZsirGame extends CardGame {
     private static final Logger logger = LoggerFactory.getLogger(ZsirGame.class);
     private static final int CARDS_PER_PLAYER = 4;
     private static final String CURRENT_TRICK = "currentTrick";
@@ -27,11 +25,9 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
     private static final String AI_PLAYER = "aiPlayer";
     private static final String HUMAN_PLAYER = "humanPlayer";
     private static final int MAX_CARDS_IN_TRICK = 8;
+    private static final String ABANDONED_USERS = "abandonedUsers";
 
     private int factoryId = 0;
-
-    private transient ZsirAIStrategy aiStrategy;
-    private transient ZsirAIMoveExecutor aiMoveExecutor;
 
     public ZsirGame(int factoryId) {
         if (factoryId == 0) {
@@ -40,16 +36,9 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             setGameState("FACTORY_ID", factoryId);
             this.factoryId = factoryId;
         }
-        initializeAI();
     }
 
     public ZsirGame() {
-        initializeAI();
-    }
-
-    private void initializeAI() {
-        this.aiStrategy = new DefaultZsirAIStrategy();
-        this.aiMoveExecutor = new ZsirAIMoveExecutor(aiStrategy);
     }
 
     @Override
@@ -127,32 +116,35 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         deck.initializeHungarianDeck();
         deck.shuffle();
 
-        if (getPlayers().size() < 2) {
-            Player aiPlayer = new Player();
-            aiPlayer.setId("ai-player");
-            aiPlayer.setUsername("AI Player");
-            aiPlayer.setHand(new ArrayList<>());
-            aiPlayer.setWonCards(new ArrayList<>());
-            aiPlayer.setActive(true);
-            aiPlayer.setScore(0);
-            aiPlayer.setGame(this);
-
-            getPlayers().add(aiPlayer);
-            setGameState(AI_PLAYER, aiPlayer.getId());
+        if (getPlayers().size() != 1) {
+            logger.error("Factory 1 requires exactly 1 human player");
+            throw new IllegalStateException("Factory 1 requires exactly 1 human player");
         }
 
         Player humanPlayer = getPlayers().get(0);
+        humanPlayer.setHand(deck.drawCards(CARDS_PER_PLAYER));
+        humanPlayer.setWonCards(new ArrayList<>());
+        humanPlayer.setActive(true);
+        humanPlayer.setScore(0);
+
+        Player aiPlayer = new Player();
+        aiPlayer.setId("ai-" + UUID.randomUUID().toString());
+        aiPlayer.setUsername("AI Player");
+        aiPlayer.setHand(deck.drawCards(CARDS_PER_PLAYER));
+        aiPlayer.setWonCards(new ArrayList<>());
+        aiPlayer.setActive(true);
+        aiPlayer.setScore(0);
+        aiPlayer.setGame(this);
+        aiPlayer.setAI(true);
+
+        getPlayers().add(aiPlayer);
+
         setGameState(HUMAN_PLAYER, humanPlayer.getId());
+        setGameState(AI_PLAYER, aiPlayer.getId());
 
-        for (Player player : getPlayers()) {
-            List<Card> hand = deck.drawCards(CARDS_PER_PLAYER);
-            player.setHand(hand);
-            player.setWonCards(new ArrayList<>());
-            player.setActive(true);
-            player.setScore(0);
-        }
+        boolean humanStarts = new Random().nextBoolean();
+        setCurrentPlayer(humanStarts ? humanPlayer : aiPlayer);
 
-        setCurrentPlayer(getPlayers().get(0));
         setGameState(DECK, deck);
         setGameState(CURRENT_TRICK, new ArrayList<Card>());
         getGameState().remove(TRICK_STARTER);
@@ -160,8 +152,9 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         getGameState().remove(LAST_PLAYED_CARD);
         getGameState().remove(LAST_PLAYER);
 
-        logger.info("AI game initialized with human player: {} and AI player: {}",
-                getPlayers().get(0).getId(), getPlayers().get(1).getId());
+        if (!humanStarts) {
+            executeAIMove();
+        }
     }
 
     public void initializeGame_Factory_2(){
@@ -187,7 +180,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
     }
 
     public void initializeGame_Factory_4(){
-        //TODO: Implement 4 player game
     }
 
     protected void processGameStateObjects_1() {
@@ -195,7 +187,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             Object currentTrickObj = getGameState(CURRENT_TRICK);
             List<Card> cardList = ZsirGameUtils.convertToCardList(currentTrickObj);
             setGameState(CURRENT_TRICK, cardList);
-            logger.debug("Processed currentTrick list, size: {}", cardList.size());
         }
 
         if (getGameState().containsKey(LAST_PLAYED_CARD)) {
@@ -203,7 +194,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             Card card = ZsirGameUtils.convertToCard(cardObj);
             if (card != null) {
                 setGameState(LAST_PLAYED_CARD, card);
-                logger.debug("Processed lastPlayedCard");
             }
         }
     }
@@ -213,7 +203,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             Object currentTrickObj = getGameState(CURRENT_TRICK);
             List<Card> cardList = ZsirGameUtils.convertToCardList(currentTrickObj);
             setGameState(CURRENT_TRICK, cardList);
-            logger.debug("Processed currentTrick list, size: {}", cardList.size());
         }
 
         if (getGameState().containsKey(LAST_PLAYED_CARD)) {
@@ -221,23 +210,21 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             Card card = ZsirGameUtils.convertToCard(cardObj);
             if (card != null) {
                 setGameState(LAST_PLAYED_CARD, card);
-                logger.debug("Processed lastPlayedCard");
             }
         }
     }
 
     protected void processGameStateObjects_4() {
-        //TODO: Implement 4 player game
     }
 
     public boolean isValidMove_1(String playerId, GameAction action) {
-        if (action == null) {
+        String aiPlayerId = (String) getGameState(AI_PLAYER);
+        if (aiPlayerId != null && aiPlayerId.equals(getCurrentPlayer().getId()) && !playerId.equals(aiPlayerId)) {
             return false;
         }
 
-        String aiPlayerId = (String) getGameState(AI_PLAYER);
-        if (playerId.equals(aiPlayerId)) {
-            return true;
+        if (action == null) {
+            return false;
         }
 
         if ("pass".equals(action.getActionType())) {
@@ -308,17 +295,12 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
     }
 
     public boolean isValidMove_4(String playerId, GameAction action) {
-        //TODO: Implement 4 player game
         return false;
     }
 
     public void executeMove_1(String playerId, GameAction action) {
         String aiPlayerId = (String) getGameState(AI_PLAYER);
-        if (getCurrentPlayer().getId().equals(aiPlayerId) && !playerId.equals(aiPlayerId)) {
-            return;
-        }
-
-        if (playerId.equals(aiPlayerId)) {
+        if (aiPlayerId != null && aiPlayerId.equals(getCurrentPlayer().getId())) {
             executeAIMove();
             return;
         }
@@ -327,6 +309,12 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
             this.handlePass(playerId);
 
             if (getCurrentPlayer().getId().equals(aiPlayerId)) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
                 executeAIMove();
             }
             return;
@@ -351,12 +339,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         String trickStarter = (String) getGameState(TRICK_STARTER);
         boolean isStarterTurn = playerId.equals(trickStarter);
 
-        boolean playerHit = false;
-        if (currentTrick.size() > 1) {
-            Card previousCard = currentTrick.get(currentTrick.size() - 2);
-            playerHit = card.getRank() == Rank.SEVEN || card.getRank() == previousCard.getRank();
-        }
-
+        boolean playerHit = isPlayerHit(currentTrick, card);
         setGameState(CAN_HIT, false);
 
         boolean trickComplete = false;
@@ -385,44 +368,27 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
 
             setGameState(CURRENT_TRICK, new ArrayList<Card>());
             getGameState().remove(TRICK_STARTER);
+
             setGameState(CAN_HIT, false);
 
             checkAndDrawCards();
             setCurrentPlayer(winner);
-
-            if (getCurrentPlayer().getId().equals(aiPlayerId)) {
-                executeAIMove();
-            }
+            serializeGameState();
         } else {
             Player nextPlayer = ZsirGameUtils.getOtherPlayer(getPlayers(), player);
             setCurrentPlayer(nextPlayer);
+        }
+        serializeGameState();
 
-            if (getCurrentPlayer().getId().equals(aiPlayerId)) {
-                executeAIMove();
+        if (getCurrentPlayer().getId().equals(aiPlayerId)) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
+
+            executeAIMove();
         }
-    }
-
-    private void executeAIMove() {
-        String aiPlayerId = (String) getGameState(AI_PLAYER);
-        Player aiPlayer = getPlayerById(aiPlayerId);
-
-        if (aiPlayer == null || aiPlayer.getHand().isEmpty()) {
-            return;
-        }
-
-        List<Card> currentTrick = fetchCurrentTrickCards();
-        Boolean canHit = (Boolean) getGameState(CAN_HIT);
-        String trickStarter = (String) getGameState(TRICK_STARTER);
-
-        aiMoveExecutor.executeAIMove(
-                aiPlayer,
-                currentTrick,
-                aiPlayerId,
-                trickStarter,
-                Boolean.TRUE.equals(canHit),
-                this
-        );
     }
 
     public void executeMove_2(String playerId, GameAction action) {
@@ -450,12 +416,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         String trickStarter = (String) getGameState(TRICK_STARTER);
         boolean isStarterTurn = playerId.equals(trickStarter);
 
-        boolean playerHit = false;
-        if (currentTrick.size() > 1) {
-            Card previousCard = currentTrick.get(currentTrick.size() - 2);
-            playerHit = card.getRank() == Rank.SEVEN || card.getRank() == previousCard.getRank();
-        }
-
+        boolean playerHit = isPlayerHit(currentTrick, card);
         setGameState(CAN_HIT, false);
 
         boolean trickComplete = false;
@@ -485,21 +446,33 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
 
             setGameState(CURRENT_TRICK, new ArrayList<Card>());
             getGameState().remove(TRICK_STARTER);
+
             setGameState(CAN_HIT, false);
 
             checkAndDrawCards();
             setCurrentPlayer(winner);
+            serializeGameState();
         } else {
             Player nextPlayer = ZsirGameUtils.getOtherPlayer(getPlayers(), player);
             setCurrentPlayer(nextPlayer);
         }
+        serializeGameState();
     }
 
     public void executeMove_4(String playerId, GameAction action) {
-        //TODO: Implement 4 player game
     }
 
-    private List<Card> fetchCurrentTrickCards() {
+    private static boolean isPlayerHit(List<Card> currentTrick, Card card) {
+        boolean playerHit = false;
+
+        if (currentTrick.size() > 1) {
+            Card leadCard = currentTrick.get(0);
+            playerHit = card.getRank() == Rank.SEVEN || card.getRank() == leadCard.getRank();
+        }
+        return playerHit;
+    }
+
+    public List<Card> fetchCurrentTrickCards() {
         Object currentTrickObj = getGameState(CURRENT_TRICK);
         return ZsirGameUtils.convertToCardList(currentTrickObj);
     }
@@ -646,7 +619,6 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         throw new IllegalArgumentException("Invalid factoryId: " + factoryId);
     }
 
-    @Override
     public void handlePass(String playerId) {
         List<Card> currentTrick = fetchCurrentTrickCards();
         String trickStarter = (String) getGameState(TRICK_STARTER);
@@ -659,6 +631,7 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
 
         Player winner = determineTrickWinner(currentTrick, trickStarter);
         winner.getWonCards().addAll(currentTrick);
+        addScore(winner, currentTrick);
 
         setGameState(CURRENT_TRICK, new ArrayList<Card>());
         getGameState().remove(TRICK_STARTER);
@@ -667,33 +640,129 @@ public class ZsirGame extends CardGame implements ZsirAIMoveExecutor.GameStateCa
         setCurrentPlayer(winner);
     }
 
-    @Override
-    public void setCurrentTrick(List<Card> currentTrick) {
+    public void recordAbandonedUser(String userId) {
+        List<String> abandonedUsers = new ArrayList<>();
+        if (hasGameState(ABANDONED_USERS)) {
+            Object obj = getGameState(ABANDONED_USERS);
+            if (obj instanceof List) {
+                abandonedUsers = (List<String>) obj;
+            }
+        }
+
+        if (!abandonedUsers.contains(userId)) {
+            abandonedUsers.add(userId);
+            setGameState(ABANDONED_USERS, abandonedUsers);
+        }
+
+        serializeGameState();
+    }
+
+    public List<String> fetchAbandonedUsers() {
+        if (hasGameState(ABANDONED_USERS)) {
+            Object obj = getGameState(ABANDONED_USERS);
+            if (obj instanceof List) {
+                return (List<String>) obj;
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private void executeAIMove() {
+        String aiPlayerId = (String) getGameState(AI_PLAYER);
+        String humanPlayerId = (String) getGameState(HUMAN_PLAYER);
+
+        Player aiPlayer = getPlayerById(aiPlayerId);
+        Player humanPlayer = getPlayerById(humanPlayerId);
+
+        if (aiPlayer == null || humanPlayer == null) {
+            logger.error("AI or human player not found");
+            return;
+        }
+
+        ZsirGameAI ai = new ZsirGameAI(this, aiPlayer, humanPlayer);
+        GameAction aiAction = ai.decideMove();
+
+        if (aiAction == null) {
+            logger.error("AI failed to decide on a move");
+            return;
+        }
+
+        if ("pass".equals(aiAction.getActionType())) {
+            this.handlePass(aiPlayerId);
+            return;
+        }
+
+        Card card = aiAction.getCardParameter("card");
+
+        if (card == null) {
+            logger.error("AI action has no card parameter");
+            return;
+        }
+
+        ZsirGameUtils.removeCardFromHand(aiPlayer, card);
+
+        List<Card> currentTrick = fetchCurrentTrickCards();
+        currentTrick.add(card);
         setGameState(CURRENT_TRICK, currentTrick);
-    }
 
-    @Override
-    public void setLastPlayedCard(Card card) {
         setGameState(LAST_PLAYED_CARD, card);
-    }
+        setGameState(LAST_PLAYER, aiPlayerId);
 
-    @Override
-    public void setLastPlayer(String playerId) {
-        setGameState(LAST_PLAYER, playerId);
-    }
+        if (currentTrick.size() == 1) {
+            setGameState(TRICK_STARTER, aiPlayerId);
+        }
 
-    @Override
-    public void setTrickStarter(String playerId) {
-        setGameState(TRICK_STARTER, playerId);
-    }
+        String trickStarter = (String) getGameState(TRICK_STARTER);
+        boolean isStarterTurn = aiPlayerId.equals(trickStarter);
 
-    @Override
-    public void setCanHit(boolean canHit) {
-        setGameState(CAN_HIT, canHit);
-    }
+        boolean playerHit = isPlayerHit(currentTrick, card);
+        setGameState(CAN_HIT, false);
 
-    @Override
-    public void removeTrickStarter() {
-        getGameState().remove(TRICK_STARTER);
+        boolean trickComplete = false;
+
+        if (currentTrick.size() >= 2) {
+            if (!isStarterTurn && !playerHit) {
+                trickComplete = true;
+            } else if (!isStarterTurn) {
+                boolean humanCanHit = ZsirGameUtils.checkIfPlayerCanHit(humanPlayer, card);
+                setGameState(CAN_HIT, humanCanHit);
+
+                if (!humanCanHit) {
+                    trickComplete = true;
+                }
+            }
+        }
+
+        if (currentTrick.size() == MAX_CARDS_IN_TRICK) {
+            trickComplete = true;
+        }
+
+        if (trickComplete) {
+            Player winner = determineTrickWinner(currentTrick, trickStarter);
+            winner.getWonCards().addAll(currentTrick);
+            addScore(winner, currentTrick);
+
+            setGameState(CURRENT_TRICK, new ArrayList<Card>());
+            getGameState().remove(TRICK_STARTER);
+
+            setGameState(CAN_HIT, false);
+
+            checkAndDrawCards();
+            setCurrentPlayer(winner);
+
+            if (winner.getId().equals(aiPlayerId) && getCurrentPlayer().getId().equals(aiPlayerId)) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
+                executeAIMove();
+            }
+        } else {
+            setCurrentPlayer(humanPlayer);
+        }
+
+        serializeGameState();
     }
 }

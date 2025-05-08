@@ -29,6 +29,7 @@ public class ClubMemberStats {
 
     private int gamesPlayed;
     private int gamesWon;
+    private int gamesDrawn;
     private int totalPoints;
     private int highestScore;
     private int totalFatsCollected;
@@ -39,6 +40,7 @@ public class ClubMemberStats {
     public ClubMemberStats() {
         this.gamesPlayed = 0;
         this.gamesWon = 0;
+        this.gamesDrawn = 0;
         this.totalPoints = 0;
         this.highestScore = 0;
         this.totalFatsCollected = 0;
@@ -85,6 +87,14 @@ public class ClubMemberStats {
         this.gamesWon = gamesWon;
     }
 
+    public int getGamesDrawn() {
+        return gamesDrawn;
+    }
+
+    public void setGamesDrawn(int gamesDrawn) {
+        this.gamesDrawn = gamesDrawn;
+    }
+
     public int getTotalPoints() {
         return totalPoints;
     }
@@ -124,6 +134,11 @@ public class ClubMemberStats {
 
     public void incrementGamesWon() {
         this.gamesWon++;
+        this.lastPlayed = new Date();
+    }
+
+    public void incrementGamesDrawn() {
+        this.gamesDrawn++;
         this.lastPlayed = new Date();
     }
 

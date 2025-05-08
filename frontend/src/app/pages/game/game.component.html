@@ -25,6 +25,16 @@
     <mat-card-content>
       <div class="game-content-wrapper">
         <div class="game-table">
+          <div *ngIf="gameResult" class="game-result-announcement" [ngClass]="gameResult">
+            <div class="game-result-content">
+              <h2 class="game-result-title">{{ gameResultMessage }}</h2>
+              <p class="game-result-subtitle">{{ gameResultSubtitle }}</p>
+              <button mat-raised-button color="primary" (click)="goToLobby()">
+                <mat-icon>exit_to_app</mat-icon> {{ 'GAME.RETURN_TO_LOBBY' | translate }}
+              </button>
+            </div>
+          </div>
+
           <div class="last-played-section">
             <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
               <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
@@ -36,8 +46,10 @@
           <div class="current-trick-section">
             <div class="current-trick" *ngIf="getCurrentTrickCards().length > 0">
               <h4>{{ 'GAME.CURRENT_TRICK' | translate }} ({{ getCurrentTrickCards().length }})</h4>
-              <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
-                <app-card [card]="card"></app-card>
+              <div class="current-trick-cards">
+                <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
+                  <app-card [card]="card"></app-card>
+                </div>
               </div>
             </div>
 

@@ -6,6 +6,7 @@ export interface ClubStats {
   id: number
   club: Club
   gamesPlayed: number
+  gamesDrawn: number
   totalPoints: number
   totalFatsCollected: number
   uniquePlayersCount: number
@@ -17,6 +18,7 @@ export interface ClubGameStats {
   club: Club
   gameDefinition: Game
   gamesPlayed: number
+  gamesDrawn: number
   totalPoints: number
   highestScore: number
   totalFatsCollected: number
@@ -30,6 +32,7 @@ export interface ClubMemberStats {
   user: User
   gamesPlayed: number
   gamesWon: number
+  gamesDrawn: number
   totalPoints: number
   highestScore: number
   totalFatsCollected: number

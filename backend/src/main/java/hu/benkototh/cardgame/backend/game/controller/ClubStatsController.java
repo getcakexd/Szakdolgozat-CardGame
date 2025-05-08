@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class ClubStatsController {
@@ -46,12 +47,19 @@ public class ClubStatsController {
 
     @Transactional
     public void recordClubGameResult(CardGame cardGame, Lobby lobby, Map<String, Integer> scores, boolean abandoned, String abandonedBy) {
+        recordClubGameResult(cardGame, lobby, scores, abandoned, abandonedBy, false, Collections.emptyList());
+    }
+
+    @Transactional
+    public void recordClubGameResult(CardGame cardGame, Lobby lobby, Map<String, Integer> scores,
+                                     boolean abandoned, String abandonedBy, boolean isDraw, List<String> drawPlayerIds) {
         if (lobby == null || lobby.getClub() == null) {
             logger.info("Not a club game, skipping club stats recording");
             return;
         }
 
-        logger.info("Recording club game result for game {}, club {}", cardGame.getId(), lobby.getClub().getId());
+        logger.info("Recording club game result for game {}, club {}, abandoned: {}, draw: {}",
+                cardGame.getId(), lobby.getClub().getId(), abandoned, isDraw);
 
         Club club = lobby.getClub();
         Optional<Game> gameDefinitionOpt = gameRepository.findById(cardGame.getGameDefinitionId());
@@ -61,13 +69,20 @@ public class ClubStatsController {
         }
         Game gameDefinition = gameDefinitionOpt.get();
 
-        String winnerId = null;
-        int highestScore = -1;
+        int highestScore = scores.values().stream()
+                .mapToInt(Integer::intValue)
+                .max()
+                .orElse(0);
 
-        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-            if (entry.getValue() > highestScore) {
-                highestScore = entry.getValue();
-                winnerId = entry.getKey();
+        List<String> winnersIds = scores.entrySet().stream()
+                .filter(entry -> entry.getValue() == highestScore)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        if (!isDraw && !abandoned) {
+            isDraw = winnersIds.size() > 1;
+            if (isDraw) {
+                drawPlayerIds = new ArrayList<>(winnersIds);
             }
         }
 
@@ -79,6 +94,9 @@ public class ClubStatsController {
         }
 
         clubStats.incrementGamesPlayed();
+        if (isDraw) {
+            clubStats.incrementGamesDrawn();
+        }
 
         ClubGameStats clubGameStats = clubGameStatsRepository.findByClubAndGameDefinition(club, gameDefinition)
                 .orElse(new ClubGameStats());
@@ -89,6 +107,9 @@ public class ClubStatsController {
         }
 
         clubGameStats.incrementGamesPlayed();
+        if (isDraw) {
+            clubGameStats.incrementGamesDrawn();
+        }
 
         Set<String> countedPlayers = new HashSet<>();
 
@@ -101,7 +122,8 @@ public class ClubStatsController {
                 continue;
             }
 
-            boolean isWinner = playerId.equals(winnerId);
+            boolean isWinner = !isDraw && !abandoned && winnersIds.contains(playerId);
+            boolean isDrawn = isDraw && drawPlayerIds.contains(playerId);
             int playerScore = scores.getOrDefault(playerId, 0);
 
             int fatCards = 0;
@@ -122,6 +144,8 @@ public class ClubStatsController {
             memberStats.incrementGamesPlayed();
             if (isWinner) {
                 memberStats.incrementGamesWon();
+            } else if (isDrawn) {
+                memberStats.incrementGamesDrawn();
             }
             memberStats.addPoints(playerScore);
             memberStats.addFatsCollected(fatCards);
@@ -139,7 +163,6 @@ public class ClubStatsController {
         }
 
         clubStatsRepository.save(clubStats);
-
         clubGameStatsRepository.save(clubGameStats);
 
         logger.info("Club game result recorded successfully for game {}, club {}", cardGame.getId(), club.getId());
@@ -223,6 +246,27 @@ public class ClubStatsController {
 
     public List<ClubMemberStats> getTopMembersByClubAndGameAndPoints(Long clubId, Long gameDefinitionId, int limit) {
         return clubMemberStatsRepository.findTopMembersByClubAndGameAndPoints(clubId, gameDefinitionId).stream()
+                .limit(limit)
+                .toList();
+    }
+
+    public Map<String, Object> getClubDrawStats(Long clubId) {
+        ClubStats stats = getClubStats(clubId);
+        if (stats == null) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> drawStats = new HashMap<>();
+        drawStats.put("gamesDrawn", stats.getGamesDrawn());
+        drawStats.put("drawPercentage", stats.getGamesPlayed() > 0 ?
+                (double) stats.getGamesDrawn() / stats.getGamesPlayed() * 100 : 0);
+
+        return drawStats;
+    }
+
+    public List<ClubGameStats> getTopClubsByDraws(int limit) {
+        return clubGameStatsRepository.findAll().stream()
+                .sorted(Comparator.comparing(ClubGameStats::getGamesDrawn).reversed())
                 .limit(limit)
                 .toList();
     }
