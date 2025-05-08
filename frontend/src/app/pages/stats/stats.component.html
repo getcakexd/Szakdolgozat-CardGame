@@ -176,6 +176,11 @@
               <td mat-cell *matCellDef="let game">{{ game.playedAt | date:'short' }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="isFriendly">
+              <th mat-header-cell *matHeaderCellDef>{{'STATS.FRIENDLY' | translate}}</th>
+              <td mat-cell *matCellDef="let game"> {{ game.friendly ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate )}}</td>
+            </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="recentGamesColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: recentGamesColumns;"
                 (click)="viewGame(row.gameId)" class="clickable-row"></tr>

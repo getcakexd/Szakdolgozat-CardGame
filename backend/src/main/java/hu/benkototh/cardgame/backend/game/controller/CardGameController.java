@@ -190,11 +190,9 @@ public class CardGameController {
         if (cardGame.getStatus() != GameStatus.FINISHED) {
             cardGame.endGame();
 
-            if (cardGame.isTrackStatistics()) {
-                statisticsController.recordAbandonedGame(cardGame, userId);
-                auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
-                        "Abandoned game statistics recorded for game ID: " + gameId);
-            }
+            statisticsController.recordAbandonedGame(cardGame, userId);
+            auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
+                    "Abandoned game statistics recorded for game ID: " + gameId);
 
             cardGame = cardGameRepository.save(cardGame);
             lobbyController.endGame(cardGame.getId());
@@ -275,13 +273,11 @@ public class CardGameController {
             auditLogController.logAction("GAME_COMPLETED", Long.parseLong(userId),
                     "Game completed: " + cardGame.getName() + " (ID: " + gameId + ")");
 
-            if (cardGame.isTrackStatistics()) {
-                Map<String, Integer> scores = cardGame.calculateScores();
-                statisticsController.updateStatistics(cardGame, scores);
-                logger.info("Statistics updated for game {}", gameId);
-                auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
-                        "Game statistics updated for game ID: " + gameId);
-            }
+            Map<String, Integer> scores = cardGame.calculateScores();
+            statisticsController.updateStatistics(cardGame, scores);
+            logger.info("Statistics updated for game {}", gameId);
+            auditLogController.logAction("GAME_STATISTICS_UPDATED", Long.parseLong(userId),
+                    "Game statistics updated for game ID: " + gameId);
 
             lobbyController.endGame(cardGame.getId());
         }

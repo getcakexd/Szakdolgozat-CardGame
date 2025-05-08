@@ -75,10 +75,12 @@ public class StatsController {
             return;
         }
         Game gameDefinition = gameDefinitionOpt.get();
+        boolean isFriendly = !cardGame.isTrackStatistics();
 
         for (Player player : cardGame.getPlayers()) {
             String playerId = player.getId();
 
+            if (player.isAI()) continue;
             User user = userController.getUser(Long.parseLong(playerId));
 
             if (user == null) {
@@ -122,11 +124,15 @@ public class StatsController {
             gameStats.setFatCardsCollected(fatCards);
             gameStats.setTricksTaken(player.getWonCards().size() / 2);
             gameStats.setPlayedAt(new Date());
+            gameStats.setFriendly(isFriendly);
             gameStatisticsRepository.save(gameStats);
 
-            updateUserStats(user, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
+            if(!isFriendly) {
+                updateUserStats(user, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
 
-            updateUserGameStats(user, gameDefinition, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
+                updateUserGameStats(user, gameDefinition, isWinner, isDrawn, isAbandoner, playerScore, fatCards);
+            }
+
         }
 
         Lobby lobby = findLobbyByCardGameId(cardGame.getId());

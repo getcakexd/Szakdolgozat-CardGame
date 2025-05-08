@@ -135,6 +135,7 @@ public class ZsirGame extends CardGame {
         aiPlayer.setActive(true);
         aiPlayer.setScore(0);
         aiPlayer.setGame(this);
+        aiPlayer.setAI(true);
 
         getPlayers().add(aiPlayer);
 

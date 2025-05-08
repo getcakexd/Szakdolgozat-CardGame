@@ -60,7 +60,7 @@ export class StatsComponent implements OnInit {
     "fatsCollected",
     "streak",
   ]
-  recentGamesColumns: string[] = ["gameType", "result", "score", "fatsCollected", "playedAt"]
+  recentGamesColumns: string[] = ["gameType", "result", "score", "fatsCollected", "playedAt", "isFriendly"]
 
   constructor(
     private statsService: StatsService,

@@ -484,6 +484,7 @@
     "RESULT": "Result",
     "SCORE": "Score",
     "DATE": "Date",
+    "FRIENDLY": "Friendly",
     "NO_STATS": "No statistics available. Play some games to see your stats!",
     "NO_GAME_STATS": "No game-specific statistics available yet.",
     "NO_RECENT_GAMES": "No recent games found.",

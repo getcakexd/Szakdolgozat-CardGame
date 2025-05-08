@@ -20,6 +20,7 @@ public class GameStatistics {
     private boolean drawn;
     private int fatCardsCollected;
     private int tricksTaken;
+    private boolean friendly;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date playedAt;
@@ -114,5 +115,13 @@ public class GameStatistics {
 
     public void setPlayedAt(Date playedAt) {
         this.playedAt = playedAt;
+    }
+
+    public boolean isFriendly() {
+        return friendly;
+    }
+
+    public void setFriendly(boolean friendly) {
+        this.friendly = friendly;
     }
 }

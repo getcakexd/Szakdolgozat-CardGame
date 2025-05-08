@@ -44,6 +44,7 @@ export interface GameStatistics {
   tricksTaken: number
   fatCardsCollected: number
   playedAt: Date
+  friendly: boolean
 }
 
 export interface LeaderboardEntry {
