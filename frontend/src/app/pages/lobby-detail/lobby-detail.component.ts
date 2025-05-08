@@ -27,7 +27,7 @@ import {MatTooltip} from '@angular/material/tooltip';
 import {MatList, MatListItem} from '@angular/material/list';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatOption} from '@angular/material/core';
-import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
+import {MatFormField, MatSelect} from '@angular/material/select';
 import {GameCardComponent} from '../../components/game-card/game-card.component';
 import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
 
@@ -53,7 +53,6 @@ import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.compone
     ReactiveFormsModule,
     MatOption,
     MatSelect,
-    MatLabel,
     MatFormField,
     MatCardContent,
     MatCard,

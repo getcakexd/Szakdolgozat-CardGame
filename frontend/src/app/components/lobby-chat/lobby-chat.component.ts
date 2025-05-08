@@ -22,7 +22,6 @@ import { MatMenuModule } from "@angular/material/menu"
 import {TranslateModule, TranslateService} from "@ngx-translate/core"
 import {LobbyMessage} from '../../models/lobby-message.mode';
 import {LobbyService} from '../../services/lobby/lobby.service';
-import {MatDivider} from '@angular/material/divider';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {IS_DEV} from '../../../environments/api-config';
 
@@ -44,7 +43,6 @@ import {IS_DEV} from '../../../environments/api-config';
     TranslateModule,
     DatePipe,
     FormsModule,
-    MatDivider,
     MatProgressSpinner,
   ],
 })
