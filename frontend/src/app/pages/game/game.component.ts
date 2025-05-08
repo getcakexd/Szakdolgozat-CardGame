@@ -64,6 +64,7 @@ export class GameComponent implements OnInit, OnDestroy {
   private lastPlayedCardSubscription: Subscription | null = null
   private refreshInterval: any = null
   private lastCardTimer: any = null
+  private connectionSubscription: Subscription | null = null
 
   constructor(
     private route: ActivatedRoute,
@@ -94,6 +95,20 @@ export class GameComponent implements OnInit, OnDestroy {
       return
     }
 
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && this.gameId) {
+        if (!this.cardGameService.isConnected()) {
+          if (IS_DEV) console.log("Page became visible, reconnecting and refreshing game...")
+          this.cardGameService.reconnect()
+          setTimeout(() => {
+            if (this.gameId) {
+              this.cardGameService.forceRefreshGame(this.gameId)
+            }
+          }, 1000)
+        }
+      }
+    })
+
     if (!this.cardGameService.isConnected()) {
       if (IS_DEV) console.log("WebSocket not connected. Attempting to reconnect...")
       this.cardGameService.reconnect()
@@ -102,20 +117,24 @@ export class GameComponent implements OnInit, OnDestroy {
         duration: 5000,
       })
 
-      const connectionSub = this.cardGameService.connected$.subscribe((connected) => {
+      this.connectionSubscription = this.cardGameService.connected$.subscribe((connected) => {
         if (connected) {
-          connectionSub.unsubscribe()
           this.loadGame()
         }
       })
 
       setTimeout(() => {
         if (!this.cardGameService.isConnected()) {
-          connectionSub.unsubscribe()
+          if (this.connectionSubscription) {
+            this.connectionSubscription.unsubscribe()
+            this.connectionSubscription = null
+          }
+
+          this.loadGame()
+
           this.snackBar.open(this.translate.instant("GAME.CONNECTION_FAILED"), this.translate.instant("COMMON.CLOSE"), {
             duration: 3000,
           })
-          this.router.navigate(["/lobby"])
         }
       }, 10000)
     } else {
@@ -150,6 +169,10 @@ export class GameComponent implements OnInit, OnDestroy {
       this.lastPlayedCardSubscription.unsubscribe()
     }
 
+    if (this.connectionSubscription) {
+      this.connectionSubscription.unsubscribe()
+    }
+
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval)
     }
@@ -157,6 +180,8 @@ export class GameComponent implements OnInit, OnDestroy {
     if (this.lastCardTimer) {
       clearTimeout(this.lastCardTimer)
     }
+
+    document.removeEventListener("visibilitychange", () => {})
   }
 
   loadGame(): void {

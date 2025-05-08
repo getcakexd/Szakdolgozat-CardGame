@@ -29,11 +29,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/ws/**", "/ws").permitAll()
+                                .requestMatchers("/api/ws/**", "/api/ws").permitAll()
                                 .requestMatchers("/api/heartbeat", "/api/**").permitAll()
                                 //.hasAnyAuthority("ROLE_USER")
-                                .anyRequest().authenticated()
-
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(
