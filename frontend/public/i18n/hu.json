@@ -443,7 +443,20 @@
     "CURRENT_TRICK": "Aktuális ütés",
     "NO_CARDS_IN_TRICK": "Nincs kártya az ütésben",
     "LAST_PLAYED_CARD": "Utoljára kijátszott kártya",
-    "PASS": "Passz"
+    "PASS": "Passz",
+    "RESULT_WIN": "Nyertél!",
+    "RESULT_LOSS": "Vesztettél!",
+    "RESULT_DRAW": "Döntetlen!",
+    "RESULT_WIN_SUBTITLE": "Gratulálunk! Te gyűjtötted a legtöbb {{points}}-ot, {{score}} ponttal.",
+    "RESULT_LOSS_SUBTITLE": "{{player}} nyert {{score}} {{points}} ponttal.",
+    "RESULT_DRAW_SUBTITLE": "Mindkét játékos {{score}} pontot szerzett.",
+    "RESULT_ABANDONED": "Játék Megszakítva",
+    "RESULT_ABANDONED_BY": "{{player}} elhagyta a játékot.",
+    "RESULT_YOU_ABANDONED": "Elhagytad a Játékot",
+    "RESULT_ABANDONED_SUBTITLE": "Kiléptél a játékból, mielőtt befejeződött volna.",
+    "RESULT_OPPONENT_ABANDONED": "{{player}} elhagyta a játékot.",
+    "RETURN_TO_LOBBY": "Vissza a Lobbyba",
+    "POINTS": "pont"
   },
   "STATS": {
     "TITLE": "Játékos Statisztikák",

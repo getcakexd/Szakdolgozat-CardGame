@@ -68,9 +68,7 @@ public class StatisticsController {
     public void recordAbandonedGame(CardGame game, String abandonedBy) {
         logger.info("Recording abandoned game {}", game.getId());
 
-        Map<String, Integer> scores = game.calculateScores();
-
-        statsController.recordGameResult(game, scores, true, abandonedBy, false, Collections.emptyList());
+        statsController.recordAbandonedGame(game,abandonedBy);
 
         logger.info("Abandoned game {} recorded", game.getId());
     }

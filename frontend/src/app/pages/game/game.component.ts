@@ -1,15 +1,10 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef} from "@angular/core"
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
-import {Subscription} from "rxjs"
+import { Subscription } from "rxjs"
 import { CardGameService } from "../../services/card-game/card-game.service"
 import { AuthService } from "../../services/auth/auth.service"
-import {
-  CardGame,
-  GameStatus,
-  Card,
-  Player,
-} from "../../models/card-game.model"
+import { CardGame, GameStatus, Card, Player } from "../../models/card-game.model"
 import { CommonModule } from "@angular/common"
 import { MatButtonModule } from "@angular/material/button"
 import { MatCardModule } from "@angular/material/card"
@@ -17,14 +12,14 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatTooltipModule } from "@angular/material/tooltip"
-import { TranslateModule, TranslateService} from "@ngx-translate/core"
+import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { RouterModule } from "@angular/router"
 import { CardComponent } from "../../components/card/card.component"
 import { PlayerInfoComponent } from "../../components/player-info/player-info.component"
-import {IS_DEV} from '../../../environments/api-config';
-import {LobbyService} from '../../services/lobby/lobby.service';
-import {LobbyChatComponent} from '../../components/lobby-chat/lobby-chat.component';
-import {LOBBY_STATUS} from '../../models/lobby.model';
+import { IS_DEV } from "../../../environments/api-config"
+import { LobbyService } from "../../services/lobby/lobby.service"
+import { LobbyChatComponent } from "../../components/lobby-chat/lobby-chat.component"
+import { LOBBY_STATUS } from "../../models/lobby.model"
 
 @Component({
   selector: "app-game",
@@ -56,6 +51,9 @@ export class GameComponent implements OnInit, OnDestroy {
   canHit = false
   lastPlayedCard: { card: Card; playerId: string } | null = null
   showLastPlayedCard = false
+  gameResult: "win" | "loss" | "draw" | null = null
+  gameResultMessage = ""
+  gameResultSubtitle = ""
 
   private lastTrickSize = 0
 
@@ -184,6 +182,14 @@ export class GameComponent implements OnInit, OnDestroy {
         if (trickChanged && currentTrickSize === 0 && this.lastTrickSize > 0) {
           this.showTrickCompletedNotification()
         }
+
+        if (game.status === GameStatus.FINISHED) {
+          this.determineGameResult()
+        } else {
+          this.gameResult = null
+          this.gameResultMessage = ""
+          this.gameResultSubtitle = ""
+        }
       }
 
       this.isLoading = false
@@ -230,8 +236,22 @@ export class GameComponent implements OnInit, OnDestroy {
         this.snackBar.open(this.translate.instant("GAME.GAME_STARTED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
-      } else if (event.eventType === "GAME_OVER" || event.eventType === "GAME_ABANDONED") {
+      } else if (event.eventType === "GAME_OVER") {
         this.snackBar.open(this.translate.instant("GAME.GAME_OVER"), this.translate.instant("COMMON.CLOSE"), {
+          duration: 3000,
+        })
+        if (this.gameId) {
+          setTimeout(() => this.cardGameService.forceRefreshGame(this.gameId!), 500)
+        }
+      } else if (event.eventType === "GAME_ABANDONED") {
+        const abandonedBy = event.data?.["abandonedBy"]
+        if (abandonedBy) {
+          const playerName = this.getPlayerName(abandonedBy)
+          this.gameResult = "loss"
+          this.gameResultMessage = this.translate.instant("GAME.RESULT_ABANDONED")
+          this.gameResultSubtitle = this.translate.instant("GAME.RESULT_ABANDONED_BY", { player: playerName })
+        }
+        this.snackBar.open(this.translate.instant("GAME.GAME_ABANDONED"), this.translate.instant("COMMON.CLOSE"), {
           duration: 3000,
         })
       } else if (event.eventType === "GAME_ACTION") {
@@ -256,6 +276,71 @@ export class GameComponent implements OnInit, OnDestroy {
         this.router.navigate(["/lobby"])
       },
     })
+  }
+
+  determineGameResult(): void {
+    if (!this.game || !this.currentPlayer) return
+
+    const abandonedUsers = this.game.abandonedUsers || []
+    if (abandonedUsers.length > 0) {
+      const currentUserId = this.currentPlayer.id
+      if (abandonedUsers.includes(currentUserId)) {
+        this.gameResult = "loss"
+        this.gameResultMessage = this.translate.instant("GAME.RESULT_YOU_ABANDONED")
+        this.gameResultSubtitle = this.translate.instant("GAME.RESULT_ABANDONED_SUBTITLE")
+        return
+      }
+
+      const abandonerName = this.getPlayerName(abandonedUsers[0])
+      this.gameResult = "win"
+      this.gameResultMessage = this.translate.instant("GAME.RESULT_WIN")
+      this.gameResultSubtitle = this.translate.instant("GAME.RESULT_OPPONENT_ABANDONED", { player: abandonerName })
+      return
+    }
+
+    const scores: { [playerId: string]: number } = {}
+    let highestScore = 0
+    let highestScorePlayers: string[] = []
+
+    this.game.players.forEach((player) => {
+      const score = player.score || 0
+      scores[player.id] = score
+
+      if (score > highestScore) {
+        highestScore = score
+        highestScorePlayers = [player.id]
+      } else if (score === highestScore) {
+        highestScorePlayers.push(player.id)
+      }
+    })
+
+    if (highestScorePlayers.length > 1) {
+      this.gameResult = "draw"
+      this.gameResultMessage = this.translate.instant("GAME.RESULT_DRAW")
+      this.gameResultSubtitle = this.translate.instant("GAME.RESULT_DRAW_SUBTITLE", { score: highestScore })
+      return
+    }
+
+    const winnerId = highestScorePlayers[0]
+    const winnerName = this.getPlayerName(winnerId)
+    const currentUserId = this.currentPlayer.id
+
+    if (winnerId === currentUserId) {
+      this.gameResult = "win"
+      this.gameResultMessage = this.translate.instant("GAME.RESULT_WIN")
+      this.gameResultSubtitle = this.translate.instant("GAME.RESULT_WIN_SUBTITLE", {
+        score: highestScore,
+        points: this.translate.instant("GAME.POINTS"),
+      })
+    } else {
+      this.gameResult = "loss"
+      this.gameResultMessage = this.translate.instant("GAME.RESULT_LOSS")
+      this.gameResultSubtitle = this.translate.instant("GAME.RESULT_LOSS_SUBTITLE", {
+        player: winnerName,
+        score: highestScore,
+        points: this.translate.instant("GAME.POINTS"),
+      })
+    }
   }
 
   private showTrickCompletedNotification(): void {
@@ -345,5 +430,5 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   protected readonly GameStatus = GameStatus
-  protected readonly lobbyStatus = LOBBY_STATUS;
+  protected readonly lobbyStatus = LOBBY_STATUS
 }

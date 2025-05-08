@@ -22,7 +22,7 @@
       <div class="lobby-content">
         <div class="lobby-settings">
           <div>
-            <h3>{{ 'LOBBY.GAME_SETTINGS' | translate }}</h3>
+            <h4>{{ 'LOBBY.GAME_SETTINGS' | translate }}</h4>
             <form [formGroup]="settingsForm">
               <div class="form-field">
                 <mat-form-field appearance="fill">
@@ -52,6 +52,7 @@
                   <button *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
                           mat-raised-button
                           color="primary"
+                          [class.mat-button-dense]="true"
                           [disabled]="settingsForm.invalid || isLoading"
                           (click)="onSaveSettings()">
                     {{ 'LOBBY.SAVE_SETTINGS' | translate }}
@@ -61,6 +62,7 @@
                     *ngIf="lobby.status === lobbyStatus.WAITING"
                     mat-button
                     color="warn"
+                    [class.mat-button-dense]="true"
                     (click)="onLeaveLobby()"
                     [disabled]="isLoading">
                     <mat-icon>exit_to_app</mat-icon> {{ 'LOBBY.LEAVE_LOBBY' | translate }}
@@ -70,6 +72,7 @@
                     mat-raised-button
                     color="accent"
                     *ngIf="lobby.status === lobbyStatus.IN_GAME && lobby.cardGameId"
+                    [class.mat-button-dense]="true"
                     (click)="goToGame()">
                     <mat-icon>sports_esports</mat-icon> {{ 'LOBBY.GO_TO_GAME' | translate }}
                   </button>
@@ -79,6 +82,7 @@
                     color="primary"
                     *ngIf="isLeader && lobby.status === lobbyStatus.WAITING"
                     [disabled]="!canStartGame() || isLoading"
+                    [class.mat-button-dense]="true"
                     (click)="onStartGame()">
                     <mat-icon>play_arrow</mat-icon> {{ 'LOBBY.START_GAME' | translate }}
                   </button>
@@ -99,7 +103,7 @@
         </div>
 
         <div class="players-section">
-          <h3>{{ 'LOBBY.PLAYERS' | translate }} ( {{ lobby.players.length }} / {{ selectedGame?.maxPlayers }} )</h3>
+          <h4>{{ 'LOBBY.PLAYERS' | translate }} ( {{ lobby.players.length }} / {{ selectedGame?.maxPlayers }} )</h4>
           <div class="lobby-players">
             <mat-list>
               <mat-list-item *ngFor="let player of lobby.players">
@@ -113,7 +117,8 @@
                     color="warn"
                     *ngIf="isLeader && player.id !== currentUser?.id && lobby.status === lobbyStatus.WAITING"
                     (click)="onKickPlayer(player)"
-                    matTooltip="{{ 'LOBBY.KICK_PLAYER' | translate }}">
+                    matTooltip="{{ 'LOBBY.KICK_PLAYER' | translate }}"
+                    [class.mat-button-dense]="true">
                     <mat-icon>person_remove</mat-icon>
                   </button>
                 </div>

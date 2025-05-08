@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core"
 import { HttpClient } from "@angular/common/http"
-import {Observable, BehaviorSubject, Subject, tap, of} from "rxjs"
+import { Observable, BehaviorSubject, Subject, tap, of } from "rxjs"
 import { map, catchError } from "rxjs/operators"
 import { CardGame, GameAction, GameEvent, Card, Player } from "../../models/card-game.model"
 import { AuthService } from "../auth/auth.service"
-import {BACKEND_API_URL, IS_DEV} from "../../../environments/api-config"
-import {IMessage, Stomp} from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { BACKEND_API_URL, IS_DEV } from "../../../environments/api-config"
+import { IMessage, Stomp } from "@stomp/stompjs"
+import SockJS from "sockjs-client"
 
 @Injectable({
   providedIn: "root",
@@ -184,6 +184,8 @@ export class CardGameService {
 
       if (event.eventType === "GAME_ACTION") {
         this.forceRefreshGame(gameId)
+      } else if (event.eventType === "GAME_OVER" || event.eventType === "GAME_ABANDONED") {
+        setTimeout(() => this.forceRefreshGame(gameId), 500)
       } else {
         this.getGame(gameId).subscribe({
           next: (game) => {

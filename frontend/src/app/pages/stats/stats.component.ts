@@ -165,6 +165,7 @@ export class StatsComponent implements OnInit {
   }
 
   getGameResult(game: GameStatistics): string {
+    console.log("Game result:", game)
     if (game.won) return this.translate.instant("STATS.WON")
     if (game.drawn) return this.translate.instant("STATS.DRAWN")
     return this.translate.instant("STATS.LOST")

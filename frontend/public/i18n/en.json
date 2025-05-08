@@ -442,7 +442,20 @@
     "CURRENT_TRICK": "Current Trick",
     "NO_CARDS_IN_TRICK": "No cards in trick",
     "LAST_PLAYED_CARD": "Last Played Card",
-    "PASS": "Pass"
+    "PASS": "Pass",
+    "RESULT_WIN": "You Won!",
+    "RESULT_LOSS": "You Lost!",
+    "RESULT_DRAW": "It's a Draw!",
+    "RESULT_WIN_SUBTITLE": "Congratulations! You collected the most {{points}} with a score of {{score}}.",
+    "RESULT_LOSS_SUBTITLE": "{{player}} won with a score of {{score}} {{points}}.",
+    "RESULT_DRAW_SUBTITLE": "Both players tied with a score of {{score}}.",
+    "RESULT_ABANDONED": "Game Abandoned",
+    "RESULT_ABANDONED_BY": "{{player}} abandoned the game.",
+    "RESULT_YOU_ABANDONED": "You Abandoned the Game",
+    "RESULT_ABANDONED_SUBTITLE": "You left the game before it was finished.",
+    "RESULT_OPPONENT_ABANDONED": "{{player}} abandoned the game.",
+    "RETURN_TO_LOBBY": "Return to Lobby",
+    "POINTS": "points"
   },
   "STATS": {
     "TITLE": "Player Statistics",

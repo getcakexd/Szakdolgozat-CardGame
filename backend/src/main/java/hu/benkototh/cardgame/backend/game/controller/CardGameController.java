@@ -345,4 +345,8 @@ public class CardGameController {
                     game.getId(), game.getName(), game.getStatus(), game.getPlayers().size());
         });
     }
+
+    public void saveGame(CardGame game) {
+        cardGameRepository.save(game);
+    }
 }
