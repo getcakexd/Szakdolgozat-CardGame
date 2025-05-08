@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { GdprService } from "../../services/gdpr/gdpr.service"
 import { AuthService } from "../../services/auth/auth.service"
 import { Observable } from "rxjs"
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-privacy-policy",
@@ -74,7 +75,7 @@ export class PrivacyPolicyComponent implements OnInit {
         URL.revokeObjectURL(url)
       },
       error: (error) => {
-        console.error("Error exporting user data:", error)
+        if(IS_DEV) console.error("Error exporting user data:", error)
         this.snackBar.open(this.translate.instant("GDPR.DATA_EXPORT_ERROR"), this.translate.instant("GDPR.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],

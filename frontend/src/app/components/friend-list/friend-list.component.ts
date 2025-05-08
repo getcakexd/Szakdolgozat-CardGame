@@ -19,6 +19,7 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner"
 import { AuthService } from "../../services/auth/auth.service"
 import { TranslateModule, TranslateService } from "@ngx-translate/core"
 import { Subscription } from "rxjs"
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-friend-list",
@@ -85,7 +86,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
         this.isLoading = false
       },
       error: (error: any) => {
-        console.error("Error loading friends:", error)
+        if(IS_DEV) console.error("Error loading friends:", error)
         this.snackBar.open(
           this.translate.instant("SOCIAL.FAILED_LOAD_FRIENDS"),
           this.translate.instant("COMMON.CLOSE"),
@@ -102,7 +103,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
         this.unreadCounts = data
       },
       error: (error: any) => {
-        console.error("Error loading unread counts:", error)
+        if(IS_DEV) console.error("Error loading unread counts:", error)
       },
     })
   }
@@ -127,7 +128,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
             this.loadFriends()
           },
           error: (error: any) => {
-            console.error("Error removing friend:", error)
+            if(IS_DEV) console.error("Error removing friend:", error)
             this.snackBar.open(
               this.translate.instant("SOCIAL.FAILED_REMOVE_FRIEND"),
               this.translate.instant("COMMON.CLOSE"),

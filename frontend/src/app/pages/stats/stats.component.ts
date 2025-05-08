@@ -90,7 +90,7 @@ export class StatsComponent implements OnInit {
         if (IS_DEV) console.log("Loaded games:", this.games)
       },
       error: (error: any) => {
-        console.error("Error loading games:", error)
+        if(IS_DEV) console.error("Error loading games:", error)
       },
     })
   }
@@ -105,7 +105,7 @@ export class StatsComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading user stats:", error)
+        if(IS_DEV) console.error("Error loading user stats:", error)
         this.snackBar.open(this.translate.instant("STATS.FAILED_LOAD"), this.translate.instant("COMMON.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],
@@ -120,7 +120,7 @@ export class StatsComponent implements OnInit {
         this.drawStats = stats
       },
       error: (error) => {
-        console.error("Error loading draw stats:", error)
+        if(IS_DEV) console.error("Error loading draw stats:", error)
       },
     })
 
@@ -130,7 +130,7 @@ export class StatsComponent implements OnInit {
         this.userGameStats = stats
       },
       error: (error) => {
-        console.error("Error loading game stats:", error)
+        if(IS_DEV) console.error("Error loading game stats:", error)
       },
     })
 
@@ -140,7 +140,7 @@ export class StatsComponent implements OnInit {
         if (IS_DEV) console.log("Recent games:", games)
       },
       error: (error) => {
-        console.error("Error loading recent games:", error)
+        if(IS_DEV) console.error("Error loading recent games:", error)
       },
     })
   }
@@ -165,7 +165,6 @@ export class StatsComponent implements OnInit {
   }
 
   getGameResult(game: GameStatistics): string {
-    console.log("Game result:", game)
     if (game.won) return this.translate.instant("STATS.WON")
     if (game.drawn) return this.translate.instant("STATS.DRAWN")
     return this.translate.instant("STATS.LOST")

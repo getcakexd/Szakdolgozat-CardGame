@@ -113,7 +113,7 @@ export class ChatService {
             this.messageStore[conversationKey].next(messages)
           },
           error: (error) => {
-            console.error("Error fetching messages via HTTP:", error)
+            if(IS_DEV) console.error("Error fetching messages via HTTP:", error)
           },
         })
     }
@@ -194,7 +194,7 @@ export class ChatService {
             this.unreadCountsSubject.next(counts)
           },
           error: (error) => {
-            console.error("Error fetching unread counts via HTTP:", error)
+            if(IS_DEV) console.error("Error fetching unread counts via HTTP:", error)
           },
         })
     }

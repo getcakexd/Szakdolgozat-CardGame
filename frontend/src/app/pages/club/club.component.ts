@@ -27,6 +27,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {ClubLobbyComponent} from '../club-lobby/club-lobby.component';
 import {ClubLeaderboardComponent} from '../../components/club-leaderboard/club-leaderboard.component';
 import {ClubStatsComponent} from '../../components/club-stats/club-stats.component';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: 'app-club',
@@ -116,7 +117,7 @@ export class ClubComponent implements OnInit {
           this.router.navigate(["/clubs"])
         } else {
           this.showErrorSnackbar("CLUB.ERROR_LOADING")
-          console.error("Error loading club:", error)
+          if(IS_DEV) console.error("Error loading club:", error)
         }
       },
     })

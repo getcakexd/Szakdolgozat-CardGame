@@ -37,7 +37,6 @@ export class GameService {
   }
 
   createGame(game: GameCreationDTO): Observable<any> {
-    console.log(game)
     return this.http.post(`${this.adminApiUrl}/create`, game)
   }
 

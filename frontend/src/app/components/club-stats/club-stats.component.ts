@@ -105,7 +105,7 @@ export class ClubStatsComponent implements OnInit {
         if (IS_DEV) console.log("Loaded games:", this.games)
       },
       error: (error: any) => {
-        console.error("Error loading games:", error)
+        if(IS_DEV) console.error("Error loading games:", error)
       },
     })
   }
@@ -120,7 +120,7 @@ export class ClubStatsComponent implements OnInit {
         this.isLoading = false
       },
       error: (error) => {
-        console.error("Error loading club stats:", error)
+        if(IS_DEV) console.error("Error loading club stats:", error)
         this.snackBar.open(this.translate.instant("CLUB.STATS.FAILED_LOAD"), this.translate.instant("COMMON.CLOSE"), {
           duration: 5000,
           panelClass: ["error-snackbar"],
@@ -135,7 +135,7 @@ export class ClubStatsComponent implements OnInit {
         this.drawStats = stats
       },
       error: (error) => {
-        console.error("Error loading club draw stats:", error)
+        if(IS_DEV) console.error("Error loading club draw stats:", error)
       },
     })
 
@@ -145,7 +145,7 @@ export class ClubStatsComponent implements OnInit {
         this.clubGameStats = stats
       },
       error: (error) => {
-        console.error("Error loading club game stats:", error)
+        if(IS_DEV) console.error("Error loading club game stats:", error)
       },
     })
 
@@ -155,7 +155,7 @@ export class ClubStatsComponent implements OnInit {
         this.clubMemberStats = stats
       },
       error: (error) => {
-        console.error("Error loading club member stats:", error)
+        if(IS_DEV) console.error("Error loading club member stats:", error)
       },
     })
   }

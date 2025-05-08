@@ -27,6 +27,7 @@ import { MatButton } from "@angular/material/button"
 import { MatIcon } from "@angular/material/icon"
 import { MatTooltip } from "@angular/material/tooltip"
 import { MatSnackBar } from "@angular/material/snack-bar"
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-audit-logs",
@@ -139,7 +140,7 @@ export class AuditLogsComponent implements OnInit {
         this.loading = false
       },
       error: (error) => {
-        console.error("Error fetching audit logs", error)
+        if(IS_DEV) console.error("Error fetching audit logs", error)
         this.showError(this.translate.instant("AUDIT_LOGS.ERROR_LOADING"))
         this.loading = false
       },
@@ -152,7 +153,7 @@ export class AuditLogsComponent implements OnInit {
         this.actions = actions
       },
       error: (error) => {
-        console.error("Error fetching actions", error)
+        if(IS_DEV) console.error("Error fetching actions", error)
       },
     })
   }
@@ -287,7 +288,7 @@ export class AuditLogsComponent implements OnInit {
         this.isFiltering = false
       },
       error: (error) => {
-        console.error("Error fetching filtered audit logs", error)
+        if(IS_DEV) console.error("Error fetching filtered audit logs", error)
         this.showError(this.translate.instant("AUDIT_LOGS.ERROR_FILTERING"))
         this.loading = false
         this.isFiltering = false

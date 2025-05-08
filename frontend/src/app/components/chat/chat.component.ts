@@ -21,6 +21,7 @@ import {MatDivider} from '@angular/material/divider';
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {IS_DEV} from '../../../environments/api-config';
 
 @Component({
   selector: "app-chat",
@@ -122,7 +123,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.shouldScrollToBottom = true
         },
         error: (error) => {
-          console.error("Error loading messages:", error)
+          if(IS_DEV) console.error("Error loading messages:", error)
           this.isLoading = false
         },
       }),
