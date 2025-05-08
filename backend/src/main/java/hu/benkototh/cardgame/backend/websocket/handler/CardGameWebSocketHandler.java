@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class CardGameWebSocketHandler {
     SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/game.action")
+    @Transactional
     public void executeGameActionWebSocket(@Payload Map<String, Object> payload) {
         try {
             String gameId = (String) payload.get("gameId");
@@ -79,6 +81,7 @@ public class CardGameWebSocketHandler {
     }
 
     @MessageMapping("/game.join")
+    @Transactional
     public void joinGameWebSocket(
             @Payload Map<String, String> payload,
             SimpMessageHeaderAccessor headerAccessor) {
@@ -97,6 +100,7 @@ public class CardGameWebSocketHandler {
     }
 
     @MessageMapping("/game.leave")
+    @Transactional
     public void leaveGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
@@ -109,11 +113,12 @@ public class CardGameWebSocketHandler {
     }
 
     @MessageMapping("/game.abandon")
+    @Transactional
     public void abandonGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
-       CardGame game = cardGameController.abandonGame(gameId, userId);
+        CardGame game = cardGameController.abandonGame(gameId, userId);
         messagingTemplate.convertAndSend(
                 "/topic/game/" + gameId,
                 game
@@ -121,11 +126,12 @@ public class CardGameWebSocketHandler {
     }
 
     @MessageMapping("/game.start")
+    @Transactional
     public void startGameWebSocket(@Payload Map<String, String> payload) {
         String gameId = payload.get("gameId");
         String userId = payload.get("userId");
 
-       CardGame game = cardGameController.startGame(gameId, userId);
+        CardGame game = cardGameController.startGame(gameId, userId);
         messagingTemplate.convertAndSend(
                 "/topic/game/" + gameId,
                 game
