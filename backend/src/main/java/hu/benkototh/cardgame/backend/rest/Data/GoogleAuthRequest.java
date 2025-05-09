@@ -1,9 +1,20 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Request object for Google authentication")
 public class GoogleAuthRequest {
+
+    @Schema(description = "User's email address from Google", example = "user@gmail.com")
     private String email;
+
+    @Schema(description = "User's full name from Google", example = "John Doe")
     private String name;
+
+    @Schema(description = "Google authentication token", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     private String token;
+
+    @Schema(description = "URL to user's Google profile photo", example = "https://lh3.googleusercontent.com/a/ACg8ocLt...")
     private String photoUrl;
 
     public GoogleAuthRequest() {

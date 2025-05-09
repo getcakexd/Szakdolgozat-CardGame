@@ -1,5 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -9,24 +10,29 @@ import java.util.Set;
 
 @Entity
 @Table(name = "lobbies")
+@Schema(description = "Represents a game lobby where players gather before starting a game")
 public class Lobby {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the lobby", example = "1")
     private long id;
 
     @Column(unique = true)
+    @Schema(description = "Unique join code for the lobby", example = "ABCDEF")
     private String code;
 
     @ManyToOne
     @JoinColumn(name = "leader_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_lobby_leader",
                     foreignKeyDefinition = "FOREIGN KEY (leader_id) REFERENCES users(id) ON DELETE CASCADE"))
+    @Schema(description = "The user who created and leads the lobby")
     private User leader;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_lobby_game",
                     foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE"))
+    @Schema(description = "The game selected for this lobby")
     private Game game;
 
     @ManyToMany
@@ -37,6 +43,7 @@ public class Lobby {
                     foreignKey = @ForeignKey(name = "fk_lobbyplayers_user",
                             foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
     )
+    @Schema(description = "Set of players currently in the lobby")
     private Set<User> players = new HashSet<>();
 
     @ManyToOne
@@ -45,19 +52,26 @@ public class Lobby {
             foreignKey = @ForeignKey(name = "fk_lobby_club",
                     foreignKeyDefinition = "FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE")
     )
+    @Schema(description = "The club this lobby belongs to, if it's a club lobby")
     private Club club;
 
+    @Schema(description = "Whether the lobby is publicly visible", example = "false")
     private boolean isPublic = false;
 
+    @Schema(description = "Whether the game will track and award points", example = "true")
     private boolean playWithPoints;
 
+    @Schema(description = "Minimum number of players required to start the game", example = "2")
     private int minPlayers;
 
+    @Schema(description = "Current status of the lobby", example = "WAITING", allowableValues = {"WAITING", "IN_GAME", "FINISHED"})
     private String status = "WAITING";
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Schema(description = "When the lobby was created", example = "2023-05-20T14:30:00Z")
     private Date createdAt;
 
+    @Schema(description = "ID of the active card game if the lobby is in game state", example = "g-123456")
     private String cardGameId;
 
     public Lobby() {

@@ -1,29 +1,46 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "games")
+@Schema(description = "Represents a card game definition")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the game", example = "1")
     private long id;
+
+    @Schema(description = "Name of the game", example = "Poker")
     private String name;
+
+    @Schema(description = "Whether the game is currently active and available to play", example = "true")
     private boolean active;
+
+    @Schema(description = "Minimum number of players required", example = "2")
     private int minPlayers;
+
+    @Schema(description = "Maximum number of players allowed", example = "8")
     private int maxPlayers;
+
+    @Schema(description = "Identifier for the game factory implementation", example = "PokerGameFactory")
     private String factorySign;
+
+    @Schema(description = "Numeric identifier for the game factory", example = "1")
     private int factoryId;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Set of game descriptions in different languages")
     private Set<GameDescription> descriptions = new HashSet<>();
 
     @JsonManagedReference
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Set of game rules in different languages")
     private Set<GameRules> rules = new HashSet<>();
 
     public Game() {
