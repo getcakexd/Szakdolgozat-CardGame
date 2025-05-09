@@ -87,7 +87,7 @@
     "CURRENT_PASSWORD": "Jelenlegi jelszó",
     "NEW_PASSWORD": "Új jelszó",
     "SAVE": "Mentés",
-    "CANCEL": "Jelenlegi jelszó",
+    "CANCEL": "Mégse",
     "DELETE_ACCOUNT": "Fiók törlése",
     "DELETE_PROFILE": "Profil törlése",
     "DELETE_WARNING": "Ez a művelet nem vonható vissza!",
