@@ -25,6 +25,11 @@
     <mat-card-content>
       <div class="game-content-wrapper">
         <div class="game-table">
+          <div class="cards-left-counter">
+            <mat-icon>playing_cards</mat-icon>
+            <span>{{ game.gameState['deck']['cardsLeft'] || 0 }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
+          </div>
+
           <div *ngIf="gameResult" class="game-result-announcement" [ngClass]="gameResult">
             <div class="game-result-content">
               <h2 class="game-result-title">{{ gameResultMessage }}</h2>
@@ -57,13 +62,6 @@
 
                 <div *ngIf="getCurrentTrickCards().length === 0" class="empty-trick">
                   <p>{{ 'GAME.NO_CARDS_IN_TRICK' | translate }}</p>
-                </div>
-              </div>
-
-              <div class="cards-left-section">
-                <div class="cards-left-counter">
-                  <mat-icon>playing_cards</mat-icon>
-                  <span>{{ game.gameState['deck']['cardsLeft'] || 0 }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
                 </div>
               </div>
             </div>
