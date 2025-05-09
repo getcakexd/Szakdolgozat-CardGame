@@ -35,33 +35,37 @@
             </div>
           </div>
 
-          <div class="last-played-section">
-            <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
-              <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
-              <p>{{ getPlayerName(lastPlayedCard.playerId) }} played:</p>
-              <app-card [card]="lastPlayedCard.card"></app-card>
-            </div>
-          </div>
-
-          <div class="current-trick-section">
-            <div class="current-trick" *ngIf="getCurrentTrickCards().length > 0">
-              <h4>{{ 'GAME.CURRENT_TRICK' | translate }} ({{ getCurrentTrickCards().length }})</h4>
-              <div class="current-trick-cards">
-                <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
-                  <app-card [card]="card"></app-card>
+          <div class="game-table-content">
+            <div class="table-row">
+              <div class="last-played-section">
+                <div *ngIf="showLastPlayedCard && lastPlayedCard" class="last-played-card">
+                  <h4>{{ 'GAME.LAST_PLAYED_CARD' | translate }}</h4>
+                  <p>{{ getPlayerName(lastPlayedCard.playerId) }} played:</p>
+                  <app-card [card]="lastPlayedCard.card"></app-card>
                 </div>
               </div>
-            </div>
 
-            <div *ngIf="getCurrentTrickCards().length === 0" class="empty-trick">
-              <p>{{ 'GAME.NO_CARDS_IN_TRICK' | translate }}</p>
-            </div>
-          </div>
+              <div class="current-trick-section">
+                <div class="current-trick" *ngIf="getCurrentTrickCards().length > 0">
+                  <h4>{{ 'GAME.CURRENT_TRICK' | translate }} ({{ getCurrentTrickCards().length }})</h4>
+                  <div class="current-trick-cards">
+                    <div *ngFor="let card of getCurrentTrickCards()" class="trick-card">
+                      <app-card [card]="card"></app-card>
+                    </div>
+                  </div>
+                </div>
 
-          <div class="cards-left-section">
-            <div class="cards-left-counter">
-              <mat-icon>playing_cards</mat-icon>
-              <span>{{ game.gameState['deck']['cardsLeft'] || 0 }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
+                <div *ngIf="getCurrentTrickCards().length === 0" class="empty-trick">
+                  <p>{{ 'GAME.NO_CARDS_IN_TRICK' | translate }}</p>
+                </div>
+              </div>
+
+              <div class="cards-left-section">
+                <div class="cards-left-counter">
+                  <mat-icon>playing_cards</mat-icon>
+                  <span>{{ game.gameState['deck']['cardsLeft'] || 0 }} {{ 'GAME.CARDS_LEFT' | translate }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -3,11 +3,12 @@
   overflow-x: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 1rem;
 }
 
 .game-card {
-  width: 95%;
+  width: 100%;
   height: auto;
   min-height: auto;
   display: flex;
@@ -22,25 +23,19 @@ mat-card-content {
 }
 
 .game-content-wrapper {
-  display: grid;
-  grid-template-columns: 2.2fr 0.8fr 300px;
-  grid-template-rows: minmax(180px, auto) minmax(250px, auto);
-  grid-template-areas:
-    "game-table players chat"
-    "player-hand players chat";
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
   height: auto;
 }
 
 .game-table {
-  grid-area: game-table;
   background-color: rgba(0, 128, 0, 0.1);
   border-radius: 16px;
   padding: 1rem;
   min-height: 130px;
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-areas: "last-played current-trick cards-left";
+  display: flex;
+  flex-direction: column;
   align-items: center;
   overflow: visible;
   gap: 1rem;
@@ -76,40 +71,52 @@ mat-card-content {
 
 .game-result-content {
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
-  max-width: 80%;
+  max-width: 90%;
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .game-result-title {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
 }
 
 .game-result-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .game-result-content button {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.game-table-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+}
+
+.table-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
 }
 
 .last-played-section {
-  grid-area: last-played;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
   overflow: visible;
-  height: 150px;
-  min-height: 150px;
+  flex: 1;
 }
 
 .last-played-card {
@@ -118,9 +125,9 @@ mat-card-content {
   background-color: transparent;
   border-radius: 8px;
   animation: fadeIn 0.5s ease-in-out;
-  max-width: 220px;
+  max-width: 100%;
   margin: 0.5rem 0;
-  height: 130px;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -140,7 +147,6 @@ mat-card-content {
 }
 
 .current-trick-section {
-  grid-area: current-trick;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,7 +154,8 @@ mat-card-content {
   padding: 0.5rem;
   overflow: visible;
   width: 100%;
-  min-height: 150px;
+  min-height: 120px;
+  flex: 2;
 }
 
 .current-trick {
@@ -171,15 +178,15 @@ mat-card-content {
 }
 
 .trick-card:hover {
-  transform: translateY(-10px) scale(0.8);
+  transform: translateY(-5px) scale(0.8);
 }
 
 .empty-trick {
   text-align: center;
   color: var(--text-secondary-color, rgba(0, 0, 0, 0.6));
   font-style: italic;
-  font-size: 1.1rem;
-  min-height: 100px;
+  font-size: 1rem;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,11 +197,11 @@ mat-card-content {
 }
 
 .cards-left-section {
-  grid-area: cards-left;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
+  flex: 1;
 }
 
 .cards-left-counter {
@@ -204,21 +211,21 @@ mat-card-content {
   background-color: rgba(255, 0, 0, 0.1);
   border: 1px solid rgba(255, 0, 0, 0.3);
   color: var(--mat-sys-primary);
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .player-hand {
-  grid-area: player-hand;
   padding: 1rem;
   background-color: rgba(0, 0, 255, 0.05);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 250px;
+  min-height: 200px;
   overflow: visible;
   justify-content: space-between;
   align-items: center;
@@ -228,13 +235,13 @@ mat-card-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   flex-shrink: 0;
   width: 100%;
 }
 
 .hand-header h3 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .hand-cards-counter {
@@ -243,10 +250,10 @@ mat-card-content {
   gap: 0.5rem;
   background-color: var(--mat-sys-primary);
   color: white;
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 20px;
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .cards-container {
@@ -254,12 +261,12 @@ mat-card-content {
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.5rem;
+  padding: 0.5rem;
   overflow: visible;
   width: 100%;
-  margin-bottom: 1rem;
-  min-height: 120px;
+  margin-bottom: 0.75rem;
+  min-height: 100px;
 }
 
 .card-wrapper {
@@ -267,14 +274,15 @@ mat-card-content {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 8px;
   margin: 0.25rem;
+  transform: scale(0.9);
 }
 
 .card-wrapper:hover {
-  transform: translateY(-10px);
+  transform: translateY(-5px) scale(0.9);
 }
 
 .card-wrapper.selected {
-  transform: translateY(-15px);
+  transform: translateY(-10px) scale(0.9);
   position: relative;
 }
 
@@ -292,39 +300,43 @@ mat-card-content {
 .hand-actions {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin: 1rem 0;
+  gap: 1rem;
+  margin: 0.75rem 0;
   flex-shrink: 0;
   width: 100%;
 }
 
 .hand-actions button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
 
 .players-sidebar {
-  grid-area: players;
   background-color: rgba(255, 255, 0, 0.05);
   border-radius: 8px;
   padding: 0.75rem;
-  overflow-y: auto;
+  overflow-x: auto;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.75rem;
 }
 
 .players-sidebar h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .player-info-sidebar {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
   border-radius: 8px;
   padding: 0.5rem;
   transition: all 0.3s ease;
+  min-width: 150px;
+  flex-shrink: 0;
 }
 
 .player-info-sidebar.current-player {
@@ -337,10 +349,9 @@ mat-card-content {
 }
 
 .chat-sidebar {
-  grid-area: chat;
   background-color: rgba(0, 0, 0, 0.02);
   border-radius: 8px;
-  height: 100%;
+  height: 300px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -382,16 +393,17 @@ mat-card-content {
 }
 
 .loading-container p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-top: 1rem;
 }
 
 .status-badge {
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
+  margin-right: 0.5rem;
 }
 
 .status-badge.waiting {
@@ -410,19 +422,19 @@ mat-card-content {
 }
 
 :host ::ng-deep app-player-info {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 :host ::ng-deep app-player-info .player-name {
-  font-size: 0.95rem;
-}
-
-:host ::ng-deep app-player-info .player-score {
   font-size: 0.9rem;
 }
 
-:host ::ng-deep app-player-info .player-cards {
+:host ::ng-deep app-player-info .player-score {
   font-size: 0.85rem;
+}
+
+:host ::ng-deep app-player-info .player-cards {
+  font-size: 0.8rem;
 }
 
 .current-trick-cards {
@@ -436,86 +448,115 @@ mat-card-content {
   padding: 0.5rem;
 }
 
-@media (max-width: 1200px) {
+/* Responsive styles */
+@media (min-width: 768px) {
   .game-content-wrapper {
-    grid-template-columns: 2fr 0.8fr 220px;
-  }
-
-  .card-wrapper {
-    transform: scale(1.1);
-  }
-
-  .card-wrapper:hover, .card-wrapper.selected {
-    transform: translateY(-10px) scale(1.1);
-  }
-
-  .trick-card {
-    transform: scale(0.8);
-  }
-
-  .trick-card:hover {
-    transform: translateY(-10px) scale(0.8);
-  }
-
-  .game-result-title {
-    font-size: 2rem;
-  }
-
-  .game-result-subtitle {
-    font-size: 1rem;
-  }
-
-  .players-sidebar {
-    max-width: 180px;
-  }
-}
-
-@media (max-width: 992px) {
-  .game-content-wrapper {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
-      "game-table"
-      "player-hand"
-      "players"
-      "chat";
-    gap: 1rem;
+      "game-table chat"
+      "player-hand chat"
+      "players chat";
+    gap: 0.75rem;
   }
 
   .game-table {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "last-played"
-      "current-trick"
-      "cards-left";
-    gap: 1rem;
-    padding: 1rem;
+    grid-area: game-table;
+  }
+
+  .player-hand {
+    grid-area: player-hand;
   }
 
   .players-sidebar {
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 1rem;
-    max-width: 100%;
-    justify-self: stretch;
-  }
-
-  .player-info-sidebar {
-    min-width: 180px;
-    margin-right: 1rem;
+    grid-area: players;
   }
 
   .chat-sidebar {
-    height: 300px;
+    grid-area: chat;
+    height: 100%;
+  }
+}
+
+@media (min-width: 992px) {
+  .game-content-wrapper {
+    grid-template-columns: 2fr 1fr 300px;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "game-table players chat"
+      "player-hand players chat";
+  }
+
+  .players-sidebar {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .player-info-sidebar {
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .players-sidebar h3 {
+    text-align: center;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .game-table {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: "last-played current-trick cards-left";
+  }
+
+  .last-played-section {
+    grid-area: last-played;
+  }
+
+  .current-trick-section {
+    grid-area: current-trick;
+  }
+
+  .cards-left-section {
+    grid-area: cards-left;
+  }
+
+  .game-table-content {
+    display: contents;
+  }
+
+  .table-row {
+    display: contents;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    padding: 0.5rem;
+  }
+
+  .game-card {
+    width: 100%;
+  }
+
+  mat-card-content {
+    padding: 0.5rem !important;
+  }
+
+  .hand-actions button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
   }
 
   .card-wrapper {
-    transform: scale(1);
+    transform: scale(0.8);
   }
 
   .card-wrapper:hover, .card-wrapper.selected {
-    transform: translateY(-10px) scale(1);
+    transform: translateY(-5px) scale(0.8);
   }
 
   .trick-card {
@@ -523,22 +564,7 @@ mat-card-content {
   }
 
   .trick-card:hover {
-    transform: translateY(-10px) scale(0.7);
-  }
-
-  .game-result-title {
-    font-size: 1.8rem;
-  }
-
-  .game-result-subtitle {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .game-result-content {
-    padding: 1rem;
-    max-width: 90%;
+    transform: translateY(-5px) scale(0.7);
   }
 
   .game-result-title {
@@ -546,7 +572,16 @@ mat-card-content {
   }
 
   .game-result-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .status-badge {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .cards-left-counter, .hand-cards-counter {
     font-size: 0.8rem;
-    margin-bottom: 1rem;
+    padding: 0.4rem 0.6rem;
   }
 }
