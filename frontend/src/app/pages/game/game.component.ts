@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core"
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener } from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { MatSnackBar } from "@angular/material/snack-bar"
 import { Subscription } from "rxjs"
@@ -54,8 +54,10 @@ export class GameComponent implements OnInit, OnDestroy {
   gameResult: "win" | "loss" | "draw" | null = null
   gameResultMessage = ""
   gameResultSubtitle = ""
+  isMobile = false;
 
   private lastTrickSize = 0
+  private screenWidth = window.innerWidth;
 
   protected gameId: string | null = null
   private gameSubscription: Subscription | null = null
@@ -66,6 +68,12 @@ export class GameComponent implements OnInit, OnDestroy {
   private lastCardTimer: any = null
   private connectionSubscription: Subscription | null = null
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.screenWidth = event.target.innerWidth;
+    this.checkIfMobile();
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -75,9 +83,21 @@ export class GameComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  ) {
+    // Initialize isMobile based on current screen width
+    this.isMobile = window.innerWidth < 768;
+  }
+
+  private checkIfMobile() {
+    // Just update the property without triggering change detection
+    this.isMobile = this.screenWidth < 768;
+    // Don't call changeDetectorRef.detectChanges() here
+  }
 
   ngOnInit(): void {
+    // Check mobile status again in ngOnInit where it's safe to trigger change detection
+    this.checkIfMobile();
+
     if (!this.authService.currentUser) {
       this.snackBar.open(this.translate.instant("ERRORS.LOGIN_REQUIRED"), this.translate.instant("COMMON.CLOSE"), {
         duration: 3000,
