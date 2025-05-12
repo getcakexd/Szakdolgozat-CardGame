@@ -1,5 +1,6 @@
 package hu.benkototh.cardgame.backend.game.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +8,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "players")
+@Schema(description = "Represents a player in a card game")
 public class Player {
     @Id
+    @Schema(description = "Unique identifier for the player", example = "p-123456")
     private String id;
 
+    @Schema(description = "Username of the player", example = "johndoe")
     private String username;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -18,6 +22,7 @@ public class Player {
             , foreignKey = @ForeignKey(name = "fk_player_hand",
             foreignKeyDefinition = "FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE")
     ))
+    @Schema(description = "Cards currently in the player's hand")
     private List<Card> hand;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -25,10 +30,13 @@ public class Player {
             , foreignKey = @ForeignKey(name = "fk_player_won_cards",
             foreignKeyDefinition = "FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE")
     ))
+    @Schema(description = "Cards the player has won during the game")
     private List<Card> wonCards;
 
+    @Schema(description = "Whether the player is still active in the game", example = "true")
     private boolean active;
 
+    @Schema(description = "Current score of the player in the game", example = "42")
     private int score;
 
     @ManyToOne
@@ -36,8 +44,10 @@ public class Player {
             , foreignKey = @ForeignKey(name = "fk_player_game",
             foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
     @JsonBackReference
+    @Schema(description = "The card game this player is participating in")
     private CardGame game;
 
+    @Schema(description = "Whether this player is controlled by AI", example = "false")
     private boolean isAI;
 
     public Player() {
@@ -112,6 +122,7 @@ public class Player {
         isAI = AI;
     }
 
+    @Schema(description = "Adds a card to the player's hand")
     public void addCardToHand(Card card) {
         if (hand == null) {
             hand = new ArrayList<>();
@@ -119,6 +130,7 @@ public class Player {
         hand.add(card);
     }
 
+    @Schema(description = "Removes a card from the player's hand")
     public void removeCardFromHand(Card card) {
         if (hand != null) {
             hand.removeIf(c -> c.getSuit() == card.getSuit() && c.getRank() == card.getRank());

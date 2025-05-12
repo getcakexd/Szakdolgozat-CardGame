@@ -348,7 +348,7 @@ public class ZsirGame extends CardGame {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
             } else if (!isStarterTurn) {
-                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
+                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), currentTrick.get(0));
                 setGameState(CAN_HIT, firstPlayerCanHit);
 
                 if (!firstPlayerCanHit) {
@@ -382,7 +382,7 @@ public class ZsirGame extends CardGame {
 
         if (getCurrentPlayer().getId().equals(aiPlayerId)) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -425,7 +425,7 @@ public class ZsirGame extends CardGame {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
             } else if (!isStarterTurn) {
-                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), card);
+                boolean firstPlayerCanHit = ZsirGameUtils.checkIfPlayerCanHit(getPlayerById(trickStarter), currentTrick.get(0));
                 setGameState(CAN_HIT, firstPlayerCanHit);
 
                 if (!firstPlayerCanHit) {
@@ -724,7 +724,7 @@ public class ZsirGame extends CardGame {
             if (!isStarterTurn && !playerHit) {
                 trickComplete = true;
             } else if (!isStarterTurn) {
-                boolean humanCanHit = ZsirGameUtils.checkIfPlayerCanHit(humanPlayer, card);
+                boolean humanCanHit = ZsirGameUtils.checkIfPlayerCanHit(humanPlayer, currentTrick.get(0));
                 setGameState(CAN_HIT, humanCanHit);
 
                 if (!humanCanHit) {
@@ -749,10 +749,12 @@ public class ZsirGame extends CardGame {
 
             checkAndDrawCards();
             setCurrentPlayer(winner);
+            serializeGameState();
 
             if (winner.getId().equals(aiPlayerId) && getCurrentPlayer().getId().equals(aiPlayerId)) {
+
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -761,6 +763,7 @@ public class ZsirGame extends CardGame {
             }
         } else {
             setCurrentPlayer(humanPlayer);
+            serializeGameState();
         }
 
         serializeGameState();

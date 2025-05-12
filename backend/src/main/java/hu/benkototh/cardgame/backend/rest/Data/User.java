@@ -1,23 +1,44 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "users")
+@Schema(description = "Represents a user account")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the user", example = "1")
     private long id;
+
+    @Schema(description = "Username for login", example = "johndoe")
     private String username;
+
+    @Schema(description = "Hashed password", example = "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
     private String password;
+
+    @Schema(description = "Email address", example = "john.doe@example.com")
     private String email;
+
+    @Schema(description = "User role for authorization", example = "USER", allowableValues = {"USER", "ADMIN", "AGENT", "MODERATOR"})
     private String role;
+
+    @Schema(description = "Whether the account is locked due to security concerns", example = "false")
     private boolean locked;
+
+    @Schema(description = "Number of consecutive failed login attempts", example = "0")
     private int failedLoginAttempts;
+
+    @Schema(description = "Whether the email address has been verified", example = "true")
     private boolean verified = false;
+
+    @Schema(description = "Token for email verification", example = "7c9e6679-7425-40de-944b-e07fc1f90ae7")
     private String verificationToken;
+
+    @Schema(description = "Expiry date for the verification token", example = "2023-05-21T14:30:00Z")
     private Date verificationTokenExpiry;
 
     public User() {

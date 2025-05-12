@@ -1,24 +1,35 @@
 package hu.benkototh.cardgame.backend.rest.Data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "user_history")
+@Schema(description = "Represents a historical record of changes to a user account")
 public class UserHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the history record", example = "1")
     private long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "fk_userhistory_user",
                     foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
+    @Schema(description = "User associated with this history record")
     private User user;
 
+    @Schema(description = "Previous username before change", example = "old_username")
     private String previousUsername;
+
+    @Schema(description = "Previous email before change", example = "old.email@example.com")
     private String previousEmail;
+
+    @Schema(description = "When the change occurred", example = "2023-05-20T14:30:00Z")
     private Date changedAt;
+
+    @Schema(description = "Who made the change (user ID or 'system')", example = "1")
     private String changedBy;
 
     public UserHistory() {

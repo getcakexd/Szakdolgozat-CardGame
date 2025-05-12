@@ -1,8 +1,17 @@
 package hu.benkototh.cardgame.backend.websocket.dto.friends;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO for sending a private message between users")
 public class ChatMessageDTO {
+
+    @Schema(description = "ID of the user sending the message", example = "1")
     private long senderId;
+
+    @Schema(description = "ID of the user receiving the message", example = "2")
     private long receiverId;
+
+    @Schema(description = "Content of the message", example = "Hey, want to play a game?")
     private String content;
 
     public ChatMessageDTO() {

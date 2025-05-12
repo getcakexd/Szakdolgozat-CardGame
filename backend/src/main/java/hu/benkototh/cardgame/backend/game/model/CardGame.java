@@ -2,6 +2,7 @@ package hu.benkototh.cardgame.backend.game.model;
 
 import hu.benkototh.cardgame.backend.game.exception.GameException;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,29 +21,38 @@ import org.slf4j.LoggerFactory;
 @Table(name = "card_games")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "game_type", discriminatorType = DiscriminatorType.STRING)
+@Schema(description = "Abstract base class representing a card game session")
 public abstract class CardGame {
     private static final Logger logger = LoggerFactory.getLogger(CardGame.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Id
+    @Schema(description = "Unique identifier for the game session", example = "g-123456")
     private String id;
 
+    @Schema(description = "ID of the game definition (game type)", example = "1")
     private long gameDefinitionId;
 
+    @Schema(description = "Name of the game session", example = "John's Poker Game")
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "Current status of the game", example = "ACTIVE", allowableValues = {"WAITING", "ACTIVE", "FINISHED", "ABANDONED"})
     private GameStatus status;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Schema(description = "When the game was created", example = "2023-05-20T14:00:00Z")
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Schema(description = "When the game was started", example = "2023-05-20T14:05:00Z")
     private Date startedAt;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Schema(description = "When the game ended", example = "2023-05-20T14:30:00Z")
     private Date endedAt;
 
+    @Schema(description = "Whether this game should track statistics", example = "true")
     private boolean trackStatistics;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -50,12 +60,14 @@ public abstract class CardGame {
             , foreignKey = @ForeignKey(name = "fk_game_player",
             foreignKeyDefinition = "FOREIGN KEY (game_id) REFERENCES card_games(id) ON DELETE CASCADE"))
     @JsonManagedReference
+    @Schema(description = "List of players participating in the game")
     private List<Player> players;
 
     @ManyToOne
     @JoinColumn(name = "current_player_id",
             foreignKey = @ForeignKey(name = "FK_CURRENT_PLAYER",
                     foreignKeyDefinition = "FOREIGN KEY (current_player_id) REFERENCES players(id) ON DELETE SET NULL"))
+    @Schema(description = "Player whose turn it currently is")
     private Player currentPlayer;
 
     @ElementCollection
@@ -64,12 +76,15 @@ public abstract class CardGame {
             joinColumns = @JoinColumn(name = "game_id")
     )
     @Column(name = "user_id")
+    @Schema(description = "List of user IDs who have abandoned the game")
     private List<String> abandonedUsers = new ArrayList<>();
 
     @Transient
+    @Schema(description = "Current state of the game (transient, not stored directly in database)")
     private Map<String, Object> gameState;
 
     @Column(columnDefinition = "TEXT")
+    @Schema(description = "Serialized JSON representation of the game state")
     private String serializedGameState;
 
     public CardGame() {
@@ -83,14 +98,28 @@ public abstract class CardGame {
         logger.debug("Created new CardGame with ID: {}", this.id);
     }
 
+    @Schema(description = "Initialize the game with cards, players, and initial state")
     public abstract void initializeGame();
+
+    @Schema(description = "Check if a move is valid for the given player")
     public abstract boolean isValidMove(String playerId, GameAction action);
+
+    @Schema(description = "Execute a move for the given player")
     public abstract void executeMove(String playerId, GameAction action);
+
+    @Schema(description = "Check if the game is over")
     public abstract boolean isGameOver();
+
+    @Schema(description = "Calculate final scores for all players")
     public abstract Map<String, Integer> calculateScores();
+
+    @Schema(description = "Get the minimum number of players required for this game")
     public abstract int getMinPlayers();
+
+    @Schema(description = "Get the maximum number of players allowed for this game")
     public abstract int getMaxPlayers();
 
+    @Schema(description = "Add a player to the game")
     public void addPlayer(Player player) {
         if (players.size() < getMaxPlayers() && status == GameStatus.WAITING) {
             players.add(player);
@@ -100,6 +129,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "Remove a player from the game")
     public void removePlayer(String playerId) {
         if (currentPlayer != null && currentPlayer.getId().equals(playerId)) {
             currentPlayer = null;
@@ -113,6 +143,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "Mark a user as having abandoned the game")
     public void addAbandonedUser(String userId) {
         if (!abandonedUsers.contains(userId)) {
             abandonedUsers.add(userId);
@@ -120,6 +151,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "Get the list of users who have abandoned the game")
     public List<String> fetchAbandonedUsers() {
         return abandonedUsers;
     }
@@ -128,10 +160,12 @@ public abstract class CardGame {
         this.abandonedUsers = abandonedUsers;
     }
 
+    @Schema(description = "Check if a user has abandoned the game")
     public boolean hasUserAbandoned(String userId) {
         return abandonedUsers.contains(userId);
     }
 
+    @Schema(description = "Start the game if enough players have joined")
     public void startGame() {
         if (players.size() >= getMinPlayers() && status == GameStatus.WAITING) {
             status = GameStatus.ACTIVE;
@@ -148,6 +182,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "End the game and set its status to FINISHED")
     public void endGame() {
         status = GameStatus.FINISHED;
         endedAt = new Date();
@@ -221,6 +256,7 @@ public abstract class CardGame {
         return gameState;
     }
 
+    @Schema(description = "Set a value in the game state")
     public void setGameState(String key, Object value) {
         if (gameState == null) {
             gameState = new ConcurrentHashMap<>();
@@ -241,6 +277,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "Get a value from the game state")
     public Object getGameState(String key) {
         if (gameState == null) {
             return null;
@@ -248,10 +285,12 @@ public abstract class CardGame {
         return this.gameState.get(key);
     }
 
+    @Schema(description = "Check if a key exists in the game state")
     public boolean hasGameState(String key) {
         return gameState != null && gameState.containsKey(key);
     }
 
+    @Schema(description = "Remove a key from the game state")
     public void removeGameState(String key) {
         if (gameState != null) {
             gameState.remove(key);
@@ -309,6 +348,7 @@ public abstract class CardGame {
         }
     }
 
+    @Schema(description = "Process game-specific state objects after deserialization")
     protected void processGameStateObjects() {
     }
 }
