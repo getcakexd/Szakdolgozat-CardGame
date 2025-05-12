@@ -51,7 +51,7 @@ public class TicketMessage {
     private Date createdAt;
 
     @PrePersist
-    protected void onCreate() {
+    public void onCreate() {
         if (createdAt == null) {
             createdAt = new Date();
         }

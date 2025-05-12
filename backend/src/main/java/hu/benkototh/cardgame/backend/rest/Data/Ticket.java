@@ -71,7 +71,7 @@ public class Ticket {
     private List<TicketMessage> messages;
 
     @PrePersist
-    protected void onCreate() {
+    public void onCreate() {
         if (reference == null) {
             reference = generateReference();
         }
@@ -80,7 +80,7 @@ public class Ticket {
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    public void onUpdate() {
         updatedAt = new Date();
     }
 

@@ -117,7 +117,7 @@ public class User {
     }
 
     public Date getVerificationTokenExpiry() {
-        return verificationTokenExpiry;
+        return this.verificationTokenExpiry;
     }
 
     public void setVerificationTokenExpiry(Date verificationTokenExpiry) {

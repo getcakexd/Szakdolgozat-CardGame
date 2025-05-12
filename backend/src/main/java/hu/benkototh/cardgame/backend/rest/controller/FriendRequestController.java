@@ -119,7 +119,8 @@ public class FriendRequestController {
     }
 
     public boolean requestExists(User user1, User user2) {
-        return friendRequestRepository.findAll().stream()
+        List<FriendRequest> requests = friendRequestRepository.findAll();
+        return requests.stream()
                 .anyMatch(request ->
                         request.getStatus().equals("pending") && (
                             (request.getSender().equals(user1) && request.getReceiver().equals(user2)) ||

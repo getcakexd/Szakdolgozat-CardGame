@@ -63,8 +63,8 @@ public class LobbyController {
             lobby.addPlayer(leader);
             lobby.setPublic(isPublic);
             lobby.setStatus(STATUS_WAITING);
-
-            return lobbyRepository.save(lobby);
+            lobbyRepository.save(lobby);
+            return lobby;
         }
         return null;
     }
@@ -97,8 +97,8 @@ public class LobbyController {
             lobby.addPlayer(leader);
             lobby.setPublic(false);
             lobby.setStatus(STATUS_WAITING);
-
-            return lobbyRepository.save(lobby);
+            lobbyRepository.save(lobby);
+            return lobby;
         }
         return null;
     }
