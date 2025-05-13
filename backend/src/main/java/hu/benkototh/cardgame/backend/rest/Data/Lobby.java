@@ -71,7 +71,7 @@ public class Lobby {
     @Schema(description = "When the lobby was created", example = "2023-05-20T14:30:00Z")
     private Date createdAt;
 
-    @Schema(description = "ID of the active card game if the lobby is in game state", example = "g-123456")
+    @Schema(description = "ID of the active card game if the lobby is in game state", example = "04a420c1-e047-4530-8fe1-df22d07226cd")
     private String cardGameId;
 
     public Lobby() {

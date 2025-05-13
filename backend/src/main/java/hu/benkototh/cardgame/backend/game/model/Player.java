@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Schema(description = "Represents a player in a card game")
 public class Player {
     @Id
-    @Schema(description = "Unique identifier for the player", example = "p-123456")
+    @Schema(description = "Unique identifier for the player", example = "1")
     private String id;
 
     @Schema(description = "Username of the player", example = "johndoe")

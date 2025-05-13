@@ -14,10 +14,10 @@ public class GameStatistics {
     @Schema(description = "Unique identifier for the game statistics", example = "1")
     private Long id;
 
-    @Schema(description = "ID of the user who played the game", example = "u-123456")
+    @Schema(description = "ID of the user who played the game", example = "1")
     private String userId;
 
-    @Schema(description = "ID of the specific game session", example = "g-123456")
+    @Schema(description = "ID of the specific game session", example = "1")
     private String gameId;
 
     @Schema(description = "ID of the game definition (game type)", example = "1")

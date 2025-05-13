@@ -23,7 +23,7 @@ public class LobbyMessage {
     @Schema(description = "User who sent the message")
     private User user;
 
-    @Schema(description = "ID of the game if this is a game message", example = "g-123456")
+    @Schema(description = "ID of the game if this is a game message", example = "04a420c1-e047-4530-8fe1-df22d07226cd")
     private String gameId;
 
     @Schema(description = "ID of the lobby if this is a lobby message", example = "1")
