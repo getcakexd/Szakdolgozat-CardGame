@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
-import hu.benkototh.cardgame.backend.rest.Data.Ticket;
-import hu.benkototh.cardgame.backend.rest.Data.TicketMessage;
+import hu.benkototh.cardgame.backend.rest.model.Ticket;
+import hu.benkototh.cardgame.backend.rest.model.TicketMessage;
 import hu.benkototh.cardgame.backend.rest.controller.TicketController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

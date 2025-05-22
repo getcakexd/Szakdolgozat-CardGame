@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.Club;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.IClubRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

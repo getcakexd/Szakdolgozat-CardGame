@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.*;
+import hu.benkototh.cardgame.backend.rest.model.*;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

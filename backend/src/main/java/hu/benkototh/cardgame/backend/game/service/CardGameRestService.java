@@ -3,7 +3,7 @@ package hu.benkototh.cardgame.backend.game.service;
 import hu.benkototh.cardgame.backend.game.controller.CardGameController;
 import hu.benkototh.cardgame.backend.game.controller.StatisticsController;
 import hu.benkototh.cardgame.backend.game.model.CardGame;
-import hu.benkototh.cardgame.backend.rest.Data.Game;
+import hu.benkototh.cardgame.backend.rest.model.Game;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

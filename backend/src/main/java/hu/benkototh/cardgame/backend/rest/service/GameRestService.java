@@ -1,9 +1,9 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.controller.GameController;
-import hu.benkototh.cardgame.backend.rest.Data.Game;
-import hu.benkototh.cardgame.backend.rest.Data.GameDescription;
-import hu.benkototh.cardgame.backend.rest.Data.GameRules;
+import hu.benkototh.cardgame.backend.rest.model.Game;
+import hu.benkototh.cardgame.backend.rest.model.GameDescription;
+import hu.benkototh.cardgame.backend.rest.model.GameRules;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

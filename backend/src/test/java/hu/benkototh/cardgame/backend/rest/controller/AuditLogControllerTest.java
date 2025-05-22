@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.AuditLog;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.AuditLog;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.IAuditLogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

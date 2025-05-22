@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.game.model;
 
-import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.Game;
+import hu.benkototh.cardgame.backend.rest.model.Club;
+import hu.benkototh.cardgame.backend.rest.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.Date;

@@ -1,31 +1,33 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { SignupComponent } from './pages/signup/signup.component';
-import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/home/home.component';
+import {HomeComponent} from './pages/home/home.component';
+import {LoginComponent} from './pages/login/login.component';
+import {ForgotPasswordComponent} from './pages/forgot-password/forgot-password.component';
+import {ResetPasswordComponent} from './pages/reset-password/reset-password.component';
+import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
+import {SignupComponent} from './pages/signup/signup.component';
 import {ProfileComponent} from './pages/profile/profile.component';
+import {AuthGuard} from './guards/auth.guard';
+import {FriendsComponent} from './pages/friends/friends.component';
 import {ClubPageComponent} from './pages/club-page/club-page.component';
 import {ClubComponent} from './pages/club/club.component';
-import {AdminDashboardComponent} from './pages/admin-dashboard/admin-dashboard.component';
-import {AgentDashboardComponent} from './pages/agent-dashboard/agent-dashboard.component';
-import {AuthGuard} from './guards/auth.guard';
-import {AgentGuard} from './guards/agent.guard';
-import {AdminGuard} from './guards/admin.guard';
-import {AuditLogsComponent} from './pages/audit-logs/audit-logs.component';
-import {RootGuard} from './guards/root.guard';
-import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
+import {GamesComponent} from './pages/games/games.component';
 import {LobbyHomeComponent} from './pages/lobby-home/lobby-home.component';
 import {SupportComponent} from './pages/support/support.component';
 import {TicketDetailComponent} from './pages/ticket-detail/ticket-detail.component';
-import {FriendsComponent} from './pages/friends/friends.component';
-import {ResetPasswordComponent} from './pages/reset-password/reset-password.component';
-import {ForgotPasswordComponent} from './pages/forgot-password/forgot-password.component';
-import {VerifyEmailComponent} from './components/verify-email/verify-email.component';
-import {GamesComponent} from './pages/games/games.component';
+import {LobbyDetailComponent} from './pages/lobby-detail/lobby-detail.component';
 import {GameComponent} from './pages/game/game.component';
 import {StatsComponent} from './pages/stats/stats.component';
 import {LeaderboardComponent} from './pages/leaderboard/leaderboard.component';
+import {AdminDashboardComponent} from './pages/admin-dashboard/admin-dashboard.component';
+import {AgentDashboardComponent} from './pages/agent-dashboard/agent-dashboard.component';
+import {AuditLogsComponent} from './pages/audit-logs/audit-logs.component';
 import {PrivacyPolicyComponent} from './pages/privacy-policy/privacy-policy.component';
+import {RootGuard} from './guards/root.guard';
+import {AgentGuard} from './guards/agent.guard';
+import {AdminGuard} from './guards/admin.guard';
+
+
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

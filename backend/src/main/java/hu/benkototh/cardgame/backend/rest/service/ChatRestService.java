@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
 import hu.benkototh.cardgame.backend.rest.controller.ChatController;
-import hu.benkototh.cardgame.backend.rest.Data.Message;
+import hu.benkototh.cardgame.backend.rest.model.Message;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

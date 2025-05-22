@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.PasswordResetToken;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.PasswordResetToken;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.IPasswordResetTokenRepository;
 import hu.benkototh.cardgame.backend.rest.service.SimpleEmailService;
 import org.springframework.beans.factory.annotation.Autowired;

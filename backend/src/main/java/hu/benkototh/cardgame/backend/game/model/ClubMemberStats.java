@@ -2,8 +2,8 @@ package hu.benkototh.cardgame.backend.game.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.Club;
+import hu.benkototh.cardgame.backend.rest.model.User;
 
 import java.util.Date;
 

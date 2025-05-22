@@ -1,8 +1,8 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.Ticket;
-import hu.benkototh.cardgame.backend.rest.Data.TicketMessage;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.Ticket;
+import hu.benkototh.cardgame.backend.rest.model.TicketMessage;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.ITicketMessageRepository;
 import hu.benkototh.cardgame.backend.rest.repository.ITicketRepository;
 import org.junit.jupiter.api.BeforeEach;

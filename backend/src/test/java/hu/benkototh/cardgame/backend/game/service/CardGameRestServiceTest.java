@@ -4,7 +4,7 @@ import hu.benkototh.cardgame.backend.game.controller.CardGameController;
 import hu.benkototh.cardgame.backend.game.controller.StatisticsController;
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.GameStatus;
-import hu.benkototh.cardgame.backend.rest.Data.Game;
+import hu.benkototh.cardgame.backend.rest.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class CardGameRestServiceTest {

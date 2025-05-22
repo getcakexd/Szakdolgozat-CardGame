@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.*;
+import hu.benkototh.cardgame.backend.rest.model.*;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;

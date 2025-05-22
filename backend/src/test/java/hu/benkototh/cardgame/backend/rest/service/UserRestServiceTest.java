@@ -1,8 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
-import hu.benkototh.cardgame.backend.rest.Data.GoogleAuthRequest;
-import hu.benkototh.cardgame.backend.rest.Data.User;
-import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
+import hu.benkototh.cardgame.backend.rest.model.GoogleAuthRequest;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

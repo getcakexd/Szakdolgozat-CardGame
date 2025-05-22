@@ -3,8 +3,6 @@ package hu.benkototh.cardgame.backend.game.controller;
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.GameStatistics;
 import hu.benkototh.cardgame.backend.game.repository.IGameStatisticsRepository;
-import hu.benkototh.cardgame.backend.rest.Data.Lobby;
-import hu.benkototh.cardgame.backend.rest.controller.LobbyController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

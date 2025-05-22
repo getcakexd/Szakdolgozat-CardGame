@@ -1,8 +1,8 @@
 package hu.benkototh.cardgame.backend.websocket.handler;
 
-import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.ClubMessage;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.Club;
+import hu.benkototh.cardgame.backend.rest.model.ClubMessage;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.controller.ClubChatController;
 import hu.benkototh.cardgame.backend.websocket.dto.club.ClubChatMessageDTO;
 import hu.benkototh.cardgame.backend.websocket.dto.club.GetClubMessagesDTO;
@@ -18,7 +18,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

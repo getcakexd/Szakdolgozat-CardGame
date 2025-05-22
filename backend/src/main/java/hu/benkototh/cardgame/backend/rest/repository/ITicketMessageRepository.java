@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.repository;
 
-import hu.benkototh.cardgame.backend.rest.Data.TicketMessage;
+import hu.benkototh.cardgame.backend.rest.model.TicketMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

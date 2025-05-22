@@ -4,7 +4,7 @@ import hu.benkototh.cardgame.backend.game.controller.StatsController;
 import hu.benkototh.cardgame.backend.game.model.GameStatistics;
 import hu.benkototh.cardgame.backend.game.model.UserGameStats;
 import hu.benkototh.cardgame.backend.game.model.UserStats;
-import hu.benkototh.cardgame.backend.rest.Data.*;
+import hu.benkototh.cardgame.backend.rest.model.*;
 import hu.benkototh.cardgame.backend.rest.repository.IUserHistoryRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
 import hu.benkototh.cardgame.backend.rest.service.SimpleEmailService;
