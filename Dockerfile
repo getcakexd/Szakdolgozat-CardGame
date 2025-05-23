@@ -2,7 +2,7 @@ FROM amazoncorretto:17 AS backend-build
 
 WORKDIR /app
 COPY backend /app/
-RUN chmod +x ./gradlew && ./gradlew build -x test --no-daemon
+RUN chmod +x ./gradlew && ./gradlew build --no-daemon
 
 FROM node:18 AS frontend-build
 
