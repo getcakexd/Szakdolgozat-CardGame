@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.websocket.handler;
 
-import hu.benkototh.cardgame.backend.rest.Data.ClubMessage;
+import hu.benkototh.cardgame.backend.rest.model.ClubMessage;
 import hu.benkototh.cardgame.backend.rest.controller.ClubChatController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;

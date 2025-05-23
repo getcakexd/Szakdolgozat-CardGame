@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.game.repository;
 
 import hu.benkototh.cardgame.backend.game.model.UserStats;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

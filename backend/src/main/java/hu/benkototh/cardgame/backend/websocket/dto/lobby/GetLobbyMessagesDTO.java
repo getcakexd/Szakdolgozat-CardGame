@@ -8,7 +8,7 @@ public class GetLobbyMessagesDTO {
     @Schema(description = "ID of the lobby to get messages from", example = "42")
     private long lobbyId;
 
-    @Schema(description = "ID of the game if requesting messages during a game", example = "g-123456", nullable = true)
+    @Schema(description = "ID of the game if requesting messages during a game", example = "04a420c1-e047-4530-8fe1-df22d07226cd", nullable = true)
     private String gameId;
 
     public GetLobbyMessagesDTO() {

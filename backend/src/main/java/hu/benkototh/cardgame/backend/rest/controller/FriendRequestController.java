@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.FriendRequest;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.FriendRequest;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.IFriendRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -119,7 +119,8 @@ public class FriendRequestController {
     }
 
     public boolean requestExists(User user1, User user2) {
-        return friendRequestRepository.findAll().stream()
+        List<FriendRequest> requests = friendRequestRepository.findAll();
+        return requests.stream()
                 .anyMatch(request ->
                         request.getStatus().equals("pending") && (
                             (request.getSender().equals(user1) && request.getReceiver().equals(user2)) ||

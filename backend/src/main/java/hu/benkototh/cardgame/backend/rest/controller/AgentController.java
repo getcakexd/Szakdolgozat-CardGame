@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.controller;
 
-import hu.benkototh.cardgame.backend.rest.Data.User;
-import hu.benkototh.cardgame.backend.rest.Data.UserHistory;
+import hu.benkototh.cardgame.backend.rest.model.User;
+import hu.benkototh.cardgame.backend.rest.model.UserHistory;
 import hu.benkototh.cardgame.backend.rest.repository.IUserHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

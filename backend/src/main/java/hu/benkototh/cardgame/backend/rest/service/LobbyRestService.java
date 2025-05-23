@@ -1,7 +1,7 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
-import hu.benkototh.cardgame.backend.rest.Data.Game;
-import hu.benkototh.cardgame.backend.rest.Data.Lobby;
+import hu.benkototh.cardgame.backend.rest.model.Game;
+import hu.benkototh.cardgame.backend.rest.model.Lobby;
 import hu.benkototh.cardgame.backend.rest.controller.LobbyController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

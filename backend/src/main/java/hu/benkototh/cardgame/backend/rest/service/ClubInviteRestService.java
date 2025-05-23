@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.rest.service;
 
-import hu.benkototh.cardgame.backend.rest.Data.ClubInvite;
+import hu.benkototh.cardgame.backend.rest.model.ClubInvite;
 import hu.benkototh.cardgame.backend.rest.controller.ClubInviteController;
 import hu.benkototh.cardgame.backend.rest.controller.UserController;
 import io.swagger.v3.oas.annotations.Operation;

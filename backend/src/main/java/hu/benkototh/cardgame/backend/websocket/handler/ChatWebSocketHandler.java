@@ -1,6 +1,6 @@
 package hu.benkototh.cardgame.backend.websocket.handler;
 
-import hu.benkototh.cardgame.backend.rest.Data.Message;
+import hu.benkototh.cardgame.backend.rest.model.Message;
 import hu.benkototh.cardgame.backend.rest.controller.ChatController;
 import hu.benkototh.cardgame.backend.websocket.dto.friends.ChatMessageDTO;
 import hu.benkototh.cardgame.backend.websocket.dto.friends.GetMessagesDTO;

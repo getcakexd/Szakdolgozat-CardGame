@@ -27,7 +27,7 @@ public abstract class CardGame {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Id
-    @Schema(description = "Unique identifier for the game session", example = "g-123456")
+    @Schema(description = "Unique identifier for the game session", example = "04a420c1-e047-4530-8fe1-df22d07226cd")
     private String id;
 
     @Schema(description = "ID of the game definition (game type)", example = "1")

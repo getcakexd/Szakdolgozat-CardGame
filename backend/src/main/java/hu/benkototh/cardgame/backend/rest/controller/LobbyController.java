@@ -3,10 +3,10 @@ package hu.benkototh.cardgame.backend.rest.controller;
 import hu.benkototh.cardgame.backend.game.controller.CardGameController;
 import hu.benkototh.cardgame.backend.game.model.CardGame;
 import hu.benkototh.cardgame.backend.game.model.Player;
-import hu.benkototh.cardgame.backend.rest.Data.Club;
-import hu.benkototh.cardgame.backend.rest.Data.Game;
-import hu.benkototh.cardgame.backend.rest.Data.Lobby;
-import hu.benkototh.cardgame.backend.rest.Data.User;
+import hu.benkototh.cardgame.backend.rest.model.Club;
+import hu.benkototh.cardgame.backend.rest.model.Game;
+import hu.benkototh.cardgame.backend.rest.model.Lobby;
+import hu.benkototh.cardgame.backend.rest.model.User;
 import hu.benkototh.cardgame.backend.rest.repository.IGameRepository;
 import hu.benkototh.cardgame.backend.rest.repository.ILobbyRepository;
 import hu.benkototh.cardgame.backend.rest.repository.IUserRepository;
@@ -63,8 +63,8 @@ public class LobbyController {
             lobby.addPlayer(leader);
             lobby.setPublic(isPublic);
             lobby.setStatus(STATUS_WAITING);
-
-            return lobbyRepository.save(lobby);
+            lobbyRepository.save(lobby);
+            return lobby;
         }
         return null;
     }
@@ -97,8 +97,8 @@ public class LobbyController {
             lobby.addPlayer(leader);
             lobby.setPublic(false);
             lobby.setStatus(STATUS_WAITING);
-
-            return lobbyRepository.save(lobby);
+            lobbyRepository.save(lobby);
+            return lobby;
         }
         return null;
     }

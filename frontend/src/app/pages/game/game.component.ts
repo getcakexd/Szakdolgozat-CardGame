@@ -84,18 +84,14 @@ export class GameComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
-    // Initialize isMobile based on current screen width
     this.isMobile = window.innerWidth < 768;
   }
 
   private checkIfMobile() {
-    // Just update the property without triggering change detection
     this.isMobile = this.screenWidth < 768;
-    // Don't call changeDetectorRef.detectChanges() here
   }
 
   ngOnInit(): void {
-    // Check mobile status again in ngOnInit where it's safe to trigger change detection
     this.checkIfMobile();
 
     if (!this.authService.currentUser) {
