@@ -947,6 +947,7 @@
     "MESSAGE": "Message",
     "SUBMIT": "Submit Ticket",
     "NAME_REQUIRED": "Name is required",
+    "NAME_MIN_LENGTH": "Name must be at least 3 characters",
     "EMAIL_REQUIRED": "Email is required",
     "EMAIL_INVALID": "Please enter a valid email",
     "CATEGORY_REQUIRED": "Category is required",

@@ -948,6 +948,7 @@
     "MESSAGE": "Üzenet",
     "SUBMIT": "Jegy Beküldése",
     "NAME_REQUIRED": "Név megadása kötelező",
+    "NAME_MIN_LENGTH": "A névnek legalább 3 karakter hosszúnak kell lennie",
     "EMAIL_REQUIRED": "Email megadása kötelező",
     "EMAIL_INVALID": "Kérjük, adjon meg érvényes email címet",
     "CATEGORY_REQUIRED": "Kategória kiválasztása kötelező",
