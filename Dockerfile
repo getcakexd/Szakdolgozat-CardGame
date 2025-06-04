@@ -28,12 +28,12 @@ RUN apt-get update && \
 RUN echo 'server {\n\
     listen PORT;\n\
     server_name cardhub-ff690e54a14d.herokuapp.com;\n\
-    return 301 https://cardhub;\n\
+    return 301 https://cardhub.getcake.eu\$request_uri;\n\
 }\n\
 \n\
 server {\n\
     listen PORT default_server;\n\
-    server_name cardhub localhost _;\n\
+    server_name cardhub.getcake.eu\$request_uri; localhost _;\n\
     \n\
     location / {\n\
         root /usr/share/nginx/html;\n\
