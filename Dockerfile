@@ -27,7 +27,13 @@ RUN apt-get update && \
 
 RUN echo 'server {\n\
     listen PORT;\n\
-    server_name localhost;\n\
+    server_name cardhub-ff690e54a14d.herokuapp.com;\n\
+    return 301 https://cardhub;\n\
+}\n\
+\n\
+server {\n\
+    listen PORT default_server;\n\
+    server_name cardhub localhost _;\n\
     \n\
     location / {\n\
         root /usr/share/nginx/html;\n\
@@ -39,6 +45,8 @@ RUN echo 'server {\n\
         proxy_pass http://localhost:8081;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+        proxy_set_header X-Forwarded-Proto $scheme;\n\
     }\n\
     \n\
     error_page 500 502 503 504 /50x.html;\n\
